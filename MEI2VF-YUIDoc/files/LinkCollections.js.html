@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>LinkCollections.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title=""></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/MEI2VF.html">MEI2VF</a></li>
+            
+                <li><a href="../classes/MEI2VF.Connectors
+Handles stave connectors.html">MEI2VF.Connectors
+Handles stave connectors</a></li>
+            
+                <li><a href="../classes/MEI2VF.Converter.html">MEI2VF.Converter</a></li>
+            
+                <li><a href="../classes/MEI2VF.Directives.html">MEI2VF.Directives</a></li>
+            
+                <li><a href="../classes/MEI2VF.Dynamics.html">MEI2VF.Dynamics</a></li>
+            
+                <li><a href="../classes/MEI2VF.EventLink.html">MEI2VF.EventLink</a></li>
+            
+                <li><a href="../classes/MEI2VF.EventReverence
+Represents and event with its xmlid, but if the xmlid is not defined, it
+can also hold the timestamp that can be resolved as soon as the context
+that
+holds the event is established. When the tstamp reference is being
+resolved, the xml:id is calculated using the generic function tstamp2id(),
+then the
+xml:id stored, thus marking that the reference is resolved..html">MEI2VF.EventReverence
+Represents and event with its xmlid, but if the xmlid is not defined, it
+can also hold the timestamp that can be resolved as soon as the context
+that
+holds the event is established. When the tstamp reference is being
+resolved, the xml:id is calculated using the generic function tstamp2id(),
+then the
+xml:id stored, thus marking that the reference is resolved.</a></li>
+            
+                <li><a href="../classes/MEI2VF.Hairpins.html">MEI2VF.Hairpins</a></li>
+            
+                <li><a href="../classes/MEI2VF.Hyphenation.html">MEI2VF.Hyphenation</a></li>
+            
+                <li><a href="../classes/MEI2VF.LinkCollection.html">MEI2VF.LinkCollection</a></li>
+            
+                <li><a href="../classes/MEI2VF.Measure.html">MEI2VF.Measure</a></li>
+            
+                <li><a href="../classes/MEI2VF.PointerCollection.html">MEI2VF.PointerCollection</a></li>
+            
+                <li><a href="../classes/MEI2VF.RUNTIME_ERROR.html">MEI2VF.RUNTIME_ERROR</a></li>
+            
+                <li><a href="../classes/MEI2VF.StaffInfo
+Contains the definition and the rendering information (i.e. what
+clef modifiers are to be rendered) of a single staff.html">MEI2VF.StaffInfo
+Contains the definition and the rendering information (i.e. what
+clef modifiers are to be rendered) of a single staff</a></li>
+            
+                <li><a href="../classes/MEI2VF.StaffVoice.html">MEI2VF.StaffVoice</a></li>
+            
+                <li><a href="../classes/MEI2VF.StaveVoices
+Stores all voices in a given measure along with the respective staff id.
+Passes all voices to Vex.Flow.Formatter and calls joinVoices, then draws
+all voices..html">MEI2VF.StaveVoices
+Stores all voices in a given measure along with the respective staff id.
+Passes all voices to Vex.Flow.Formatter and calls joinVoices, then draws
+all voices.</a></li>
+            
+                <li><a href="../classes/MEI2VF.System.html">MEI2VF.System</a></li>
+            
+                <li><a href="../classes/MEI2VF.SystemInfo
+Deals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children.html">MEI2VF.SystemInfo
+Deals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children</a></li>
+            
+                <li><a href="../classes/MEI2VF.Ties.html">MEI2VF.Ties</a></li>
+            
+                <li><a href="../classes/MEI2VF.Util.html">MEI2VF.Util</a></li>
+            
+                <li><a href="../classes/MeiLib.html">MeiLib</a></li>
+            
+                <li><a href="../classes/MeiLib
+MeiLib - General purpose JavaScript functions for processing MEI documents..html">MeiLib
+MeiLib - General purpose JavaScript functions for processing MEI documents.</a></li>
+            
+                <li><a href="../classes/MeiLib.Alt
+Represents an MEI &lt;b&gt;app&lt;/b&gt; or &lt;b&gt;choice&lt;/b&gt; element..html">MeiLib.Alt
+Represents an MEI &lt;b&gt;app&lt;/b&gt; or &lt;b&gt;choice&lt;/b&gt; element.</a></li>
+            
+                <li><a href="../classes/MeiLib.EventEnumerator
+Enumerate over the children events of node (node is a layer or a beam)..html">MeiLib.EventEnumerator
+Enumerate over the children events of node (node is a layer or a beam).</a></li>
+            
+                <li><a href="../classes/MeiLib.MeiDoc
+A Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus
+(&lt;b&gt;app&lt;/b&gt;, &lt;b&gt;rdg&lt;/b&gt;, etc.), or Editorial Transformation (&lt;b&gt;choice&lt;/b&gt;, &lt;b&gt;corr&lt;/b&gt;, etc.)
+elements..html">MeiLib.MeiDoc
+A Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus
+(&lt;b&gt;app&lt;/b&gt;, &lt;b&gt;rdg&lt;/b&gt;, etc.), or Editorial Transformation (&lt;b&gt;choice&lt;/b&gt;, &lt;b&gt;corr&lt;/b&gt;, etc.)
+elements.</a></li>
+            
+                <li><a href="../classes/MeiLib.RuntimeError.html">MeiLib.RuntimeError</a></li>
+            
+                <li><a href="../classes/MeiLib.Variant
+Represents a &lt;b&gt;lem&lt;/b&gt;, &lt;b&gt;rdg&lt;/b&gt;, &lt;b&gt;sic&lt;/b&gt; or &lt;b&gt;corr&lt;/b&gt; element..html">MeiLib.Variant
+Represents a &lt;b&gt;lem&lt;/b&gt;, &lt;b&gt;rdg&lt;/b&gt;, &lt;b&gt;sic&lt;/b&gt; or &lt;b&gt;corr&lt;/b&gt; element.</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: LinkCollections.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+var MEI2VF = ( function(m2v, VF, $, undefined) {
+
+    // TODO handle cross-system hairpins
+
+    /**
+     * @class MEI2VF.LinkCollection
+     * @private
+     *
+     * @constructor
+     */
+    m2v.LinkCollection = function(systemInfo, unresolvedTStamp2) {
+      this.init(systemInfo, unresolvedTStamp2);
+    };
+
+    m2v.LinkCollection.prototype = {
+
+      /**
+       * initializes the LinkCollection
+       */
+      init : function(systemInfo, unresolvedTStamp2) {
+        /**
+         * @property
+         */
+        this.allVexObjects = [];
+        /**
+         * @property
+         */
+        this.allModels = [];
+        /**
+         * @property
+         */
+        this.systemInfo = systemInfo;
+        /**
+         * @property
+         */
+        this.unresolvedTStamp2 = unresolvedTStamp2;
+      },
+
+      validateAtts : function() {
+        throw new m2v.RUNTIME_ERROR(&#x27;MEI2VF.DEVELOPMENT_ERROR.validateAtts&#x27;, &#x27;Developers have to provide a validateAtts method when inheriting MEI2VF.LinkCollection.&#x27;);
+      },
+
+      createVexFromInfos : function() {
+        throw new m2v.RUNTIME_ERROR(&#x27;MEI2VF.DEVELOPMENT_ERROR.createVexFromInfos&#x27;, &#x27;Developers have to provide a createVexFromInfos method when inheriting MEI2VF.LinkCollection.&#x27;);
+      },
+
+      /**
+       * create EventLink objects from  &lt;b&gt;tie&lt;/b&gt;, &lt;b&gt;slur&lt;/b&gt; or &lt;b&gt;hairpin&lt;/b&gt;
+       * elements
+       */
+      createInfos : function(link_elements, measureElement, systemInfo) {
+        var me = this;
+
+        var link_staffInfo = function(lnkelem) {
+          return {
+            staff_n : $(lnkelem).attr(&#x27;staff&#x27;) || &#x27;1&#x27;,
+            layer_n : $(lnkelem).attr(&#x27;layer&#x27;) || &#x27;1&#x27;
+          };
+        };
+
+        // convert tstamp into startid in current measure
+        var local_tstamp2id = function(tstamp, lnkelem, measureElement) {
+          var stffinf = link_staffInfo(lnkelem);
+          var staff = $(measureElement).find(&#x27;staff[n=&quot;&#x27; + stffinf.staff_n + &#x27;&quot;]&#x27;);
+          var layer = $(staff).find(&#x27;layer[n=&quot;&#x27; + stffinf.layer_n + &#x27;&quot;]&#x27;).get(0);
+          if (!layer) {
+            var layer_candid = $(staff).find(&#x27;layer&#x27;);
+            if (layer_candid &amp;&amp; !layer_candid.attr(&#x27;n&#x27;))
+              layer = layer_candid;
+            if (!layer)
+              throw new m2v.RUNTIME_ERROR(&#x27;MEI2VF.RERR.createInfos:E01&#x27;, &#x27;Cannot find layer&#x27;);
+          }
+          var staffdef = systemInfo.getStaffInfo(stffinf.staff_n);
+          if (!staffdef)
+            throw new m2v.RUNTIME_ERROR(&#x27;MEI2VF.RERR.createInfos:E02&#x27;, &#x27;Cannot determine staff definition.&#x27;);
+          var meter = staffdef.meter;
+          if (!meter.count || !meter.unit)
+            throw new m2v.RUNTIME_ERROR(&#x27;MEI2VF.RERR.createInfos:E03&#x27;, &quot;Cannot determine meter; missing or incorrect @meter.count or @meter.unit.&quot;);
+          return MeiLib.tstamp2id(tstamp, layer, meter);
+        };
+
+        var measure_partOf = function(tstamp2) {
+          return tstamp2.substring(0, tstamp2.indexOf(&#x27;m&#x27;));
+        };
+
+        var beat_partOf = function(tstamp2) {
+          return tstamp2.substring(tstamp2.indexOf(&#x27;+&#x27;) + 1);
+        };
+
+        $.each(link_elements, function() {
+          var eventLink, atts, startid, tstamp, endid, tstamp2, measures_ahead;
+
+          eventLink = new m2v.EventLink(null, null);
+
+          atts = m2v.Util.attsToObj(this);
+
+          me.validateAtts(atts);
+
+          eventLink.setParams(atts);
+
+          // find startid for eventLink. if tstamp is provided in the
+          // element,
+          // tstamp will be calculated.
+          startid = atts.startid;
+          if (startid) {
+            eventLink.setFirstId(startid);
+          } else {
+            tstamp = atts.tstamp;
+            if (tstamp) {
+              startid = local_tstamp2id(tstamp, this, measureElement);
+              eventLink.setFirstId(startid);
+            }
+            // else {
+            // // no @startid, no @tstamp ==&gt; eventLink.first_ref
+            // remains empty.
+            // }
+          }
+
+          // find end reference value (id/tstamp) of eventLink:
+          endid = atts.endid;
+          if (endid) {
+            eventLink.setLastId(endid);
+          } else {
+            tstamp2 = atts.tstamp2;
+            if (tstamp2) {
+              measures_ahead = +measure_partOf(tstamp2);
+              if (measures_ahead &gt; 0) {
+                eventLink.setLastTStamp(beat_partOf(tstamp2));
+                // register that eventLink needs context;
+                // need to save: measure.n, link.staff_n,
+                // link.layer_n
+                var staffinfo = link_staffInfo(this);
+                var target_measure_n = +$(measureElement).attr(&#x27;n&#x27;) + measures_ahead;
+                var refLocationIndex = target_measure_n.toString() + &#x27;:&#x27; + staffinfo.staff_n + &#x27;:&#x27; + staffinfo.layer_n;
+                if (!me.unresolvedTStamp2[refLocationIndex])
+                  me.unresolvedTStamp2[refLocationIndex] = [];
+                me.unresolvedTStamp2[refLocationIndex].push(eventLink);
+              } else {
+                endid = local_tstamp2id(beat_partOf(tstamp2), this, measureElement);
+                eventLink.setLastId(endid);
+              }
+            }
+            // else {
+            // // TODO no @endid, no @tstamp2 ==&gt; eventLink.last_ref
+            // remains empty.
+            // }
+          }
+          me.addModel(eventLink);
+        });
+      },
+
+      /**
+       * adds a new model to {@link #allModels}
+       * @param {Object} obj the object to add
+       */
+      addModel : function(obj) {
+        this.allModels.push(obj);
+      },
+
+      /**
+       * gets all models
+       * @return {Object[]} all models in {@link #allModels}
+       */
+      getModels : function() {
+        return this.allModels;
+      },
+
+      /**
+       * sets the context for the link collection
+       * @param {Object} ctx the canvas context
+       */
+      setContext : function(ctx) {
+        this.ctx = ctx;
+        return this;
+      },
+
+      /**
+       * draws the link collection to the canvas set by {@link #setContext}
+       */
+      draw : function() {
+        var ctx = this.ctx;
+        $.each(this.allVexObjects, function() {
+          this.setContext(ctx).draw();
+        });
+      }
+    };
+
+    /**
+     * @class MEI2VF.Hairpins
+     * @extend MEI2VF.LinkCollection
+     * @private
+     *
+     * @constructor
+     */
+    m2v.Hairpins = function(systemInfo, unresolvedTStamp2) {
+      this.init(systemInfo, unresolvedTStamp2);
+    };
+
+    Vex.Inherit(m2v.Hairpins, m2v.LinkCollection, {
+
+      init : function(systemInfo, unresolvedTStamp2) {
+        m2v.Ties.superclass.init.call(this, systemInfo, unresolvedTStamp2);
+      },
+
+      validateAtts : function(atts) {
+        if (!atts.form) {
+          throw new m2v.RUNTIME_ERROR(&#x27;MEI2VF.RERR.BadArguments:createInfos&#x27;, &#x27;@form is mandatory in &lt;hairpin&gt; - make sure the xml is valid.&#x27;);
+        }
+      },
+
+      createVexFromInfos : function(notes_by_id) {
+        var me = this, f_note, l_note, place, type, vex_options, hairpin;
+        vex_options = {
+          height : 10,
+          y_shift : 0,
+          left_shift_px : 0,
+          r_shift_px : 0
+        };
+        $.each(me.allModels, function() {
+          f_note = notes_by_id[this.getFirstId()] || {};
+          l_note = notes_by_id[this.getLastId()] || {};
+
+          if (f_note.system !== undefined &amp;&amp; l_note.system !== undefined &amp;&amp; f_note.system !== l_note.system) {
+            // TODO add support for cross-system hairpins
+            
+            // me.createSingleHairpin(f_note, {}, this.params, vex_options);
+            // me.createSingleHairpin({}, l_note, this.params, vex_options);
+          } else {
+            me.createSingleHairpin(f_note, l_note, this.params, vex_options);
+          }
+
+        });
+        return this;
+      },
+
+      createSingleHairpin : function(f_note, l_note, params, vex_options) {
+        var me = this;
+        place = m2v.tables.positions[params.place];
+        type = m2v.tables.hairpins[params.form];
+
+        hairpin = new VF.StaveHairpin({
+          first_note : f_note.vexNote,
+          last_note : l_note.vexNote
+        }, type);
+
+        hairpin.setRenderOptions(vex_options);
+        hairpin.setPosition(place);
+
+        me.allVexObjects.push(hairpin);
+      }
+    });
+
+    /**
+     * @class MEI2VF.Ties
+     * @extend MEI2VF.LinkCollection
+     * @private
+     *
+     * @constructor
+     */
+
+    m2v.Ties = function(systemInfo, unresolvedTStamp2) {
+      this.init(systemInfo, unresolvedTStamp2);
+    };
+
+    Vex.Inherit(m2v.Ties, m2v.LinkCollection, {
+
+      init : function(systemInfo, unresolvedTStamp2) {
+        m2v.Ties.superclass.init.call(this, systemInfo, unresolvedTStamp2);
+      },
+
+      validateAtts : function(atts) {
+        return;
+      },
+
+      // NB called from tie/slur attributes elements
+      start_tieslur : function(startid, linkCond) {
+        var eventLink = new m2v.EventLink(startid, null);
+        eventLink.setParams({
+          linkCond : linkCond
+        });
+        this.allModels.push(eventLink);
+      },
+
+      // TODO: separate tie &amp; slur specific functions in separate objects!?
+      terminate_tie : function(endid, linkCond) {
+        var cmpLinkCond, found, i, tie, allTies;
+
+        allTies = this.getModels();
+
+        cmpLinkCond = function(lc1, lc2) {
+          // return (lc1 &amp;&amp; lc2 &amp;&amp; lc1.pname === lc2.pname &amp;&amp; lc1.oct === lc2.oct
+          // &amp;&amp; lc1.system === lc2.system);
+          return (lc1 &amp;&amp; lc2 &amp;&amp; lc1.pname === lc2.pname &amp;&amp; lc1.oct === lc2.oct);
+        };
+
+        if (!linkCond.pname || !linkCond.oct)
+          throw new m2v.RUNTIME_ERROR(&#x27;MEI2VF.RERR.BadArguments:TermTie01&#x27;, &#x27;no pitch or octave specified for the tie&#x27;);
+        found = false;
+        for ( i = 0; !found &amp;&amp; i &lt; allTies.length; ++i) {
+          tie = allTies[i];
+          if (!tie.getLastId()) {
+            if (cmpLinkCond(tie.params.linkCond, linkCond)) {
+              found = true;
+              tie.setLastId(endid);
+            }
+            // else {
+            // // TODO in case there&#x27;s no link condition set for the
+            // link,
+            // // we have to retreive the pitch of the referenced note.
+            // // var note_id = tie.getFirstId();
+            // // if (note_id) {
+            // // var note = me.notes_by_id[note_id];
+            // // if (note &amp;&amp; cmpLinkCond(tie.params.linkCond,
+            // // linkCond)) {
+            // // found=true;
+            // // tie.setLastId(endid);
+            // // }
+            // // }
+            // }
+          }
+        }
+        // if no tie object found that is uncomplete and with the same
+        // pitch,
+        // then create a tie that has only endid set.
+        if (!found)
+          this.addModel(new m2v.EventLink(null, endid));
+      },
+
+      terminate_slur : function(endid, linkCond) {
+        var me = this, cmpLinkCond, found, i, slur;
+
+        var allModels = this.getModels();
+
+        cmpLinkCond = function(lc1, lc2) {
+          // return lc1.nesting_level === lc2.nesting_level &amp;&amp; lc1.system ===
+          // lc2.system;
+          return lc1.nesting_level === lc2.nesting_level;
+        };
+
+        found = false;
+        for ( i = 0; i &lt; allModels.length; ++i) {
+          slur = allModels[i];
+          if (slur &amp;&amp; !slur.getLastId() &amp;&amp; cmpLinkCond(slur.params.linkCond, linkCond)) {
+            slur.setLastId(endid);
+            found = true;
+            break;
+          }
+        }
+        if (!found)
+          me.addModel(new m2v.EventLink(null, endid));
+      },
+
+      createVexFromInfos : function(notes_by_id) {
+        var me = this, f_note, l_note;
+        $.each(me.allModels, function() {
+          f_note = notes_by_id[this.getFirstId()] || {};
+          l_note = notes_by_id[this.getLastId()] || {};
+          if (f_note.system !== undefined &amp;&amp; l_note.system !== undefined &amp;&amp; f_note.system !== l_note.system) {
+            me.createSingleStaveTie(f_note, {}, this.params);
+
+            // temporary: set the same curve direction for the second note by
+            // evaluating the stem direction of the first note; change this when
+            // the curve dir of the first note is calculated differently in
+            // VexFlow
+            this.params.curvedir = (f_note.vexNote.getStemDirection() === -1) ? &#x27;above&#x27; : &#x27;below&#x27;;
+            me.createSingleStaveTie({}, l_note, this.params);
+          } else {
+            me.createSingleStaveTie(f_note, l_note, this.params);
+          }
+        });
+        return this;
+      },
+
+      createSingleStaveTie : function(f_note, l_note, params) {
+        var me = this, vexTie, bezier, cps;
+        bezier = params.bezier;
+        if (bezier) {
+          cps = me.bezierStringToCps(bezier);
+          vexTie = new VF.Curve(f_note.vexNote, l_note.vexNote, {
+            cps : cps,
+            y_shift_start : +params.startvo,
+            y_shift_end : +params.endvo
+          });
+        } else {
+          vexTie = new VF.StaveTie({
+            first_note : f_note.vexNote,
+            last_note : l_note.vexNote,
+            first_indices : f_note.index,
+            last_indices : l_note.index
+          });
+          vexTie.setDir(params.curvedir);
+        }
+        me.allVexObjects.push(vexTie);
+      },
+
+      bezierStringToCps : function(str) {
+        var cps = [], xy, bezierArray = str.split(&#x27; &#x27;);
+        while (bezierArray[0]) {
+          xy = bezierArray.splice(0, 2);
+          cps.push({
+            x : +xy[0],
+            y : +xy[1]
+          });
+        }
+        return cps;
+      }
+    });
+
+    return m2v;
+
+  }(MEI2VF || {}, Vex.Flow, jQuery));
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

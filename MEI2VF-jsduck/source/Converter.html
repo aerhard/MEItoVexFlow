@@ -1,4 +1,21 @@
-/*
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
  * MEItoVexFlow
  *
  * Author: Richard Lewis Contributors: Zoltan Komives, Raffaele Viglianti
@@ -8,14 +25,14 @@
  * Copyright © 2012, 2013 Richard Lewis, Raffaele Viglianti, Zoltan Komives,
  * University of Maryland
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
@@ -23,8 +40,8 @@
 
 var MEI2VF = ( function(m2v, VF, $, undefined) {
 
-    /**
-     * Converts an MEI XML document / document fragment to VexFlow objects and
+<span id='MEI2VF-Converter-method-constructor'><span id='MEI2VF-Converter'>    /**
+</span></span>     * Converts an MEI XML document / document fragment to VexFlow objects and
      * optionally renders it using Raphael or HTML5 Canvas.
      *
      * Usage:
@@ -33,7 +50,7 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
      * object has been passed) call {@link #initConfig} after construction.
      * - Call {@link #process} to process an MEI XML document
      * - Call {@link #draw} to draw the processed VexFlow objects to a canvas
-     *
+
      * @class MEI2VF.Converter
      *
      * @constructor
@@ -56,42 +73,42 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
       BOTTOM : VF.Annotation.VerticalJustify.BOTTOM,
 
       defaults : {
-        /**
-         * @cfg {Number} page_width The width of the page
+<span id='MEI2VF-Converter-cfg-page_width'>        /**
+</span>         * @cfg {Number} page_width The width of the page
          */
         page_width : 800,
-        /**
-         * @cfg {Number} page_margin_top The top page margin
+<span id='MEI2VF-Converter-cfg-page_margin_top'>        /**
+</span>         * @cfg {Number} page_margin_top The top page margin
          */
         page_margin_top : 60,
-        /**
-         * @cfg {Number} page_margin_left The left page margin
+<span id='MEI2VF-Converter-cfg-page_margin_left'>        /**
+</span>         * @cfg {Number} page_margin_left The left page margin
          */
         page_margin_left : 20,
-        /**
-         * @cfg {Number} page_margin_right The right page margin
+<span id='MEI2VF-Converter-cfg-page_margin_right'>        /**
+</span>         * @cfg {Number} page_margin_right The right page margin
          */
         page_margin_right : 20,
-        /**
-         * @cfg {Number} systemSpacing The spacing between two staff
+<span id='MEI2VF-Converter-cfg-systemSpacing'>        /**
+</span>         * @cfg {Number} systemSpacing The spacing between two staff
          * systems
          */
         systemSpacing : 90,
-        /**
-         * @cfg {Number} staveSpacing The default spacing between two staffs
+<span id='MEI2VF-Converter-cfg-staveSpacing'>        /**
+</span>         * @cfg {Number} staveSpacing The default spacing between two staffs
          * within a system; overridden by the spacing attribute of a staffDef
          * element in the MEI code
          */
         staveSpacing : 60,
-        /**
-         * @cfg {Boolean} autoStaveConnectorLine Specifies if a stave connector
+<span id='MEI2VF-Converter-cfg-autoStaveConnectorLine'>        /**
+</span>         * @cfg {Boolean} autoStaveConnectorLine Specifies if a stave connector
          * line is drawn on the left of systems by default; if set to true, the
-         * auto line will not appear when staffDef/@symbol="none" is set for the
+         * auto line will not appear when staffDef/@symbol=&quot;none&quot; is set for the
          * outermost staffDef element
          */
         autoStaveConnectorLine : true,
-        /**
-         * @cfg {"full"/"abbr"/null} labelMode Specifies the way voice labels are
+<span id='MEI2VF-Converter-cfg-labelMode'>        /**
+</span>         * @cfg {&quot;full&quot;/&quot;abbr&quot;/null} labelMode Specifies the way voice labels are
          * added
          * to staves. Values:
          *
@@ -101,16 +118,16 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
          * - null or undefined: renders no labels
          */
         labelMode : null, // 'full',
-        /**
-         * @cfg {Number} maxHyphenDistance The maximum distance (in pixels)
+<span id='MEI2VF-Converter-cfg-maxHyphenDistance'>        /**
+</span>         * @cfg {Number} maxHyphenDistance The maximum distance (in pixels)
          * between two hyphens in the lyrics lines
          */
         maxHyphenDistance : 75,
         //sectionsOnNewLine : false, // TODO: add feature
 
         // TODO check compatibility with RAPHAEL!
-        /**
-         * @cfg {Object} lyricsFont The font used for rendering lyrics (and
+<span id='MEI2VF-Converter-cfg-lyricsFont'>        /**
+</span>         * @cfg {Object} lyricsFont The font used for rendering lyrics (and
          * hyphens)
          * @cfg {String} lyricsFont.family the font family
          * @cfg {Number} lyricsFont.size the font size
@@ -124,8 +141,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
           family : 'Times',
           size : 15
         },
-        /**
-         * @cfg {Object} annotFont the font used for annotations (for example,
+<span id='MEI2VF-Converter-cfg-annotFont'>        /**
+</span>         * @cfg {Object} annotFont the font used for annotations (for example,
          * 'pizz.')
          * @cfg {String} annotFont.family the font family
          * @cfg {Number} annotFont.size the font size
@@ -136,8 +153,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
           size : 15,
           weight : 'Italic'
         },
-        /**
-         * @cfg {Object} dynamFont the font used for dynamics
+<span id='MEI2VF-Converter-cfg-dynamFont'>        /**
+</span>         * @cfg {Object} dynamFont the font used for dynamics
          * @cfg {String} dynamFont.family the font family
          * @cfg {Number} dynamFont.size the font size
          * @cfg {String} dynamFont.weight the font weight
@@ -147,19 +164,19 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
           size : 18,
           weight : 'bold italic'
         },
-        /**
-         * @cfg {Object} tempoFont The tempo font
+<span id='MEI2VF-Converter-cfg-tempoFont'>        /**
+</span>         * @cfg {Object} tempoFont The tempo font
          * @cfg {String} tempoFont.family the font family
          * @cfg {Number} tempoFont.size the font size
          * @cfg {String} tempoFont.weight the font weight
          */
         tempoFont : {
-          family : "Times",
+          family : &quot;Times&quot;,
           size : 17,
-          weight : "bold"
+          weight : &quot;bold&quot;
         },
-        /**
-         * @cfg {Object} staff The staff config object passed to each
+<span id='MEI2VF-Converter-cfg-staff'>        /**
+</span>         * @cfg {Object} staff The staff config object passed to each
          * Vex.Flow.Staff
          */
         staff : {
@@ -170,8 +187,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
       },
 
       // TODO add setters (and getters?) for single config items / groups
-      /**
-       * initializes the Converter
+<span id='MEI2VF-Converter-method-initConfig'>      /**
+</span>       * initializes the Converter
        * @method initConfig
        * @param {Object} config A config object (optional)
        * @chainable
@@ -180,8 +197,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
       initConfig : function(config) {
         var me = this;
         me.cfg = $.extend(true, {}, me.defaults, config);
-        /**
-         * an instance of MEI2VF.SystemInfo dealing with the system and staff
+<span id='MEI2VF-Converter-property-systemInfo'>        /**
+</span>         * an instance of MEI2VF.SystemInfo dealing with the system and staff
          * info derived from
          * the MEI data
          * @property {MEI2VF.SystemInfo} systemInfo
@@ -190,8 +207,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
 
         // TODO see if the values of this property should better be calculated
         // in the viewer object
-        /**
-         * The print space coordinates calculated from the page config.
+<span id='MEI2VF-Converter-property-printSpace'>        /**
+</span>         * The print space coordinates calculated from the page config.
          * @property {Object} printSpace
          * @property {Number} printSpace.top
          * @property {Number} printSpace.left
@@ -213,8 +230,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
       },
 
       // TODO instead of creating new objects each time on reset, call reset functions in the generated objects
-      /**
-       * Resets all data. Called by {@link #process}.
+<span id='MEI2VF-Converter-method-reset'>      /**
+</span>       * Resets all data. Called by {@link #process}.
        * @method reset
        * @chainable
        * @return {MEI2VF.Converter} this
@@ -222,68 +239,68 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
       reset : function() {
         var me = this;
         me.systemInfo.init(me.cfg, me.printSpace);
-        /**
-         * @property {} unresolvedTStamp2
+<span id='MEI2VF-Converter-property-unresolvedTStamp2'>        /**
+</span>         * @property {} unresolvedTStamp2
          */
         me.unresolvedTStamp2 = [];
-        /**
-         * Contains all {@link MEI2VF.System} objects
+<span id='MEI2VF-Converter-property-systems'>        /**
+</span>         * Contains all {@link MEI2VF.System} objects
          * @property {MEI2VF.System[]} systems
          */
 
         me.systems = [];
-        /**
-         * Contains all
+<span id='MEI2VF-Converter-property-allVexMeasureStaffs'>        /**
+</span>         * Contains all
          * Vex.Flow.Stave objects. Addressing scheme:
          * [measure_n][staff_n]
          * @property {Vex.Flow.Stave[][]} allVexMeasureStaffs
          */
         me.allVexMeasureStaffs = [];
-        /**
-         * Contains all Vex.Flow.Beam objects. Data is just pushed in
+<span id='MEI2VF-Converter-property-allBeams'>        /**
+</span>         * Contains all Vex.Flow.Beam objects. Data is just pushed in
          * and later processed as a whole, so the array index is
          * irrelevant.
          * @property {Vex.Flow.Beam[]} allBeams
          */
         me.allBeams = [];
-        /**
-         * an instance of MEI2VF.Dynamics dealing with and storing all dynamics
+<span id='MEI2VF-Converter-property-dynamics'>        /**
+</span>         * an instance of MEI2VF.Dynamics dealing with and storing all dynamics
          * found in the MEI document
          * @property {MEI2VF.Dynamics} dynamics
          */
         me.dynamics = new m2v.Dynamics(me.systemInfo, me.cfg.dynamFont);
-        /**
-         * an instance of MEI2VF.Directives dealing with and storing all
+<span id='MEI2VF-Converter-property-directives'>        /**
+</span>         * an instance of MEI2VF.Directives dealing with and storing all
          * directives found in the MEI document
          * @property {MEI2VF.Directives} directives
          */
         me.directives = new m2v.Directives(me.systemInfo, me.cfg.annotFont);
-        /**
-         * an instance of MEI2VF.Ties dealing with and storing all ties found in
+<span id='MEI2VF-Converter-property-ties'>        /**
+</span>         * an instance of MEI2VF.Ties dealing with and storing all ties found in
          * the MEI document
          * @property {MEI2VF.Ties} ties
          */
         me.ties = new m2v.Ties(me.systemInfo, me.unresolvedTStamp2);
-        /**
-         * an instance of MEI2VF.Ties dealing with and storing all slurs found in
+<span id='MEI2VF-Converter-property-slurs'>        /**
+</span>         * an instance of MEI2VF.Ties dealing with and storing all slurs found in
          * the MEI document
          * @property {MEI2VF.Ties} slurs
          */
         me.slurs = new m2v.Ties(me.systemInfo, me.unresolvedTStamp2);
-        /**
-         * an instance of MEI2VF.Hairpins dealing with and storing all hairpins
+<span id='MEI2VF-Converter-property-hairpins'>        /**
+</span>         * an instance of MEI2VF.Hairpins dealing with and storing all hairpins
          * found in the MEI document
          * @property {MEI2VF.Hairpins} hairpins
          */
         me.hairpins = new m2v.Hairpins(me.systemInfo, me.unresolvedTStamp2);
-        /**
-         * an instance of MEI2VF.Hyphenation dealing with and storing all lyrics
+<span id='MEI2VF-Converter-property-hyphenation'>        /**
+</span>         * an instance of MEI2VF.Hyphenation dealing with and storing all lyrics
          * hyphens found in the MEI document
          * @property {MEI2VF.Hyphenation} hyphenation
          */
         me.hyphenation = new m2v.Hyphenation(me.cfg.lyricsFont, me.printSpace.right, me.cfg.maxHyphenDistance);
-        /**
-         * contains all note-like objects in the current MEI document, accessible
+<span id='MEI2VF-Converter-property-notes_by_id'>        /**
+</span>         * contains all note-like objects in the current MEI document, accessible
          * by their xml:id
          * @property {Object} notes_by_id
          * @property {XMLElement} notes_by_id.meiNote the XML Element of the note
@@ -291,23 +308,23 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
          * object
          */
         me.notes_by_id = {};
-        /**
-         * the number of the current system
+<span id='MEI2VF-Converter-property-currentSystem_n'>        /**
+</span>         * the number of the current system
          * @property {Number} currentSystem_n
          */
         me.currentSystem_n = 0;
-        /**
-         * indicates if a system break is currently to be processed
+<span id='MEI2VF-Converter-property-pendingSystemBreak'>        /**
+</span>         * indicates if a system break is currently to be processed
          * @property {Boolean} pendingSystemBreak
          */
         me.pendingSystemBreak = false;
-        /**
-         * indicates if a system break is currently to be processed
+<span id='MEI2VF-Converter-property-pendingSectionBreak'>        /**
+</span>         * indicates if a system break is currently to be processed
          * @property {Boolean} pendingSectionBreak
          */
         me.pendingSectionBreak = true;
-        /**
-         * Contains information about the
+<span id='MEI2VF-Converter-property-currentVoltaType'>        /**
+</span>         * Contains information about the
          * volta type of the current staff. Properties:
          *
          * -  `start` {String} indicates the number to render to the volta. When
@@ -323,8 +340,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         return me;
       },
 
-      /**
-       * Calls {@link #reset} and then processes the specified MEI document or
+<span id='MEI2VF-Converter-method-process'>      /**
+</span>       * Calls {@link #reset} and then processes the specified MEI document or
        * document fragment. The generated objects can
        * be processed further or drawn immediately to a canvas via {@link #draw}.
        * @method process
@@ -345,8 +362,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         return me;
       },
 
-      /**
-       * Draws the internal data objects to a canvas
+<span id='MEI2VF-Converter-method-draw'>      /**
+</span>       * Draws the internal data objects to a canvas
        * @method draw
        * @chainable
        * @param ctx The canvas context
@@ -363,8 +380,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         return me;
       },
 
-      /**
-       * assigns an external function for processing pgHead elements. By default,
+<span id='MEI2VF-Converter-method-setPgHeadProcessor'>      /**
+</span>       * assigns an external function for processing pgHead elements. By default,
        * pgHead elements are ignored in MEI2VF.
        * @method setPgHeadProcessor
        * @param {Function} fn the callback function. Parameter: element
@@ -373,8 +390,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         this.systemInfo.processPgHead = fn;
       },
 
-      /**
-       * assigns an external function for processing anchoredText elements. By
+<span id='MEI2VF-Converter-method-setAnchoredTextProcessor'>      /**
+</span>       * assigns an external function for processing anchoredText elements. By
        * default, anchoredText elements are ignored in MEI2VF.
        * @method setAnchoredTextProcessor
        * @param {Function} fn the callback function. Parameter: element
@@ -388,8 +405,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         }
       },
 
-      /**
-       * Returns the width and the height of the area that contains all drawn
+<span id='MEI2VF-Converter-method-getStaffArea'>      /**
+</span>       * Returns the width and the height of the area that contains all drawn
        * staves as per the last processing.
        *
        * @method getStaffArea
@@ -430,8 +447,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         };
       },
 
-      /**
-       * returns a 2d array of all Vex.Flow.Stave objects, arranged by
+<span id='MEI2VF-Converter-method-getAllVexMeasureStaffs'>      /**
+</span>       * returns a 2d array of all Vex.Flow.Stave objects, arranged by
        * [measure_n][staff_n]
        * @method getAllVexMeasureStaffs
        * @return {Vex.Flow.Stave[][]} see {@link #allVexMeasureStaffs}
@@ -440,8 +457,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         return this.allVexMeasureStaffs;
       },
 
-      /**
-       * returns all systems created when processing the MEI document
+<span id='MEI2VF-Converter-method-getSystems'>      /**
+</span>       * returns all systems created when processing the MEI document
        * @method getSystems
        * @return {MEI2VF.System[]}
        */
@@ -449,8 +466,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         return this.systems;
       },
 
-      /**
-       * returns all note-like objects created when processing the MEI document
+<span id='MEI2VF-Converter-method-getNotes'>      /**
+</span>       * returns all note-like objects created when processing the MEI document
        * @method getNotes
        * @return {Object} for the object properties, see {@link #notes_by_id}
        */
@@ -458,8 +475,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         return this.notes_by_id;
       },
 
-      /**
-       * creates in initializes a new {@link MEI2VF.System} and updates the staff
+<span id='MEI2VF-Converter-method-createNewSystem'>      /**
+</span>       * creates in initializes a new {@link MEI2VF.System} and updates the staff
        * modifier infos
        * @method createNewSystem
        */
@@ -502,8 +519,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
       // TODO: add rule: if an ending is followed by another ending, add
       // space on the right (or choose a VexFlow parameter accordingly),
       // otherwise don't add space
-      /**
-       * @method processSections
+<span id='MEI2VF-Converter-method-processSections'>      /**
+</span>       * @method processSections
        */
       processSections : function(xmlDoc) {
         var me = this;
@@ -516,22 +533,22 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         });
       },
 
-      /**
-       *@method processSection
+<span id='MEI2VF-Converter-method-processSection'>      /**
+</span>       *@method processSection
        */
       processSection : function(element) {
         var me = this, i, j, sectionChildren = $(element).children();
-        for ( i = 0, j = sectionChildren.length; i < j; i += 1) {
+        for ( i = 0, j = sectionChildren.length; i &lt; j; i += 1) {
           me.processSectionChild(sectionChildren[i]);
         }
       },
 
-      /**
-       * @method processEnding
+<span id='MEI2VF-Converter-method-processEnding'>      /**
+</span>       * @method processEnding
        */
       processEnding : function(element) {
         var me = this, i, j, sectionChildren = $(element).children();
-        for ( i = 0, j = sectionChildren.length; i < j; i += 1) {
+        for ( i = 0, j = sectionChildren.length; i &lt; j; i += 1) {
           me.currentVoltaType = {};
           if (i === 0)
             me.currentVoltaType.start = $(element).attr('n');
@@ -542,15 +559,15 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         me.currentVoltaType = null;
       },
 
-      /**
-       * MEI element <b>section</b> may contain (MEI v2.1.0): MEI.cmn: measure
+<span id='MEI2VF-Converter-method-processSectionChild'>      /**
+</span>       * MEI element &lt;b&gt;section&lt;/b&gt; may contain (MEI v2.1.0): MEI.cmn: measure
        * MEI.critapp: app MEI.edittrans: add choice corr damage del gap
        * handShift orig reg restore sic subst supplied unclear MEI.shared:
        * annot ending expansion pb sb scoreDef section staff staffDef
        * MEI.text: div MEI.usersymbols: anchoredText curve line symbol
        *
-       * Supported elements: <b>measure</b> <b>scoreDef</b> <b>staffDef</b>
-       * <b>sb</b>
+       * Supported elements: &lt;b&gt;measure&lt;/b&gt; &lt;b&gt;scoreDef&lt;/b&gt; &lt;b&gt;staffDef&lt;/b&gt;
+       * &lt;b&gt;sb&lt;/b&gt;
        *  @method processSectionChild
        */
       processSectionChild : function(element) {
@@ -569,12 +586,12 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
             me.setPendingSystemBreak(element);
             break;
           default :
-            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Element <' + element.localName + '> is not supported in <section>');
+            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Element &lt;' + element.localName + '&gt; is not supported in &lt;section&gt;');
         }
       },
 
-      /**
-       * sets the property {@link #pendingSystemBreak} to `true`. When true, a
+<span id='MEI2VF-Converter-method-setPendingSystemBreak'>      /**
+</span>       * sets the property {@link #pendingSystemBreak} to `true`. When true, a
        * new system will be initialized when {@link #processMeasure} is called
        * the next time.
        *  @method setPendingSystemBreak
@@ -584,8 +601,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
       },
 
       // TODO extract function for measure_child (see the staffDef functions)!?
-      /**
-       * Processes a MEI measure element and calls functions to process a
+<span id='MEI2VF-Converter-method-processMeasure'>      /**
+</span>       * Processes a MEI measure element and calls functions to process a
        * selection of ancestors: .//staff, ./slur, ./tie, ./hairpin, .//tempo
        *  @method processMeasure
        * @param {XMLElement} element the MEI measure element
@@ -684,8 +701,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         }));
       },
 
-      /**
-       * Processes a single stave in a measure
+<span id='MEI2VF-Converter-method-processStaffInMeasure'>      /**
+</span>       * Processes a single stave in a measure
        *
        * @method processStaffInMeasure
        * @param {MEI2VF.System} system the current system
@@ -704,7 +721,7 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
 
         staff_n = +$(staff_element).attr('n');
         if (!staff_n) {
-          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArgument', 'Cannot render staff without attribute "n".');
+          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArgument', 'Cannot render staff without attribute &quot;n&quot;.');
         }
 
         staff = me.createVexStaff(system.getStaffYs()[staff_n]);
@@ -731,8 +748,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
 
       },
 
-      /**
-       * Creates a new Vex.Flow.Stave object at the specified y coordinate. This
+<span id='MEI2VF-Converter-method-createVexStaff'>      /**
+</span>       * Creates a new Vex.Flow.Stave object at the specified y coordinate. This
        * method sets fixed x coordinates, which will later be substituted in
        * {@link MEI2VF.System#format} - the Vex.Flow.Stave
        * objects must be initialized with some x measurements, but the real
@@ -753,8 +770,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         return staff;
       },
 
-      /**
-       * Adds staff modifiers (bar lines, clef, time signature, key signature,
+<span id='MEI2VF-Converter-method-addStaffModifiers'>      /**
+</span>       * Adds staff modifiers (bar lines, clef, time signature, key signature,
        * volta) to a Vex.Flow.Staff.
        *
        *  @method addStaffModifiers
@@ -788,13 +805,13 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         if (right_barline)
           staff.setEndBarType(m2v.tables.barlines[right_barline]);
 
-        if (atSystemTop && me.currentVoltaType) {
+        if (atSystemTop &amp;&amp; me.currentVoltaType) {
           me.addStaffVolta(staff);
         }
       },
 
-      /**
-       * Adds a volta to a staff. Currently not working due to the reworking of
+<span id='MEI2VF-Converter-method-addStaffVolta'>      /**
+</span>       * Adds a volta to a staff. Currently not working due to the reworking of
        * the measure width calulation (27/4/2014)
        *  @method addStaffVolta
        * @experimental
@@ -804,13 +821,13 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         if (volta.start)
           staff.setVoltaType(Vex.Flow.Volta.type.BEGIN, volta.start + '.', 30, 0);
         if (volta.end)
-          staff.setVoltaType(Vex.Flow.Volta.type.END, "", 30, 0);
-        if (!volta.start && !volta.end)
-          staff.setVoltaType(Vex.Flow.Volta.type.MID, "", 30, 0);
+          staff.setVoltaType(Vex.Flow.Volta.type.END, &quot;&quot;, 30, 0);
+        if (!volta.start &amp;&amp; !volta.end)
+          staff.setVoltaType(Vex.Flow.Volta.type.MID, &quot;&quot;, 30, 0);
       },
 
-      /**
-       * @method getStaffLabels
+<span id='MEI2VF-Converter-method-getStaffLabels'>      /**
+</span>       * @method getStaffLabels
        */
       getStaffLabels : function() {
         var me = this, labels, i, infos, labelType;
@@ -818,7 +835,7 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         if (!me.cfg.labelMode) {
           return labels;
         }
-        labelType = (me.cfg.labelMode === 'full' && me.currentSystem_n === 1) ? 'label' : 'labelAbbr';
+        labelType = (me.cfg.labelMode === 'full' &amp;&amp; me.currentSystem_n === 1) ? 'label' : 'labelAbbr';
         infos = me.systemInfo.getAllStaffInfos();
         i = infos.length;
         while (i--) {
@@ -829,8 +846,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         return labels;
       },
 
-      /**
-       * Creates a new Vex.Flow.Voice
+<span id='MEI2VF-Converter-method-createVexVoice'>      /**
+</span>       * Creates a new Vex.Flow.Voice
        *  @method createVexVoice
        * @param {Array} voice_contents The contents of the voice, an array of
        * tickables
@@ -853,15 +870,15 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         return voice;
       },
 
-      /**
-       * @method resolveUnresolvedTimestamps
+<span id='MEI2VF-Converter-method-resolveUnresolvedTimestamps'>      /**
+</span>       * @method resolveUnresolvedTimestamps
        */
       resolveUnresolvedTimestamps : function(layer, staff_n, measure_n) {
         var me = this, refLocationIndex;
         // check if there's an unresolved TStamp2 reference to this location
         // (measure, staff, layer):
         if (isNaN(measure_n))
-          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.extract_events', '<measure> must have @n specified');
+          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.extract_events', '&lt;measure&gt; must have @n specified');
         staff_n = staff_n || 1;
         refLocationIndex = measure_n + ':' + staff_n + ':' + ($(layer).attr('n') || '1');
         if (me.unresolvedTStamp2[refLocationIndex]) {
@@ -878,8 +895,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         }
       },
 
-      /**
-       * processes a note like element by calling the adequate processing
+<span id='MEI2VF-Converter-method-processNoteLikeElement'>      /**
+</span>       * processes a note like element by calling the adequate processing
        * function
        *  @method processNoteLikeElement
        * @param {XMLElement} element the element to process
@@ -905,28 +922,28 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
           case 'anchoredText' :
             return me.processAnchoredLayerText(element, staff, staff_n);
           default :
-            throw new m2v.RUNTIME_ERROR('BadArguments', 'Rendering of element "' + element.localName + '" is not supported.');
+            throw new m2v.RUNTIME_ERROR('BadArguments', 'Rendering of element &quot;' + element.localName + '&quot; is not supported.');
         }
       },
 
-      /**
-       * @method processAnchoredStaffText
+<span id='MEI2VF-Converter-method-processAnchoredStaffText'>      /**
+</span>       * @method processAnchoredStaffText
        */
       processAnchoredStaffText : function() {
         // override
         return;
       },
 
-      /**
-       * @method processAnchoredLayerText
+<span id='MEI2VF-Converter-method-processAnchoredLayerText'>      /**
+</span>       * @method processAnchoredLayerText
        */
       processAnchoredLayerText : function() {
         // TODO
         return;
       },
 
-      /**
-       * @method processNote
+<span id='MEI2VF-Converter-method-processNote'>      /**
+</span>       * @method processNote
        */
       processNote : function(element, staff, staff_n) {
         var me = this, dots, mei_accid, mei_ho, pname, oct, xml_id, mei_tie, mei_slur, mei_staff_n, i, atts, note_opts, note;
@@ -967,7 +984,7 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
             if (otherStaff) {
               // TODO: the note is correctly assigned to the new staff
               // here, but
-              // in the end it has the old staff assigned to it -> fix
+              // in the end it has the old staff assigned to it -&gt; fix
               // that!
               // REASON PROBABLY: all notes get assigned to the old
               // staff when
@@ -978,18 +995,18 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
               // n = note;
               note.setStave(otherStaff);
             } else {
-              throw new m2v.RUNTIME_ERROR('Error', 'Note has staff attribute "' + mei_staff_n + '", but the staff does not exist.');
+              throw new m2v.RUNTIME_ERROR('Error', 'Note has staff attribute &quot;' + mei_staff_n + '&quot;, but the staff does not exist.');
             }
           }
 
           me.processSyllables(note, element, staff_n);
 
           try {
-            for ( i = 0; i < dots; i += 1) {
+            for ( i = 0; i &lt; dots; i += 1) {
               note.addDotToAll();
             }
           } catch (e) {
-            throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the dots of <note>: ' + m2v.Util.attsToString(element));
+            throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the dots of &lt;note&gt;: ' + m2v.Util.attsToString(element));
           }
 
           if (mei_accid)
@@ -1004,7 +1021,7 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
             me.addFermata(note, atts.fermata);
           }
 
-          // FIXME For now, we'll remove any child nodes of <note>
+          // FIXME For now, we'll remove any child nodes of &lt;note&gt;
           $.each($(element).children(), function() {
             $(this).remove();
           });
@@ -1034,14 +1051,14 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
           };
 
         } catch (e1) {
-          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the <note>: ' + m2v.Util.attsToString(element) + '\nORIGINAL ERROR MESSAGE: ' + e1.toString());
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the &lt;note&gt;: ' + m2v.Util.attsToString(element) + '\nORIGINAL ERROR MESSAGE: ' + e1.toString());
         }
       },
 
       // TODO add support for features found in me.processNote (annot etc.)
       // extract functions!?
-      /**
-       * @method processChord
+<span id='MEI2VF-Converter-method-processChord'>      /**
+</span>       * @method processChord
        */
       processChord : function(element, staff, staff_n) {
         var me = this, i, j, hasDots, $children, keys = [], duration, durations = [], durAtt, xml_id, mei_slur, mei_ho, chord, chord_opts, atts, note_atts;
@@ -1066,13 +1083,13 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
           if (durAtt) {
             duration = me.translateDuration(+durAtt);
           } else {
-            for ( i = 0, j = $children.length; i < j; i += 1) {
+            for ( i = 0, j = $children.length; i &lt; j; i += 1) {
               durations.push(+$children[i].getAttribute('dur'));
             }
             duration = me.translateDuration(Math.max.apply(Math, durations));
           }
 
-          for ( i = 0, j = $children.length; i < j; i += 1) {
+          for ( i = 0, j = $children.length; i &lt; j; i += 1) {
             keys.push(me.processAttsPitch($children[i]));
             // dots.push(+$children[i].getAttribute('dots'));
             if ($children[i].getAttribute('dots') === '1')
@@ -1123,17 +1140,17 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
             id : xml_id
           };
         } catch (e) {
-          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the <chord>:' + e.toString());
-          // 'A problem occurred processing the <chord>: ' +
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the &lt;chord&gt;:' + e.toString());
+          // 'A problem occurred processing the &lt;chord&gt;: ' +
           // JSON.stringify($.each($(element).children(), function(i,
           // element) {
           // element.attrs();
-          // }).get()) + '. \"' + x.toString() + '"');
+          // }).get()) + '. \&quot;' + x.toString() + '&quot;');
         }
       },
 
-      /**
-       * @method processNoteInChord
+<span id='MEI2VF-Converter-method-processNoteInChord'>      /**
+</span>       * @method processNoteInChord
        */
       processNoteInChord : function(i, element, chordElement, chord) {
         var me = this, atts, xml_id;
@@ -1167,8 +1184,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         }
       },
 
-      /**
-       * @method processRest
+<span id='MEI2VF-Converter-method-processRest'>      /**
+</span>       * @method processRest
        */
       processRest : function(element, staff, unused_staff_n) {
         var me = this, dur, rest, xml_id, atts;
@@ -1211,12 +1228,12 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
             id : xml_id
           };
         } catch (e) {
-          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the <rest>: ' + m2v.Util.attsToString(element));
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the &lt;rest&gt;: ' + m2v.Util.attsToString(element));
         }
       },
 
-      /**
-       * @method processmRest
+<span id='MEI2VF-Converter-method-processmRest'>      /**
+</span>       * @method processmRest
        */
       processmRest : function(element, staff) {
         var me = this, mRest, atts, xml_id;
@@ -1261,12 +1278,12 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
             id : xml_id
           };
         } catch (x) {
-          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the <mRest>: ' + m2v.Util.attsToString(element));
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the &lt;mRest&gt;: ' + m2v.Util.attsToString(element));
         }
       },
 
-      /**
-       * @method processSpace
+<span id='MEI2VF-Converter-method-processSpace'>      /**
+</span>       * @method processSpace
        */
       processSpace : function(element, staff) {
         var me = this, space;
@@ -1285,12 +1302,12 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
             // id : xml_id
           };
         } catch (e) {
-          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the <space>: ' + m2v.Util.attsToString(element));
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the &lt;space&gt;: ' + m2v.Util.attsToString(element));
         }
       },
 
-      /**
-       * @method processBeam
+<span id='MEI2VF-Converter-method-processBeam'>      /**
+</span>       * @method processBeam
        */
       processBeam : function(element, staff, staff_n) {
         var me = this, elements;
@@ -1304,8 +1321,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         return elements;
       },
 
-      /**
-       * @method processAttrAccid
+<span id='MEI2VF-Converter-method-processAttrAccid'>      /**
+</span>       * @method processAttrAccid
        */
       processAttrAccid : function(mei_accid, vexObject, i) {
         var val = m2v.tables.accidentals[mei_accid];
@@ -1315,23 +1332,23 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         vexObject.addAccidental(i, new VF.Accidental(val));
       },
 
-      /**
-       * @method processAttrHo
+<span id='MEI2VF-Converter-method-processAttrHo'>      /**
+</span>       * @method processAttrHo
        */
       processAttrHo : function(mei_ho, vexObject) {
         var me = this;
         vexObject.setExtraLeftPx(+mei_ho * me.HALF_LINE_DISTANCE);
       },
 
-      /**
-       * @method processAttrTie
+<span id='MEI2VF-Converter-method-processAttrTie'>      /**
+</span>       * @method processAttrTie
        */
       processAttrTie : function(mei_tie, xml_id, pname, oct) {
         var me = this, i, j;
         // if (!mei_tie) {
-        // mei_tie = "";
+        // mei_tie = &quot;&quot;;
         // }
-        for ( i = 0, j = mei_tie.length; i < j; ++i) {
+        for ( i = 0, j = mei_tie.length; i &lt; j; ++i) {
           if (mei_tie[i] === 'i') {
             me.ties.start_tieslur(xml_id, {
               pname : pname,
@@ -1348,8 +1365,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         }
       },
 
-      /**
-       * @method processAttrSlur
+<span id='MEI2VF-Converter-method-processAttrSlur'>      /**
+</span>       * @method processAttrSlur
        */
       processAttrSlur : function(mei_slur, xml_id) {
         var me = this, tokens;
@@ -1372,13 +1389,13 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         }
       },
 
-      /**
-       * @method parse_slure_attribute
+<span id='MEI2VF-Converter-method-parse_slure_attribute'>      /**
+</span>       * @method parse_slure_attribute
        */
       parse_slur_attribute : function(slur_str) {
         var result = [], numbered_tokens, numbered_token, i, j, num;
         numbered_tokens = slur_str.split(' ');
-        for ( i = 0, j = numbered_tokens.length; i < j; i += 1) {
+        for ( i = 0, j = numbered_tokens.length; i &lt; j; i += 1) {
           numbered_token = numbered_tokens[i];
           if (numbered_token.length === 1) {
             result.push({
@@ -1388,21 +1405,21 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
           } else if (numbered_token.length === 2) {
             num = +numbered_token[1];
             if (!num) {
-              throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArguments:ParseSlur01', "badly formed slur attribute");
+              throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArguments:ParseSlur01', &quot;badly formed slur attribute&quot;);
             }
             result.push({
               letter : numbered_token[0],
               nesting_level : num
             });
           } else {
-            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArguments:ParseSlur01', "badly formed slur attribute");
+            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArguments:ParseSlur01', &quot;badly formed slur attribute&quot;);
           }
         }
         return result;
       },
 
-      /**
-       * converts the pitch of an MEI <b>note</b> element to a VexFlow pitch
+<span id='MEI2VF-Converter-method-processAttsPitch'>      /**
+</span>       * converts the pitch of an MEI &lt;b&gt;note&lt;/b&gt; element to a VexFlow pitch
        *
        *  @method processAttsPitch
        * @param {XMLElement} mei_note
@@ -1413,13 +1430,13 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         pname = $(mei_note).attr('pname');
         oct = $(mei_note).attr('oct');
         if (!pname || !oct) {
-          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.MissingAttribute', 'pname and oct attributes must be specified for <note>');
+          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.MissingAttribute', 'pname and oct attributes must be specified for &lt;note&gt;');
         }
         return pname + '/' + oct;
       },
 
-      /**
-       * adds an articulation to a note-like object
+<span id='MEI2VF-Converter-method-addArticulation'>      /**
+</span>       * adds an articulation to a note-like object
        *  @method addArticulation
        * @param {Vex.Flow.StaveNote} note the note-like VexFlow object
        * @param {XMLElement} ar the articulation element
@@ -1433,8 +1450,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         note.addArticulation(0, vexArtic);
       },
 
-      /**
-       * adds a fermata to a note-like object
+<span id='MEI2VF-Converter-method-addFermata'>      /**
+</span>       * adds a fermata to a note-like object
        *  @method addFermata
        * @param {Vex.Flow.StaveNote} note the note-like VexFlow object
        * @param {'above'/'below'} place The place of the fermata
@@ -1446,8 +1463,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         note.addArticulation(index || 0, vexArtic);
       },
 
-      /**
-       * @method processSyllables
+<span id='MEI2VF-Converter-method-processSyllables'>      /**
+</span>       * @method processSyllables
        */
       processSyllables : function(note, element, staff_n) {
         var me = this, annot, syl;
@@ -1471,14 +1488,14 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
       // dash = ($(s).attr('wordpos') === 'i' || $(s).attr('wordpos') === 'm')
       // ?
       // '-' : '';
-      // full_syl += (i > 0 ? '\n' : '') + $(s).text() + dash;
+      // full_syl += (i &gt; 0 ? '\n' : '') + $(s).text() + dash;
       // });
       // return full_syl;
       // },
 
       // temporarily only handle one syllable per note
-      /**
-       * @method processSyllable
+<span id='MEI2VF-Converter-method-processSyllable'>      /**
+</span>       * @method processSyllable
        */
       processSyllable : function(mei_note) {
         var syl = $(mei_note).find('syl')[0];
@@ -1491,15 +1508,15 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
       },
 
       // Support for annotations
-      /**
-       * @method createAnnot
+<span id='MEI2VF-Converter-method-createAnnot'>      /**
+</span>       * @method createAnnot
        */
       createAnnot : function(text, annotFont) {
         return (new VF.Annotation(text)).setFont(annotFont.family, annotFont.size, annotFont.weight);
       },
 
-      /**
-       * @method getMandatoryAttr
+<span id='MEI2VF-Converter-method-getMandatoryAttr'>      /**
+</span>       * @method getMandatoryAttr
        */
       getMandatoryAttr : function(element, attribute) {
         var result = $(element).attr(attribute);
@@ -1509,21 +1526,21 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         return result;
       },
 
-      /**
-       * @method translateDuration
+<span id='MEI2VF-Converter-method-translateDuration'>      /**
+</span>       * @method translateDuration
        */
       translateDuration : function(mei_dur) {
         var result = m2v.tables.durations[mei_dur + ''];
         if (result)
           return result;
-        throw new m2v.RUNTIME_ERROR('BadArguments', 'The MEI duration "' + mei_dur + '" is not supported.');
+        throw new m2v.RUNTIME_ERROR('BadArguments', 'The MEI duration &quot;' + mei_dur + '&quot; is not supported.');
       },
 
       // TODO: dots should work with the lastest VexFlow, so try to remove the noDots
       // parameter there. Can the noDots condition be removed entirely or will there
       // be dots rendered with space elements?
-      /**
-       * @method processAttsDuration
+<span id='MEI2VF-Converter-method-processAttsDuration'>      /**
+</span>       * @method processAttsDuration
        */
       processAttsDuration : function(mei_note, noDots) {
         var me = this, dur, dur_attr;
@@ -1533,13 +1550,13 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
           alert('Could not get duration from:\n' + JSON.stringify(mei_note, null, '\t'));
         }
         dur = me.translateDuration(dur_attr);
-        if (!noDots && $(mei_note).attr('dots') === '1')
+        if (!noDots &amp;&amp; $(mei_note).attr('dots') === '1')
           dur += 'd';
         return dur;
       },
 
-      /**
-       * @method setStemDir
+<span id='MEI2VF-Converter-method-setStemDir'>      /**
+</span>       * @method setStemDir
        */
       setStemDir : function(element, optionsObj) {
         var specified_dir = {
@@ -1553,8 +1570,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         }
       },
 
-      /**
-       * @method drawSystems
+<span id='MEI2VF-Converter-method-drawSystems'>      /**
+</span>       * @method drawSystems
        */
       drawSystems : function(ctx) {
         var me = this, i = me.systems.length;
@@ -1565,8 +1582,8 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
         }
       },
 
-      /**
-       * @method drawVexBeams
+<span id='MEI2VF-Converter-method-drawVexBeams'>      /**
+</span>       * @method drawVexBeams
        */
       drawVexBeams : function(beams, ctx) {
         $.each(beams, function() {
@@ -1579,3 +1596,6 @@ var MEI2VF = ( function(m2v, VF, $, undefined) {
     return m2v;
 
   }(MEI2VF || {}, Vex.Flow, jQuery));
+</pre>
+</body>
+</html>

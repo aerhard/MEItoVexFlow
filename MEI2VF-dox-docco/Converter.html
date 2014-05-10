@@ -1,0 +1,1027 @@
+<!DOCTYPE html><html><head><title>Converter.js</title><meta http-equiv="content-type" content="text/html; charset=UTF-8"><link rel="stylesheet" media="all" href="http://aearly.github.com/dox-docco/static/docco.css" /></head><body><div id="container"><div id="background"></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>Converter.js</h1></th><th class="code"></th></tr></thead><tbody><tr id="section-0"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-0">&#182;</a></div><p>MEItoVexFlow</p>
+
+<p>Author: Richard Lewis Contributors: Zoltan Komives, Raffaele Viglianti</p>
+
+<p>See README for details of this library</p>
+
+<p>Copyright © 2012, 2013 Richard Lewis, Raffaele Viglianti, Zoltan Komives,<br />University of Maryland</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the "License"); you may not<br />use this file except in compliance with the License. You may obtain a copy of<br />the License at</p>
+
+<p><a href='http://www.apache.org/licenses/LICENSE-2.0'>http://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+<p>Unless required by applicable law or agreed to in writing, software<br />distributed under the License is distributed on an "AS IS" BASIS, WITHOUT<br />WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the<br />License for the specific language governing permissions and limitations under<br />the License.</p></td><td class="code"><div class="highlight"><pre lang="javascript">var MEI2VF = ( function(m2v, VF, $, undefined) {</pre></div></td></tr><tr id="section-1"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-1">&#182;</a></div><p>Converts an MEI XML document / document fragment to VexFlow objects and<br />optionally renders it using Raphael or HTML5 Canvas.</p>
+
+<p>Usage:</p>
+
+<ul>
+<li>Either pass a config object to the constructor function or (if no config
+object has been passed) call {@link #initConfig} after construction.</li>
+<li>Call {@link #process} to process an MEI XML document</li>
+<li>Call {@link #draw} to draw the processed VexFlow objects to a canvas</li>
+</ul><table class="tags"><tbody><tr><td><small><strong>@class</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@constructor</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@param</strong> [Object] </small></td><td><strong>[config]</strong></td><td></td></tr><tr><td><small><strong>@chainable</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@return</strong> [MEI2VF.Converter] </small></td><td><strong></strong></td><td>this</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">m2v.Converter = function(config) {
+      if (config)
+        this.initConfig(config);
+      return this;
+    };
+
+    m2v.Converter.prototype = {
+
+      // TODO calculate now, that should not be too expensive
+      // currently fixed
+      HALF_LINE_DISTANCE : 5, // VF.Staff.spacing_between_lines_px / 2;
+
+      BOTTOM : VF.Annotation.VerticalJustify.BOTTOM,
+
+      defaults : {</pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-2">&#182;</a></div><p>@cfg {Number} page_width The width of the page</p></td><td class="code"><div class="highlight"><pre lang="javascript">page_width : 800,</pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-3">&#182;</a></div><p>@cfg {Number} page_margin_top The top page margin</p></td><td class="code"><div class="highlight"><pre lang="javascript">page_margin_top : 60,</pre></div></td></tr><tr id="section-4"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-4">&#182;</a></div><p>@cfg {Number} page_margin_left The left page margin</p></td><td class="code"><div class="highlight"><pre lang="javascript">page_margin_left : 20,</pre></div></td></tr><tr id="section-5"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-5">&#182;</a></div><p>@cfg {Number} page_margin_right The right page margin</p></td><td class="code"><div class="highlight"><pre lang="javascript">page_margin_right : 20,</pre></div></td></tr><tr id="section-6"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-6">&#182;</a></div><p>@cfg {Number} systemSpacing The spacing between two staff<br />systems</p></td><td class="code"><div class="highlight"><pre lang="javascript">systemSpacing : 90,</pre></div></td></tr><tr id="section-7"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-7">&#182;</a></div><p>@cfg {Number} staveSpacing The default spacing between two staffs<br />within a system; overridden by the spacing attribute of a staffDef<br />element in the MEI code</p></td><td class="code"><div class="highlight"><pre lang="javascript">staveSpacing : 60,</pre></div></td></tr><tr id="section-8"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-8">&#182;</a></div><p>@cfg {Boolean} autoStaveConnectorLine Specifies if a stave connector<br />line is drawn on the left of systems by default; if set to true, the<br />auto line will not appear when staffDef/@symbol="none" is set for the<br />outermost staffDef element</p></td><td class="code"><div class="highlight"><pre lang="javascript">autoStaveConnectorLine : true,</pre></div></td></tr><tr id="section-9"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-9">&#182;</a></div><p>@cfg {"full"/"abbr"/null} labelMode Specifies the way voice labels are<br />added<br />to staves. Values:</p>
+
+<ul>
+<li>'full': renders full labels in the first system, abbreviated labels
+in all following systems</li>
+<li>'abbr': only render abbreviated labels</li>
+<li>null or undefined: renders no labels</li>
+</ul></td><td class="code"><div class="highlight"><pre lang="javascript">labelMode : null, // 'full',</pre></div></td></tr><tr id="section-10"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-10">&#182;</a></div><p>@cfg {Number} maxHyphenDistance The maximum distance (in pixels)<br />between two hyphens in the lyrics lines</p></td><td class="code"><div class="highlight"><pre lang="javascript">maxHyphenDistance : 75,
+        //sectionsOnNewLine : false, // TODO: add feature
+
+        // TODO check compatibility with RAPHAEL!</pre></div></td></tr><tr id="section-11"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-11">&#182;</a></div><p>@cfg {Object} lyricsFont The font used for rendering lyrics (and<br />hyphens)</p><table class="tags"><tbody><tr><td><small><strong>@cfg</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@cfg</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@NB</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@or</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@to</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@'weight'</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">lyricsFont : {
+          family : 'Times',
+          size : 15
+        },</pre></div></td></tr><tr id="section-12"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-12">&#182;</a></div><p>@cfg {Object} annotFont the font used for annotations (for example,<br />'pizz.')</p><table class="tags"><tbody><tr><td><small><strong>@cfg</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@cfg</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@cfg</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">annotFont : {
+          family : 'Times',
+          size : 15,
+          weight : 'Italic'
+        },</pre></div></td></tr><tr id="section-13"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-13">&#182;</a></div><p>@cfg {Object} dynamFont the font used for dynamics</p><table class="tags"><tbody><tr><td><small><strong>@cfg</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@cfg</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@cfg</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">dynamFont : {
+          family : 'Times',
+          size : 18,
+          weight : 'bold italic'
+        },</pre></div></td></tr><tr id="section-14"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-14">&#182;</a></div><p>@cfg {Object} tempoFont The tempo font</p><table class="tags"><tbody><tr><td><small><strong>@cfg</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@cfg</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@cfg</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">tempoFont : {
+          family : "Times",
+          size : 17,
+          weight : "bold"
+        },</pre></div></td></tr><tr id="section-15"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-15">&#182;</a></div><p>@cfg {Object} staff The staff config object passed to each<br />Vex.Flow.Staff</p></td><td class="code"><div class="highlight"><pre lang="javascript">staff : {
+          vertical_bar_width : 20, // 10 // Width around vertical bar end-marker
+          top_text_position : 1.5, // 1 // in staff lines
+          bottom_text_position : 7.5
+        }
+      },
+
+      // TODO add setters (and getters?) for single config items / groups</pre></div></td></tr><tr id="section-16"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-16">&#182;</a></div><p>initializes the Converter</p><table class="tags"><tbody><tr><td><small><strong>@method</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@param</strong> [Object] </small></td><td><strong>config</strong></td><td>A config object (optional)</td></tr><tr><td><small><strong>@chainable</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@return</strong> [MEI2VF.Converter] </small></td><td><strong></strong></td><td>this</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">initConfig : function(config) {
+        var me = this;
+        me.cfg = $.extend(true, {}, me.defaults, config);</pre></div></td></tr><tr id="section-17"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-17">&#182;</a></div><p>an instance of MEI2VF.SystemInfo dealing with the system and staff<br />info derived from<br />the MEI data</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.systemInfo = new m2v.SystemInfo();
+
+        // TODO see if the values of this property should better be calculated
+        // in the viewer object</pre></div></td></tr><tr id="section-18"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-18">&#182;</a></div><p>The print space coordinates calculated from the page config.</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.printSpace = {
+          // substract four line distances (40px) from page_margin_top in order
+          // to compensate VexFlow's default top spacing / allow specifying
+          // absolute
+          // values
+          top : me.cfg.page_margin_top - 40,
+          left : me.cfg.page_margin_left,
+          right : me.cfg.page_width - me.cfg.page_margin_right,
+          width : Math.floor(me.cfg.page_width - me.cfg.page_margin_right - me.cfg.page_margin_left) - 1
+        };
+        return me;
+
+      },
+
+      // TODO instead of creating new objects each time on reset, call reset functions in the generated objects</pre></div></td></tr><tr id="section-19"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-19">&#182;</a></div><p>Resets all data. Called by {@link #process}.</p><table class="tags"><tbody><tr><td><small><strong>@method</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@chainable</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@return</strong> [MEI2VF.Converter] </small></td><td><strong></strong></td><td>this</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">reset : function() {
+        var me = this;
+        me.systemInfo.init(me.cfg, me.printSpace);</pre></div></td></tr><tr id="section-20"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-20">&#182;</a></div><p>@property {} unresolvedTStamp2</p></td><td class="code"><div class="highlight"><pre lang="javascript">me.unresolvedTStamp2 = [];</pre></div></td></tr><tr id="section-21"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-21">&#182;</a></div><p>Contains all {@link MEI2VF.System} objects</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.systems = [];</pre></div></td></tr><tr id="section-22"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-22">&#182;</a></div><p>Contains all<br />Vex.Flow.Stave objects. Addressing scheme:<br />[measure_n][staff_n]</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.allVexMeasureStaffs = [];</pre></div></td></tr><tr id="section-23"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-23">&#182;</a></div><p>Contains all Vex.Flow.Beam objects. Data is just pushed in<br />and later processed as a whole, so the array index is<br />irrelevant.</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.allBeams = [];</pre></div></td></tr><tr id="section-24"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-24">&#182;</a></div><p>an instance of MEI2VF.Dynamics dealing with and storing all dynamics<br />found in the MEI document</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.dynamics = new m2v.Dynamics(me.systemInfo, me.cfg.dynamFont);</pre></div></td></tr><tr id="section-25"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-25">&#182;</a></div><p>an instance of MEI2VF.Directives dealing with and storing all<br />directives found in the MEI document</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.directives = new m2v.Directives(me.systemInfo, me.cfg.annotFont);</pre></div></td></tr><tr id="section-26"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-26">&#182;</a></div><p>an instance of MEI2VF.Ties dealing with and storing all ties found in<br />the MEI document</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.ties = new m2v.Ties(me.systemInfo, me.unresolvedTStamp2);</pre></div></td></tr><tr id="section-27"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-27">&#182;</a></div><p>an instance of MEI2VF.Ties dealing with and storing all slurs found in<br />the MEI document</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.slurs = new m2v.Ties(me.systemInfo, me.unresolvedTStamp2);</pre></div></td></tr><tr id="section-28"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-28">&#182;</a></div><p>an instance of MEI2VF.Hairpins dealing with and storing all hairpins<br />found in the MEI document</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.hairpins = new m2v.Hairpins(me.systemInfo, me.unresolvedTStamp2);</pre></div></td></tr><tr id="section-29"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-29">&#182;</a></div><p>an instance of MEI2VF.Hyphenation dealing with and storing all lyrics<br />hyphens found in the MEI document</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.hyphenation = new m2v.Hyphenation(me.cfg.lyricsFont, me.printSpace.right, me.cfg.maxHyphenDistance);</pre></div></td></tr><tr id="section-30"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-30">&#182;</a></div><p>contains all note-like objects in the current MEI document, accessible<br />by their xml:id</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@object</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.notes_by_id = {};</pre></div></td></tr><tr id="section-31"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-31">&#182;</a></div><p>the number of the current system</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.currentSystem_n = 0;</pre></div></td></tr><tr id="section-32"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-32">&#182;</a></div><p>indicates if a system break is currently to be processed</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.pendingSystemBreak = false;</pre></div></td></tr><tr id="section-33"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-33">&#182;</a></div><p>indicates if a system break is currently to be processed</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.pendingSectionBreak = true;</pre></div></td></tr><tr id="section-34"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-34">&#182;</a></div><p>Contains information about the<br />volta type of the current staff. Properties:</p>
+
+<ul>
+<li><code>start</code> {String} indicates the number to render to the volta. When
+falsy, it is assumed that the volta does not start in the current
+measure</li>
+<li><code>end</code> {Boolean} indicates if there is a volta end in the current
+measure</li>
+</ul>
+
+<p>If null, no volta is rendered</p><table class="tags"><tbody><tr><td><small><strong>@property</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">me.currentVoltaType = null;
+        return me;
+      },</pre></div></td></tr><tr id="section-35"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-35">&#182;</a></div><p>Calls {@link #reset} and then processes the specified MEI document or<br />document fragment. The generated objects can<br />be processed further or drawn immediately to a canvas via {@link #draw}.</p><table class="tags"><tbody><tr><td><small><strong>@method</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@chainable</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@param</strong> [XMLDocument] </small></td><td><strong>xmlDoc</strong></td><td>the XML document</td></tr><tr><td><small><strong>@return</strong> [MEI2VF.Converter] </small></td><td><strong></strong></td><td>this</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">process : function(xmlDoc) {
+        var me = this;
+        me.reset();
+        me.systemInfo.processScoreDef($(xmlDoc).find('scoreDef')[0]);
+        me.processSections(xmlDoc);
+        me.directives.createVexFromInfos(me.notes_by_id);
+        me.dynamics.createVexFromInfos(me.notes_by_id);
+        me.ties.createVexFromInfos(me.notes_by_id);
+        me.slurs.createVexFromInfos(me.notes_by_id);
+        me.hairpins.createVexFromInfos(me.notes_by_id);
+        return me;
+      },</pre></div></td></tr><tr id="section-36"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-36">&#182;</a></div><p>Draws the internal data objects to a canvas</p><table class="tags"><tbody><tr><td><small><strong>@method</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@chainable</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@param</strong> [ctx] </small></td><td><strong>The</strong></td><td>canvas context</td></tr><tr><td><small><strong>@return</strong> [MEI2VF.Converter] </small></td><td><strong></strong></td><td>this</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">draw : function(ctx) {
+        var me = this;
+        me.drawSystems(ctx);
+        me.drawVexBeams(me.allBeams, ctx);
+        me.ties.setContext(ctx).draw();
+        me.slurs.setContext(ctx).draw();
+        me.hairpins.setContext(ctx).draw();
+        me.hyphenation.setContext(ctx).draw();
+        return me;
+      },</pre></div></td></tr><tr id="section-37"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-37">&#182;</a></div><p>assigns an external function for processing pgHead elements. By default,<br />pgHead elements are ignored in MEI2VF.</p><table class="tags"><tbody><tr><td><small><strong>@method</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@param</strong> [Function] </small></td><td><strong>fn</strong></td><td>the callback function. Parameter: element</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">setPgHeadProcessor : function(fn) {
+        this.systemInfo.processPgHead = fn;
+      },</pre></div></td></tr><tr id="section-38"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-38">&#182;</a></div><p>assigns an external function for processing anchoredText elements. By<br />default, anchoredText elements are ignored in MEI2VF.</p><table class="tags"><tbody><tr><td><small><strong>@method</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@param</strong> [Function] </small></td><td><strong>fn</strong></td><td>the callback function. Parameter: element</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">setAnchoredTextProcessor : function(staffFn, layerFn) {
+        if (staffFn) {
+          this.processAnchoredStaffText = staffFn;
+        };
+        if (layerFn) {
+          this.processAnchoredLayerText = layerFn;
+        }
+      },</pre></div></td></tr><tr id="section-39"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-39">&#182;</a></div><p>Returns the width and the height of the area that contains all drawn<br />staves as per the last processing.</p><table class="tags"><tbody><tr><td><small><strong>@method</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@return</strong> [Object] </small></td><td><strong></strong></td><td>the width and height of the area that contains all</td></tr><tr><td><small><strong>@staves.</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@Properties:</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">getStaffArea : function() {
+        var width, height, i;
+        height = this.systemInfo.getCurrentLowestY();
+        var allVexMeasureStaffs = this.getAllVexMeasureStaffs();
+        var i, k, max_start_x, area_width, staff;
+        i = allVexMeasureStaffs.length;
+        area_width = 0;
+        while (i--) {
+          if (allVexMeasureStaffs[i]) {
+            max_start_x = 0;
+            // get maximum start_x of all staffs in measure
+            k = allVexMeasureStaffs[i].length;
+            while (k--) {
+              staff = allVexMeasureStaffs[i][k];
+              if (staff)
+                max_start_x = Math.max(max_start_x, staff.getNoteStartX());
+            }
+            k = allVexMeasureStaffs[i].length;
+            while (k--) {
+              // get maximum width of all staffs in measure
+              staff = allVexMeasureStaffs[i][k];
+              if (staff) {
+                area_width = Math.max(area_width, max_start_x + staff.getWidth());
+              }
+            }
+          }
+        }
+        return {
+          width : area_width,
+          height : height
+        };
+      },</pre></div></td></tr><tr id="section-40"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-40">&#182;</a></div><p>returns a 2d array of all Vex.Flow.Stave objects, arranged by<br />[measure_n][staff_n]</p><table class="tags"><tbody><tr><td><small><strong>@method</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@return</strong> [Vex.Flow.Stave[][]] </small></td><td><strong></strong></td><td>see {@link #allVexMeasureStaffs}</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">getAllVexMeasureStaffs : function() {
+        return this.allVexMeasureStaffs;
+      },</pre></div></td></tr><tr id="section-41"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-41">&#182;</a></div><p>returns all systems created when processing the MEI document</p><table class="tags"><tbody><tr><td><small><strong>@method</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@return</strong> [MEI2VF.System[]] </small></td><td><strong></strong></td><td></td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">getSystems : function() {
+        return this.systems;
+      },</pre></div></td></tr><tr id="section-42"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-42">&#182;</a></div><p>returns all note-like objects created when processing the MEI document</p><table class="tags"><tbody><tr><td><small><strong>@method</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@return</strong> [Object] </small></td><td><strong></strong></td><td>for the object properties, see {@link #notes_by_id}</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">getNotes : function() {
+        return this.notes_by_id;
+      },</pre></div></td></tr><tr id="section-43"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-43">&#182;</a></div><p>creates in initializes a new {@link MEI2VF.System} and updates the staff<br />modifier infos</p><table class="tags"><tbody><tr><td><small><strong>@method</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">createNewSystem : function() {
+        var me = this, system, coords;
+
+        m2v.L('Converter.createNewSystem()', '{enter}');
+
+        me.pendingSystemBreak = false;
+        me.currentSystem_n += 1;
+
+        coords = {
+          x : me.printSpace.left,
+          y : (me.currentSystem_n === 1) ? me.printSpace.top : me.systemInfo.getCurrentLowestY() + me.cfg.systemSpacing,
+          w : me.printSpace.width
+        };
+
+        system = new m2v.System({
+          leftMar : me.systemInfo.getLeftMar(),
+          coords : coords,
+          staffYs : me.systemInfo.getYs(coords.y),
+          labels : me.getStaffLabels()
+        });
+
+        if (me.pendingSectionBreak) {
+          me.pendingSectionBreak = false;
+          me.systemInfo.forceSectionStartInfos();
+        } else {
+          me.systemInfo.forceStaveStartInfos();
+        }
+
+        me.hyphenation.addLineBreaks(me.systemInfo.getAllStaffInfos(), {
+          system : system
+        });
+
+        me.systems[me.currentSystem_n] = system;
+        return system;
+      },
+
+      // TODO: add rule: if an ending is followed by another ending, add
+      // space on the right (or choose a VexFlow parameter accordingly),
+      // otherwise don't add space</pre></div></td></tr><tr id="section-44"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-44">&#182;</a></div><p>@method processSections</p></td><td class="code"><div class="highlight"><pre lang="javascript">processSections : function(xmlDoc) {
+        var me = this;
+        $(xmlDoc).find('section, ending').each(function() {
+          if (this.localName === 'ending') {
+            me.processEnding(this);
+          } else {
+            me.processSection(this);
+          }
+        });
+      },</pre></div></td></tr><tr id="section-45"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-45">&#182;</a></div><p>@method processSection</p></td><td class="code"><div class="highlight"><pre lang="javascript">processSection : function(element) {
+        var me = this, i, j, sectionChildren = $(element).children();
+        for ( i = 0, j = sectionChildren.length; i &lt; j; i += 1) {
+          me.processSectionChild(sectionChildren[i]);
+        }
+      },</pre></div></td></tr><tr id="section-46"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-46">&#182;</a></div><p>@method processEnding</p></td><td class="code"><div class="highlight"><pre lang="javascript">processEnding : function(element) {
+        var me = this, i, j, sectionChildren = $(element).children();
+        for ( i = 0, j = sectionChildren.length; i &lt; j; i += 1) {
+          me.currentVoltaType = {};
+          if (i === 0)
+            me.currentVoltaType.start = $(element).attr('n');
+          if (i === j - 1)
+            me.currentVoltaType.end = true;
+          me.processSectionChild(sectionChildren[i]);
+        }
+        me.currentVoltaType = null;
+      },</pre></div></td></tr><tr id="section-47"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-47">&#182;</a></div><p>MEI element <b>section</b> may contain (MEI v2.1.0): MEI.cmn: measure<br />MEI.critapp: app MEI.edittrans: add choice corr damage del gap<br />handShift orig reg restore sic subst supplied unclear MEI.shared:<br />annot ending expansion pb sb scoreDef section staff staffDef<br />MEI.text: div MEI.usersymbols: anchoredText curve line symbol</p>
+
+<p>Supported elements: <b>measure</b> <b>scoreDef</b> <b>staffDef</b><br /><b>sb</b><br /> @method processSectionChild</p></td><td class="code"><div class="highlight"><pre lang="javascript">processSectionChild : function(element) {
+        var me = this;
+        switch (element.localName) {
+          case 'measure' :
+            me.processMeasure(element);
+            break;
+          case 'scoreDef' :
+            me.systemInfo.processScoreDef(element);
+            break;
+          case 'staffDef' :
+            me.systemInfo.processStaffDef(element);
+            break;
+          case 'sb' :
+            me.setPendingSystemBreak(element);
+            break;
+          default :
+            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Element &lt;' + element.localName + '&gt; is not supported in &lt;section&gt;');
+        }
+      },</pre></div></td></tr><tr id="section-48"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-48">&#182;</a></div><p>sets the property {@link #pendingSystemBreak} to <code>true</code>. When true, a<br />new system will be initialized when {@link #processMeasure} is called<br />the next time.<br /> @method setPendingSystemBreak</p></td><td class="code"><div class="highlight"><pre lang="javascript">setPendingSystemBreak : function() {
+        this.pendingSystemBreak = true;
+      },
+
+      // TODO extract function for measure_child (see the staffDef functions)!?</pre></div></td></tr><tr id="section-49"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-49">&#182;</a></div><p>Processes a MEI measure element and calls functions to process a<br />selection of ancestors: .//staff, ./slur, ./tie, ./hairpin, .//tempo<br /> @method processMeasure</p><table class="tags"><tbody><tr><td><small><strong>@param</strong> [XMLElement] </small></td><td><strong>element</strong></td><td>the MEI measure element</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">processMeasure : function(element) {
+        var me = this, measure_n, atSystemStart, left_barline, right_barline, atSystemTop = true, system, system_n;
+
+        if (me.pendingSectionBreak || me.pendingSystemBreak) {
+          system_n = me.systems.length;
+          system = me.createNewSystem();
+          atSystemStart = true;
+        } else {
+          system_n = me.systems.length - 1;
+          system = me.systems[system_n];
+          atSystemStart = false;
+        }
+
+        m2v.L('Converter.processMeasure()', '{enter}');
+
+        measure_n = +element.getAttribute('n');
+        left_barline = element.getAttribute('left');
+        right_barline = element.getAttribute('right');
+
+        var staffElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [];
+
+        $(element).find('*').each(function() {
+          switch (this.localName) {
+            case 'staff':
+              staffElements.push(this);
+              break;
+            case 'dir':
+              dirElements.push(this);
+              break;
+            case 'tie':
+              tieElements.push(this);
+              break;
+            case 'slur':
+              slurElements.push(this);
+              break;
+            case 'hairpin':
+              hairpinElements.push(this);
+              break;
+            case 'tempo':
+              tempoElements.push(this);
+              break;
+            case 'dynam':
+              dynamElements.push(this);
+              break;
+            default:
+              break;
+          }
+        });
+
+        // references to the staffs will be stored in two places:
+        // 1) in the measure objects
+        // 2) in this.allVexMeasureStaffs
+        var staffs = [];
+        me.allVexMeasureStaffs[measure_n] = staffs;
+
+        var currentStaveVoices = new m2v.StaveVoices();
+
+        // TODO create all staff objects before processing the voices so a
+        // reference to any staff object in the current measure can be set to the
+        // note-like objects (this is necessary when the attribute staff=n is
+        // used, for example)
+        $.each(staffElements, function() {
+          me.processStaffInMeasure(system, staffs, this, measure_n, left_barline, right_barline, currentStaveVoices, atSystemTop);
+          atSystemTop = false;
+        });
+
+        me.directives.createInfos(dirElements, element);
+        me.dynamics.createInfos(dynamElements, element);
+        me.ties.createInfos(tieElements, element, me.systemInfo);
+        me.slurs.createInfos(slurElements, element, me.systemInfo);
+        me.hairpins.createInfos(hairpinElements, element, me.systemInfo);
+
+        system.addMeasure(new m2v.Measure({
+          element : element,
+          n : measure_n,
+          staffs : staffs,
+          voices : currentStaveVoices,
+          startConnectorCfg : (atSystemStart) ? {
+            labelMode : me.cfg.labelMode,
+            models : me.systemInfo.startConnectorInfos,
+            staffs : staffs,
+            system_n : me.currentSystem_n
+          } : null,
+          inlineConnectorCfg : {
+            models : me.systemInfo.inlineConnectorInfos,
+            staffs : staffs,
+            barline_l : left_barline,
+            barline_r : right_barline
+          },
+          tempoElements : tempoElements,
+          tempoFont : me.cfg.tempoFont
+        }));
+      },</pre></div></td></tr><tr id="section-50"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-50">&#182;</a></div><p>Processes a single stave in a measure</p><table class="tags"><tbody><tr><td><small><strong>@method</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@param</strong> [MEI2VF.System] </small></td><td><strong>system</strong></td><td>the current system</td></tr><tr><td><small><strong>@param</strong> [Array] </small></td><td><strong>staffs</strong></td><td></td></tr><tr><td><small><strong>@param</strong> [XMLElement] </small></td><td><strong>staff_element</strong></td><td>the MEI staff element</td></tr><tr><td><small><strong>@param</strong> [Number] </small></td><td><strong>measure_n</strong></td><td>the measure number</td></tr><tr><td><small><strong>@param</strong> [String] </small></td><td><strong>left_barline</strong></td><td>the left barline</td></tr><tr><td><small><strong>@param</strong> [String] </small></td><td><strong>right_barline</strong></td><td>the right barline</td></tr><tr><td><small><strong>@param</strong> [MEI2VF.StaveVoices] </small></td><td><strong>currentStaveVoices</strong></td><td>The current MEI2VF</td></tr><tr><td><small><strong>@StaveVoices</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@param</strong> [Boolean] </small></td><td><strong>atSystemTop</strong></td><td>indicates if the current stave is the first</td></tr><tr><td><small><strong>@stave</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">processStaffInMeasure : function(system, staffs, staff_element, measure_n, left_barline, right_barline, currentStaveVoices, atSystemTop) {
+        var me = this, staff, staff_n, readEvents, layer_events;
+
+        staff_n = +$(staff_element).attr('n');
+        if (!staff_n) {
+          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArgument', 'Cannot render staff without attribute "n".');
+        }
+
+        staff = me.createVexStaff(system.getStaffYs()[staff_n]);
+
+        me.addStaffModifiers(staff, staff_n, left_barline, right_barline, atSystemTop);
+
+        staffs[staff_n] = staff;
+
+        $(staff_element).children('anchoredText').each(function() {
+          me.processAnchoredStaffText(this, staff);
+        });
+
+        readEvents = function() {
+          var event = me.processNoteLikeElement(this, staff, staff_n);
+          // return event.vexNote;
+          return event.vexNote || event;
+        };
+
+        $(staff_element).find('layer').each(function() {
+          me.resolveUnresolvedTimestamps(this, staff_n, measure_n);
+          layer_events = $(this).children().map(readEvents).get();
+          currentStaveVoices.addVoice(me.createVexVoice(layer_events, staff_n), staff_n);
+        });
+
+      },</pre></div></td></tr><tr id="section-51"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-51">&#182;</a></div><p>Creates a new Vex.Flow.Stave object at the specified y coordinate. This<br />method sets fixed x coordinates, which will later be substituted in<br />{@link MEI2VF.System#format} - the Vex.Flow.Stave<br />objects must be initialized with some x measurements, but the real<br />values depend on values only available after modifiers, voices etc<br />have been added.</p>
+
+<p>@method createVexStaff</p><table class="tags"><tbody><tr><td><small><strong>@param</strong> [Number] </small></td><td><strong>y</strong></td><td>the y coordinate of the staff</td></tr><tr><td><small><strong>@return</strong> [Vex.Flow.Stave] </small></td><td><strong></strong></td><td>The initialized stave object</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">createVexStaff : function(y) {
+        var me = this, staff;
+        staff = new VF.Stave();
+        staff.init(0, y, 1000, me.cfg.staff);
+        // temporary; (due to a bug?) in VexFlow, bottom_text_position does
+        // not work when it's passed in the config object
+        staff.options.bottom_text_position = me.cfg.staff.bottom_text_position;
+        return staff;
+      },</pre></div></td></tr><tr id="section-52"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-52">&#182;</a></div><p>Adds staff modifiers (bar lines, clef, time signature, key signature,<br />volta) to a Vex.Flow.Staff.</p>
+
+<p>@method addStaffModifiers</p><table class="tags"><tbody><tr><td><small><strong>@param</strong> [Vex.Flow.Stave] </small></td><td><strong>staff</strong></td><td>The stave object</td></tr><tr><td><small><strong>@param</strong> [Number] </small></td><td><strong>staff_n</strong></td><td>the staff number</td></tr><tr><td><small><strong>@param</strong> [String] </small></td><td><strong>left_barline</strong></td><td>the left barline</td></tr><tr><td><small><strong>@param</strong> [String] </small></td><td><strong>right_barline</strong></td><td>the right barline</td></tr><tr><td><small><strong>@param</strong> [Boolean] </small></td><td><strong>atSystemTop</strong></td><td>indicates if the current stave is the first</td></tr><tr><td><small><strong>@stave</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">addStaffModifiers : function(staff, staff_n, left_barline, right_barline, atSystemTop) {
+        var me = this, currentStaffInfo;
+
+        currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
+
+        if (currentStaffInfo.showClefCheck()) {
+          staff.clefIndex = 2;
+          staff.addClef(currentStaffInfo.getClef());
+        }
+        if (currentStaffInfo.showKeysigCheck()) {
+          staff.keySigIndex = staff.clefIndex + 1 || 2;
+          staff.addKeySignature(currentStaffInfo.getKeySpec());
+
+        }
+        if (currentStaffInfo.showTimesigCheck()) {
+          staff.timeSigIndex = staff.keySigIndex + 1 || staff.clefIndex + 1 || 2;
+          staff.addTimeSignature(currentStaffInfo.getTimeSig());
+        }
+
+        staff.setBegBarType( left_barline ? m2v.tables.barlines[left_barline] : VF.Barline.type.NONE);
+        if (right_barline)
+          staff.setEndBarType(m2v.tables.barlines[right_barline]);
+
+        if (atSystemTop &amp;&amp; me.currentVoltaType) {
+          me.addStaffVolta(staff);
+        }
+      },</pre></div></td></tr><tr id="section-53"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-53">&#182;</a></div><p>Adds a volta to a staff. Currently not working due to the reworking of<br />the measure width calulation (27/4/2014)<br /> @method addStaffVolta</p><table class="tags"><tbody><tr><td><small><strong>@experimental</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">addStaffVolta : function(staff) {
+        var volta = this.currentVoltaType;
+        if (volta.start)
+          staff.setVoltaType(Vex.Flow.Volta.type.BEGIN, volta.start + '.', 30, 0);
+        if (volta.end)
+          staff.setVoltaType(Vex.Flow.Volta.type.END, "", 30, 0);
+        if (!volta.start &amp;&amp; !volta.end)
+          staff.setVoltaType(Vex.Flow.Volta.type.MID, "", 30, 0);
+      },</pre></div></td></tr><tr id="section-54"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-54">&#182;</a></div><p>@method getStaffLabels</p></td><td class="code"><div class="highlight"><pre lang="javascript">getStaffLabels : function() {
+        var me = this, labels, i, infos, labelType;
+        labels = {};
+        if (!me.cfg.labelMode) {
+          return labels;
+        }
+        labelType = (me.cfg.labelMode === 'full' &amp;&amp; me.currentSystem_n === 1) ? 'label' : 'labelAbbr';
+        infos = me.systemInfo.getAllStaffInfos();
+        i = infos.length;
+        while (i--) {
+          if (infos[i]) {
+            labels[i] = infos[i][labelType];
+          }
+        }
+        return labels;
+      },</pre></div></td></tr><tr id="section-55"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-55">&#182;</a></div><p>Creates a new Vex.Flow.Voice<br /> @method createVexVoice</p><table class="tags"><tbody><tr><td><small><strong>@param</strong> [Array] </small></td><td><strong>voice_contents</strong></td><td>The contents of the voice, an array of</td></tr><tr><td><small><strong>@tickables</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr><tr><td><small><strong>@param</strong> [Number] </small></td><td><strong>staff_n</strong></td><td>The number of the enclosing staff element</td></tr><tr><td><small><strong>@return</strong> [Vex.Flow.Voice] </small></td><td><strong></strong></td><td></td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">createVexVoice : function(voice_contents, staff_n) {
+        var me = this, voice, meter;
+        if (!$.isArray(voice_contents)) {
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'me.createVexVoice() voice_contents argument must be an array.');
+        }
+        meter = me.systemInfo.getStaffInfo(staff_n).meter;
+        voice = new VF.Voice({
+          num_beats : meter.count,
+          beat_value : meter.unit,
+          resolution : VF.RESOLUTION
+        });
+        voice.setStrict(false);
+        voice.addTickables(voice_contents);
+        return voice;
+      },</pre></div></td></tr><tr id="section-56"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-56">&#182;</a></div><p>@method resolveUnresolvedTimestamps</p></td><td class="code"><div class="highlight"><pre lang="javascript">resolveUnresolvedTimestamps : function(layer, staff_n, measure_n) {
+        var me = this, refLocationIndex;
+        // check if there's an unresolved TStamp2 reference to this location
+        // (measure, staff, layer):
+        if (isNaN(measure_n))
+          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.extract_events', '&lt;measure&gt; must have @n specified');
+        staff_n = staff_n || 1;
+        refLocationIndex = measure_n + ':' + staff_n + ':' + ($(layer).attr('n') || '1');
+        if (me.unresolvedTStamp2[refLocationIndex]) {
+          $(me.unresolvedTStamp2[refLocationIndex]).each(function(i) {
+            this.setContext({
+              layer : layer,
+              meter : me.systemInfo.getStaffInfo(staff_n).meter
+            });
+            // TODO: remove eventLink from the list
+            me.unresolvedTStamp2[refLocationIndex][i] = null;
+          });
+          // at this point all references should be supplied with context.
+          me.unresolvedTStamp2[refLocationIndex] = null;
+        }
+      },</pre></div></td></tr><tr id="section-57"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-57">&#182;</a></div><p>processes a note like element by calling the adequate processing<br />function<br /> @method processNoteLikeElement</p><table class="tags"><tbody><tr><td><small><strong>@param</strong> [XMLElement] </small></td><td><strong>element</strong></td><td>the element to process</td></tr><tr><td><small><strong>@param</strong> [] </small></td><td><strong>staff</strong></td><td></td></tr><tr><td><small><strong>@param</strong> [Number] </small></td><td><strong>staff_n</strong></td><td>the number of the staff as given in the MEI</td></tr><tr><td><small><strong>@document</strong> </small></td><td><strong></strong></td><td>[object Object]</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">processNoteLikeElement : function(element, staff, staff_n) {
+        var me = this;
+        switch (element.localName) {
+          case 'rest' :
+            return me.processRest(element, staff, staff_n);
+          case 'mRest' :
+            return me.processmRest(element, staff, staff_n);
+          case 'space' :
+            return me.processSpace(element, staff, staff_n);
+          case 'note' :
+            return me.processNote(element, staff, staff_n);
+          case 'beam' :
+            return me.processBeam(element, staff, staff_n);
+          case 'chord' :
+            return me.processChord(element, staff, staff_n);
+          case 'anchoredText' :
+            return me.processAnchoredLayerText(element, staff, staff_n);
+          default :
+            throw new m2v.RUNTIME_ERROR('BadArguments', 'Rendering of element "' + element.localName + '" is not supported.');
+        }
+      },</pre></div></td></tr><tr id="section-58"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-58">&#182;</a></div><p>@method processAnchoredStaffText</p></td><td class="code"><div class="highlight"><pre lang="javascript">processAnchoredStaffText : function() {
+        // override
+        return;
+      },</pre></div></td></tr><tr id="section-59"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-59">&#182;</a></div><p>@method processAnchoredLayerText</p></td><td class="code"><div class="highlight"><pre lang="javascript">processAnchoredLayerText : function() {
+        // TODO
+        return;
+      },</pre></div></td></tr><tr id="section-60"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-60">&#182;</a></div><p>@method processNote</p></td><td class="code"><div class="highlight"><pre lang="javascript">processNote : function(element, staff, staff_n) {
+        var me = this, dots, mei_accid, mei_ho, pname, oct, xml_id, mei_tie, mei_slur, mei_staff_n, i, atts, note_opts, note;
+
+        atts = m2v.Util.attsToObj(element);
+
+        dots = +atts.dots;
+        mei_accid = atts.accid;
+        mei_ho = atts.ho;
+        pname = atts.pname;
+        oct = atts.oct;
+        mei_tie = atts.tie;
+        mei_slur = atts.slur;
+        mei_staff_n = +atts.staff || staff_n;
+
+        xml_id = atts['xml:id'];
+        // If xml:id is missing, create it
+        if (!xml_id) {
+          xml_id = MeiLib.createPseudoUUID();
+          $(element).attr('xml:id', xml_id);
+        }
+
+        try {
+
+          note_opts = {
+            keys : [me.processAttsPitch(element)],
+            clef : me.systemInfo.getClef(staff_n),
+            duration : me.processAttsDuration(element)
+          };
+
+          me.setStemDir(element, note_opts);
+          note = new VF.StaveNote(note_opts);
+
+          if (mei_staff_n === staff_n) {
+            note.setStave(staff);
+          } else {
+            var otherStaff = me.allVexMeasureStaffs[me.allVexMeasureStaffs.length - 1][mei_staff_n];
+            if (otherStaff) {
+              // TODO: the note is correctly assigned to the new staff
+              // here, but
+              // in the end it has the old staff assigned to it -&gt; fix
+              // that!
+              // REASON PROBABLY: all notes get assigned to the old
+              // staff when
+              // the voices are drawn in StaveVoices.js
+              // ALSO: Vex.Flow.Voice seems to assign all voice
+              // tickables to only
+              // one staff
+              // n = note;
+              note.setStave(otherStaff);
+            } else {
+              throw new m2v.RUNTIME_ERROR('Error', 'Note has staff attribute "' + mei_staff_n + '", but the staff does not exist.');
+            }
+          }
+
+          me.processSyllables(note, element, staff_n);
+
+          try {
+            for ( i = 0; i &lt; dots; i += 1) {
+              note.addDotToAll();
+            }
+          } catch (e) {
+            throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the dots of &lt;note&gt;: ' + m2v.Util.attsToString(element));
+          }
+
+          if (mei_accid)
+            me.processAttrAccid(mei_accid, note, 0);
+          if (mei_ho)
+            me.processAttrHo(mei_ho, note);
+
+          $.each($(element).find('artic'), function() {
+            me.addArticulation(note, this);
+          });
+          if (atts.fermata) {
+            me.addFermata(note, atts.fermata);
+          }
+
+          // FIXME For now, we'll remove any child nodes of &lt;note&gt;
+          $.each($(element).children(), function() {
+            $(this).remove();
+          });
+
+          // Build a note object that keeps the xml:id
+
+          if (!pname)
+            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArguments', 'mei:note must have pname attribute');
+          if (!oct)
+            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArguments', 'mei:note must have oct attribute');
+
+          if (mei_tie)
+            me.processAttrTie(mei_tie, xml_id, pname, oct);
+          if (mei_slur)
+            me.processAttrSlur(mei_slur, xml_id);
+
+          me.notes_by_id[xml_id] = {
+            meiNote : element,
+            vexNote : note,
+            system : me.currentSystem_n
+          };
+
+          // return note object
+          return {
+            vexNote : note,
+            id : xml_id
+          };
+
+        } catch (e1) {
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the &lt;note&gt;: ' + m2v.Util.attsToString(element) + '\nORIGINAL ERROR MESSAGE: ' + e1.toString());
+        }
+      },
+
+      // TODO add support for features found in me.processNote (annot etc.)
+      // extract functions!?</pre></div></td></tr><tr id="section-61"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-61">&#182;</a></div><p>@method processChord</p></td><td class="code"><div class="highlight"><pre lang="javascript">processChord : function(element, staff, staff_n) {
+        var me = this, i, j, hasDots, $children, keys = [], duration, durations = [], durAtt, xml_id, mei_slur, mei_ho, chord, chord_opts, atts, note_atts;
+
+        $children = $(element).children();
+
+        atts = m2v.Util.attsToObj(element);
+        durAtt = atts.dur;
+        // mei_tie = atts.tie;
+        // mei_slur = atts.slur;
+
+        xml_id = atts['xml:id'];
+        // If xml:id is missing, create it
+        if (!xml_id) {
+          xml_id = MeiLib.createPseudoUUID();
+          $(element).attr('xml:id', xml_id);
+        }
+
+        hasDots = !!$(element).attr('dots');
+
+        try {
+          if (durAtt) {
+            duration = me.translateDuration(+durAtt);
+          } else {
+            for ( i = 0, j = $children.length; i &lt; j; i += 1) {
+              durations.push(+$children[i].getAttribute('dur'));
+            }
+            duration = me.translateDuration(Math.max.apply(Math, durations));
+          }
+
+          for ( i = 0, j = $children.length; i &lt; j; i += 1) {
+            keys.push(me.processAttsPitch($children[i]));
+            // dots.push(+$children[i].getAttribute('dots'));
+            if ($children[i].getAttribute('dots') === '1')
+              hasDots = true;
+          }
+
+          if (hasDots)
+            duration += 'd';
+
+          chord_opts = {
+            keys : keys,
+            clef : me.systemInfo.getClef(staff_n),
+            duration : duration
+          };
+
+          me.setStemDir(element, chord_opts);
+          chord = new VF.StaveNote(chord_opts);
+          chord.setStave(staff);
+
+          var allNoteIndices = [];
+
+          $children.each(function(i) {
+            me.processNoteInChord(i, this, element, chord);
+            allNoteIndices.push(i);
+          });
+
+          if (hasDots) {
+            chord.addDotToAll();
+          }
+          if (atts.ho) {
+            me.processAttrHo(atts.ho, chord);
+          }
+          if (atts.fermata) {
+            me.addFermata(chord, atts.fermata);
+          }
+
+          // TODO add support for chord/@tie and chord/@slur
+
+          me.notes_by_id[xml_id] = {
+            meiNote : element,
+            vexNote : chord,
+            index : allNoteIndices,
+            system : me.currentSystem_n
+          };
+
+          return {
+            vexNote : chord,
+            id : xml_id
+          };
+        } catch (e) {
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the &lt;chord&gt;:' + e.toString());
+          // 'A problem occurred processing the &lt;chord&gt;: ' +
+          // JSON.stringify($.each($(element).children(), function(i,
+          // element) {
+          // element.attrs();
+          // }).get()) + '. \"' + x.toString() + '"');
+        }
+      },</pre></div></td></tr><tr id="section-62"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-62">&#182;</a></div><p>@method processNoteInChord</p></td><td class="code"><div class="highlight"><pre lang="javascript">processNoteInChord : function(i, element, chordElement, chord) {
+        var me = this, atts, xml_id;
+
+        atts = m2v.Util.attsToObj(element);
+
+        var xml_id = atts['xml:id'];
+        // If xml:id is missing, create it
+        if (!xml_id) {
+          xml_id = MeiLib.createPseudoUUID();
+          $(element).attr('xml:id', xml_id);
+        }
+
+        if (atts.tie)
+          me.processAttrTie(atts.tie, xml_id, atts.pname, atts.oct);
+        if (atts.slur)
+          me.processAttrSlur(atts.slur, xml_id);
+
+        me.notes_by_id[xml_id] = {
+          meiNote : chordElement,
+          vexNote : chord,
+          index : [i],
+          system : me.currentSystem_n
+        };
+
+        if (atts.accid) {
+          me.processAttrAccid(atts.accid, chord, i);
+        }
+        if (atts.fermata) {
+          me.addFermata(chord, atts.fermata, i);
+        }
+      },</pre></div></td></tr><tr id="section-63"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-63">&#182;</a></div><p>@method processRest</p></td><td class="code"><div class="highlight"><pre lang="javascript">processRest : function(element, staff, unused_staff_n) {
+        var me = this, dur, rest, xml_id, atts;
+        try {
+          atts = m2v.Util.attsToObj(element);
+
+          dur = me.processAttsDuration(element, true);
+          // assign whole rests to the fourth line, all others to the
+          // middle line:
+          rest = new VF.StaveNote({
+            keys : [(dur === 'w') ? 'd/5' : 'b/4'],
+            duration : dur + 'r'
+          });
+
+          xml_id = atts['xml:id'];
+
+          // If xml:id is missing, create it
+          if (!xml_id) {
+            xml_id = MeiLib.createPseudoUUID();
+            $(element).attr('xml:id', xml_id);
+          }
+
+          if (atts.ho) {
+            me.processAttrHo(atts.ho, rest);
+          }
+          rest.setStave(staff);
+          if (atts.dots === '1') {
+            rest.addDotToAll();
+          }
+          if (atts.fermata) {
+            me.addFermata(rest, atts.fermata);
+          }
+          me.notes_by_id[xml_id] = {
+            meiNote : element,
+            vexNote : rest,
+            system : me.currentSystem_n
+          };
+          return {
+            vexNote : rest,
+            id : xml_id
+          };
+        } catch (e) {
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the &lt;rest&gt;: ' + m2v.Util.attsToString(element));
+        }
+      },</pre></div></td></tr><tr id="section-64"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-64">&#182;</a></div><p>@method processmRest</p></td><td class="code"><div class="highlight"><pre lang="javascript">processmRest : function(element, staff) {
+        var me = this, mRest, atts, xml_id;
+
+        try {
+          atts = m2v.Util.attsToObj(element);
+
+          mRest = new VF.StaveNote({
+            keys : ['d/5'],
+            duration : 'wr'
+          });
+
+          xml_id = atts['xml:id'];
+
+          // If xml:id is missing, create it
+          if (!xml_id) {
+            xml_id = MeiLib.createPseudoUUID();
+            $(element).attr('xml:id', xml_id);
+          }
+
+          // mRest.ignore_ticks = true;
+          // mRest.addToModifierContext = function() {
+          // return this;
+          // };
+          // console.log(mRest);
+          // me.processAttrHo(10, mRest);
+
+          if (atts.ho) {
+            me.processAttrHo(atts.ho, mRest);
+          }
+          if (atts.fermata) {
+            me.addFermata(mRest, atts.fermata);
+          }
+          mRest.setStave(staff);
+          me.notes_by_id[xml_id] = {
+            meiNote : element,
+            vexNote : mRest,
+            system : me.currentSystem_n
+          };
+          return {
+            vexNote : mRest,
+            id : xml_id
+          };
+        } catch (x) {
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the &lt;mRest&gt;: ' + m2v.Util.attsToString(element));
+        }
+      },</pre></div></td></tr><tr id="section-65"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-65">&#182;</a></div><p>@method processSpace</p></td><td class="code"><div class="highlight"><pre lang="javascript">processSpace : function(element, staff) {
+        var me = this, space;
+        try {
+          space = new VF.GhostNote({
+            duration : me.processAttsDuration(element, true) + 'r'
+          });
+          // space.setStave(staff);
+          // me.notes_by_id[xml_id] = {
+          // meiNote : element,
+          // vexNote : space
+          // };
+          return {
+            vexNote : space
+            // ,
+            // id : xml_id
+          };
+        } catch (e) {
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the &lt;space&gt;: ' + m2v.Util.attsToString(element));
+        }
+      },</pre></div></td></tr><tr id="section-66"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-66">&#182;</a></div><p>@method processBeam</p></td><td class="code"><div class="highlight"><pre lang="javascript">processBeam : function(element, staff, staff_n) {
+        var me = this, elements;
+        var process = function() {
+          // make sure to get vexNote out of wrapped note objects
+          var proc_element = me.processNoteLikeElement(this, staff, staff_n);
+          return proc_element.vexNote || proc_element;
+        };
+        elements = $(element).children().map(process).get();
+        me.allBeams.push(new VF.Beam(elements));
+        return elements;
+      },</pre></div></td></tr><tr id="section-67"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-67">&#182;</a></div><p>@method processAttrAccid</p></td><td class="code"><div class="highlight"><pre lang="javascript">processAttrAccid : function(mei_accid, vexObject, i) {
+        var val = m2v.tables.accidentals[mei_accid];
+        if (!val) {
+          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadAttributeValue', 'Invalid attribute value: ' + mei_accid);
+        }
+        vexObject.addAccidental(i, new VF.Accidental(val));
+      },</pre></div></td></tr><tr id="section-68"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-68">&#182;</a></div><p>@method processAttrHo</p></td><td class="code"><div class="highlight"><pre lang="javascript">processAttrHo : function(mei_ho, vexObject) {
+        var me = this;
+        vexObject.setExtraLeftPx(+mei_ho * me.HALF_LINE_DISTANCE);
+      },</pre></div></td></tr><tr id="section-69"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-69">&#182;</a></div><p>@method processAttrTie</p></td><td class="code"><div class="highlight"><pre lang="javascript">processAttrTie : function(mei_tie, xml_id, pname, oct) {
+        var me = this, i, j;
+        // if (!mei_tie) {
+        // mei_tie = "";
+        // }
+        for ( i = 0, j = mei_tie.length; i &lt; j; ++i) {
+          if (mei_tie[i] === 'i') {
+            me.ties.start_tieslur(xml_id, {
+              pname : pname,
+              oct : oct
+              //,system : system
+            });
+          } else if (mei_tie[i] === 't') {
+            me.ties.terminate_tie(xml_id, {
+              pname : pname,
+              oct : oct
+              //,system : system
+            });
+          }
+        }
+      },</pre></div></td></tr><tr id="section-70"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-70">&#182;</a></div><p>@method processAttrSlur</p></td><td class="code"><div class="highlight"><pre lang="javascript">processAttrSlur : function(mei_slur, xml_id) {
+        var me = this, tokens;
+        if (mei_slur) {
+          // create a list of { letter, num }
+          tokens = me.parse_slur_attribute(mei_slur);
+          $.each(tokens, function() {
+            if (this.letter === 'i') {
+              me.slurs.start_tieslur(xml_id, {
+                nesting_level : this.nesting_level
+                //,system : system
+              });
+            } else if (this.letter === 't') {
+              me.slurs.terminate_slur(xml_id, {
+                nesting_level : this.nesting_level
+                //,system : system
+              });
+            }
+          });
+        }
+      },</pre></div></td></tr><tr id="section-71"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-71">&#182;</a></div><p>@method parse_slure_attribute</p></td><td class="code"><div class="highlight"><pre lang="javascript">parse_slur_attribute : function(slur_str) {
+        var result = [], numbered_tokens, numbered_token, i, j, num;
+        numbered_tokens = slur_str.split(' ');
+        for ( i = 0, j = numbered_tokens.length; i &lt; j; i += 1) {
+          numbered_token = numbered_tokens[i];
+          if (numbered_token.length === 1) {
+            result.push({
+              letter : numbered_token,
+              nesting_level : 0
+            });
+          } else if (numbered_token.length === 2) {
+            num = +numbered_token[1];
+            if (!num) {
+              throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArguments:ParseSlur01', "badly formed slur attribute");
+            }
+            result.push({
+              letter : numbered_token[0],
+              nesting_level : num
+            });
+          } else {
+            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArguments:ParseSlur01', "badly formed slur attribute");
+          }
+        }
+        return result;
+      },</pre></div></td></tr><tr id="section-72"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-72">&#182;</a></div><p>converts the pitch of an MEI <b>note</b> element to a VexFlow pitch</p>
+
+<p>@method processAttsPitch</p><table class="tags"><tbody><tr><td><small><strong>@param</strong> [XMLElement] </small></td><td><strong>mei_note</strong></td><td></td></tr><tr><td><small><strong>@return</strong> [String] </small></td><td><strong></strong></td><td>the VexFlow pitch</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">processAttsPitch : function(mei_note) {
+        var pname, oct;
+        pname = $(mei_note).attr('pname');
+        oct = $(mei_note).attr('oct');
+        if (!pname || !oct) {
+          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.MissingAttribute', 'pname and oct attributes must be specified for &lt;note&gt;');
+        }
+        return pname + '/' + oct;
+      },</pre></div></td></tr><tr id="section-73"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-73">&#182;</a></div><p>adds an articulation to a note-like object<br /> @method addArticulation</p><table class="tags"><tbody><tr><td><small><strong>@param</strong> [Vex.Flow.StaveNote] </small></td><td><strong>note</strong></td><td>the note-like VexFlow object</td></tr><tr><td><small><strong>@param</strong> [XMLElement] </small></td><td><strong>ar</strong></td><td>the articulation element</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">addArticulation : function(note, ar) {
+        var vexArtic = new VF.Articulation(m2v.tables.articulations[ar.getAttribute('artic')]);
+        var place = ar.getAttribute('place');
+        if (place) {
+          vexArtic.setPosition(m2v.tables.positions[place]);
+        }
+        note.addArticulation(0, vexArtic);
+      },</pre></div></td></tr><tr id="section-74"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-74">&#182;</a></div><p>adds a fermata to a note-like object<br /> @method addFermata</p><table class="tags"><tbody><tr><td><small><strong>@param</strong> [Vex.Flow.StaveNote] </small></td><td><strong>note</strong></td><td>the note-like VexFlow object</td></tr><tr><td><small><strong>@param</strong> ['above'] ['below'] </small></td><td><strong>place</strong></td><td>The place of the fermata</td></tr><tr><td><small><strong>@param</strong> [Number] </small></td><td><strong>index</strong></td><td>The index of the note in a chord (optional)</td></tr></tbody></table></td><td class="code"><div class="highlight"><pre lang="javascript">addFermata : function(note, place, index) {
+        var vexArtic = new VF.Articulation(m2v.tables.fermata[place]);
+        vexArtic.setPosition(m2v.tables.positions[place]);
+        note.addArticulation(index || 0, vexArtic);
+      },</pre></div></td></tr><tr id="section-75"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-75">&#182;</a></div><p>@method processSyllables</p></td><td class="code"><div class="highlight"><pre lang="javascript">processSyllables : function(note, element, staff_n) {
+        var me = this, annot, syl;
+        syl = me.processSyllable(element);
+        if (syl) {
+          annot = me.createAnnot(syl.text, me.cfg.lyricsFont).setVerticalJustification(me.BOTTOM);
+          // TODO handle justification
+          // .setJustification(VF.Annotation.Justify.LEFT);
+          note.addAnnotation(0, annot);
+          if (syl.wordpos) {
+            me.hyphenation.addSyllable(annot, syl.wordpos, staff_n);
+          }
+        }
+      },
+
+      // Add annotation (lyrics)
+      // processSyllable : function(mei_note) {
+      // var me = this, syl, full_syl = '', dash;
+      // syl = $(mei_note).find('syl');
+      // $(syl).each(function(i, s) {
+      // dash = ($(s).attr('wordpos') === 'i' || $(s).attr('wordpos') === 'm')
+      // ?
+      // '-' : '';
+      // full_syl += (i &gt; 0 ? '\n' : '') + $(s).text() + dash;
+      // });
+      // return full_syl;
+      // },
+
+      // temporarily only handle one syllable per note</pre></div></td></tr><tr id="section-76"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-76">&#182;</a></div><p>@method processSyllable</p></td><td class="code"><div class="highlight"><pre lang="javascript">processSyllable : function(mei_note) {
+        var syl = $(mei_note).find('syl')[0];
+        if (syl) {
+          return {
+            text : $(syl).text(),
+            wordpos : $(syl).attr('wordpos')
+          };
+        }
+      },
+
+      // Support for annotations</pre></div></td></tr><tr id="section-77"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-77">&#182;</a></div><p>@method createAnnot</p></td><td class="code"><div class="highlight"><pre lang="javascript">createAnnot : function(text, annotFont) {
+        return (new VF.Annotation(text)).setFont(annotFont.family, annotFont.size, annotFont.weight);
+      },</pre></div></td></tr><tr id="section-78"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-78">&#182;</a></div><p>@method getMandatoryAttr</p></td><td class="code"><div class="highlight"><pre lang="javascript">getMandatoryAttr : function(element, attribute) {
+        var result = $(element).attr(attribute);
+        if (!result) {
+          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.MissingAttribute', 'Attribute ' + attribute + ' is mandatory.');
+        }
+        return result;
+      },</pre></div></td></tr><tr id="section-79"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-79">&#182;</a></div><p>@method translateDuration</p></td><td class="code"><div class="highlight"><pre lang="javascript">translateDuration : function(mei_dur) {
+        var result = m2v.tables.durations[mei_dur + ''];
+        if (result)
+          return result;
+        throw new m2v.RUNTIME_ERROR('BadArguments', 'The MEI duration "' + mei_dur + '" is not supported.');
+      },
+
+      // TODO: dots should work with the lastest VexFlow, so try to remove the noDots
+      // parameter there. Can the noDots condition be removed entirely or will there
+      // be dots rendered with space elements?</pre></div></td></tr><tr id="section-80"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-80">&#182;</a></div><p>@method processAttsDuration</p></td><td class="code"><div class="highlight"><pre lang="javascript">processAttsDuration : function(mei_note, noDots) {
+        var me = this, dur, dur_attr;
+
+        dur_attr = $(mei_note).attr('dur');
+        if (dur_attr === undefined) {
+          alert('Could not get duration from:\n' + JSON.stringify(mei_note, null, '\t'));
+        }
+        dur = me.translateDuration(dur_attr);
+        if (!noDots &amp;&amp; $(mei_note).attr('dots') === '1')
+          dur += 'd';
+        return dur;
+      },</pre></div></td></tr><tr id="section-81"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-81">&#182;</a></div><p>@method setStemDir</p></td><td class="code"><div class="highlight"><pre lang="javascript">setStemDir : function(element, optionsObj) {
+        var specified_dir = {
+        down : VF.StaveNote.STEM_DOWN,
+        up : VF.StaveNote.STEM_UP
+        }[$(element).attr('stem.dir')];
+        if (specified_dir) {
+          optionsObj.stem_direction = specified_dir;
+        } else {
+          optionsObj.auto_stem = true;
+        }
+      },</pre></div></td></tr><tr id="section-82"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-82">&#182;</a></div><p>@method drawSystems</p></td><td class="code"><div class="highlight"><pre lang="javascript">drawSystems : function(ctx) {
+        var me = this, i = me.systems.length;
+        while (i--) {
+          if (me.systems[i]) {
+            me.systems[i].format(ctx).draw(ctx);
+          }
+        }
+      },</pre></div></td></tr><tr id="section-83"><td class="docs"><div class="pilwrap"><a class="pilcrow" href="#section-83">&#182;</a></div><p>@method drawVexBeams</p></td><td class="code"><div class="highlight"><pre lang="javascript">drawVexBeams : function(beams, ctx) {
+        $.each(beams, function() {
+          this.setContext(ctx).draw();
+        });
+
+      }
+    };
+
+    return m2v;
+
+  }(MEI2VF || {}, Vex.Flow, jQuery));</pre></div></td></tr></tbody></table></div></body></html>

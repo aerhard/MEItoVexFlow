@@ -1,0 +1,3403 @@
+{
+    "project": {},
+    "files": {
+        "Converter.js": {
+            "name": "Converter.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.Converter": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "EventLink.js": {
+            "name": "EventLink.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.EventLink": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "EventReference.js": {
+            "name": "EventReference.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.EventReverence\nRepresents and event with its xmlid, but if the xmlid is not defined, it\ncan also hold the timestamp that can be resolved as soon as the context\nthat\nholds the event is established. When the tstamp reference is being\nresolved, the xml:id is calculated using the generic function tstamp2id(),\nthen the\nxml:id stored, thus marking that the reference is resolved.": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "Hyphenation.js": {
+            "name": "Hyphenation.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.Hyphenation": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "Interface.js": {
+            "name": "Interface.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "LinkCollections.js": {
+            "name": "LinkCollections.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.LinkCollection": 1,
+                "MEI2VF.Hairpins": 1,
+                "MEI2VF.Ties": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "MEI2VF.js": {
+            "name": "MEI2VF.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.RUNTIME_ERROR": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "Measure.js": {
+            "name": "Measure.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.Measure": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "PointerCollections.js": {
+            "name": "PointerCollections.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.PointerCollection": 1,
+                "MEI2VF.Directives": 1,
+                "MEI2VF.Dynamics": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "StaffInfo.js": {
+            "name": "StaffInfo.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.StaffInfo\nContains the definition and the rendering information (i.e. what\nclef modifiers are to be rendered) of a single staff": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "StaveConnector.js": {
+            "name": "StaveConnector.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.Connectors\nHandles stave connectors": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "StaveVoices.js": {
+            "name": "StaveVoices.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.StaffVoice": 1,
+                "MEI2VF.StaveVoices\nStores all voices in a given measure along with the respective staff id.\nPasses all voices to Vex.Flow.Formatter and calls joinVoices, then draws\nall voices.": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "System.js": {
+            "name": "System.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.System": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "SystemInfo.js": {
+            "name": "SystemInfo.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "Util.js": {
+            "name": "Util.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF.Util": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "meilib.js": {
+            "name": "meilib.js",
+            "modules": {},
+            "classes": {
+                "MeiLib\nMeiLib - General purpose JavaScript functions for processing MEI documents.": 1,
+                "MeiLib.RuntimeError": 1,
+                "MeiLib": 1,
+                "MeiLib.EventEnumerator\nEnumerate over the children events of node (node is a layer or a beam).": 1,
+                "MeiLib.Alt\nRepresents an MEI <b>app</b> or <b>choice</b> element.": 1,
+                "MeiLib.Variant\nRepresents a <b>lem</b>, <b>rdg</b>, <b>sic</b> or <b>corr</b> element.": 1,
+                "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements.": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "tables.js": {
+            "name": "tables.js",
+            "modules": {},
+            "classes": {
+                "MEI2VF": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "vexflow-overrides.js": {
+            "name": "vexflow-overrides.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {},
+    "classes": {
+        "MEI2VF.Converter": {
+            "name": "MEI2VF.Converter",
+            "shortname": "MEI2VF.Converter",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "Converter.js",
+            "line": 26,
+            "description": "Converts an MEI XML document / document fragment to VexFlow objects and\noptionally renders it using Raphael or HTML5 Canvas.\n\nUsage:\n\n- Either pass a config object to the constructor function or (if no config\nobject has been passed) call {@link #initConfig} after construction.\n- Call {@link #process} to process an MEI XML document\n- Call {@link #draw} to draw the processed VexFlow objects to a canvas",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "config",
+                    "description": "",
+                    "type": "Object",
+                    "optional": true
+                }
+            ],
+            "chainable": 1,
+            "return": {
+                "description": "this",
+                "type": "MEI2VF.Converter"
+            }
+        },
+        "MEI2VF.EventLink": {
+            "name": "MEI2VF.EventLink",
+            "shortname": "MEI2VF.EventLink",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "EventLink.js",
+            "line": 22,
+            "access": "private",
+            "tagname": "Represents a link between two MEI events. The link is represented by two\nreferences:\n \n1. reference to start event, \n2. reference to end event.",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "first_id",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "last_id",
+                    "description": "",
+                    "type": "String"
+                }
+            ]
+        },
+        "MEI2VF.EventReverence\nRepresents and event with its xmlid, but if the xmlid is not defined, it\ncan also hold the timestamp that can be resolved as soon as the context\nthat\nholds the event is established. When the tstamp reference is being\nresolved, the xml:id is calculated using the generic function tstamp2id(),\nthen the\nxml:id stored, thus marking that the reference is resolved.": {
+            "name": "MEI2VF.EventReverence\nRepresents and event with its xmlid, but if the xmlid is not defined, it\ncan also hold the timestamp that can be resolved as soon as the context\nthat\nholds the event is established. When the tstamp reference is being\nresolved, the xml:id is calculated using the generic function tstamp2id(),\nthen the\nxml:id stored, thus marking that the reference is resolved.",
+            "shortname": "MEI2VF.EventReverence\nRepresents and event with its xmlid, but if the xmlid is not defined, it\ncan also hold the timestamp that can be resolved as soon as the context\nthat\nholds the event is established. When the tstamp reference is being\nresolved, the xml:id is calculated using the generic function tstamp2id(),\nthen the\nxml:id stored, thus marking that the reference is resolved.",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "EventReference.js",
+            "line": 23,
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "xmlid",
+                    "description": "",
+                    "type": "String"
+                }
+            ]
+        },
+        "MEI2VF.Hyphenation": {
+            "name": "MEI2VF.Hyphenation",
+            "shortname": "MEI2VF.Hyphenation",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "Hyphenation.js",
+            "line": 4,
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "cfg",
+                    "description": "",
+                    "type": "Object"
+                }
+            ]
+        },
+        "MEI2VF": {
+            "name": "MEI2VF",
+            "shortname": "MEI2VF",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "tables.js",
+            "line": 21,
+            "description": "### ADD GENERAL NOTES ###",
+            "singleton": ""
+        },
+        "MEI2VF.LinkCollection": {
+            "name": "MEI2VF.LinkCollection",
+            "shortname": "MEI2VF.LinkCollection",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "LinkCollections.js",
+            "line": 5,
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1
+        },
+        "MEI2VF.Hairpins": {
+            "name": "MEI2VF.Hairpins",
+            "shortname": "MEI2VF.Hairpins",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "LinkCollections.js",
+            "line": 188,
+            "extends": "MEI2VF.LinkCollection",
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1
+        },
+        "MEI2VF.Ties": {
+            "name": "MEI2VF.Ties",
+            "shortname": "MEI2VF.Ties",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "LinkCollections.js",
+            "line": 253,
+            "extends": "MEI2VF.LinkCollection",
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1
+        },
+        "MEI2VF.RUNTIME_ERROR": {
+            "name": "MEI2VF.RUNTIME_ERROR",
+            "shortname": "MEI2VF.RUNTIME_ERROR",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "MEI2VF.js",
+            "line": 32,
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "error_code",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "message",
+                    "description": "",
+                    "type": "String"
+                }
+            ]
+        },
+        "MEI2VF.Measure": {
+            "name": "MEI2VF.Measure",
+            "shortname": "MEI2VF.Measure",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "Measure.js",
+            "line": 3,
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "config",
+                    "description": "The configuration object",
+                    "type": "Object"
+                }
+            ]
+        },
+        "MEI2VF.PointerCollection": {
+            "name": "MEI2VF.PointerCollection",
+            "shortname": "MEI2VF.PointerCollection",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "PointerCollections.js",
+            "line": 3,
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1
+        },
+        "MEI2VF.Directives": {
+            "name": "MEI2VF.Directives",
+            "shortname": "MEI2VF.Directives",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "PointerCollections.js",
+            "line": 113,
+            "extends": "MEI2VF.PointerCollection",
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1
+        },
+        "MEI2VF.Dynamics": {
+            "name": "MEI2VF.Dynamics",
+            "shortname": "MEI2VF.Dynamics",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "PointerCollections.js",
+            "line": 150,
+            "extends": "MEI2VF.PointerCollection",
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1
+        },
+        "MEI2VF.StaffInfo\nContains the definition and the rendering information (i.e. what\nclef modifiers are to be rendered) of a single staff": {
+            "name": "MEI2VF.StaffInfo\nContains the definition and the rendering information (i.e. what\nclef modifiers are to be rendered) of a single staff",
+            "shortname": "MEI2VF.StaffInfo\nContains the definition and the rendering information (i.e. what\nclef modifiers are to be rendered) of a single staff",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "StaffInfo.js",
+            "line": 22,
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "staffdef",
+                    "description": ""
+                },
+                {
+                    "name": "w_clef",
+                    "description": ""
+                },
+                {
+                    "name": "w_keysig",
+                    "description": ""
+                },
+                {
+                    "name": "w_timesig",
+                    "description": ""
+                }
+            ]
+        },
+        "MEI2VF.Connectors\nHandles stave connectors": {
+            "name": "MEI2VF.Connectors\nHandles stave connectors",
+            "shortname": "MEI2VF.Connectors\nHandles stave connectors",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "StaveConnector.js",
+            "line": 23,
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "config",
+                    "description": "the config object",
+                    "type": "Object"
+                }
+            ]
+        },
+        "MEI2VF.StaffVoice": {
+            "name": "MEI2VF.StaffVoice",
+            "shortname": "MEI2VF.StaffVoice",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "StaveVoices.js",
+            "line": 23,
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "voice",
+                    "description": "",
+                    "type": "Object"
+                },
+                {
+                    "name": "staff_n",
+                    "description": "",
+                    "type": "Object"
+                }
+            ]
+        },
+        "MEI2VF.StaveVoices\nStores all voices in a given measure along with the respective staff id.\nPasses all voices to Vex.Flow.Formatter and calls joinVoices, then draws\nall voices.": {
+            "name": "MEI2VF.StaveVoices\nStores all voices in a given measure along with the respective staff id.\nPasses all voices to Vex.Flow.Formatter and calls joinVoices, then draws\nall voices.",
+            "shortname": "MEI2VF.StaveVoices\nStores all voices in a given measure along with the respective staff id.\nPasses all voices to Vex.Flow.Formatter and calls joinVoices, then draws\nall voices.",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "StaveVoices.js",
+            "line": 36,
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1
+        },
+        "MEI2VF.System": {
+            "name": "MEI2VF.System",
+            "shortname": "MEI2VF.System",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "System.js",
+            "line": 6,
+            "description": "A single instance of a staff system, containing and processing information\nabout the measures contained",
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "config",
+                    "description": "The configuration object",
+                    "type": "Object"
+                }
+            ]
+        },
+        "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children": {
+            "name": "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children",
+            "shortname": "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "SystemInfo.js",
+            "line": 3,
+            "access": "private",
+            "tagname": "",
+            "is_constructor": 1
+        },
+        "MEI2VF.Util": {
+            "name": "MEI2VF.Util",
+            "shortname": "MEI2VF.Util",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "Util.js",
+            "line": 3,
+            "singleton": "",
+            "access": "private",
+            "tagname": ""
+        },
+        "MeiLib\nMeiLib - General purpose JavaScript functions for processing MEI documents.": {
+            "name": "MeiLib\nMeiLib - General purpose JavaScript functions for processing MEI documents.",
+            "shortname": "MeiLib\nMeiLib - General purpose JavaScript functions for processing MEI documents.",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "meilib.js",
+            "line": 22,
+            "singleton": ""
+        },
+        "MeiLib.RuntimeError": {
+            "name": "MeiLib.RuntimeError",
+            "shortname": "MeiLib.RuntimeError",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "meilib.js",
+            "line": 29,
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "errorcode",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "message",
+                    "description": "",
+                    "type": "String"
+                }
+            ]
+        },
+        "MeiLib": {
+            "name": "MeiLib",
+            "shortname": "MeiLib",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "meilib.js",
+            "line": 134,
+            "singleton": ""
+        },
+        "MeiLib.EventEnumerator\nEnumerate over the children events of node (node is a layer or a beam).": {
+            "name": "MeiLib.EventEnumerator\nEnumerate over the children events of node (node is a layer or a beam).",
+            "shortname": "MeiLib.EventEnumerator\nEnumerate over the children events of node (node is a layer or a beam).",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "meilib.js",
+            "line": 58,
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "node",
+                    "description": "an XML DOM object",
+                    "type": "Object"
+                }
+            ]
+        },
+        "MeiLib.Alt\nRepresents an MEI <b>app</b> or <b>choice</b> element.": {
+            "name": "MeiLib.Alt\nRepresents an MEI <b>app</b> or <b>choice</b> element.",
+            "shortname": "MeiLib.Alt\nRepresents an MEI <b>app</b> or <b>choice</b> element.",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "meilib.js",
+            "line": 592,
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "xmlID",
+                    "description": "the xml:id attribute value of the <b>app</b> or <b>choice</b>\nelement.",
+                    "type": "String"
+                },
+                {
+                    "name": "parentID",
+                    "description": "the xml:id attribute value of the direct parent\nelement of the <b>app</b> or <b>choice</b> element.",
+                    "type": "String"
+                }
+            ]
+        },
+        "MeiLib.Variant\nRepresents a <b>lem</b>, <b>rdg</b>, <b>sic</b> or <b>corr</b> element.": {
+            "name": "MeiLib.Variant\nRepresents a <b>lem</b>, <b>rdg</b>, <b>sic</b> or <b>corr</b> element.",
+            "shortname": "MeiLib.Variant\nRepresents a <b>lem</b>, <b>rdg</b>, <b>sic</b> or <b>corr</b> element.",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "meilib.js",
+            "line": 633,
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "xmlID",
+                    "description": "the xml:id attribute value of the element.",
+                    "type": "String"
+                },
+                {
+                    "name": "tagname",
+                    "description": "'lem' for <b>lem</b> and 'rdg for <b>rdg</b> elements.",
+                    "type": "String"
+                },
+                {
+                    "name": "source",
+                    "description": "space-separated list of the source IDs what the given\n           item belongs to.",
+                    "type": "String"
+                },
+                {
+                    "name": "resp",
+                    "description": "xmlID of the editor responsible for the given reading or\n           correction.",
+                    "type": "String"
+                },
+                {
+                    "name": "n",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "n": "attribute value of the element."
+        },
+        "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements.": {
+            "name": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements.",
+            "shortname": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements.",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "meilib.js",
+            "line": 661,
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "meiXmlDoc",
+                    "description": "the MEI document.",
+                    "type": "XMLDocument"
+                }
+            ]
+        }
+    },
+    "classitems": [
+        {
+            "file": "Converter.js",
+            "line": 59,
+            "cfg": "{Number} page_width The width of the page",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 63,
+            "cfg": "{Number} page_margin_top The top page margin",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 67,
+            "cfg": "{Number} page_margin_left The left page margin",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 71,
+            "cfg": "{Number} page_margin_right The right page margin",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 75,
+            "cfg": "{Number} systemSpacing The spacing between two staff\nsystems",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 80,
+            "cfg": "{Number} staveSpacing The default spacing between two staffs\nwithin a system; overridden by the spacing attribute of a staffDef\nelement in the MEI code",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 86,
+            "cfg": "{Boolean} autoStaveConnectorLine Specifies if a stave connector\nline is drawn on the left of systems by default; if set to true, the\nauto line will not appear when staffDef/@symbol=\"none\" is set for the\noutermost staffDef element",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 93,
+            "cfg": "{\"full\"/\"abbr\"/null} labelMode Specifies the way voice labels are\nadded\nto staves. Values:\n\n- 'full': renders full labels in the first system, abbreviated labels\nin all following systems\n- 'abbr': only render abbreviated labels\n- null or undefined: renders no labels",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 104,
+            "cfg": "{Number} maxHyphenDistance The maximum distance (in pixels)\nbetween two hyphens in the lyrics lines",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 112,
+            "cfg": "{Number} lyricsFont.size the font size\n\nNB the weight properties can be used to specify style, weight\nor both (space separated); some of the objects are passed directly\nto vexFlow (which requires the name 'weight'), so the name is\n'weight'",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 127,
+            "cfg": "{String} annotFont.weight the font weight",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 139,
+            "cfg": "{String} dynamFont.weight the font weight",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 150,
+            "cfg": "{String} tempoFont.weight the font weight",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 161,
+            "cfg": "{Object} staff The staff config object passed to each\nVex.Flow.Staff",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 173,
+            "description": "initializes the Converter",
+            "itemtype": "method",
+            "name": "initConfig",
+            "params": [
+                {
+                    "name": "config",
+                    "description": "A config object (optional)",
+                    "type": "Object"
+                }
+            ],
+            "chainable": 1,
+            "return": {
+                "description": "this",
+                "type": "MEI2VF.Converter"
+            },
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 183,
+            "description": "an instance of MEI2VF.SystemInfo dealing with the system and staff\ninfo derived from\nthe MEI data",
+            "itemtype": "property",
+            "name": "systemInfo",
+            "type": "MEI2VF.SystemInfo",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 193,
+            "description": "The print space coordinates calculated from the page config.",
+            "itemtype": "property",
+            "name": "printSpace",
+            "type": "Object",
+            "class": "MEI2VF.Converter",
+            "subprops": [
+                {
+                    "name": "top",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "left",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "right",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "width",
+                    "description": "",
+                    "type": "Number"
+                }
+            ]
+        },
+        {
+            "file": "Converter.js",
+            "line": 216,
+            "description": "Resets all data. Called by {@link #process}.",
+            "itemtype": "method",
+            "name": "reset",
+            "chainable": 1,
+            "return": {
+                "description": "this",
+                "type": "MEI2VF.Converter"
+            },
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 225,
+            "itemtype": "property",
+            "name": "unresolvedTStamp2",
+            "type": "",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 229,
+            "description": "Contains all {@link MEI2VF.System} objects",
+            "itemtype": "property",
+            "name": "systems",
+            "type": "MEI2VF.System[]",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 235,
+            "description": "Contains all\nVex.Flow.Stave objects. Addressing scheme:\n[measure_n][staff_n]",
+            "itemtype": "property",
+            "name": "allVexMeasureStaffs",
+            "type": "Vex.Flow.Stave[][]",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 242,
+            "description": "Contains all Vex.Flow.Beam objects. Data is just pushed in\nand later processed as a whole, so the array index is\nirrelevant.",
+            "itemtype": "property",
+            "name": "allBeams",
+            "type": "Vex.Flow.Beam[]",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 249,
+            "description": "an instance of MEI2VF.Dynamics dealing with and storing all dynamics\nfound in the MEI document",
+            "itemtype": "property",
+            "name": "dynamics",
+            "type": "MEI2VF.Dynamics",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 255,
+            "description": "an instance of MEI2VF.Directives dealing with and storing all\ndirectives found in the MEI document",
+            "itemtype": "property",
+            "name": "directives",
+            "type": "MEI2VF.Directives",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 261,
+            "description": "an instance of MEI2VF.Ties dealing with and storing all ties found in\nthe MEI document",
+            "itemtype": "property",
+            "name": "ties",
+            "type": "MEI2VF.Ties",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 267,
+            "description": "an instance of MEI2VF.Ties dealing with and storing all slurs found in\nthe MEI document",
+            "itemtype": "property",
+            "name": "slurs",
+            "type": "MEI2VF.Ties",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 273,
+            "description": "an instance of MEI2VF.Hairpins dealing with and storing all hairpins\nfound in the MEI document",
+            "itemtype": "property",
+            "name": "hairpins",
+            "type": "MEI2VF.Hairpins",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 279,
+            "description": "an instance of MEI2VF.Hyphenation dealing with and storing all lyrics\nhyphens found in the MEI document",
+            "itemtype": "property",
+            "name": "hyphenation",
+            "type": "MEI2VF.Hyphenation",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 285,
+            "description": "contains all note-like objects in the current MEI document, accessible\nby their xml:id",
+            "itemtype": "property",
+            "name": "notes_by_id",
+            "type": "Object",
+            "class": "MEI2VF.Converter",
+            "subprops": [
+                {
+                    "name": "meiNote",
+                    "description": "the XML Element of the note",
+                    "type": "XMLElement"
+                },
+                {
+                    "name": "vexNote",
+                    "description": "the VexFlow note\nobject",
+                    "type": "Vex.Flow.StaveNote"
+                }
+            ]
+        },
+        {
+            "file": "Converter.js",
+            "line": 294,
+            "description": "the number of the current system",
+            "itemtype": "property",
+            "name": "currentSystem_n",
+            "type": "Number",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 299,
+            "description": "indicates if a system break is currently to be processed",
+            "itemtype": "property",
+            "name": "pendingSystemBreak",
+            "type": "Boolean",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 304,
+            "description": "indicates if a system break is currently to be processed",
+            "itemtype": "property",
+            "name": "pendingSectionBreak",
+            "type": "Boolean",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 309,
+            "description": "Contains information about the\nvolta type of the current staff. Properties:\n\n-  `start` {String} indicates the number to render to the volta. When\nfalsy, it is assumed that the volta does not start in the current\nmeasure\n-  `end` {Boolean} indicates if there is a volta end in the current\nmeasure\n\nIf null, no volta is rendered",
+            "itemtype": "property",
+            "name": "currentVoltaType",
+            "type": "Object",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 326,
+            "description": "Calls {@link #reset} and then processes the specified MEI document or\ndocument fragment. The generated objects can\nbe processed further or drawn immediately to a canvas via {@link #draw}.",
+            "itemtype": "method",
+            "name": "process",
+            "chainable": 1,
+            "params": [
+                {
+                    "name": "xmlDoc",
+                    "description": "the XML document",
+                    "type": "XMLDocument"
+                }
+            ],
+            "return": {
+                "description": "this",
+                "type": "MEI2VF.Converter"
+            },
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 348,
+            "description": "Draws the internal data objects to a canvas",
+            "itemtype": "method",
+            "name": "draw",
+            "chainable": 1,
+            "params": [
+                {
+                    "name": "ctx",
+                    "description": "The canvas context"
+                }
+            ],
+            "return": {
+                "description": "this",
+                "type": "MEI2VF.Converter"
+            },
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 366,
+            "description": "assigns an external function for processing pgHead elements. By default,\npgHead elements are ignored in MEI2VF.",
+            "itemtype": "method",
+            "name": "setPgHeadProcessor",
+            "params": [
+                {
+                    "name": "fn",
+                    "description": "the callback function. Parameter: element",
+                    "type": "Function"
+                }
+            ],
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 376,
+            "description": "assigns an external function for processing anchoredText elements. By\ndefault, anchoredText elements are ignored in MEI2VF.",
+            "itemtype": "method",
+            "name": "setAnchoredTextProcessor",
+            "params": [
+                {
+                    "name": "fn",
+                    "description": "the callback function. Parameter: element",
+                    "type": "Function"
+                }
+            ],
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 391,
+            "description": "Returns the width and the height of the area that contains all drawn\nstaves as per the last processing.",
+            "itemtype": "method",
+            "name": "getStaffArea",
+            "return": {
+                "description": "the width and height of the area that contains all\nstaves.\nProperties: width, height",
+                "type": "Object"
+            },
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 433,
+            "description": "returns a 2d array of all Vex.Flow.Stave objects, arranged by\n[measure_n][staff_n]",
+            "itemtype": "method",
+            "name": "getAllVexMeasureStaffs",
+            "return": {
+                "description": "see {@link #allVexMeasureStaffs}",
+                "type": "Vex.Flow.Stave[][]"
+            },
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 443,
+            "description": "returns all systems created when processing the MEI document",
+            "itemtype": "method",
+            "name": "getSystems",
+            "return": {
+                "description": "",
+                "type": "MEI2VF.System[]"
+            },
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 452,
+            "description": "returns all note-like objects created when processing the MEI document",
+            "itemtype": "method",
+            "name": "getNotes",
+            "return": {
+                "description": "for the object properties, see {@link #notes_by_id}",
+                "type": "Object"
+            },
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 461,
+            "description": "creates in initializes a new {@link MEI2VF.System} and updates the staff\nmodifier infos",
+            "itemtype": "method",
+            "name": "createNewSystem",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 505,
+            "itemtype": "method",
+            "name": "processSections",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 519,
+            "itemtype": "method",
+            "name": "processSection",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 529,
+            "itemtype": "method",
+            "name": "processEnding",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 545,
+            "description": "MEI element <b>section</b> may contain (MEI v2.1.0): MEI.cmn: measure\nMEI.critapp: app MEI.edittrans: add choice corr damage del gap\nhandShift orig reg restore sic subst supplied unclear MEI.shared:\nannot ending expansion pb sb scoreDef section staff staffDef\nMEI.text: div MEI.usersymbols: anchoredText curve line symbol\n\nSupported elements: <b>measure</b> <b>scoreDef</b> <b>staffDef</b>\n<b>sb</b>",
+            "itemtype": "method",
+            "name": "processSectionChild",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 576,
+            "description": "sets the property {@link #pendingSystemBreak} to `true`. When true, a\nnew system will be initialized when {@link #processMeasure} is called\nthe next time.",
+            "itemtype": "method",
+            "name": "setPendingSystemBreak",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 587,
+            "description": "Processes a MEI measure element and calls functions to process a\nselection of ancestors: .//staff, ./slur, ./tie, ./hairpin, .//tempo",
+            "itemtype": "method",
+            "name": "processMeasure",
+            "params": [
+                {
+                    "name": "element",
+                    "description": "the MEI measure element",
+                    "type": "XMLElement"
+                }
+            ],
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 687,
+            "description": "Processes a single stave in a measure",
+            "itemtype": "method",
+            "name": "processStaffInMeasure",
+            "params": [
+                {
+                    "name": "system",
+                    "description": "the current system",
+                    "type": "MEI2VF.System"
+                },
+                {
+                    "name": "staffs",
+                    "description": "",
+                    "type": "Array"
+                },
+                {
+                    "name": "staff_element",
+                    "description": "the MEI staff element",
+                    "type": "XMLElement"
+                },
+                {
+                    "name": "measure_n",
+                    "description": "the measure number",
+                    "type": "Number"
+                },
+                {
+                    "name": "left_barline",
+                    "description": "the left barline",
+                    "type": "String"
+                },
+                {
+                    "name": "right_barline",
+                    "description": "the right barline",
+                    "type": "String"
+                },
+                {
+                    "name": "currentStaveVoices",
+                    "description": "The current MEI2VF\nStaveVoices object",
+                    "type": "MEI2VF.StaveVoices"
+                },
+                {
+                    "name": "atSystemTop",
+                    "description": "indicates if the current stave is the first\nstave in its system",
+                    "type": "Boolean"
+                }
+            ],
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 734,
+            "description": "Creates a new Vex.Flow.Stave object at the specified y coordinate. This\nmethod sets fixed x coordinates, which will later be substituted in\n{@link MEI2VF.System#format} - the Vex.Flow.Stave\nobjects must be initialized with some x measurements, but the real\nvalues depend on values only available after modifiers, voices etc\nhave been added.",
+            "itemtype": "method",
+            "name": "createVexStaff",
+            "params": [
+                {
+                    "name": "y",
+                    "description": "the y coordinate of the staff",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "The initialized stave object",
+                "type": "Vex.Flow.Stave"
+            },
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 756,
+            "description": "Adds staff modifiers (bar lines, clef, time signature, key signature,\nvolta) to a Vex.Flow.Staff.",
+            "itemtype": "method",
+            "name": "addStaffModifiers",
+            "params": [
+                {
+                    "name": "staff",
+                    "description": "The stave object",
+                    "type": "Vex.Flow.Stave"
+                },
+                {
+                    "name": "staff_n",
+                    "description": "the staff number",
+                    "type": "Number"
+                },
+                {
+                    "name": "left_barline",
+                    "description": "the left barline",
+                    "type": "String"
+                },
+                {
+                    "name": "right_barline",
+                    "description": "the right barline",
+                    "type": "String"
+                },
+                {
+                    "name": "atSystemTop",
+                    "description": "indicates if the current stave is the first\nstave in its system",
+                    "type": "Boolean"
+                }
+            ],
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 796,
+            "description": "Adds a volta to a staff. Currently not working due to the reworking of\nthe measure width calulation (27/4/2014)",
+            "itemtype": "method",
+            "name": "addStaffVolta",
+            "experimental": "",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 812,
+            "itemtype": "method",
+            "name": "getStaffLabels",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 832,
+            "description": "Creates a new Vex.Flow.Voice",
+            "itemtype": "method",
+            "name": "createVexVoice",
+            "params": [
+                {
+                    "name": "voice_contents",
+                    "description": "The contents of the voice, an array of\ntickables",
+                    "type": "Array"
+                },
+                {
+                    "name": "staff_n",
+                    "description": "The number of the enclosing staff element\nreturn {Vex.Flow.Voice}",
+                    "type": "Number"
+                }
+            ],
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 856,
+            "itemtype": "method",
+            "name": "resolveUnresolvedTimestamps",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 881,
+            "description": "processes a note like element by calling the adequate processing\nfunction",
+            "itemtype": "method",
+            "name": "processNoteLikeElement",
+            "params": [
+                {
+                    "name": "element",
+                    "description": "the element to process",
+                    "type": "XMLElement"
+                },
+                {
+                    "name": "staff",
+                    "description": ""
+                },
+                {
+                    "name": "staff_n",
+                    "description": "the number of the staff as given in the MEI\ndocument",
+                    "type": "Number"
+                }
+            ],
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 912,
+            "itemtype": "method",
+            "name": "processAnchoredStaffText",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 920,
+            "itemtype": "method",
+            "name": "processAnchoredLayerText",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 928,
+            "itemtype": "method",
+            "name": "processNote",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1043,
+            "itemtype": "method",
+            "name": "processChord",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1135,
+            "itemtype": "method",
+            "name": "processNoteInChord",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1170,
+            "itemtype": "method",
+            "name": "processRest",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1218,
+            "itemtype": "method",
+            "name": "processmRest",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1268,
+            "itemtype": "method",
+            "name": "processSpace",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1292,
+            "itemtype": "method",
+            "name": "processBeam",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1307,
+            "itemtype": "method",
+            "name": "processAttrAccid",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1318,
+            "itemtype": "method",
+            "name": "processAttrHo",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1326,
+            "itemtype": "method",
+            "name": "processAttrTie",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1351,
+            "itemtype": "method",
+            "name": "processAttrSlur",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1375,
+            "itemtype": "method",
+            "name": "parse_slure_attribute",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1404,
+            "description": "converts the pitch of an MEI <b>note</b> element to a VexFlow pitch",
+            "itemtype": "method",
+            "name": "processAttsPitch",
+            "params": [
+                {
+                    "name": "mei_note",
+                    "description": "",
+                    "type": "XMLElement"
+                }
+            ],
+            "return": {
+                "description": "the VexFlow pitch",
+                "type": "String"
+            },
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1421,
+            "description": "adds an articulation to a note-like object",
+            "itemtype": "method",
+            "name": "addArticulation",
+            "params": [
+                {
+                    "name": "note",
+                    "description": "the note-like VexFlow object",
+                    "type": "Vex.Flow.StaveNote"
+                },
+                {
+                    "name": "ar",
+                    "description": "the articulation element",
+                    "type": "XMLElement"
+                }
+            ],
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1436,
+            "description": "adds a fermata to a note-like object",
+            "itemtype": "method",
+            "name": "addFermata",
+            "params": [
+                {
+                    "name": "note",
+                    "description": "the note-like VexFlow object",
+                    "type": "Vex.Flow.StaveNote"
+                },
+                {
+                    "name": "place",
+                    "description": "The place of the fermata",
+                    "type": "'above'/'below'"
+                },
+                {
+                    "name": "index",
+                    "description": "The index of the note in a chord (optional)",
+                    "type": "Number"
+                }
+            ],
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1449,
+            "itemtype": "method",
+            "name": "processSyllables",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1480,
+            "itemtype": "method",
+            "name": "processSyllable",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1494,
+            "itemtype": "method",
+            "name": "createAnnot",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1501,
+            "itemtype": "method",
+            "name": "getMandatoryAttr",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1512,
+            "itemtype": "method",
+            "name": "translateDuration",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1525,
+            "itemtype": "method",
+            "name": "processAttsDuration",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1541,
+            "itemtype": "method",
+            "name": "setStemDir",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1556,
+            "itemtype": "method",
+            "name": "drawSystems",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "Converter.js",
+            "line": 1568,
+            "itemtype": "method",
+            "name": "drawVexBeams",
+            "class": "MEI2VF.Converter"
+        },
+        {
+            "file": "EventLink.js",
+            "line": 46,
+            "params": [
+                {
+                    "name": "params",
+                    "description": "is an object. for ties and slurs { linkCond } to indicate\n           the linking condition when parsing from attributes (pitch\n           name for ties, nesting level for slurs); for hairpins\n           params it is an object { place, form }",
+                    "type": "Object"
+                }
+            ],
+            "class": "MEI2VF.EventLink"
+        },
+        {
+            "file": "EventReference.js",
+            "line": 69,
+            "params": [
+                {
+                    "name": "params",
+                    "description": "; both parameters are optional;\n           meicontext is an obejct { layer, meter }; strict is\n           boolean, false if not defined.",
+                    "type": "!~YUIDOC_LINE~!           meicontext, strict"
+                }
+            ],
+            "class": "MEI2VF.EventReverence\nRepresents and event with its xmlid, but if the xmlid is not defined, it\ncan also hold the timestamp that can be resolved as soon as the context\nthat\nholds the event is established. When the tstamp reference is being\nresolved, the xml:id is calculated using the generic function tstamp2id(),\nthen the\nxml:id stored, thus marking that the reference is resolved."
+        },
+        {
+            "file": "Interface.js",
+            "line": 30,
+            "itemtype": "property",
+            "name": "",
+            "class": "MEI2VF"
+        },
+        {
+            "file": "Interface.js",
+            "line": 35,
+            "description": "Basic rendering function. Uses the m2v.Converter's prototype as a\nsingleton. No scaling; page layout information in the MEI code is ignored.",
+            "params": [
+                {
+                    "name": "xmlDoc",
+                    "description": "The MEI XML Document",
+                    "type": "XMLDocument"
+                },
+                {
+                    "name": "target",
+                    "description": "An svg or canvas element",
+                    "type": "XMLElement"
+                },
+                {
+                    "name": "width",
+                    "description": "The width of the print space in pixels",
+                    "type": "Number"
+                },
+                {
+                    "name": "height",
+                    "description": "The height of the print space in pixels",
+                    "type": "Number"
+                },
+                {
+                    "name": "backend",
+                    "description": "Set to Vex.Flow.Renderer.Backends.RAPHAEL to\nrender to a Raphael context; if falsy, Vex.Flow.Renderer.Backends.CANVAS\nis set",
+                    "type": "Number"
+                },
+                {
+                    "name": "options",
+                    "description": "The options passed to the converter. For a list, see\n{@link MEI2VF.Converter MEI2VF.Converter}",
+                    "type": "Object"
+                }
+            ],
+            "class": "MEI2VF"
+        },
+        {
+            "file": "LinkCollections.js",
+            "line": 17,
+            "description": "initializes the LinkCollection",
+            "class": "MEI2VF.LinkCollection"
+        },
+        {
+            "file": "LinkCollections.js",
+            "line": 21,
+            "itemtype": "property",
+            "name": "",
+            "class": "MEI2VF.LinkCollection"
+        },
+        {
+            "file": "LinkCollections.js",
+            "line": 25,
+            "itemtype": "property",
+            "name": "",
+            "class": "MEI2VF.LinkCollection"
+        },
+        {
+            "file": "LinkCollections.js",
+            "line": 29,
+            "itemtype": "property",
+            "name": "",
+            "class": "MEI2VF.LinkCollection"
+        },
+        {
+            "file": "LinkCollections.js",
+            "line": 33,
+            "itemtype": "property",
+            "name": "",
+            "class": "MEI2VF.LinkCollection"
+        },
+        {
+            "file": "LinkCollections.js",
+            "line": 47,
+            "description": "create EventLink objects from  <b>tie</b>, <b>slur</b> or <b>hairpin</b>\nelements",
+            "class": "MEI2VF.LinkCollection"
+        },
+        {
+            "file": "LinkCollections.js",
+            "line": 152,
+            "description": "adds a new model to {@link #allModels}",
+            "params": [
+                {
+                    "name": "obj",
+                    "description": "the object to add",
+                    "type": "Object"
+                }
+            ],
+            "class": "MEI2VF.LinkCollection"
+        },
+        {
+            "file": "LinkCollections.js",
+            "line": 160,
+            "description": "gets all models",
+            "return": {
+                "description": "all models in {@link #allModels}",
+                "type": "Object[]"
+            },
+            "class": "MEI2VF.LinkCollection"
+        },
+        {
+            "file": "LinkCollections.js",
+            "line": 168,
+            "description": "sets the context for the link collection",
+            "params": [
+                {
+                    "name": "ctx",
+                    "description": "the canvas context",
+                    "type": "Object"
+                }
+            ],
+            "class": "MEI2VF.LinkCollection"
+        },
+        {
+            "file": "LinkCollections.js",
+            "line": 177,
+            "description": "draws the link collection to the canvas set by {@link #setContext}",
+            "class": "MEI2VF.LinkCollection"
+        },
+        {
+            "file": "MEI2VF.js",
+            "line": 6,
+            "itemtype": "property",
+            "name": "DO_LOG specifies if logging is enabled or disabled.!~YUIDOC_LINE~!Defaults to false. Use {@link MEI2VF#setLogging setLogging()} to change!~YUIDOC_LINE~!the value.",
+            "type": "Boolean",
+            "access": "private",
+            "tagname": "",
+            "class": "MEI2VF"
+        },
+        {
+            "file": "MEI2VF.js",
+            "line": 14,
+            "itemtype": "method",
+            "name": "setLogging enables or disables MEI2VF logging",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "",
+                    "type": "Boolean"
+                }
+            ],
+            "class": "MEI2VF"
+        },
+        {
+            "file": "MEI2VF.js",
+            "line": 22,
+            "itemtype": "method",
+            "name": "L the internal MEI2VF logging function. Passes the function!~YUIDOC_LINE~!arguments to VexFlow's Vex.L function if  is `true`",
+            "type": "@link #DO_LOG",
+            "access": "private",
+            "tagname": "",
+            "class": "MEI2VF"
+        },
+        {
+            "file": "MEI2VF.js",
+            "line": 45,
+            "itemtype": "method",
+            "name": "",
+            "return": {
+                "description": "the string representation of the error",
+                "type": "String"
+            },
+            "class": "MEI2VF.RUNTIME_ERROR"
+        },
+        {
+            "file": "Measure.js",
+            "line": 17,
+            "itemtype": "property",
+            "name": "",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 22,
+            "description": "initializes the current MEI2VF.Measure object",
+            "params": [
+                {
+                    "name": "config",
+                    "description": "The configuration object",
+                    "type": "Object"
+                }
+            ],
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 28,
+            "cfg": "{XMLElement} element the MEI element of the current measure",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 32,
+            "cfg": "{Number} n The number of the current measure as specified in\nthe MEI document",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 38,
+            "cfg": "{Array} staffs an array of the staffs in the current\nmeasure. Contains",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 43,
+            "cfg": "{MEI2VF.StaveVoices} voices The voices of all staffs in the\ncurrent measure",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 48,
+            "cfg": "{MEI2VF.Connectors} startConnectors an instance of\nMEI2VF.Connectors handling all left connectors (only the first measure\nin a system has data)",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 54,
+            "cfg": "{MEI2VF.Connectors} inlineConnectors an instance of\nMEI2VF.Connectors handling all right connectors",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 63,
+            "cfg": "{XMLElement[]} tempoElements the MEI tempo elements in the\ncurrent\nmeasure",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 69,
+            "cfg": "{Object} tempoFont the font used for rendering tempo\nspecifications",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 74,
+            "itemtype": "property",
+            "name": "maxNoteStartX the maximum note_start_x value of all!~YUIDOC_LINE~!Vex.Flow.Stave objects in the current measure",
+            "type": "Number",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 79,
+            "itemtype": "property",
+            "name": "meiW the width attribute of the measure element or!~YUIDOC_LINE~!null if NaN",
+            "type": "Number",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 86,
+            "description": "reads the width attribute of the specified element and converts it to a\n number",
+            "params": [
+                {
+                    "name": "element",
+                    "description": "the element to process",
+                    "type": "XMLElement"
+                }
+            ],
+            "return": {
+                "description": "the number of the attribute or null if NaN",
+                "type": "Number"
+            },
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 96,
+            "description": "gets the staffs array of the current measure",
+            "return": {
+                "description": "",
+                "type": "Array"
+            },
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 104,
+            "description": "gets the voices object of the current measure",
+            "return": {
+                "description": "",
+                "type": "MEI2VF.StaveVoices"
+            },
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 112,
+            "description": "gets the x coordinate of the staff",
+            "return": {
+                "description": "",
+                "type": "Number"
+            },
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 120,
+            "description": "gets the number of the current staff as specified in the MEI code",
+            "return": {
+                "description": "",
+                "type": "Number"
+            },
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 128,
+            "description": "gets the first defined staff in the current measure",
+            "return": {
+                "description": "",
+                "type": "Vex.Flow.Stave"
+            },
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 145,
+            "description": "Writes the data of the tempo elements in the current measure to the\ncorresponding Vex.Flow.Stave object",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 173,
+            "description": "calculates the minimum width of the current measure",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 180,
+            "itemtype": "property",
+            "name": "",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 184,
+            "itemtype": "property",
+            "name": "",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 190,
+            "description": "gets the minimum width of the current measure;",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 197,
+            "description": "calculates the maximum note_start_x of all Vex.Flow.Stave objects in the\ncurrent measure",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 213,
+            "description": "calculates additional start padding when there are repetition start bars\nin the current measure",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 220,
+            "itemtype": "property",
+            "name": "",
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 229,
+            "description": "Formats the staffs in the current measure: sets x coordinates and adds\nstaff labels",
+            "params": [
+                {
+                    "name": "x",
+                    "description": "The x coordinate of the the measure",
+                    "type": "Number"
+                },
+                {
+                    "name": "labels",
+                    "description": "The labels of all staves",
+                    "type": "String[]"
+                }
+            ],
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "Measure.js",
+            "line": 258,
+            "description": "Draws the staffs, voices and connectors in the current measure to a\ncanvas",
+            "params": [
+                {
+                    "name": "ctx",
+                    "description": "the canvas context",
+                    "type": "Object"
+                }
+            ],
+            "class": "MEI2VF.Measure"
+        },
+        {
+            "file": "PointerCollections.js",
+            "line": 17,
+            "description": "initializes the PointerCollection",
+            "class": "MEI2VF.PointerCollection"
+        },
+        {
+            "file": "PointerCollections.js",
+            "line": 21,
+            "itemtype": "property",
+            "name": "",
+            "class": "MEI2VF.PointerCollection"
+        },
+        {
+            "file": "PointerCollections.js",
+            "line": 25,
+            "itemtype": "property",
+            "name": "",
+            "class": "MEI2VF.PointerCollection"
+        },
+        {
+            "file": "PointerCollections.js",
+            "line": 29,
+            "itemtype": "property",
+            "name": "",
+            "class": "MEI2VF.PointerCollection"
+        },
+        {
+            "file": "PointerCollections.js",
+            "line": 33,
+            "itemtype": "property",
+            "name": "",
+            "class": "MEI2VF.PointerCollection"
+        },
+        {
+            "file": "PointerCollections.js",
+            "line": 96,
+            "description": "adds a new model to {@link #allModels}",
+            "params": [
+                {
+                    "name": "obj",
+                    "description": "the object to add",
+                    "type": "Object"
+                }
+            ],
+            "class": "MEI2VF.PointerCollection"
+        },
+        {
+            "file": "PointerCollections.js",
+            "line": 104,
+            "description": "gets all models",
+            "return": {
+                "description": "all models in {@link #allModels}",
+                "type": "Object[]"
+            },
+            "class": "MEI2VF.PointerCollection"
+        },
+        {
+            "file": "StaffInfo.js",
+            "line": 172,
+            "description": "gets the vexFlow time signature from an MEI staffDef element",
+            "return": {
+                "description": "the vexFlow time signature or undefined",
+                "type": "String"
+            },
+            "class": "MEI2VF.StaffInfo\nContains the definition and the rendering information (i.e. what\nclef modifiers are to be rendered) of a single staff"
+        },
+        {
+            "file": "StaveVoices.js",
+            "line": 84,
+            "params": [
+                {
+                    "name": "staff",
+                    "description": "a staff in the current measure used to set\n the x dimensions of the voice",
+                    "type": "Object"
+                }
+            ],
+            "class": "MEI2VF.StaveVoices\nStores all voices in a given measure along with the respective staff id.\nPasses all voices to Vex.Flow.Formatter and calls joinVoices, then draws\nall voices."
+        },
+        {
+            "file": "System.js",
+            "line": 21,
+            "itemtype": "property",
+            "name": "LABEL_PADDING the padding (in pixels) between the voice!~YUIDOC_LINE~!labels and the staves",
+            "type": "Number",
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 27,
+            "params": [
+                {
+                    "name": "config",
+                    "description": "The configuration object",
+                    "type": "Object"
+                }
+            ],
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 33,
+            "cfg": "{Number|null} leftMar the left system margin as specified in the\nMEI file or null if there is no margin specified. In the latter case,\nthe margin will be calculated on basis of the text width of the labels",
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 39,
+            "cfg": "{Number} coords.w the system width",
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 46,
+            "cfg": "{Number[]} staffYs the y coordinates of all staffs in the current\nsystem",
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 51,
+            "cfg": "{String[]} labels the labels of all staffs in the current system",
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 55,
+            "itemtype": "property",
+            "name": "measures the measures in the current!~YUIDOC_LINE~!system",
+            "type": "MEI2VF.Measure[]",
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 62,
+            "return": {
+                "description": "the value of {@link #staffYs}",
+                "type": "Number[]"
+            },
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 69,
+            "description": "adds a measure to the end of the measure array",
+            "params": [
+                {
+                    "name": "measure",
+                    "description": "the measure to add",
+                    "type": "MEI2VF.Measure"
+                }
+            ],
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 77,
+            "description": "gets a measure in the current system at the specified index",
+            "params": [
+                {
+                    "name": "i",
+                    "description": "the measure index (the first measure in the current\nsystem has the index 0)",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "MEI2VF.Measure"
+            },
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 87,
+            "description": "gets all measures in the current system",
+            "return": {
+                "description": "",
+                "type": "MEI2VF.Measure[]"
+            },
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 95,
+            "description": "Calculates the system indent based on the width of the stave and\nstave-connector labels",
+            "params": [
+                {
+                    "name": "ctx",
+                    "description": "the canvas context",
+                    "type": "Object"
+                }
+            ],
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 126,
+            "description": "Calculates the minimum width of each measure in the current system",
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 136,
+            "description": "calculates the width of all measures in a stave which don't have a\nspecified width in the MEI code and writes them to their enclosing\nmeasure object",
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 161,
+            "description": "formats the measures in the current system",
+            "params": [
+                {
+                    "name": "ctx",
+                    "description": "the canvas context",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "this",
+                "type": "MEI2VF.System"
+            },
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "System.js",
+            "line": 186,
+            "description": "draws the current system to a canvas",
+            "params": [
+                {
+                    "name": "ctx",
+                    "description": "the canvas context",
+                    "type": "Object"
+                }
+            ],
+            "class": "MEI2VF.System"
+        },
+        {
+            "file": "SystemInfo.js",
+            "line": 25,
+            "description": "contains the current {@link MEI2VF.StaffInfo} objects",
+            "class": "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children"
+        },
+        {
+            "file": "SystemInfo.js",
+            "line": 29,
+            "itemtype": "property",
+            "name": "systemLeftMar the left margin of the!~YUIDOC_LINE~!current system (additional to the left print space margin)",
+            "type": "Number",
+            "class": "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children"
+        },
+        {
+            "file": "SystemInfo.js",
+            "line": 34,
+            "itemtype": "property",
+            "name": "currentLowestY the lowest Y coordinate of the!~YUIDOC_LINE~!previously processed staffs",
+            "type": "Number",
+            "class": "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children"
+        },
+        {
+            "file": "SystemInfo.js",
+            "line": 58,
+            "class": "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children"
+        },
+        {
+            "file": "SystemInfo.js",
+            "line": 108,
+            "class": "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children"
+        },
+        {
+            "file": "SystemInfo.js",
+            "line": 161,
+            "class": "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children"
+        },
+        {
+            "file": "SystemInfo.js",
+            "line": 176,
+            "description": "MEI element <b>scoreDef</b> may contain (MEI v2.1.0):\nMEI.cmn: <b>meterSig</b> <b>meterSigGrp</b>\nMEI.harmony: <b>chordTable</b> MEI.linkalign:\n<b>timeline</b> MEI.midi: <b>instrGrp</b> MEI.shared:\n<b>keySig</b> <b>pgFoot</b> <b>pgFoot2</b> <b>pgHead</b>\n<b>pgHead2</b> <b>staffGrp</b> MEI.usersymbols:\n<b>symbolTable</b>\n\nSupported elements: <b>staffGrp</b> <b>pgHead</b>",
+            "params": [
+                {
+                    "name": "element",
+                    "description": "the scoreDef element to process",
+                    "type": "XMLElement"
+                }
+            ],
+            "class": "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children"
+        },
+        {
+            "file": "SystemInfo.js",
+            "line": 203,
+            "class": "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children"
+        },
+        {
+            "file": "SystemInfo.js",
+            "line": 210,
+            "params": [
+                {
+                    "name": "staffGrp",
+                    "description": "",
+                    "type": "XMLElement"
+                },
+                {
+                    "name": "isChild",
+                    "description": "specifies if the staffGrp is a child of another\n            staffGrp (auto staff connectors only get attached\n            to the outermost staffGrp elements)",
+                    "type": "Boolean"
+                }
+            ],
+            "return": {
+                "description": "the range of the current staff group. Properties:\n         first_n, last_n",
+                "type": "Object"
+            },
+            "class": "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children"
+        },
+        {
+            "file": "SystemInfo.js",
+            "line": 232,
+            "description": "MEI element <b>staffGrp</b> may contain (MEI v2.1.0): MEI.cmn: meterSig\nmeterSigGrp MEI.mensural: mensur proport MEI.midi: instrDef\nMEI.shared: clef clefGrp keySig label layerDef\n\nSupported elements: <b>staffGrp</b> <b>staffDef</b>",
+            "params": [
+                {
+                    "name": "element",
+                    "description": "",
+                    "type": "XMLElement"
+                }
+            ],
+            "return": {
+                "description": "the range of staffs. Properties: first_n, last_n",
+                "type": "Object"
+            },
+            "class": "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children"
+        },
+        {
+            "file": "SystemInfo.js",
+            "line": 258,
+            "description": "reads a staffDef, writes it to currentStaffInfos",
+            "params": [
+                {
+                    "name": "staffDef",
+                    "description": "",
+                    "type": "XMLElement"
+                }
+            ],
+            "return": {
+                "description": "the staff number of the staffDef",
+                "type": "Number"
+            },
+            "class": "MEI2VF.SystemInfo\nDeals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children"
+        },
+        {
+            "file": "Util.js",
+            "line": 10,
+            "class": "MEI2VF.Util"
+        },
+        {
+            "file": "Util.js",
+            "line": 25,
+            "class": "MEI2VF.Util"
+        },
+        {
+            "file": "Util.js",
+            "line": 38,
+            "class": "MEI2VF.Util"
+        },
+        {
+            "file": "Util.js",
+            "line": 95,
+            "class": "MEI2VF.Util"
+        },
+        {
+            "file": "meilib.js",
+            "line": 40,
+            "itemtype": "method",
+            "name": "toString",
+            "return": {
+                "description": "the string representation of the error",
+                "type": "String"
+            },
+            "class": "MeiLib.RuntimeError"
+        },
+        {
+            "file": "meilib.js",
+            "line": 52,
+            "itemtype": "method",
+            "name": "createPseudoUUID",
+            "class": "MeiLib"
+        },
+        {
+            "file": "meilib.js",
+            "line": 67,
+            "itemtype": "method",
+            "name": "init",
+            "params": [
+                {
+                    "name": "node",
+                    "description": ""
+                }
+            ],
+            "class": "MeiLib.EventEnumerator\nEnumerate over the children events of node (node is a layer or a beam)."
+        },
+        {
+            "file": "meilib.js",
+            "line": 82,
+            "itemtype": "method",
+            "name": "nextEvent",
+            "return": {
+                "description": ""
+            },
+            "class": "MeiLib.EventEnumerator\nEnumerate over the children events of node (node is a layer or a beam)."
+        },
+        {
+            "file": "meilib.js",
+            "line": 94,
+            "itemtype": "method",
+            "name": "read_ahead",
+            "return": {
+                "description": ""
+            },
+            "class": "MeiLib.EventEnumerator\nEnumerate over the children events of node (node is a layer or a beam)."
+        },
+        {
+            "file": "meilib.js",
+            "line": 112,
+            "itemtype": "method",
+            "name": "step_ahead",
+            "class": "MeiLib.EventEnumerator\nEnumerate over the children events of node (node is a layer or a beam)."
+        },
+        {
+            "file": "meilib.js",
+            "line": 139,
+            "itemtype": "method",
+            "name": "durationOf\nCalculate the duration of an event (number of beats) according to the given\nmeter.\n\nEvent refers to musical event such as notes, rests, chords. The MEI element\n<b>space</b> is also considered an event.",
+            "params": [
+                {
+                    "name": "evnt",
+                    "description": "an XML DOM object"
+                },
+                {
+                    "name": "meter",
+                    "description": "the time signature object",
+                    "type": "Count, unit"
+                }
+            ],
+            "class": "MeiLib"
+        },
+        {
+            "file": "meilib.js",
+            "line": 216,
+            "itemtype": "method",
+            "name": "tstamp2id\nFind the event with the minimum distance from of the given timestamp.",
+            "params": [
+                {
+                    "name": "tstamp",
+                    "description": "the timestamp to match against events in the given\ncontext. Local timestamp only (without measure part).",
+                    "type": "String"
+                },
+                {
+                    "name": "layer",
+                    "description": "an XML DOM object, contains all events in the given\nmeasure.",
+                    "type": "Object"
+                },
+                {
+                    "name": "meter",
+                    "description": "the effective time signature object { count, unit } in\nthe measure containing layer.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the xml:id of the closest element, or\nundefined if <b>layer</b> contains no events.",
+                "type": "String"
+            },
+            "class": "MeiLib"
+        },
+        {
+            "file": "meilib.js",
+            "line": 274,
+            "itemtype": "method",
+            "name": "XMLID\nreturns the xml:id attribute of an element; if there is none, the function\ncreated a pseudo id, adds it to the element and returns that id.",
+            "params": [
+                {
+                    "name": "elem",
+                    "description": "the element to process",
+                    "type": "XMLElement"
+                }
+            ],
+            "return": {
+                "description": "the xml:id of the element",
+                "type": "String"
+            },
+            "class": "MeiLib"
+        },
+        {
+            "file": "meilib.js",
+            "line": 289,
+            "itemtype": "method",
+            "name": "id2tstamp\nCalculates a timestamp value for an event in a given context. (Event refers\nto musical events such as notes, rests and chords).",
+            "params": [
+                {
+                    "name": "eventid",
+                    "description": "the xml:id of the event",
+                    "type": "String"
+                },
+                {
+                    "name": "context",
+                    "description": "of\ncontextual objects {layer, meter}. Time signature is mandatory for the first\none, but optional for the rest. All layers belong to a single logical layer.\nThey are the layer elements from some consequtive measures.",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "the MEI timestamp value (expressed in beats relative to the\nmeter of the\nmeasure containing the event) of all events that happened before the given\nevent in the given context. If the event is not in the first measure (layer)\nthe timestamp value contains a 'measure part', that is for example 2m+2 if\nthe event is at the second beat in the 3rd measure.",
+                "type": "String"
+            },
+            "class": "MeiLib"
+        },
+        {
+            "file": "meilib.js",
+            "line": 324,
+            "itemtype": "method",
+            "name": "dur2beats\nConvert absolute duration into relative duration (nuber of beats) according\nto time signature.",
+            "params": [
+                {
+                    "name": "dur",
+                    "description": "reciprocal value of absolute duration (e.g. 4->quarter\nnote, 8->eighth note, etc.)",
+                    "type": "Number"
+                },
+                {
+                    "name": "meter",
+                    "description": "the time signature object { count,\nunit }",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Number"
+            },
+            "class": "MeiLib"
+        },
+        {
+            "file": "meilib.js",
+            "line": 338,
+            "itemtype": "method",
+            "name": "beats2dur\nConvert relative duration (nuber of beats) into absolute duration (e.g.\nquarter note, eighth note, etc) according to time signature.",
+            "params": [
+                {
+                    "name": "beats",
+                    "description": "duration in beats @param meter time signature object {\ncount, unit } @return {Number} reciprocal value of absolute duration (e.g. 4\n-> quarter note, 8 -> eighth note, etc.)",
+                    "type": "Number"
+                }
+            ],
+            "class": "MeiLib"
+        },
+        {
+            "file": "meilib.js",
+            "line": 350,
+            "itemtype": "method",
+            "name": "dotsMult\nConverts the <b>dots</b> attribute value into a duration multiplier.",
+            "params": [
+                {
+                    "name": "node",
+                    "description": "XML DOM object containing a node which may have <code>dots</code>\nattribute"
+                }
+            ],
+            "return": {
+                "description": "The result is 1 if no <code>dots</code> attribute is present.\nFor <code>dots=\"1\"</code> the result is 1.5, for <code>dots=\"2\"</code> the\nresult is 1.75, etc.",
+                "type": "Number"
+            },
+            "class": "MeiLib"
+        },
+        {
+            "file": "meilib.js",
+            "line": 370,
+            "itemtype": "method",
+            "name": "sumUpUntil\nFor a given event (such as note, rest chord or space) calculates the combined\nlegth of preceding events, or the combined lenght of all events if the given\nevent isn't present.",
+            "params": [
+                {
+                    "name": "eventid",
+                    "description": "the value of the xml:id attribute of the event",
+                    "type": "String"
+                },
+                {
+                    "name": "layer",
+                    "description": "an XML DOM object containing the MEI <b>Layer</b> element",
+                    "type": "Object"
+                },
+                {
+                    "name": "meter",
+                    "description": "the time signature object { count, unit }",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "an object { beats:number, found:boolean }. 1. 'found' is true and 'beats' is the total duration of the events that happened before the event 'eventid' within 'layer', or 2. 'found' is false and 'beats is the total duration of the events in 'layer'.",
+                "type": "Object"
+            },
+            "class": "MeiLib"
+        },
+        {
+            "file": "meilib.js",
+            "line": 482,
+            "itemtype": "method",
+            "name": "SliceMEI\nReturns a slice of the MEI. The slice is specified by the number of the\nstarting and ending measures.\n\nAbout the <code>staves</code> parameter: it specifies a list of staff\nnumbers. If it is defined, only the listed staves will be kept in the\nresulting slice. The following elements will be removed from: 1. <b>staffDef</b>\nelements (@staff value is matched against the specified list) 2. <b>staff</b>\nelements (@n value is matched against the specified list) 3. any other child\nelement of measures that has",
+            "staff": "specified AND it is not listed.\n\nNote that <b>staff</b> elements without",
+            "n": "will be removed.",
+            "params": [
+                {
+                    "name": "params",
+                    "description": "like { start_n:NUMBER, end_n:NUMBER, noKey:BOOLEAN,\n           noClef:BOOLEAN, noMeter:BOOLEAN, noConnectors, staves:[NUMBER] },\n           where <code>noKey</code>, <code>noClef</code> and\n           <code>noMeter</code> and <code>noConnectors</code> are\n           optional. taves is optional. If staves is set, it is an array of\n           staff numbers. Only the staves specified in the list will be\n           included in the resulting MEI.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "XML DOM object"
+            },
+            "class": "MeiLib"
+        },
+        {
+            "file": "meilib.js",
+            "line": 674,
+            "itemtype": "method",
+            "name": "init\nInitializes a <code>MeiLib.MeiDoc</code> object.\n\nThe constructor extracts information about alternative encodings and compiles\nthem into a JS object (this.ALTs). The obejcts are exposed as per the\nfollowing: 1. <code>sourceList</code> is the list of sources as defined in\nthe MEI header (meiHead). 2. <code>editorList</code> is the list of editors\nlisted in the MEI header. 3. <code>ALTs</code> is the object that contains\ninformation about the alternative encodings. It contains one entry per for\neach <b>app</b> or <b>choice</b> element. It is indexed by the xml:id attribute value\nof the elements. 4. <code>altgroups</code> is the obejct that contains how\n<b>app</b> and <b>choice</b> elements are grouped together to form a logical unit of\nalternative encoding.",
+            "params": [
+                {
+                    "name": "meiXmlDoc",
+                    "description": "an XML document containing the rich MEI",
+                    "type": "XMLDocument"
+                }
+            ],
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 704,
+            "itemtype": "method",
+            "name": "getRichScore",
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 710,
+            "itemtype": "method",
+            "name": "getPlainScore",
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 716,
+            "itemtype": "method",
+            "name": "getALTs",
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 722,
+            "itemtype": "method",
+            "name": "getSourceList",
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 728,
+            "itemtype": "method",
+            "name": "getEditorList",
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 734,
+            "itemtype": "method",
+            "name": "parseSourceList\nExtracts information about the sources as defined in the MEI header.",
+            "return": {
+                "description": "is a container indexed by the xml:id attribute value of the\n        <b>sourceDesc</b> element.",
+                "type": "Object"
+            },
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 755,
+            "itemtype": "method",
+            "name": "parseEditorList",
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 770,
+            "itemtype": "method",
+            "name": "parseALTs\nExtracts information about the elements encoding alternatives. The method\nstores its result in the <code>ALTs</code> property.\n\n<code>ALTs</code> is a container of MeiLib.Alt obejcts indexed by the\nxml:id attribute value of the <b>app</b> or <b>choice</b> elements.",
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 802,
+            "itemtype": "method",
+            "name": "initAltgroups",
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 821,
+            "itemtype": "method",
+            "name": "initSectionView\nThe MeiLib.MeiDoc.initSectionView transforms the rich MEI (this.rich_score)\ninto a plain MEI (this.sectionview_score)\n\nAn MEI is called 'plain' MEI if it contains no <b>app</b> or <b>choice</b> elements.\nSuch an MEI can also be referred after the analogy of 2D section views of a\n3D object: the rich MEI is a higher-dimensional object, of which we would\nlike to display a 'flat' section view. The term 'section plane' refers to a\ncombination of alternatives at different locations in the score. The section\nplane defines the actual view of the higher-dimensional object. For instance,\nconsider a score that has two different variants at measure #5 (let's call\nthem (variant A and variant B), and it contains three different variants at\nmeasure #10 (let's call those ones variants C, D and E). In this case the\nsection plane would contain two elements the first one is either A or B, the\nsecond one is C, D or E.\n\nThe extracted information about all the <b>app</b> and <b>choice</b> elements are\nstored in an array. Using this array the application can access information\nsuch as what alternative encodings are present in the score, what source a\nvariant comes from, etc. This array is exposed by te <code>ALTs</code>\nproperty.",
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 947,
+            "itemtype": "method",
+            "name": "updateSectionView\nUpdates the sectionview score (plain MEI) by replacing one or more\nalternative instance with other alternatives.",
+            "params": [
+                {
+                    "name": "sectionplaneUpdate",
+                    "description": "the list of changes. It is an container of xml:id\n           attribute values of <b>rdg</b>, <b>lem</b>, <b>sic</b> or <b>corr</b> elements,\n           indexed by the xml:id attribute values of the corresponding <b>app</b>\n           or <b>choice</b> elements. sectionplaneUpdate[altXmlID] = altInstXmlID\n           is the xml:id attribute value of the <b>rdg</b>, <b>lem</b>, <b>sic</b> or <b>corr</b>\n           element, which is to be inserted in place of the original <app\n           xml:id=altXmlID> or <b>choice xml:id=altXmlID</b> When replacing an\n           <b>app</b> or <b>choice</b> that is part of a group of such elements\n           (defined by this.altgroups), then those other elements needs to be\n           replaced as well.",
+                    "type": "Object"
+                }
+            ],
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 1026,
+            "itemtype": "method",
+            "name": "replaceAltInstance\nReplace an alternative instance in the sectionview score and in the\nsectionplane",
+            "params": [
+                {
+                    "name": "alt_inst_update",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "the updated score"
+            },
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 1116,
+            "itemtype": "method",
+            "name": "getSectionViewSlice\nGet a slice of the sectionview_score.",
+            "params": [
+                {
+                    "name": "params",
+                    "description": "contains the parameters for slicing. For more info see at\n           documentation of MeiLib.SliceMEI",
+                    "type": "Obejct"
+                }
+            ],
+            "return": {
+                "description": "an XML DOM object containing the slice of the plain MEI"
+            },
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "meilib.js",
+            "line": 1128,
+            "itemtype": "method",
+            "name": "getRichSlice\nGet a slice of the whole rich MEI document.",
+            "params": [
+                {
+                    "name": "params",
+                    "description": "contains the parameters for slicing. For more info see at\n           documentation of MeiLib.SliceMEI",
+                    "type": "Obejct"
+                }
+            ],
+            "return": {
+                "description": "a MeiDoc object"
+            },
+            "class": "MeiLib.MeiDoc\nA Rich MEI is an MEI that contain ambiguity represented by Critical Apparatus\n(<b>app</b>, <b>rdg</b>, etc.), or Editorial Transformation (<b>choice</b>, <b>corr</b>, etc.)\nelements."
+        },
+        {
+            "file": "tables.js",
+            "line": 28,
+            "access": "private",
+            "tagname": "",
+            "itemtype": "property",
+            "name": "tables",
+            "class": "MEI2VF"
+        },
+        {
+            "file": "vexflow-overrides.js",
+            "line": 2,
+            "description": "Create hyphens between the specified annotations.",
+            "is_constructor": 1,
+            "class": ""
+        },
+        {
+            "file": "vexflow-overrides.js",
+            "line": 15,
+            "description": "config is a struct that has:\n\n {\n   first_annot: Annotation or any other object with an x (and optional\ny) property,\n   last_annot: Annotation or any other object with an x (and optional\ny) property,\n   NOTE: either first_annot or last_annot must have an y property\n   (optional) max_hyphen_distance: the maximum distance between two\nhyphens\n   (optional) hyphen_width: the width of the hyphen character to draw\n }",
+            "class": ""
+        },
+        {
+            "file": "vexflow-overrides.js",
+            "line": 447,
+            "description": "Create a new tie from the specified notes. The notes must\nbe part of the same line, and have the same duration (in ticks).",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "context",
+                    "description": "The canvas context.",
+                    "type": "!Object"
+                },
+                {
+                    "name": "notes",
+                    "description": "The notes to tie up.",
+                    "type": "!Object"
+                },
+                {
+                    "name": "Options",
+                    "description": "",
+                    "type": "!Object"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "vexflow-overrides.js",
+            "line": 465,
+            "description": "Notes is a struct that has:\n\n {\n   first_note: Note,\n   last_note: Note,\n   first_indices: [n1, n2, n3],\n   last_indices: [n1, n2, n3]\n }",
+            "class": ""
+        },
+        {
+            "file": "vexflow-overrides.js",
+            "line": 508,
+            "description": "Set the notes to attach this tie to.",
+            "params": [
+                {
+                    "name": "notes",
+                    "description": "The notes to tie up.",
+                    "type": "!Object"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "vexflow-overrides.js",
+            "line": 533,
+            "return": {
+                "description": "Returns true if this is a partial bar.",
+                "type": "Boolean"
+            },
+            "class": ""
+        }
+    ],
+    "warnings": [
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:59"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:63"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:67"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:71"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:75"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:80"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:86"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:93"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:104"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:112"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:112"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:112"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:127"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:127"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:127"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:127"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:139"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:139"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:139"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:139"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:150"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:150"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:150"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:150"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Converter.js:161"
+        },
+        {
+            "message": "unknown tag: singleton",
+            "line": " Interface.js:1"
+        },
+        {
+            "message": "replacing incorrect tag: extend with extends",
+            "line": " LinkCollections.js:188"
+        },
+        {
+            "message": "replacing incorrect tag: extend with extends",
+            "line": " LinkCollections.js:253"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Measure.js:28"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Measure.js:32"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Measure.js:38"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Measure.js:43"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Measure.js:48"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Measure.js:54"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Measure.js:63"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " Measure.js:69"
+        },
+        {
+            "message": "replacing incorrect tag: extend with extends",
+            "line": " PointerCollections.js:113"
+        },
+        {
+            "message": "replacing incorrect tag: extend with extends",
+            "line": " PointerCollections.js:150"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " System.js:33"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " System.js:39"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " System.js:39"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " System.js:39"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " System.js:39"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " System.js:46"
+        },
+        {
+            "message": "unknown tag: cfg",
+            "line": " System.js:51"
+        },
+        {
+            "message": "unknown tag: singleton",
+            "line": " Util.js:3"
+        },
+        {
+            "message": "unknown tag: singleton",
+            "line": " meilib.js:22"
+        },
+        {
+            "message": "unknown tag: singleton",
+            "line": " meilib.js:47"
+        },
+        {
+            "message": "unknown tag: singleton",
+            "line": " meilib.js:134"
+        },
+        {
+            "message": "unknown tag: staff",
+            "line": " meilib.js:482"
+        },
+        {
+            "message": "unknown tag: n",
+            "line": " meilib.js:482"
+        },
+        {
+            "message": "unknown tag: n",
+            "line": " meilib.js:633"
+        },
+        {
+            "message": "unknown tag: singleton",
+            "line": " tables.js:21"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:59"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:63"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:67"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:71"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:75"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:80"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:86"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:93"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:104"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:112"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:127"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:139"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:150"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Converter.js:161"
+        },
+        {
+            "message": "Missing item type",
+            "line": " EventLink.js:46"
+        },
+        {
+            "message": "Missing item type",
+            "line": " EventReference.js:69"
+        },
+        {
+            "message": "Missing item type\nBasic rendering function. Uses the m2v.Converter's prototype as a\nsingleton. No scaling; page layout information in the MEI code is ignored.",
+            "line": " Interface.js:35"
+        },
+        {
+            "message": "Missing item type\ninitializes the LinkCollection",
+            "line": " LinkCollections.js:17"
+        },
+        {
+            "message": "Missing item type\ncreate EventLink objects from  <b>tie</b>, <b>slur</b> or <b>hairpin</b>\nelements",
+            "line": " LinkCollections.js:47"
+        },
+        {
+            "message": "Missing item type\nadds a new model to {@link #allModels}",
+            "line": " LinkCollections.js:152"
+        },
+        {
+            "message": "Missing item type\ngets all models",
+            "line": " LinkCollections.js:160"
+        },
+        {
+            "message": "Missing item type\nsets the context for the link collection",
+            "line": " LinkCollections.js:168"
+        },
+        {
+            "message": "Missing item type\ndraws the link collection to the canvas set by {@link #setContext}",
+            "line": " LinkCollections.js:177"
+        },
+        {
+            "message": "Missing item type\ninitializes the current MEI2VF.Measure object",
+            "line": " Measure.js:22"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Measure.js:28"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Measure.js:32"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Measure.js:38"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Measure.js:43"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Measure.js:48"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Measure.js:54"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Measure.js:63"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Measure.js:69"
+        },
+        {
+            "message": "Missing item type\nreads the width attribute of the specified element and converts it to a\n number",
+            "line": " Measure.js:86"
+        },
+        {
+            "message": "Missing item type\ngets the staffs array of the current measure",
+            "line": " Measure.js:96"
+        },
+        {
+            "message": "Missing item type\ngets the voices object of the current measure",
+            "line": " Measure.js:104"
+        },
+        {
+            "message": "Missing item type\ngets the x coordinate of the staff",
+            "line": " Measure.js:112"
+        },
+        {
+            "message": "Missing item type\ngets the number of the current staff as specified in the MEI code",
+            "line": " Measure.js:120"
+        },
+        {
+            "message": "Missing item type\ngets the first defined staff in the current measure",
+            "line": " Measure.js:128"
+        },
+        {
+            "message": "Missing item type\nWrites the data of the tempo elements in the current measure to the\ncorresponding Vex.Flow.Stave object",
+            "line": " Measure.js:145"
+        },
+        {
+            "message": "Missing item type\ncalculates the minimum width of the current measure",
+            "line": " Measure.js:173"
+        },
+        {
+            "message": "Missing item type\ngets the minimum width of the current measure;",
+            "line": " Measure.js:190"
+        },
+        {
+            "message": "Missing item type\ncalculates the maximum note_start_x of all Vex.Flow.Stave objects in the\ncurrent measure",
+            "line": " Measure.js:197"
+        },
+        {
+            "message": "Missing item type\ncalculates additional start padding when there are repetition start bars\nin the current measure",
+            "line": " Measure.js:213"
+        },
+        {
+            "message": "Missing item type\nFormats the staffs in the current measure: sets x coordinates and adds\nstaff labels",
+            "line": " Measure.js:229"
+        },
+        {
+            "message": "Missing item type\nDraws the staffs, voices and connectors in the current measure to a\ncanvas",
+            "line": " Measure.js:258"
+        },
+        {
+            "message": "Missing item type\ninitializes the PointerCollection",
+            "line": " PointerCollections.js:17"
+        },
+        {
+            "message": "Missing item type\nadds a new model to {@link #allModels}",
+            "line": " PointerCollections.js:96"
+        },
+        {
+            "message": "Missing item type\ngets all models",
+            "line": " PointerCollections.js:104"
+        },
+        {
+            "message": "Missing item type\ngets the vexFlow time signature from an MEI staffDef element",
+            "line": " StaffInfo.js:172"
+        },
+        {
+            "message": "Missing item type",
+            "line": " StaveVoices.js:84"
+        },
+        {
+            "message": "Missing item type",
+            "line": " System.js:27"
+        },
+        {
+            "message": "Missing item type",
+            "line": " System.js:33"
+        },
+        {
+            "message": "Missing item type",
+            "line": " System.js:39"
+        },
+        {
+            "message": "Missing item type",
+            "line": " System.js:46"
+        },
+        {
+            "message": "Missing item type",
+            "line": " System.js:51"
+        },
+        {
+            "message": "Missing item type",
+            "line": " System.js:62"
+        },
+        {
+            "message": "Missing item type\nadds a measure to the end of the measure array",
+            "line": " System.js:69"
+        },
+        {
+            "message": "Missing item type\ngets a measure in the current system at the specified index",
+            "line": " System.js:77"
+        },
+        {
+            "message": "Missing item type\ngets all measures in the current system",
+            "line": " System.js:87"
+        },
+        {
+            "message": "Missing item type\nCalculates the system indent based on the width of the stave and\nstave-connector labels",
+            "line": " System.js:95"
+        },
+        {
+            "message": "Missing item type\nCalculates the minimum width of each measure in the current system",
+            "line": " System.js:126"
+        },
+        {
+            "message": "Missing item type\ncalculates the width of all measures in a stave which don't have a\nspecified width in the MEI code and writes them to their enclosing\nmeasure object",
+            "line": " System.js:136"
+        },
+        {
+            "message": "Missing item type\nformats the measures in the current system",
+            "line": " System.js:161"
+        },
+        {
+            "message": "Missing item type\ndraws the current system to a canvas",
+            "line": " System.js:186"
+        },
+        {
+            "message": "Missing item type\ncontains the current {@link MEI2VF.StaffInfo} objects",
+            "line": " SystemInfo.js:25"
+        },
+        {
+            "message": "Missing item type",
+            "line": " SystemInfo.js:58"
+        },
+        {
+            "message": "Missing item type",
+            "line": " SystemInfo.js:108"
+        },
+        {
+            "message": "Missing item type",
+            "line": " SystemInfo.js:161"
+        },
+        {
+            "message": "Missing item type\nMEI element <b>scoreDef</b> may contain (MEI v2.1.0):\nMEI.cmn: <b>meterSig</b> <b>meterSigGrp</b>\nMEI.harmony: <b>chordTable</b> MEI.linkalign:\n<b>timeline</b> MEI.midi: <b>instrGrp</b> MEI.shared:\n<b>keySig</b> <b>pgFoot</b> <b>pgFoot2</b> <b>pgHead</b>\n<b>pgHead2</b> <b>staffGrp</b> MEI.usersymbols:\n<b>symbolTable</b>\n\nSupported elements: <b>staffGrp</b> <b>pgHead</b>",
+            "line": " SystemInfo.js:176"
+        },
+        {
+            "message": "Missing item type",
+            "line": " SystemInfo.js:203"
+        },
+        {
+            "message": "Missing item type",
+            "line": " SystemInfo.js:210"
+        },
+        {
+            "message": "Missing item type\nMEI element <b>staffGrp</b> may contain (MEI v2.1.0): MEI.cmn: meterSig\nmeterSigGrp MEI.mensural: mensur proport MEI.midi: instrDef\nMEI.shared: clef clefGrp keySig label layerDef\n\nSupported elements: <b>staffGrp</b> <b>staffDef</b>",
+            "line": " SystemInfo.js:232"
+        },
+        {
+            "message": "Missing item type\nreads a staffDef, writes it to currentStaffInfos",
+            "line": " SystemInfo.js:258"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Util.js:10"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Util.js:25"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Util.js:38"
+        },
+        {
+            "message": "Missing item type",
+            "line": " Util.js:95"
+        },
+        {
+            "message": "Missing item type\nCreate hyphens between the specified annotations.",
+            "line": " vexflow-overrides.js:2"
+        },
+        {
+            "message": "Missing item type\nconfig is a struct that has:\n\n {\n   first_annot: Annotation or any other object with an x (and optional\ny) property,\n   last_annot: Annotation or any other object with an x (and optional\ny) property,\n   NOTE: either first_annot or last_annot must have an y property\n   (optional) max_hyphen_distance: the maximum distance between two\nhyphens\n   (optional) hyphen_width: the width of the hyphen character to draw\n }",
+            "line": " vexflow-overrides.js:15"
+        },
+        {
+            "message": "Missing item type\nCreate a new tie from the specified notes. The notes must\nbe part of the same line, and have the same duration (in ticks).",
+            "line": " vexflow-overrides.js:447"
+        },
+        {
+            "message": "Missing item type\nNotes is a struct that has:\n\n {\n   first_note: Note,\n   last_note: Note,\n   first_indices: [n1, n2, n3],\n   last_indices: [n1, n2, n3]\n }",
+            "line": " vexflow-overrides.js:465"
+        },
+        {
+            "message": "Missing item type\nSet the notes to attach this tie to.",
+            "line": " vexflow-overrides.js:508"
+        },
+        {
+            "message": "Missing item type",
+            "line": " vexflow-overrides.js:533"
+        }
+    ]
+}

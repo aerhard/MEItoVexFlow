@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: MEI2VF.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: MEI2VF.js</h1>
+
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @class MEI2VF
+ */
+var MEI2VF = ( function(m2v, VF, $, undefined) {
+
+    /**
+     * @property {Boolean} DO_LOG specifies if logging is enabled or disabled.
+     * Defaults to false. Use {@link MEI2VF#setLogging setLogging()} to change
+     * the value.
+     * @private
+     */
+    m2v.DO_LOG = false;
+
+    /**
+     * @method setLogging enables or disables MEI2VF logging
+     * @param {Boolean} value
+     */
+    m2v.setLogging = function(value) {
+      m2v.DO_LOG = value;
+    };
+
+    /**
+     * @method L the internal MEI2VF logging function. Passes the function
+     * arguments to VexFlow's Vex.L function if {@link #DO_LOG} is `true`
+     * @private
+     */
+    m2v.L = function() {
+      if (m2v.DO_LOG)
+        Vex.L("MEItoVexFlow", arguments);
+    };
+
+    /**
+     * @class MEI2VF.RUNTIME_ERROR
+     * @private
+     *
+     * @constructor
+     * @param {String} error_code
+     * @param {String} message
+     */
+    m2v.RUNTIME_ERROR = function(error_code, message) {
+      this.error_code = error_code;
+      this.message = message;
+    };
+
+    /**
+     * @method
+     * @return {String} the string representation of the error
+     */
+    m2v.RUNTIME_ERROR.prototype.toString = function() {
+      return "MEI2VF.RUNTIME_ERROR: " + this.error_code + ': ' + this.message;
+    };
+
+    return m2v;
+
+  }(MEI2VF || {}, Vex.Flow, jQuery));
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="m2v.Converter.html">Converter</a></li><li><a href="MEI2VF.html">MEI2VF</a></li><li><a href="MeiLib.html">MeiLib</a></li><li><a href="MeiLib.Alt.html">Alt</a></li><li><a href="MeiLib.EventEnumerator.html">EventEnumerator</a></li><li><a href="MeiLib.MeiDoc.html">MeiDoc</a></li><li><a href="MeiLib.RuntimeError.html">RuntimeError</a></li><li><a href="MeiLib.Variant.html">Variant</a></li><li><a href="Vex.Flow.Hyphen.html">Hyphen</a></li><li><a href="Vex.Flow.StaveTie.html">StaveTie</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addArticulation">addArticulation</a></li><li><a href="global.html#addFermata">addFermata</a></li><li><a href="global.html#addStaffModifiers">addStaffModifiers</a></li><li><a href="global.html#addStaffVolta">addStaffVolta</a></li><li></li><li><a href="global.html#createAnnot">createAnnot</a></li><li><a href="global.html#createNewSystem">createNewSystem</a></li><li><a href="global.html#createPseudoUUID">createPseudoUUID</a></li><li><a href="global.html#createVexStaff">createVexStaff</a></li><li><a href="global.html#createVexVoice">createVexVoice</a></li><li></li><li><a href="global.html#draw">draw</a></li><li><a href="global.html#drawSystems">drawSystems</a></li><li><a href="global.html#drawVexBeams">drawVexBeams</a></li><li></li><li></li><li><a href="global.html#getAllVexMeasureStaffs">getAllVexMeasureStaffs</a></li><li><a href="global.html#getALTs">getALTs</a></li><li><a href="global.html#getEditorList">getEditorList</a></li><li><a href="global.html#getMandatoryAttr">getMandatoryAttr</a></li><li><a href="global.html#getNotes">getNotes</a></li><li><a href="global.html#getPlainScore">getPlainScore</a></li><li><a href="global.html#getRichScore">getRichScore</a></li><li><a href="global.html#getRichSliceGet a slice of the whole rich MEI document.">getRichSliceGet a slice of the whole rich MEI document.</a></li><li><a href="global.html#getSectionViewSliceGet a slice of the sectionview_score.">getSectionViewSliceGet a slice of the sectionview_score.</a></li><li><a href="global.html#getSourceList">getSourceList</a></li><li><a href="global.html#getStaffArea">getStaffArea</a></li><li><a href="global.html#getStaffLabels">getStaffLabels</a></li><li><a href="global.html#getSystems">getSystems</a></li><li></li><li><a href="global.html#init">init</a></li><li></li><li><a href="global.html#initAltgroups">initAltgroups</a></li><li><a href="global.html#initConfig">initConfig</a></li><li></li><li><a href="global.html#nextEvent">nextEvent</a></li><li><a href="global.html#parse_slure_attribute">parse_slure_attribute</a></li><li></li><li><a href="global.html#parseEditorList">parseEditorList</a></li><li><a href="global.html#parseSourceListExtracts information about the sources as defined in the MEI header.">parseSourceListExtracts information about the sources as defined in the MEI header.</a></li><li><a href="global.html#process">process</a></li><li><a href="global.html#processAnchoredLayerText">processAnchoredLayerText</a></li><li><a href="global.html#processAnchoredStaffText">processAnchoredStaffText</a></li><li><a href="global.html#processAttrAccid">processAttrAccid</a></li><li><a href="global.html#processAttrHo">processAttrHo</a></li><li><a href="global.html#processAttrSlur">processAttrSlur</a></li><li><a href="global.html#processAttrTie">processAttrTie</a></li><li><a href="global.html#processAttsDuration">processAttsDuration</a></li><li><a href="global.html#processAttsPitch">processAttsPitch</a></li><li><a href="global.html#processBeam">processBeam</a></li><li><a href="global.html#processChord">processChord</a></li><li><a href="global.html#processEnding">processEnding</a></li><li><a href="global.html#processMeasure">processMeasure</a></li><li><a href="global.html#processmRest">processmRest</a></li><li><a href="global.html#processNote">processNote</a></li><li><a href="global.html#processNoteInChord">processNoteInChord</a></li><li><a href="global.html#processNoteLikeElement">processNoteLikeElement</a></li><li><a href="global.html#processRest">processRest</a></li><li><a href="global.html#processSection">processSection</a></li><li><a href="global.html#processSectionChild">processSectionChild</a></li><li><a href="global.html#processSections">processSections</a></li><li><a href="global.html#processSpace">processSpace</a></li><li><a href="global.html#processStaffInMeasure">processStaffInMeasure</a></li><li><a href="global.html#processSyllable">processSyllable</a></li><li><a href="global.html#processSyllables">processSyllables</a></li><li><a href="global.html#read_ahead">read_ahead</a></li><li><a href="global.html#replaceAltInstanceReplace an alternative instance in the sectionview score and in thesectionplane">replaceAltInstanceReplace an alternative instance in the sectionview score and in thesectionplane</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#resolveUnresolvedTimestamps">resolveUnresolvedTimestamps</a></li><li><a href="global.html#setAnchoredTextProcessor">setAnchoredTextProcessor</a></li><li><a href="global.html#setLogging enables or disables MEI2VF logging">setLogging enables or disables MEI2VF logging</a></li><li><a href="global.html#setPendingSystemBreak">setPendingSystemBreak</a></li><li><a href="global.html#setPgHeadProcessor">setPgHeadProcessor</a></li><li><a href="global.html#setStemDir">setStemDir</a></li><li></li><li><a href="global.html#step_ahead">step_ahead</a></li><li></li><li><a href="global.html#toString">toString</a></li><li><a href="global.html#translateDuration">translateDuration</a></li><li><a href="global.html#tstamp2idFind the event with the minimum distance from of the given timestamp.">tstamp2idFind the event with the minimum distance from of the given timestamp.</a></li><li></li><li><a href="global.html#XMLIDreturns the xml:id attribute of an element; if there is none, the functioncreated a pseudo id, adds it to the element and returns that id.">XMLIDreturns the xml:id attribute of an element; if there is none, the functioncreated a pseudo id, adds it to the element and returns that id.</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat May 10 2014 06:02:53 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
