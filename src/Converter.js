@@ -1044,9 +1044,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           }
 
           // FIXME For now, we'll remove any child nodes of <note>
-          $.each($(element).children(), function() {
-            $(this).remove();
-          });
+          // $.each($(element).children(), function() {
+            // $(this).remove();
+          // });
 
           // Build a note object that keeps the xml:id
 

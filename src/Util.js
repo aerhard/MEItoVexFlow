@@ -12,7 +12,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        */
       attsToObj : function(element) {
         var i, obj;
-        if (element.attributes) {
+        if (element.hasAttributes()) {
           obj = {};
           i = element.attributes.length;
           while (i--) {
@@ -27,10 +27,12 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        */
       attsToString : function(element) {
         var result = '', i, j, atts, att;
-        atts = element.attributes;
-        for ( i = 0, j = atts.length; i < j; i += 1) {
-          att = atts.item(i);
-          result += ' ' + att.nodeName + '="' + att.nodeValue + '"';
+        if (element.hasAttributes()) {
+          atts = element.attributes;
+          for ( i = 0, j = atts.length; i < j; i += 1) {
+            att = atts.item(i);
+            result += ' ' + att.nodeName + '="' + att.nodeValue + '"';
+          }
         }
         return result;
       },
