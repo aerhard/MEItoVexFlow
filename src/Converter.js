@@ -595,7 +595,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         left_barline = element.getAttribute('left');
         right_barline = element.getAttribute('right');
 
-        var staffElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [];
+        var staffElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [], rehElements = [];
 
         $(element).find('*').each(function() {
           switch (this.localName) {
@@ -622,6 +622,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
               break;
             case 'fermata':
               fermataElements.push(this);
+              break;
+            case 'reh':
+              rehElements.push(this);
               break;
             default:
               break;
@@ -669,6 +672,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             barline_r : right_barline
           },
           tempoElements : tempoElements,
+          rehElements : rehElements,
           tempoFont : me.cfg.tempoFont
         }));
       },
@@ -1044,9 +1048,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           }
 
           // FIXME For now, we'll remove any child nodes of <note>
-          $.each($(element).children(), function() {
-            $(this).remove();
-          });
+          // $.each($(element).children(), function() {
+          // $(this).remove();
+          // });
 
           // Build a note object that keeps the xml:id
 
@@ -1083,9 +1087,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @method processChord
        */
       processChord : function(element, staff, staff_n) {
-        var me = this, i, j, hasDots, $children, keys = [], duration, durations = [], durAtt, xml_id, chord, chord_opts, atts, thisDur;
+        var me = this, i, j, hasDots, $children, keys = [], duration, durations = [], durAtt, xml_id, chord, chord_opts, atts;
 
-        $children = $(element).children();
+        $children = $(element).children('note');
 
         atts = m2v.Util.attsToObj(element);
         durAtt = atts.dur;
@@ -1141,6 +1145,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           if (atts.ho) {
             me.processAttrHo(atts.ho, chord, staff);
           }
+          $.each($(element).find('artic'), function() {
+            me.addArticulation(chord, this);
+          });
           if (atts.fermata) {
             me.fermatas.addFermataToNote(chord, atts.fermata);
           }
