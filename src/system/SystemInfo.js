@@ -1,6 +1,11 @@
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+define([
+  'jquery',
+  'core/Logger',
+  'core/RuntimeError',
+  'system/StaffInfo'
+], function($, Logger, RuntimeError, StaffInfo, undefined) {
 
-    /**
+  /**
      * @class MEI2VF.SystemInfo
      * Deals with MEI data provided by scoreDef, staffDef and staffGrp elements and its children
      * @private
@@ -8,11 +13,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @constructor
 
      */
-    m2v.SystemInfo = function() {
+    var SystemInfo = function() {
       return;
     };
 
-    m2v.SystemInfo.prototype = {
+    SystemInfo.prototype = {
 
       // currently fixed
       STAVE_HEIGHT : 40, // VF.Staff.spacing_between_lines_px * 4;
@@ -66,7 +71,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         symbol = $(staffGrp).attr('symbol');
         barthru = $(staffGrp).attr('barthru');
 
-        m2v.L('Converter.setConnectorModels() {2}', 'symbol: ' + symbol, ' range.first_n: ' + first_n, ' range.last_n: ' + last_n);
+        Logger.log('Converter.setConnectorModels() {2}', 'symbol: ' + symbol, ' range.first_n: ' + first_n, ' range.last_n: ' + last_n);
 
         // # left connectors specified in the MEI file
         me.setModelForStaveRange(me.startConnectorInfos, {
@@ -112,7 +117,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         var me = this, staff_info;
         staff_info = me.currentStaffInfos[staff_n];
         if (!staff_info) {
-          throw new m2v.RUNTIME_ERROR('MEI2VF.getClefForStaffNr():E01', 'No staff definition for staff n=' + staff_n);
+          throw new RuntimeError('MEI2VF.getClefForStaffNr():E01', 'No staff definition for staff n=' + staff_n);
         }
         return staff_info.getClef();
       },
@@ -195,7 +200,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           case 'pgHead' :
             break;
           default :
-            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Element <' + element.localName + '> is not supported in <scoreDef>');
+            throw new RuntimeError('MEI2VF.RERR.NotSupported', 'Element <' + element.localName + '> is not supported in <scoreDef>');
         }
       },
 
@@ -213,7 +218,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         var me = this, range = {};
         $(staffGrp).children().each(function(i, childElement) {
           var childRange = me.processStaffGrp_child(childElement);
-          m2v.L('Converter.processStaffGrp() {1}.{a}', 'childRange.first_n: ' + childRange.first_n, ' childRange.last_n: ' + childRange.last_n);
+          Logger.log('Converter.processStaffGrp() {1}.{a}', 'childRange.first_n: ' + childRange.first_n, ' childRange.last_n: ' + childRange.last_n);
           if (i === 0)
             range.first_n = childRange.first_n;
           range.last_n = childRange.last_n;
@@ -244,7 +249,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           case 'staffGrp' :
             return me.processStaffGrp(element, true);
           default :
-            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Element <' + element.localName + '> is not supported in <staffGrp>');
+            throw new RuntimeError('MEI2VF.RERR.NotSupported', 'Element <' + element.localName + '> is not supported in <staffGrp>');
         }
       },
 
@@ -261,12 +266,12 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         if (staff_info) {
           staff_info.updateDef(staffDef);
         } else {
-          me.currentStaffInfos[staff_n] = new m2v.StaffInfo(staffDef, true, true, true);
+          me.currentStaffInfos[staff_n] = new StaffInfo(staffDef, true, true, true);
         }
         return staff_n;
       }
     };
 
-    return m2v;
+  return SystemInfo;
 
-  }(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+  });

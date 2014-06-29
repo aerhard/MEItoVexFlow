@@ -23,13 +23,16 @@
  * @singleton
  * Tables for MEI <-> VexFlow values
  */
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+define([
+  'vexflow'
+], function(VF, undefined) {
+
 
     /**
      * @private
-     * @property tables
+     * @namespace Tables
      */
-    m2v.tables = {
+    var Tables = {
 
       accidentals : {
         'n' : 'n',
@@ -125,6 +128,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     };
 
-    return m2v;
+  return Tables;
 
-  }(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+  });

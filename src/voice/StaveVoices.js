@@ -18,20 +18,11 @@
  * the License.
  */
 
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+define([
+  'vexflow',
+  'voice/StaveVoice'
+], function(VF, StaveVoice, undefined) {
 
-    /**
-     * @class MEI2VF.StaffVoice
-     * @private
-     *
-     * @constructor
-     * @param {Object} voice
-     * @param {Object} staff_n
-     */
-    m2v.StaffVoice = function(voice, staff_n) {
-      this.voice = voice;
-      this.staff_n = staff_n;
-    };
 
     /**
      * @class MEI2VF.StaveVoices
@@ -42,18 +33,18 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      *
      * @constructor
      */
-    m2v.StaveVoices = function() {
+    var StaveVoices = function() {
       this.all_voices = [];
       this.formatter = new VF.Formatter();
     };
 
-    m2v.StaveVoices.prototype = {
+     StaveVoices.prototype = {
       addStaffVoice : function(staffVoice) {
         this.all_voices.push(staffVoice);
       },
 
       addVoice : function(voice, staff_n) {
-        this.addStaffVoice(new m2v.StaffVoice(voice, staff_n));
+        this.addStaffVoice(new StaveVoice(voice, staff_n));
       },
 
       // no more in use
@@ -105,6 +96,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     };
 
-    return m2v;
 
-  }(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+  return StaveVoices;
+
+  });

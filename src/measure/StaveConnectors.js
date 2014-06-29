@@ -18,7 +18,10 @@
  * the License.
  */
 
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+define([
+  'jquery',
+  'vexflow'
+], function($, VF, undefined) {
 
     /**
      * @class MEI2VF.Connectors
@@ -28,7 +31,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @constructor
      * @param {Object} config the config object
      */
-    m2v.Connectors = function(config) {
+    var StaveConnectors = function(config) {
       var me = this;
       me.allVexConnectors = [];
       if (config) {
@@ -36,7 +39,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     };
 
-    m2v.Connectors.prototype = {
+    StaveConnectors.prototype = {
 
       vexTypes : {
         'line' : VF.StaveConnector.type.SINGLE_LEFT,
@@ -129,6 +132,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     };
 
-    return m2v;
+  return StaveConnectors;
 
-  }(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+  });

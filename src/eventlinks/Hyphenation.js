@@ -1,6 +1,8 @@
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+define([
+  'vexflow'
+], function(VF, undefined) {
 
-    // TODO add support for multiple layers in one staff
+  // TODO add support for multiple layers in one staff
     /**
      * @class MEI2VF.Hyphenation
      * @private
@@ -8,7 +10,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @constructor
      * @param {Object} cfg
      */
-    m2v.Hyphenation = function(font, printSpaceRight, maxHyphenDistance) {
+    var Hyphenation = function(font, printSpaceRight, maxHyphenDistance) {
       var me = this;
       me.allSyllables = [];
       // TODO move to main.js
@@ -17,7 +19,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       me.maxHyphenDistance = maxHyphenDistance;
     };
 
-    m2v.Hyphenation.prototype = {
+    Hyphenation.prototype = {
 
       WORDBOUND : null,
 
@@ -93,6 +95,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     };
 
-    return m2v;
+  return Hyphenation;
 
-  }(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+});

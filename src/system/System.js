@@ -1,6 +1,6 @@
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+define(function(undefined) {
 
-    // TODO width calculation: take end modifiers into account (do this later: end
+  // TODO width calculation: take end modifiers into account (do this later: end
     // modifiers are currently not part of mei2vf)
 
     /**
@@ -12,11 +12,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @constructor
      * @param {Object} config The configuration object
      */
-    m2v.System = function(config) {
+    var System = function(config) {
       this.init(config);
     };
 
-    m2v.System.prototype = {
+    System.prototype = {
 
       /**
        * @property {Number} LABEL_PADDING the padding (in pixels) between the voice
@@ -198,6 +198,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     };
 
-    return m2v;
+  return System;
 
-  }(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+  });

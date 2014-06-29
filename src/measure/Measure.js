@@ -1,17 +1,23 @@
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+define([
+  'jquery',
+  'vexflow',
+  'core/RuntimeError',
+  'core/Util',
+  'measure/StaveConnectors'
+], function($, VF, RuntimeError, Util, StaveConnectors, undefined) {
 
-    /**
+  /**
      * @class MEI2VF.Measure
      * @private
      *
      * @constructor
      * @param {Object} config The configuration object
      */
-    m2v.Measure = function(config) {
+    var Measure = function(config) {
       this.init(config);
     };
 
-    m2v.Measure.prototype = {
+    Measure.prototype = {
 
       /**
        * initializes the current MEI2VF.Measure object
@@ -44,12 +50,12 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
          * MEI2VF.Connectors handling all left connectors (only the first measure
          * in a system has data)
          */
-        me.startConnectors = new m2v.Connectors(config.startConnectorCfg);
+        me.startConnectors = new StaveConnectors(config.startConnectorCfg);
         /**
          * @cfg {MEI2VF.Connectors} inlineConnectors an instance of
          * MEI2VF.Connectors handling all right connectors
          */
-        me.inlineConnectors = new m2v.Connectors(config.inlineConnectorCfg);
+        me.inlineConnectors = new StaveConnectors(config.inlineConnectorCfg);
 
         me.tieElements = config.tieElements;
         me.slurElements = config.slurElements;
@@ -135,7 +141,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             return me.staffs[i];
           }
         }
-        throw new m2v.RUNTIME_ERROR('ERROR', 'getFirstDefinedStaff(): no staff found in the current measure.');
+        throw new RuntimeError('ERROR', 'getFirstDefinedStaff(): no staff found in the current measure.');
       },
 
       /**
@@ -163,7 +169,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       addTempoToStaves : function() {
         var me = this, offsetX, vexStaff, vexTempo, atts, halfLineDistance;
         $.each(me.tempoElements, function() {
-          atts = m2v.Util.attsToObj(this);
+          atts = Util.attsToObj(this);
           vexStaff = me.staffs[atts.staff];
           halfLineDistance = vexStaff.getSpacingBetweenLines() / 2; 
           vexTempo = new Vex.Flow.StaveTempo({
@@ -298,6 +304,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     };
 
-    return m2v;
+  return Measure;
 
-  }(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+  });

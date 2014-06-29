@@ -17,7 +17,10 @@
  * the License.
  */
 
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+define([
+  'eventlinks/EventReference'
+], function(EventReference, undefined) {
+
 
     /**
      * @class MEI2VF.EventLink
@@ -32,14 +35,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @param {String} first_id
      * @param {String} last_id 
      */
-    m2v.EventLink = function(first_id, last_id) {
+    var EventLink = function(first_id, last_id) {
       this.init(first_id, last_id);
     };
 
-    m2v.EventLink.prototype = {
+   EventLink.prototype = {
       init : function(first_id, last_id) {
-        this.first_ref = new m2v.EventReference(first_id);
-        this.last_ref = new m2v.EventReference(last_id);
+        this.first_ref = new EventReference(first_id);
+        this.last_ref = new EventReference(last_id);
         this.params = {};
       },
 
@@ -95,6 +98,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     };
 
-    return m2v;
+  return EventLink;
 
-  }(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+});

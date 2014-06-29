@@ -17,7 +17,12 @@
  * the License.
  */
 
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+define([
+  'vexflow',
+  'core/RuntimeError',
+  'core/Util'
+], function(VF, RuntimeError, Util, undefined) {
+
 
     /**
      * @class MEI2VF.StaffInfo
@@ -31,7 +36,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @param w_keysig
      * @param w_timesig
      */
-    m2v.StaffInfo = function(staffdef, w_clef, w_keysig, w_timesig) {
+    var StaffInfo = function(staffdef, w_clef, w_keysig, w_timesig) {
       var me = this;
       me.renderWith = {
         clef : w_clef,
@@ -39,14 +44,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         timesig : w_timesig
       };
       me.spacing = null;
-      me.staffDefObj = m2v.Util.attsToObj(staffdef);
+      me.staffDefObj = Util.attsToObj(staffdef);
       me.updateMeter();
       me.updateStaveLabels();
       me.updateSpacing();
       me.currentClef = me.convertClef();
     };
 
-    m2v.StaffInfo.prototype = {
+    StaffInfo.prototype = {
 
       updateMeter : function() {
         var me = this;
@@ -120,7 +125,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         var me = this, clef_shape, clef_line, clef_dis, clef_dis_place;
         clef_shape = me.staffDefObj['clef.shape'];
         if (!clef_shape) {
-          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.MissingAttribute', 'Attribute clef.shape is mandatory.');
+          throw new RuntimeError('MEI2VF.RERR.MissingAttribute', 'Attribute clef.shape is mandatory.');
         }
         clef_line = me.staffDefObj['clef.line'];
         clef_dis = me.staffDefObj['clef.dis'];
@@ -137,7 +142,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           return 'alto';
         if (clef_shape === 'C' && clef_line === '4')
           return 'tenor';
-        throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Clef definition is not supported: [ clef.shape="' + clef_shape + '" ' + ( clef_line ? ('clef.line="' + clef_line + '"') : '') + ' ]');
+        throw new RuntimeError('MEI2VF.RERR.NotSupported', 'Clef definition is not supported: [ clef.shape="' + clef_shape + '" ' + ( clef_line ? ('clef.line="' + clef_line + '"') : '') + ' ]');
       },
 
       getClef : function() {
@@ -158,7 +163,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
                 keyname += 'b';
                 break;
               default :
-                throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.UnexpectedAttributeValue', "Value of key.accid must be 's' or 'f'");
+                throw new RuntimeError('MEI2VF.RERR.UnexpectedAttributeValue', "Value of key.accid must be 's' or 'f'");
             }
           }
           key_mode = me.staffDefObj['key.mode'];
@@ -216,7 +221,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
       updateDef : function(staffDef) {
         var me = this, newStaffDef;
-        newStaffDef = m2v.Util.attsToObj(staffDef);
+        newStaffDef = Util.attsToObj(staffDef);
         me.updateRenderWith(newStaffDef);
         me.staffDefObj = newStaffDef;
         me.updateMeter();
@@ -226,6 +231,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     };
 
-    return m2v;
+  return StaffInfo;
 
-  }(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+  });

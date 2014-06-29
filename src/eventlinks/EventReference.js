@@ -18,7 +18,10 @@
  * the License.
  */
 
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+define([
+  'meilib/MeiLib',
+  'core/RuntimeError'
+], function(MeiLib, RuntimeError, undefined) {
 
     /**
      * @class MEI2VF.EventReverence
@@ -34,11 +37,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @constructor
      * @param {String} xmlid
      */
-    m2v.EventReference = function(xmlid) {
+    var EventReference = function(xmlid) {
       this.xmlid = xmlid;
     };
 
-    m2v.EventReference.prototype = {
+    EventReference.prototype = {
 
       setId : function(xmlid) {
         this.xmlid = xmlid;
@@ -55,7 +58,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         tstamp = this.tstamp;
         meicontext = this.meicontext;
         if (!tstamp) {
-          throw new m2v.RUNTIME_ERROR('MEI2VF:RERR:BADARG:EventRef001', 'EventReference: tstamp must be set in order to resolve reference.');
+          throw new RuntimeError('MEI2VF:RERR:BADARG:EventRef001', 'EventReference: tstamp must be set in order to resolve reference.');
         }
         if (this.meicontext) {
           // look up event corresponding to the given tstamp (strictly or
@@ -92,6 +95,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     };
 
-    return m2v;
+  return EventReference;
 
-  }(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+});
