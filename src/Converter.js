@@ -938,6 +938,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             return me.processTuplet(element, staff, staff_n);
           case 'chord' :
             return me.processChord(element, staff, staff_n);
+          case 'clef' :
+            return me.processClef(element, staff, staff_n);
           case 'anchoredText' :
             return;
           default :
@@ -1263,6 +1265,37 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           };
         } catch (e) {
           throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the <space>: ' + m2v.Util.attsToString(element));
+        }
+      },
+
+      /**
+       * @method processClef
+       * @param {XMLElement} element the MEI clef element
+       * @param {Vex.Flow.Staff} staff the containing staff
+       * @param {Number} the number of the containing staff
+       */
+      processClef : function(element, staff, staff_n) {
+        var me = this, clef, xml_id, atts, clefDef, staffInfo;
+        atts = m2v.Util.attsToObj(element);
+        clefDef = {
+          "clef.line" : atts.line,
+          "clef.shape" : atts.shape,
+          "clef.dis" : atts.dis,
+          "clef.dis.place": atts['dis.place']
+        };
+        staffInfo = me.systemInfo.currentStaffInfos[staff_n];
+        try {
+          var clefType = staffInfo.convertClef(clefDef);
+          staffInfo.currentClef = clefType;
+
+          clef = new VF.ClefNote(clefType + '_small');
+          clef.setStave(staff);
+          return {
+            vexNote : clef
+          };
+        } catch (e) {
+          throw e;
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the <clef>: ' + m2v.Util.attsToString(element));
         }
       },
 

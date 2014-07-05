@@ -11,9 +11,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        *
        */
       attsToObj : function(element) {
-        var i, obj;
+        var i, obj = {};
         if (element.hasAttributes()) {
-          obj = {};
           i = element.attributes.length;
           while (i--) {
             obj[element.attributes[i].nodeName] = element.attributes[i].nodeValue;
