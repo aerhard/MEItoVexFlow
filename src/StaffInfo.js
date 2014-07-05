@@ -116,6 +116,26 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         }
       },
 
+      initialClefCopy : null,
+
+      clefChangeInMeasure : function(staffDefObj) {
+        var me = this;
+        me.initialClefCopy = me.currentClef;
+        me.currentClef = me.convertClef(staffDefObj);
+        return me.currentClef + '_small';
+      },
+
+      checkInitialClef : function() {
+        var me = this;
+        if (me.initialClefCopy) {
+          me.currentClef = me.initialClefCopy;
+        }
+      },
+
+      removeInitialClefCopy : function() {
+        this.initialClefCopy = null;
+      },
+
       convertClef : function(staffDefObj) {
         var me = this, clef_shape, clef_line, clef_dis, clef_dis_place;
         clef_shape = staffDefObj['clef.shape'];

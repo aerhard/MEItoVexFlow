@@ -174,12 +174,14 @@ MeiLib.EventEnumerator.prototype.step_ahead = function() {++this.i_next;
 MeiLib.durationOf = function(evnt, meter) {
 
   IsSimpleEvent = function(tagName) {
-    return (tagName === 'note' || tagName === 'rest' || tagName === 'space');
+    return (tagName === 'note' || tagName === 'rest' || tagName === 'space' || tagName === 'clef');
   }
   var durationOf_SimpleEvent = function(simple_evnt, meter) {
-    var dur = $(simple_evnt).attr('dur');
+    // FIXME clefs are given the duration 1/32 whereas they shouldn't have a duration at all
+    var dur = $(simple_evnt).attr('dur') || (simple_evnt.localName === 'clef' ? "32" : null);
     if (!dur)
       throw new MeiLib.RuntimeError('MeiLib.durationOf:E04', '@dur of <b>note</b>, <b>rest</b> or <b>space</b> must be specified.');
+    console.log(MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter));
     return MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter);
   }
   var durationOf_Chord = function(chord, meter, layer_no) {

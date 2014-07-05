@@ -38,22 +38,21 @@
 									<note xml:id="e03-1" pname="g" oct="4" dur="4"/>
                                 </layer>
                             </staff>
-                            <dir startid="e02-0" place="below">(all notes in this measure should be on the center line)</dir>
+                            <dir tstamp="3" place="below">(all notes have to be on the center line!)</dir>
                         </measure>
                         <sb/>
                         <measure n="2">
                             <staff n="1">
-                                <layer>
-									<note xml:id="e04-3" pname="e" oct="4" dur="8"/>
-									<note xml:id="e04-4" pname="f" oct="4" dur="8"/>
-									<note xml:id="e04-5" pname="g" oct="4" dur="8"/>
-									<note xml:id="e04-6" pname="a" oct="4" dur="8"/>
-									<note xml:id="e04-7" pname="b" oct="4" dur="8"/>
-									<note xml:id="e04-8" pname="c" oct="5" dur="8"/>
-									<note xml:id="e04-9" pname="d" oct="5" dur="8"/>
+                                <layer n="1">
+									<note xml:id="e104-3" pname="g" oct="4" dur="2" stem.dir="up"/>
                                     <clef line="2" shape="G"/>
-									<note xml:id="e04-10" pname="b" oct="4" dur="8"/>
+									<note xml:id="e104-10" pname="b" oct="4" dur="2" stem.dir="up"/>
 								</layer>
+                                <layer n="2">
+                                    <note xml:id="e104-3" pname="g" oct="4" dur="2" stem.dir="down"/>
+                                    <clef line="2" shape="G"/>
+                                    <note xml:id="e104-10" pname="b" oct="4" dur="2" stem.dir="down"/>
+                                </layer>
 							</staff>
 						</measure>
 					</section>

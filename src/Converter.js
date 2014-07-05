@@ -843,23 +843,27 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * object
        */
       processStaffEvents : function(staffs, staff_element, measure_n, currentStaveVoices) {
-        var me = this, staff, staff_n, readEvents, layer_events;
+        var me = this, staff, staff_n, readEvents, layer_events, staffInfo;
 
         staff_n = +$(staff_element).attr('n');
         staff = staffs[staff_n];
 
+        staffInfo = me.systemInfo.getStaffInfo(staff_n);
+
         readEvents = function() {
-          var event = me.processNoteLikeElement(this, staff, staff_n);
+          var event = me.processNoteLikeElement(this, staff, staff_n, staffInfo);
           // return event.vexNote;
           return event.vexNote || event;
         };
 
         $(staff_element).find('layer').each(function() {
-          me.resolveUnresolvedTimestamps(this, staff_n, measure_n);
+          me.resolveUnresolvedTimestamps(this, staff_n, measure_n, staffInfo.meter);
+          staffInfo.checkInitialClef();
           layer_events = $(this).children().map(readEvents).get();
-          currentStaveVoices.addVoice(me.createVexVoice(layer_events, staff_n), staff_n);
+          currentStaveVoices.addVoice(me.createVexVoice(layer_events, staffInfo.meter), staff_n);
         });
 
+        staffInfo.removeInitialClefCopy();
       },
 
       /**
@@ -867,15 +871,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @method createVexVoice
        * @param {Array} voice_contents The contents of the voice, an array of
        * tickables
-       * @param {Number} staff_n The number of the enclosing staff element
+       * @param {Object} meter The meter of the enclosing staff element
        * return {Vex.Flow.Voice}
        */
-      createVexVoice : function(voice_contents, staff_n) {
-        var me = this, voice, meter;
+      createVexVoice : function(voice_contents, meter) {
+        var me = this, voice;
         if (!$.isArray(voice_contents)) {
           throw new m2v.RUNTIME_ERROR('BadArguments', 'me.createVexVoice() voice_contents argument must be an array.');
         }
-        meter = me.systemInfo.getStaffInfo(staff_n).meter;
         voice = new VF.Voice({
           num_beats : meter.count,
           beat_value : meter.unit,
@@ -889,7 +892,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        * @method resolveUnresolvedTimestamps
        */
-      resolveUnresolvedTimestamps : function(layer, staff_n, measure_n) {
+      resolveUnresolvedTimestamps : function(layer, staff_n, measure_n, meter) {
         var me = this, refLocationIndex;
         // check if there's an unresolved TStamp2 reference to this location
         // (measure, staff, layer):
@@ -901,7 +904,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           $(me.unresolvedTStamp2[refLocationIndex]).each(function(i) {
             this.setContext({
               layer : layer,
-              meter : me.systemInfo.getStaffInfo(staff_n).meter
+              meter : meter
             });
             // TODO: remove eventLink from the list
             me.unresolvedTStamp2[refLocationIndex][i] = null;
@@ -921,13 +924,13 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {Number} staff_n the number of the staff as given in the MEI
        * document
        */
-      processNoteLikeElement : function(element, staff, staff_n) {
+      processNoteLikeElement : function(element, staff, staff_n, staffInfo) {
         var me = this;
         switch (element.localName) {
           case 'rest' :
             return me.processRest(element, staff);
           case 'mRest' :
-            return me.processmRest(element, staff, staff_n);
+            return me.processmRest(element, staff, staff_n, staffInfo);
           case 'space' :
             return me.processSpace(element, staff);
           case 'note' :
@@ -939,7 +942,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           case 'chord' :
             return me.processChord(element, staff, staff_n);
           case 'clef' :
-            return me.processClef(element, staff, staff_n);
+            return me.processClef(element, staff, staff_n, staffInfo);
           case 'anchoredText' :
             return;
           default :
@@ -1202,7 +1205,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        * @method processmRest
        */
-      processmRest : function(element, staff, staff_n) {
+      processmRest : function(element, staff, staff_n, staffInfo) {
         var me = this, mRest, atts, xml_id, meter, duration;
 
         meter = me.systemInfo.getStaffInfo(staff_n).meter;
@@ -1274,8 +1277,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {Vex.Flow.Staff} staff the containing staff
        * @param {Number} the number of the containing staff
        */
-      processClef : function(element, staff, staff_n) {
-        var me = this, clef, xml_id, atts, clefDef, staffInfo;
+      processClef : function(element, staff, staff_n, staffInfo) {
+        var me = this, clef, xml_id, atts, clefDef;
         atts = m2v.Util.attsToObj(element);
         clefDef = {
           "clef.line" : atts.line,
@@ -1283,12 +1286,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           "clef.dis" : atts.dis,
           "clef.dis.place": atts['dis.place']
         };
-        staffInfo = me.systemInfo.currentStaffInfos[staff_n];
         try {
-          var clefType = staffInfo.convertClef(clefDef);
-          staffInfo.currentClef = clefType;
-
-          clef = new VF.ClefNote(clefType + '_small');
+          clef = new VF.ClefNote(staffInfo.clefChangeInMeasure(clefDef));
           clef.setStave(staff);
           return {
             vexNote : clef
