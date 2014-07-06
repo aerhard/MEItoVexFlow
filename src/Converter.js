@@ -925,7 +925,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         var me = this;
         switch (element.localName) {
           case 'rest' :
-            return me.processRest(element, staff);
+            return me.processRest(element, staff, staff_n);
           case 'mRest' :
             return me.processmRest(element, staff, staff_n);
           case 'space' :
@@ -1158,7 +1158,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        * @method processRest
        */
-      processRest : function(element, staff) {
+      processRest : function(element, staff, staff_n) {
         var me = this, dur, rest, xml_id, atts;
         try {
           atts = m2v.Util.attsToObj(element);
@@ -1166,10 +1166,20 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           dur = me.processAttsDuration(element, true);
           // assign whole rests to the fourth line, all others to the
           // middle line:
-          rest = new VF.StaveNote({
-            keys : [(dur === 'w') ? 'd/5' : 'b/4'],
-            duration : dur + 'r'
-          });
+
+          var restOpts = (atts.ploc && atts.oloc) ? {
+            keys : [atts.ploc + '/' + atts.oloc],
+            clef : me.systemInfo.getClef(staff_n)
+          } : {
+            keys : [(dur === 'w') ? 'd/5' : 'b/4']
+          };
+
+          restOpts.duration = dur + 'r';
+
+          rest = new VF.StaveNote(restOpts);
+
+          // FIXME: create separate class for rest in which no ledger lines are drawn
+          rest.drawLedgerLines = function() {};
 
           xml_id = MeiLib.XMLID(element);
 
@@ -1218,12 +1228,21 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         }
         try {
           atts = m2v.Util.attsToObj(element);
-          mRest = new VF.StaveNote({
-            keys : keys,
+
+          var mRestOpts = {
             duration : dur + 'r',
             duration_override : duration,
             align_center : true
-          });
+          };
+
+          if (atts.ploc && atts.oloc) {
+            mRestOpts.keys = [atts.ploc + '/' + atts.oloc];
+            mRestOpts.clef = me.systemInfo.getClef(staff_n);
+          } else {
+            mRestOpts.keys = keys;
+          }
+
+          mRest = new VF.StaveNote(mRestOpts);
 
           xml_id = MeiLib.XMLID(element);
 

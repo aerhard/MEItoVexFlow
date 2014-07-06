@@ -737,3 +737,51 @@ Vex.Flow.StaveTie = ( function() {
 
     return StaveTie;
   }());
+
+
+// TEMPORARY (modify VexFlow / discuss there, 7 July 2014)
+
+Vex.Flow.NoteHead.prototype.draw = function() {
+  if (!this.context) throw new Vex.RERR("NoCanvasContext", "Can't draw without a canvas context.");
+
+  var ctx = this.context;
+  var head_x = this.getAbsoluteX();
+  var y = this.y;
+
+  // Begin and end positions for head.
+  var stem_direction = this.stem_direction;
+  var glyph_font_scale = this.render_options.glyph_font_scale;
+
+  var line = this.line;
+
+  // If note above/below the staff, draw the small staff
+
+
+  // START MODIFICATION
+//  if (line <= 0 || line >= 6) {
+    if ((line <= 0 || line >= 6) && this.note_type !== 'r') {
+      // END MODIFICATION
+
+
+      var line_y = y;
+      var floor = Math.floor(line);
+      if (line < 0 && floor - line == -0.5)
+        line_y -= 5; else if (line > 6 && floor - line == -0.5)
+        line_y += 5;
+      ctx.fillRect(head_x - this.render_options.stroke_px, line_y, (this.getGlyph().head_width) +
+                                                                   (this.render_options.stroke_px * 2), 1);
+    }
+
+    if (this.note_type == "s") {
+      drawSlashNoteHead(ctx, this.duration, head_x, y, stem_direction);
+    } else {
+      if (this.style) {
+        ctx.save();
+        this.applyStyle(ctx);
+        Vex.Flow.renderGlyph(ctx, head_x, y, glyph_font_scale, this.glyph_code);
+        ctx.restore();
+      } else {
+        Vex.Flow.renderGlyph(ctx, head_x, y, glyph_font_scale, this.glyph_code);
+      }
+    }
+  };
