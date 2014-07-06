@@ -52,7 +52,6 @@
                                         <note xml:id="n13" pname="f" accid="s" oct="5" dur="8"/>
                                         <note xml:id="n12" pname="b" oct="5" dur="8"/>
                                     </chord>
-
                                     <rest dur="8"/>
                                 </layer>
                             </staff>
@@ -67,17 +66,16 @@
                                         <note pname="f" oct="4" dur="8"/>
                                         <note pname="g" oct="4" accid="f" dur="8" grace="unknown" slur="i"/>
                                         <note pname="f" oct="4" dur="8" slur="t">
-                                                <artic artic="acc"/>
-                                        </note>
-
-                                        <note pname="f" oct="4" dur="8"/>
-                                        <tuplet>
-                                        <note pname="f" oct="4" dur="16"/>
-                                            <note pname="f" oct="4" dur="16"/>
-                                        <note pname="g" oct="4" accid="f" dur="8" grace="unknown" slur="i"/>
-                                        <note pname="f" oct="4" dur="16" slur="t">
                                             <artic artic="acc"/>
                                         </note>
+                                        <note pname="f" oct="4" dur="8"/>
+                                        <tuplet>
+                                            <note pname="f" oct="4" dur="16"/>
+                                            <note pname="f" oct="4" dur="16"/>
+                                            <note pname="g" oct="4" accid="f" dur="8" grace="unknown" slur="i"/>
+                                            <note pname="f" oct="4" dur="16" slur="t">
+                                                <artic artic="acc"/>
+                                            </note>
                                         </tuplet>
                                     </beam>
                                     <rest dur="2"/>
