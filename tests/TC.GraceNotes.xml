@@ -50,7 +50,7 @@
                                     </beam>
                                     <chord xml:id="c02">
                                         <note xml:id="n13" pname="f" accid="s" oct="5" dur="8"/>
-                                        <note xml:id="n12" pname="b" accid="n" oct="5" dur="8"/>
+                                        <note xml:id="n12" pname="b" oct="5" dur="8"/>
                                     </chord>
 
                                     <rest dur="8"/>
