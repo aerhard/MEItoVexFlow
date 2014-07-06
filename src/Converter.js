@@ -617,7 +617,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         // the staff objects will be stored in two places:
         // 1) in each MEI2VF.Measure
         // 2) in MEI2VF.Converter.allVexMeasureStaffs
-        var staffs = me.initializeMeasureStaffs(system, staffElements, left_barline, right_barline);
+        var staffs = me.initializeMeasureStaffs(system, staffElements, left_barline, right_barline, atSystemStart);
         me.allVexMeasureStaffs[measure_n] = staffs;
 
         var currentStaveVoices = new m2v.StaveVoices();
@@ -662,8 +662,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * measure
        * @param {String} left_barline the left barline
        * @param {String} right_barline the right barline
+       * @param {Boolean} atSystemStart indicates if the current measure is the system's start measure
        */
-      initializeMeasureStaffs : function(system, staffElements, left_barline, right_barline) {
+      initializeMeasureStaffs : function(system, staffElements, left_barline, right_barline, atSystemStart) {
         var me = this, staff, staff_n, staffs, isFirst = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0;
 
         staffs = [];
@@ -686,9 +687,15 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           if (isFirst && me.currentVoltaType) {
             me.addStaffVolta(staff);
           }
-          me.addStaffClef(staff, staff_n);
-          clefOffsets[staff_n] = staff.getModifierXShift();
-          maxClefOffset = Math.max(maxClefOffset, clefOffsets[staff_n]);
+          if (atSystemStart) {
+            me.addStaffClef(staff, staff_n);
+            clefOffsets[staff_n] = staff.getModifierXShift();
+            maxClefOffset = Math.max(maxClefOffset, clefOffsets[staff_n]);
+          } else {
+            me.addStaffEndClef(system.getLastMeasure().getStaffs()[staff_n], staff_n);
+            clefOffsets[staff_n] = 0;
+            maxClefOffset = 0;
+          }
           isFirst = false;
         });
 
@@ -745,7 +752,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       },
 
       /**
-       * Adds clef to a Vex.Flow.Staff.
+       * Adds a clef to a Vex.Flow.Staff.
        *
        * @method addStaffClef
        * @param {Vex.Flow.Stave} staff The stave object
@@ -756,6 +763,21 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
         if (currentStaffInfo.showClefCheck()) {
           staff.addClef(currentStaffInfo.getClef());
+        }
+      },
+
+      /**
+       * Adds a clef to the end of a Vex.Flow.Staff.
+       *
+       * @method addStaffClef
+       * @param {Vex.Flow.Stave} staff The stave object
+       * @param {Number} staff_n the staff number
+       */
+      addStaffEndClef : function(staff, staff_n) {
+        var me = this, currentStaffInfo;
+        currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
+        if (currentStaffInfo.showClefCheck()) {
+          staff.addEndClef(currentStaffInfo.getClef() + '_small');
         }
       },
 

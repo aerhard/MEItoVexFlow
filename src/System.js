@@ -89,6 +89,10 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         return this.measures;
       },
 
+      getLastMeasure : function() {
+        return this.measures[this.measures.length - 1];
+      },
+
       /**
        * Calculates the system indent based on the width of the stave and
        * stave-connector labels
@@ -123,7 +127,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        * Calculates the minimum width of each measure in the current system
        */
-      calculateMeasureMinWidths : function() {
+      calculateMinMeasureWidths : function() {
         var measures = this.measures, i = measures.length;
         while (i--) {
           measures[i].calculateMinWidth();
@@ -135,8 +139,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * specified width in the MEI code and writes them to their enclosing
        * measure object
        */
-      calculateMissingMeasureWidths : function() {
-        var me = this, i, j, totalSpecifiedMeasureWidth = 0, avaliableSingleWidth, nonSpecified_n = 0;
+      setFinalMeasureWidths : function() {
+        var me = this, i, j, totalSpecifiedMeasureWidth = 0, singleAdditionalWidth, nonSpecified_n = 0;
         for ( i = 0, j = me.measures.length; i < j; i += 1) {
           if (me.measures[i].meiW === null) {
             nonSpecified_n += 1;
@@ -145,13 +149,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             totalSpecifiedMeasureWidth += me.measures[i].meiW;
           }
         }
-        avaliableSingleWidth = Math.floor((me.coords.w - me.leftMar - totalSpecifiedMeasureWidth) / nonSpecified_n);
+        singleAdditionalWidth = Math.floor((me.coords.w - me.leftMar - totalSpecifiedMeasureWidth) / nonSpecified_n);
         for ( i = 0, j = me.measures.length; i < j; i += 1) {
-          if (me.measures[i].meiW === null) {
-            me.measures[i].w = avaliableSingleWidth + me.measures[i].getMinWidth();
-          } else {
-            me.measures[i].w = me.measures[i].meiW;
-          }
+          me.measures[i].setFinalWidth(singleAdditionalWidth);
         }
       },
 
@@ -165,8 +165,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         if ( typeof me.leftMar !== 'number') {
           me.calculateInitialIndent(ctx);
         }
-        me.calculateMeasureMinWidths();
-        me.calculateMissingMeasureWidths();
+        me.calculateMinMeasureWidths();
+        me.setFinalMeasureWidths();
         offsetX = me.coords.x + me.leftMar;
         measures = me.getMeasures();
         for ( i = 0, j = measures.length; i < j; i += 1) {
