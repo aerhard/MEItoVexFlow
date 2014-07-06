@@ -60,6 +60,30 @@
                             <slur startid="g04" endid="n12"/>
                             <dynam tstamp="3">sfz</dynam>
                         </measure>
+                        <measure>
+                            <staff n="1">
+                                <layer>
+                                    <beam>
+                                        <note pname="f" oct="4" dur="8"/>
+                                        <note pname="g" oct="4" accid="f" dur="8" grace="unknown" slur="i"/>
+                                        <note pname="f" oct="4" dur="8" slur="t">
+                                                <artic artic="acc"/>
+                                        </note>
+
+                                        <note pname="f" oct="4" dur="8"/>
+                                        <tuplet>
+                                        <note pname="f" oct="4" dur="16"/>
+                                            <note pname="f" oct="4" dur="16"/>
+                                        <note pname="g" oct="4" accid="f" dur="8" grace="unknown" slur="i"/>
+                                        <note pname="f" oct="4" dur="16" slur="t">
+                                            <artic artic="acc"/>
+                                        </note>
+                                        </tuplet>
+                                    </beam>
+                                    <rest dur="2"/>
+                                </layer>
+                            </staff>
+                        </measure>
                     </section>
                 </score>
             </mdiv>

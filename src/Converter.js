@@ -1326,7 +1326,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         var process = function() {
           // make sure to get vexNote out of wrapped note objects
           var proc_element = me.processNoteLikeElement(this, staff, staff_n);
-          return proc_element.vexNote || proc_element;
+          return proc_element ? (proc_element.vexNote || proc_element) : null;
         };
         elements = $(element).children().map(process).get();
 
