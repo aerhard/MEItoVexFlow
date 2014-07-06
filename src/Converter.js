@@ -1037,6 +1037,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           };
 
           if (atts.grace) {
+            note.slash = atts['stem.mod'] === '1slash';
             me.currentGraceNotes.push(note);
             return;
           } else {
