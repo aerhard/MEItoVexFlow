@@ -665,9 +665,13 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {Boolean} atSystemStart indicates if the current measure is the system's start measure
        */
       initializeMeasureStaffs : function(system, staffElements, left_barline, right_barline, atSystemStart) {
-        var me = this, staff, staff_n, staffs, isFirst = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0;
+        var me = this, staff, staff_n, staffs, isFirst = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaffs;
 
         staffs = [];
+
+        if (!atSystemStart) {
+          precedingMeasureStaffs = system.getLastMeasure().getStaffs();
+        }
 
         // first run: create Vex.Flow.Staff objects, store them in the staffs
         // array. Set staff barlines and staff volta. Add clef. Get each staff's
@@ -687,14 +691,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           if (isFirst && me.currentVoltaType) {
             me.addStaffVolta(staff);
           }
-          if (atSystemStart) {
+          if (precedingMeasureStaffs && precedingMeasureStaffs[staff_n]) {
+            me.addStaffEndClef(precedingMeasureStaffs[staff_n], staff_n);
+            clefOffsets[staff_n] = 0;
+            maxClefOffset = 0;
+          } else {
             me.addStaffClef(staff, staff_n);
             clefOffsets[staff_n] = staff.getModifierXShift();
             maxClefOffset = Math.max(maxClefOffset, clefOffsets[staff_n]);
-          } else {
-            me.addStaffEndClef(system.getLastMeasure().getStaffs()[staff_n], staff_n);
-            clefOffsets[staff_n] = 0;
-            maxClefOffset = 0;
           }
           isFirst = false;
         });
