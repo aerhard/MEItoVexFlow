@@ -737,3 +737,177 @@ Vex.Flow.StaveTie = ( function() {
 
     return StaveTie;
   }());
+
+
+
+
+// #############################################################################
+// Beam overrides by @mscuthbert - remove when PR is merged in VF (7 July 2014)
+// see https://github.com/0xfe/vexflow/pull/237/files
+// #############################################################################
+
+Vex.Flow.Beam.prototype.init = function(notes, auto_stem) {
+  if (!notes || notes == []) {
+    throw new Vex.RuntimeError("BadArguments", "No notes provided for beam.");
+  }
+
+  if (notes.length == 1) {
+    throw new Vex.RuntimeError("BadArguments", "Too few notes for beam.");
+  }
+
+  // Validate beam line, direction and ticks.
+  this.ticks = notes[0].getIntrinsicTicks();
+
+  if (this.ticks >= Vex.Flow.durationToTicks("4")) {
+    throw new Vex.RuntimeError("BadArguments",
+      "Beams can only be applied to notes shorter than a quarter note.");
+  }
+
+  var i; // shared iterator
+  var note;
+
+  this.stem_direction = 1;
+
+  for (i = 0; i < notes.length; ++i) {
+    note = notes[i];
+    if (note.hasStem()) {
+      this.stem_direction = note.getStemDirection();
+      break;
+    }
+  }
+
+  var stem_direction = -1;
+
+  // Figure out optimal stem direction based on given notes
+  if (auto_stem && notes[0].getCategory() === 'stavenotes')  {
+    // Auto Stem StaveNotes
+    this.min_line = 1000;
+
+    for (i = 0; i < notes.length; ++i) {
+      note = notes[i];
+      if (note.getKeyProps) {
+        var props = note.getKeyProps();
+        var center_line = (props[0].line + props[props.length - 1].line) / 2;
+        this.min_line = Math.min(center_line, this.min_line);
+      }
+    }
+
+    if (this.min_line < 3) stem_direction = 1;
+  } else if (auto_stem && notes[0].getCategory() === 'tabnotes') {
+    // Auto Stem TabNotes
+    var stem_weight = notes.reduce(function(memo, note) {
+      return memo + note.stem_direction;
+    }, 0);
+
+    stem_direction = stem_weight > -1 ? 1 : -1;
+  }
+
+  // Apply stem directions and attach beam to notes
+  for (i = 0; i < notes.length; ++i) {
+    note = notes[i];
+    if (auto_stem) {
+      note.setStemDirection(stem_direction);
+      this.stem_direction = stem_direction;
+    }
+    note.setBeam(this);
+  }
+
+  this.postFormatted = false;
+  this.notes = notes;
+  this.beam_count = this.getBeamCount();
+  this.break_on_indices = [];
+  this.render_options = {
+    beam_width: 5,
+    max_slope: 0.25,
+    min_slope: -0.25,
+    slope_iterations: 20,
+    // START MODIFICATION
+    // slope_cost: 25,
+    slope_cost: 100,
+    // END MODIFICATION
+    show_stemlets: false,
+    stemlet_extension: 7,
+    partial_beam_length: 10
+  };
+};
+
+
+Vex.Flow.Beam.prototype.calculateSlope = function() {
+  var first_note = this.notes[0];
+  var first_y_px = first_note.getStemExtents().topY;
+  var first_x_px = first_note.getStemX();
+
+  var inc = (this.render_options.max_slope - this.render_options.min_slope) /
+            this.render_options.slope_iterations;
+  var min_cost = Number.MAX_VALUE;
+  var best_slope = 0;
+  var y_shift = 0;
+
+  // iterate through slope values to find best weighted fit
+  for (var slope = this.render_options.min_slope;
+       slope <= this.render_options.max_slope;
+       slope += inc) {
+    var total_stem_extension = 0;
+    var y_shift_tmp = 0;
+
+    // iterate through notes, calculating y shift and stem extension
+    for (var i = 1; i < this.notes.length; ++i) {
+      var note = this.notes[i];
+
+      var x_px = note.getStemX();
+      var y_px = note.getStemExtents().topY;
+      var slope_y_px = this.getSlopeY(x_px, first_x_px, first_y_px, slope) + y_shift_tmp;
+
+      // beam needs to be shifted up to accommodate note
+      if (y_px * this.stem_direction < slope_y_px * this.stem_direction) {
+        var diff =  Math.abs(y_px - slope_y_px);
+        y_shift_tmp += diff * -this.stem_direction;
+        total_stem_extension += (diff * i);
+      } else { // beam overshoots note, account for the difference
+        total_stem_extension += (y_px - slope_y_px) * this.stem_direction;
+      }
+
+    }
+
+    // START MODIFICATION
+
+    //    /*
+    //     // This causes too many zero-slope beams.
+    //
+    //     var cost = this.render_options.slope_cost * Math.abs(slope) +
+    //     Math.abs(total_stem_extension);
+    //     */
+    //
+    //    // Pick a beam that minimizes stem extension.
+    //    var cost = Math.abs(total_stem_extension);
+
+    var last_note = this.notes[this.notes.length - 1];
+
+    var first_last_slope = ((last_note.getStemExtents().topY - first_y_px) /
+                            (last_note.getStemX() - first_x_px));
+
+    // most engraving books suggest aiming for a slope about half the angle of the
+    // difference between the first and last notes' stem length;
+
+    var ideal_slope = first_last_slope / 2;
+
+    var distance_from_ideal = Math.abs(ideal_slope - slope);
+
+    // This tries to align most beams to something closer to the ideal_slope, but
+    // doesn't go crazy. To disable, set this.render_options.slope_cost = 0
+
+    var cost = this.render_options.slope_cost * distance_from_ideal + Math.abs(total_stem_extension);
+
+    // END MODIFICATION
+
+    // update state when a more ideal slope is found
+    if (cost < min_cost) {
+      min_cost = cost;
+      best_slope = slope;
+      y_shift = y_shift_tmp;
+    }
+  }
+
+  this.slope = best_slope;
+  this.y_shift = y_shift;
+};
