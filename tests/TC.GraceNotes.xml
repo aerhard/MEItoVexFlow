@@ -17,6 +17,8 @@
                     <scoreDef>
                         <staffGrp>
                             <staffDef n="1" lines="5" clef.line="2" clef.shape="G" meter.count="4" meter.unit="4"/>
+                            <staffDef n="2" lines="5" clef.line="3" clef.shape="C" meter.count="4" meter.unit="4" spacing="80"/>
+                            <staffDef n="3" lines="5" clef.line="4" clef.shape="F" meter.count="4" meter.unit="4" spacing="70"/>
                         </staffGrp>
                     </scoreDef>
                     <section>
@@ -55,11 +57,79 @@
                                     <rest dur="8"/>
                                 </layer>
                             </staff>
+                            <staff n="2">
+                                <layer n="1">
+                                    <note xml:id="f01" pname="d" oct="4" dur="8" grace="unknown" stem.mod="1slash"/>
+                                    <note xml:id="f02" pname="c" oct="4" dur="4"/>
+                                    <beam>
+                                        <note xml:id="f03" pname="f" accid="s" oct="4" dur="16" grace="unknown"/>
+                                        <note xml:id="f04" pname="e" accid="f" oct="4" dur="16" grace="unknown"/>
+                                    </beam>
+                                    <note xml:id="f05" pname="d" oct="4" dur="2"/>
+                                    <beam>
+                                        <chord grace="unknown">
+                                            <note xml:id="fg09" pname="a" oct="3" dur="16"/>
+                                            <note xml:id="fg08" pname="d" oct="4" dur="16"/>
+                                        </chord>
+                                        <chord grace="unknown">
+                                            <note xml:id="fg11" pname="a" accid="f" oct="3" dur="16"/>
+                                            <note xml:id="fg10" pname="d" accid="f" oct="4" dur="16"/>
+                                        </chord>
+                                        <chord grace="unknown">
+                                            <note xml:id="fga09" pname="g" oct="3" dur="16"/>
+                                            <note xml:id="fga08" pname="c" oct="4" dur="16"/>
+                                        </chord>
+                                    </beam>
+                                    <chord xml:id="fc02">
+                                        <note xml:id="fn13" pname="f" accid="s" oct="3" dur="8"/>
+                                        <note xml:id="fn12" pname="b" oct="3" dur="4"/>
+                                    </chord>
+                                    <rest dur="8"/>
+                                </layer>
+                            </staff>
+                            <staff n="3">
+                                <layer>
+                                    <chord>
+                                        <note pname="c" oct="2" dur="8"></note>
+                                        <note pname="c" oct="3" dur="8"></note>
+                                    </chord>
+
+                                    <chord>
+                                        <note pname="c" oct="2" dur="4"></note>
+                                        <note pname="c" oct="3" dur="4"></note>
+                                    </chord>
+                                    <chord>
+                                        <note pname="c" oct="2" dur="8"></note>
+                                        <note pname="c" oct="3" dur="8"></note>
+                                    </chord>
+
+                                    <chord>
+                                        <note pname="c" oct="2" dur="4"></note>
+                                        <note pname="c" oct="3" dur="4"></note>
+                                    </chord>
+
+                                    <chord>
+                                        <note pname="f" accid="s" oct="2" dur="8"></note>
+                                        <note pname="c" accid="s" oct="3" dur="8"></note>
+                                    </chord>
+                                    <chord>
+                                        <note pname="f" accid.ges="s" oct="2" dur="8"></note>
+                                        <note pname="c" accid.ges="s" oct="3" dur="8"></note>
+                                    </chord>
+                                </layer>
+                            </staff>
                             <slur startid="g02" endid="e02"/>
+                            <slur startid="f03" endid="f05"/>
                             <slur startid="g04" endid="n12"/>
-                            <dynam tstamp="3">sfz</dynam>
+                            <slur startid="fg09" endid="fn13"/>
+                            <dynam tstamp="1" staff="1">ff</dynam>
+                            <dynam tstamp="1" staff="2">ff</dynam>
+                            <dynam tstamp="1" staff="3">ff</dynam>
+                            <dynam tstamp="4" staff="1">sfz</dynam>
+                            <dynam tstamp="4" staff="2">sfz</dynam>
+                            <dynam tstamp="4" staff="3">sfz</dynam>
                         </measure>
-                        <measure>
+                        <measure n="2">
                             <staff n="1">
                                 <layer>
                                     <beam>
@@ -83,6 +153,16 @@
                                         </tuplet>
                                     </beam>
                                     <rest dur="2"/>
+                                </layer>
+                            </staff>
+                            <staff n="2">
+                                <layer>
+                                    <mRest></mRest>
+                                </layer>
+                            </staff>
+                            <staff n="3">
+                                <layer>
+                                    <mRest></mRest>
                                 </layer>
                             </staff>
                         </measure>
