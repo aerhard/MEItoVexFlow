@@ -843,22 +843,31 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * object
        */
       processStaffEvents : function(staffs, staff_element, measure_n, currentStaveVoices) {
-        var me = this, staff, staff_n, readEvents, layer_events;
+        var me = this, staff, staff_n, readEvents, layerElements, i, j, layer_events, layerDir;
 
         staff_n = +$(staff_element).attr('n');
         staff = staffs[staff_n];
 
         readEvents = function() {
-          var event = me.processNoteLikeElement(this, staff, staff_n);
+          var event = me.processNoteLikeElement(this, staff, staff_n, layerDir);
           // return event.vexNote;
           return event.vexNote || event;
         };
 
-        $(staff_element).find('layer').each(function() {
-          me.resolveUnresolvedTimestamps(this, staff_n, measure_n);
-          layer_events = $(this).children().map(readEvents).get();
+        layerElements = $(staff_element).find('layer');
+
+        console.log(j);
+
+        for (i=0,j = layerElements.length; i < j; i++) {
+          layerDir = (j > 1) ? (i === 0 ? VF.StaveNote.STEM_UP : i === j - 1 ? VF.StaveNote.STEM_DOWN : null) : null;
+          me.resolveUnresolvedTimestamps(layerElements[i], staff_n, measure_n);
+          layer_events = $(layerElements[i]).children().map(readEvents).get();
           currentStaveVoices.addVoice(me.createVexVoice(layer_events, staff_n), staff_n);
-        });
+
+        }
+
+//        layerElements.each(function() {
+//        });
 
       },
 
@@ -887,6 +896,18 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       },
 
       /**
+       * processes a note-like element by calling the adequate processing
+       * function
+       *
+       * @method processNoteLikeElement
+       * @param {XMLElement} element the element to process
+       * @param {Vex.Flow.Stave} staff the VexFlow staff object
+       * @param {Number} staff_n the number of the staff as given in the MEI document
+       * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
+       * layer
+       */
+
+      /**
        * @method resolveUnresolvedTimestamps
        */
       resolveUnresolvedTimestamps : function(layer, staff_n, measure_n) {
@@ -910,18 +931,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           me.unresolvedTStamp2[refLocationIndex] = null;
         }
       },
-
-      /**
-       * processes a note-like element by calling the adequate processing
-       * function
-       *
-       * @method processNoteLikeElement
-       * @param {XMLElement} element the element to process
-       * @param {Vex.Flow.Stave} staff the VexFlow staff object
-       * @param {Number} staff_n the number of the staff as given in the MEI
-       * document
-       */
-      processNoteLikeElement : function(element, staff, staff_n) {
+      processNoteLikeElement : function(element, staff, staff_n, layerDir) {
         var me = this;
         switch (element.localName) {
           case 'rest' :
@@ -931,13 +941,13 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           case 'space' :
             return me.processSpace(element, staff);
           case 'note' :
-            return me.processNote(element, staff, staff_n);
+            return me.processNote(element, staff, staff_n, layerDir);
           case 'beam' :
-            return me.processBeam(element, staff, staff_n);
+            return me.processBeam(element, staff, staff_n, layerDir);
           case 'tuplet' :
-            return me.processTuplet(element, staff, staff_n);
+            return me.processTuplet(element, staff, staff_n, layerDir);
           case 'chord' :
-            return me.processChord(element, staff, staff_n);
+            return me.processChord(element, staff, staff_n, layerDir);
           case 'anchoredText' :
             return;
           default :
@@ -948,7 +958,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        * @method processNote
        */
-      processNote : function(element, staff, staff_n) {
+      processNote : function(element, staff, staff_n, layerDir) {
         var me = this, dots, mei_accid, mei_ho, pname, oct, xml_id, mei_tie, mei_slur, mei_staff_n, i, atts, note_opts, note;
 
         atts = m2v.Util.attsToObj(element);
@@ -972,7 +982,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             duration : me.processAttsDuration(element)
           };
 
-          me.setStemDir(element, note_opts);
+          me.setStemDir(element, note_opts, layerDir);
           note = new VF.StaveNote(note_opts);
 
           if (mei_staff_n === staff_n) {
@@ -1045,7 +1055,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        * @method processChord
        */
-      processChord : function(element, staff, staff_n) {
+      processChord : function(element, staff, staff_n, layerDir) {
         var me = this, i, j, hasDots, children, keys = [], duration, durations = [], durAtt, xml_id, chord, chord_opts, atts;
 
         children = $(element).children();
@@ -1083,7 +1093,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             duration : duration
           };
 
-          me.setStemDir(element, chord_opts);
+          me.setStemDir(element, chord_opts, layerDir);
           chord = new VF.StaveNote(chord_opts);
           chord.setStave(staff);
 
@@ -1271,12 +1281,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {XMLElement} element the MEI beam element
        * @param {Vex.Flow.Staff} staff the containing staff
        * @param {Number} the number of the containing staff
+       * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
+       * layer
        */
-      processBeam : function(element, staff, staff_n) {
+      processBeam : function(element, staff, staff_n, layerDir) {
         var me = this, elements;
         var process = function() {
           // make sure to get vexNote out of wrapped note objects
-          var proc_element = me.processNoteLikeElement(this, staff, staff_n);
+          var proc_element = me.processNoteLikeElement(this, staff, staff_n, layerDir);
           return proc_element.vexNote || proc_element;
         };
         elements = $(element).children().map(process).get();
@@ -1298,12 +1310,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {XMLElement} element the MEI tuplet element
        * @param {Vex.Flow.Staff} staff the containing staff
        * @param {Number} the number of the containing staff
+       * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
+       * layer
        */
-      processTuplet : function(element, staff, staff_n) {
+      processTuplet : function(element, staff, staff_n, layerDir) {
         var me = this, elements, tuplet, bracketVisible, bracketPlace;
         var process = function() {
           // make sure to get vexNote out of wrapped note objects
-          var proc_element = me.processNoteLikeElement(this, staff, staff_n);
+          var proc_element = me.processNoteLikeElement(this, staff, staff_n, layerDir);
           return proc_element.vexNote || proc_element;
         };
         elements = $(element).children().map(process).get();
@@ -1541,14 +1555,20 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
       /**
        * @method setStemDir
+       * @param element
+       * @param optionsObj
+       * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
+       * layer
        */
-      setStemDir : function(element, optionsObj) {
+      setStemDir : function(element, optionsObj, layerDir) {
         var specified_dir = {
         down : VF.StaveNote.STEM_DOWN,
         up : VF.StaveNote.STEM_UP
         }[$(element).attr('stem.dir')];
         if (specified_dir) {
           optionsObj.stem_direction = specified_dir;
+        } else if (layerDir) {
+          optionsObj.stem_direction = layerDir;
         } else {
           optionsObj.auto_stem = true;
         }
