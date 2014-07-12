@@ -896,18 +896,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       },
 
       /**
-       * processes a note-like element by calling the adequate processing
-       * function
-       *
-       * @method processNoteLikeElement
-       * @param {XMLElement} element the element to process
-       * @param {Vex.Flow.Stave} staff the VexFlow staff object
-       * @param {Number} staff_n the number of the staff as given in the MEI document
-       * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
-       * layer
-       */
-
-      /**
        * @method resolveUnresolvedTimestamps
        */
       resolveUnresolvedTimestamps : function(layer, staff_n, measure_n) {
@@ -931,6 +919,18 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           me.unresolvedTStamp2[refLocationIndex] = null;
         }
       },
+
+      /**
+       * processes a note-like element by calling the adequate processing
+       * function
+       *
+       * @method processNoteLikeElement
+       * @param {XMLElement} element the element to process
+       * @param {Vex.Flow.Stave} staff the VexFlow staff object
+       * @param {Number} staff_n the number of the staff as given in the MEI document
+       * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
+       * layer
+       */
       processNoteLikeElement : function(element, staff, staff_n, layerDir) {
         var me = this;
         switch (element.localName) {
@@ -1038,7 +1038,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           me.notes_by_id[xml_id] = {
             meiNote : element,
             vexNote : note,
-            system : me.currentSystem_n
+            system : me.currentSystem_n,
+            layerDir : layerDir
           };
 
           // return note object
@@ -1100,7 +1101,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           var allNoteIndices = [];
 
           children.each(function(i) {
-            me.processNoteInChord(i, this, element, chord);
+            me.processNoteInChord(i, this, element, chord, layerDir);
             allNoteIndices.push(i);
           });
 
@@ -1118,7 +1119,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             meiNote : element,
             vexNote : chord,
             index : allNoteIndices,
-            system : me.currentSystem_n
+            system : me.currentSystem_n,
+            layerDir : layerDir
           };
 
           return {
@@ -1138,7 +1140,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        * @method processNoteInChord
        */
-      processNoteInChord : function(i, element, chordElement, chord) {
+      processNoteInChord : function (i, element, chordElement, chord, layerDir) {
         var me = this, atts, xml_id;
 
         atts = m2v.Util.attsToObj(element);
@@ -1154,7 +1156,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           meiNote : chordElement,
           vexNote : chord,
           index : [i],
-          system : me.currentSystem_n
+          system : me.currentSystem_n,
+          layerDir : layerDir
         };
 
         if (atts.accid) {

@@ -347,6 +347,12 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         $.each(me.allModels, function() {
           f_note = notes_by_id[this.getFirstId()] || {};
           l_note = notes_by_id[this.getLastId()] || {};
+
+          if (!this.params.curvedir) {
+            var layerDir = f_note.layerDir || l_note.layerDir;
+            this.params.curvedir = layerDir === -1 ? 'below' : layerDir === 1 ? 'above' : undefined;
+          }
+
           if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
             me.createSingleStaveTie(f_note, {}, this.params);
 
