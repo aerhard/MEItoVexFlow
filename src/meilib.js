@@ -173,6 +173,9 @@ MeiLib.EventEnumerator.prototype.step_ahead = function() {++this.i_next;
  */
 MeiLib.durationOf = function(evnt, meter) {
 
+  var IsGraceEvent = function(evnt) {
+    return evnt.hasAttribute('grace');
+  };
   IsSimpleEvent = function(tagName) {
     return (tagName === 'note' || tagName === 'rest' || tagName === 'space');
   }
@@ -212,7 +215,9 @@ MeiLib.durationOf = function(evnt, meter) {
       var dur_b;
       var dur;
       var tagName = this.localName;
-      if (IsSimpleEvent(tagName)) {
+      if (IsGraceEvent(this)) {
+        dur_b = 0;
+      } else if (IsSimpleEvent(tagName)) {
         dur_b = durationOf_SimpleEvent(this, meter);
       } else if (tagName === 'chord') {
         dur_b = durationOf_Chord(this, meter);
@@ -238,6 +243,9 @@ MeiLib.durationOf = function(evnt, meter) {
     return acc;
   }
   var evnt_name = $(evnt).prop('localName');
+  if (IsGraceEvent(evnt)) {
+    return 0;
+  }
   if (IsSimpleEvent(evnt_name)) {
     return durationOf_SimpleEvent(evnt, meter);
   }
@@ -291,9 +299,11 @@ MeiLib.tstamp2id = function(tstamp, layer, meter) {
     prev_dist = dist;
     evnt = eventList.nextEvent();
     dist = distF();
-    ts_acc += MeiLib.durationOf(evnt, meter) 
-      * eventList.outputProportion.numbase 
-      / eventList.outputProportion.num;
+    if (!evnt.hasAttribute('grace')) {
+      ts_acc += MeiLib.durationOf(evnt, meter) *
+                eventList.outputProportion.numbase /
+                eventList.outputProportion.num;
+    }
     m = meter;
     e = evnt;
   }
@@ -310,6 +320,17 @@ MeiLib.tstamp2id = function(tstamp, layer, meter) {
   } else {
     winner = evnt;
   }
+
+  var getFullNote = function (evnt) {
+    if (evnt.hasAttribute('grace')) {
+      var next = eventList.nextEvent();
+      return getFullNote(next) || evnt;
+    }
+    return evnt;
+  };
+
+  winner = getFullNote(winner);
+
   var xml_id;
   xml_id = $(winner).attr('xml:id');
   if (!xml_id) {
@@ -414,7 +435,7 @@ MeiLib.dotsMult = function(node) {
 /**
  * @method sumUpUntil
  * For a given event (such as note, rest chord or space) calculates the combined
- * legth of preceding events, or the combined lenght of all events if the given
+ * length of preceding events, or the combined length of all events if the given
  * event isn't present.
  *
  * @param {String} eventid the value of the xml:id attribute of the event
@@ -432,6 +453,12 @@ MeiLib.sumUpUntil = function(eventid, layer, meter) {
     var beats, children, found, dur, dots, subtotal, chord_dur, i;
     var node = $(node_elem);
     var node_name = node.prop('localName');
+    if (node_elem.hasAttribute('grace')) {
+      return {
+        beats : 0,
+        found : (node.attr('xml:id') === eventid)
+      };
+    }
     if (node_name === 'note' || node_name === 'rest') {
       if (node.attr('xml:id') === eventid) {
         return {
