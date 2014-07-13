@@ -300,7 +300,7 @@ MeiLib.tstamp2id = function(tstamp, layer, meter) {
     prev_dist = dist;
     evnt = eventList.nextEvent();
     dist = distF();
-    if (!evnt.hasAttribute('grace')) {
+    if (!evnt.hasAttribute('grace') && evnt.localName !== 'clef') {
       ts_acc += MeiLib.durationOf(evnt, meter) *
                 eventList.outputProportion.numbase /
                 eventList.outputProportion.num;
@@ -323,7 +323,7 @@ MeiLib.tstamp2id = function(tstamp, layer, meter) {
   }
 
   var getFullNote = function (evnt) {
-    if (evnt.hasAttribute('grace')) {
+    if (evnt.hasAttribute('grace') || evnt.localName === 'clef') {
       var next = eventList.nextEvent();
       return getFullNote(next) || evnt;
     }
@@ -454,7 +454,7 @@ MeiLib.sumUpUntil = function(eventid, layer, meter) {
     var beats, children, found, dur, dots, subtotal, chord_dur, i;
     var node = $(node_elem);
     var node_name = node.prop('localName');
-    if (node_elem.hasAttribute('grace')) {
+    if (node_elem.hasAttribute('grace') ||  node_name === 'clef') {
       return {
         beats : 0,
         found : (node.attr('xml:id') === eventid)
