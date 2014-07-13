@@ -1,23 +1,23 @@
 /*
-* meilib.js
-*
-* Author: Zoltan Komives Created: 05.07.2013
-*
-* Copyright © 2012, 2013 Richard Lewis, Raffaele Viglianti, Zoltan Komives,
-* University of Maryland
-*
-* Licensed under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License. You may obtain a copy of
-* the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-* WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-* License for the specific language governing permissions and limitations under
-* the License.
-*/
+ * meilib.js
+ *
+ * Author: Zoltan Komives Created: 05.07.2013
+ *
+ * Copyright © 2012, 2013 Richard Lewis, Raffaele Viglianti, Zoltan Komives,
+ * University of Maryland
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 
 /**
  * @class MeiLib
@@ -135,10 +135,10 @@ MeiLib.EventEnumerator.prototype.step_ahead = function() {++this.i_next;
         this.EoI = true;
       }
     } else if (node_name === 'tuplet') {
-      
+
       var proportion = {
         num: this.proportion.num * +this.next_evnt.getAttribute('num') || 3,
-        numbase: this.proportion.numbase * +this.next_evnt.getAttribute('numbase') || 2        
+        numbase: this.proportion.numbase * +this.next_evnt.getAttribute('numbase') || 2
       };
 
       this.beam_enumerator = new MeiLib.EventEnumerator(this.next_evnt, proportion);
@@ -173,8 +173,8 @@ MeiLib.EventEnumerator.prototype.step_ahead = function() {++this.i_next;
  */
 MeiLib.durationOf = function(evnt, meter) {
 
-  var IsGraceEvent = function(evnt) {
-    return evnt.hasAttribute('grace');
+  var IsZeroDurEvent = function(evnt, tagName) {
+    return evnt.hasAttribute('grace') || tagName === 'clef';
   };
   IsSimpleEvent = function(tagName) {
     return (tagName === 'note' || tagName === 'rest' || tagName === 'space');
@@ -183,8 +183,9 @@ MeiLib.durationOf = function(evnt, meter) {
     var dur = $(simple_evnt).attr('dur');
     if (!dur)
       throw new MeiLib.RuntimeError('MeiLib.durationOf:E04', '@dur of <b>note</b>, <b>rest</b> or <b>space</b> must be specified.');
+    console.log(MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter));
     return MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter);
-  }
+  };
   var durationOf_Chord = function(chord, meter, layer_no) {
     if (!layer_no)
       layer_no = "1";
@@ -215,7 +216,7 @@ MeiLib.durationOf = function(evnt, meter) {
       var dur_b;
       var dur;
       var tagName = this.localName;
-      if (IsGraceEvent(this)) {
+      if (IsZeroDurEvent(this, tagName)) {
         dur_b = 0;
       } else if (IsSimpleEvent(tagName)) {
         dur_b = durationOf_SimpleEvent(this, meter);
@@ -243,7 +244,7 @@ MeiLib.durationOf = function(evnt, meter) {
     return acc;
   }
   var evnt_name = $(evnt).prop('localName');
-  if (IsGraceEvent(evnt)) {
+  if (IsZeroDurEvent(evnt, evnt_name)) {
     return 0;
   }
   if (IsSimpleEvent(evnt_name)) {
@@ -347,7 +348,7 @@ MeiLib.tstamp2id = function(tstamp, layer, meter) {
  * @return {String} the xml:id of the element
  */
 MeiLib.XMLID = function(elem) {
-  xml_id = $(elem).attr('xml:id');
+  var xml_id = $(elem).attr('xml:id');
   if (!xml_id) {
     xml_id = MeiLib.createPseudoUUID();
     $(elem).attr('xml:id', xml_id);
@@ -756,9 +757,9 @@ MeiLib.MeiDoc = function(meiXmlDoc) {
 MeiLib.MeiDoc.prototype.init = function(meiXmlDoc) {
   this.xmlDoc = meiXmlDoc;
   this.rich_head = meiXmlDoc.getElementsByTagNameNS(
-  "http://www.music-encoding.org/ns/mei", 'meiHead')[0];
+    "http://www.music-encoding.org/ns/mei", 'meiHead')[0];
   this.rich_music = meiXmlDoc.getElementsByTagNameNS(
-  "http://www.music-encoding.org/ns/mei", 'music')[0];
+    "http://www.music-encoding.org/ns/mei", 'music')[0];
   this.rich_score = $(this.rich_music).find('score')[0];
   this.parseSourceList();
   this.parseEditorList();
@@ -1120,7 +1121,7 @@ MeiLib.MeiDoc.prototype.replaceAltInstance = function(alt_inst_update) {
   }
   var app_xml_id = alt_inst_update.appXmlID;
   var parent = $(this.sectionview_score).find('[xml\\:id='
-  + this.ALTs[app_xml_id].parentID +']')[0];
+                                                + this.ALTs[app_xml_id].parentID +']')[0];
   if ( typeof parent === 'undefined') {
     return;
   }
@@ -1135,7 +1136,7 @@ MeiLib.MeiDoc.prototype.replaceAltInstance = function(alt_inst_update) {
       var replaceWith_item = replaceWith[i];
       var replaceWith_xmlID = replaceWith_item.xmlID;
       var var_inst_elem = $(this_rich_score).find(replaceWith_item.tagname
-      + '[xml\\:id="' + replaceWith_xmlID +'"]')[0];
+                                                    + '[xml\\:id="' + replaceWith_xmlID +'"]')[0];
       nodes2insert = extendWithNodeList(nodes2insert, var_inst_elem.childNodes);
     };
   }
