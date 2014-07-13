@@ -360,7 +360,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             // evaluating the stem direction of the first note; change this when
             // the curve dir of the first note is calculated differently in
             // VexFlow
-            this.params.curvedir = (f_note.vexNote.getStemDirection() === -1) ? 'above' : 'below';
+            if (!this.params.curvedir) {
+              this.params.curvedir = (f_note.vexNote.getStemDirection() === -1) ? 'above' : 'below';
+            }
             me.createSingleStaveTie({}, l_note, this.params);
           } else {
             me.createSingleStaveTie(f_note, l_note, this.params);

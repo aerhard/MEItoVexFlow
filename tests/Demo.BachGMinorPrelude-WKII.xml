@@ -58,9 +58,9 @@
                             </staff>
                             <staff n="2">
                                 <layer n="1">
-                                    <rest dur="4" ploc="g" oloc="3"/>
-                                    <rest dur="16" ploc="g" oloc="3"/>
-                                    <rest dur="32" ploc="g" oloc="3"/>
+                                    <rest dur="4" ploc="b" oloc="3"/>
+                                    <rest dur="16" ploc="b" oloc="3"/>
+                                    <rest dur="32" ploc="b" oloc="3"/>
                                     <beam>
                                         <note pname="b" oct="3" dur="32"/>
                                         <note pname="a" oct="3" dur="16" dots="1"/>
@@ -77,8 +77,8 @@
                         <measure n="2">
                             <staff n="1">
                                 <layer n="1">
-                                    <rest dur="16" ploc="f" oloc="5"/>
-                                    <rest dur="32" ploc="f" oloc="5"/>
+                                    <rest dur="16" ploc="e" oloc="5"/>
+                                    <rest dur="32" ploc="e" oloc="5"/>
                                     <beam>
                                         <note pname="d" oct="5" dur="32"/>
                                         <note pname="a" oct="4" dur="16" dots="1"/>
