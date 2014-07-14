@@ -39,6 +39,10 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
          */
         me.voices = config.voices;
         /**
+         * @cfg {MEI2VF.Verses} verses All verses in the entire score
+         */
+         me.verses = config.verses;
+        /**
          * @cfg {MEI2VF.Connectors} startConnectors an instance of
          * MEI2VF.Connectors handling all left connectors (only the first measure
          * in a system has data)
@@ -229,7 +233,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {String[]} labels The labels of all staves
        */
       format : function(x, labels) {
-        var me = this, width = me.w, i = me.staffs.length, staff;
+        var me = this, width = me.w, i = me.staffs.length, staff, k;
         while (i--) {
           if (me.staffs[i]) {
             staff = me.staffs[i];
@@ -238,15 +242,27 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
                 shift_y : -3
               });
             }
-            staff.x += x;
-            staff.glyph_start_x += x;
+
+            if (typeof staff.setX == "function") {
+              staff.setX(x);
+            } else {
+              /* Fallback if VexFlow doesn't have setter */
+              //TODO: remove when setX() is merged to standard VexFlow
+              staff.x = x;
+              staff.glyph_start_x = x + 5;
+              staff.bounds.x = x;
+              for (k = 0; k < staff.modifiers.length; k++) {
+                staff.modifiers[k].x = x;
+              }
+            }
+
             staff.start_x = staff.x + me.maxNoteStartX;
-            staff.bounds.x += x;
             staff.setWidth(width);
             staff.modifiers[0].x += x;
           }
         }
         me.voices.format(me.getFirstDefinedStaff());
+        me.verses.format();
       },
 
       /**
