@@ -858,15 +858,34 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * object
        */
       processStaffEvents : function(staffs, staff_element, measure_n, currentStaveVoices) {
-        var me = this, staff, staff_n, readEvents, layer_events;
+        var me = this, staff, staff_n, readEvents, layer_events, currentGraceNotes = [], GN = VF.GraceNote;
 
         staff_n = +$(staff_element).attr('n');
         staff = staffs[staff_n];
 
+        var evalEvent = function (event) {
+          if (event instanceof GN) {
+            currentGraceNotes.push(event);
+            return null;
+          }
+          if ($.isArray(event)) {
+            var n = [];
+            for (var i=0,j=event.length;i<j;i++) {
+              var ev = evalEvent(event[i]);
+              if (ev !== null) n.push(ev);
+            }
+            return n;
+          }
+          if (currentGraceNotes.length > 0) {
+            event.addModifier(0, new Vex.Flow.GraceNoteGroup(currentGraceNotes, false).beamNotes());
+            currentGraceNotes = [];
+          }
+          return event;
+        };
+
         readEvents = function() {
           var event = me.processNoteLikeElement(this, staff, staff_n);
-          // return event.vexNote;
-          return event ? (event.vexNote || event) : null;
+          return evalEvent(event.vexNote || event);
         };
 
         $(staff_element).find('layer').each(function() {
@@ -988,7 +1007,13 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           };
 
           me.setStemDir(element, note_opts);
-          note = (atts.grace) ? new VF.GraceNote(note_opts) : new VF.StaveNote(note_opts);
+
+          if (atts.grace) {
+            note = new VF.GraceNote(note_opts);
+            note.slash = atts['stem.mod'] === '1slash';
+          } else {
+            note = new VF.StaveNote(note_opts);
+          }
 
           if (mei_staff_n === staff_n) {
             note.setStave(staff);
@@ -1046,20 +1071,10 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             system : me.currentSystem_n
           };
 
-          if (atts.grace) {
-            note.slash = atts['stem.mod'] === '1slash';
-            me.currentGraceNotes.push(note);
-            return;
-          } else {
-            if (me.currentGraceNotes.length > 0) {
-              note.addModifier(0, new Vex.Flow.GraceNoteGroup(me.currentGraceNotes, false).beamNotes());
-              me.currentGraceNotes = [];
-            }
-            return {
-              vexNote : note,
-              id : xml_id
-            };
-          }
+          return {
+            vexNote : note,
+            id : xml_id
+          };
 
         } catch (e1) {
           throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the <note>: ' + m2v.Util.attsToString(element) + '\nORIGINAL ERROR MESSAGE: ' + e1.toString());
@@ -1108,7 +1123,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           };
 
           me.setStemDir(element, chord_opts);
-          chord = (atts.grace) ? new VF.GraceNote(chord_opts) : new VF.StaveNote(chord_opts);
+
+          if (atts.grace) {
+            chord = new VF.GraceNote(chord_opts);
+            chord.slash = atts['stem.mod'] === '1slash';
+          } else {
+            chord = new VF.StaveNote(chord_opts);
+          }
+
           chord.setStave(staff);
 
           var allNoteIndices = [];
@@ -1135,19 +1157,10 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             system : me.currentSystem_n
           };
 
-          if (atts.grace) {
-            me.currentGraceNotes.push(chord);
-            return;
-          } else {
-            if (me.currentGraceNotes.length > 0) {
-              chord.addModifier(0, new Vex.Flow.GraceNoteGroup(me.currentGraceNotes, false).beamNotes());
-              me.currentGraceNotes = [];
-            }
-            return {
-              vexNote : chord,
-              id : xml_id
-            };
-          }
+          return {
+            vexNote : chord,
+            id : xml_id
+          };
         } catch (e) {
           throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the <chord>:' + e.toString());
           // 'A problem occurred processing the <chord>: ' +
@@ -1306,14 +1319,23 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {Number} the number of the containing staff
        */
       processBeam : function(element, staff, staff_n) {
-        var me = this, elements;
+        var me = this, elements, regularBeamElements = [], GN = VF.GraceNote;
+
         var process = function() {
           // make sure to get vexNote out of wrapped note objects
           var proc_element = me.processNoteLikeElement(this, staff, staff_n);
-          return proc_element ? (proc_element.vexNote || proc_element) : null;
+          return proc_element.vexNote || proc_element;
         };
         elements = $(element).children().map(process).get();
-        if (elements.length > 0) me.allBeams.push(new VF.Beam(elements));
+
+        // exclude grace notes from regular beams:
+        for (var i= 0,j=elements.length;i<j;i++) {
+          if (!(elements[i] instanceof GN)) {
+            regularBeamElements.push(elements[i]);
+          }
+        }
+
+        if (regularBeamElements.length > 0) me.allBeams.push(new VF.Beam(regularBeamElements));
         return elements;
       },
 
@@ -1330,14 +1352,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @method processTuplet
        * @param {XMLElement} element the MEI tuplet element
        * @param {Vex.Flow.Staff} staff the containing staff
-       * @param {Number} the number of the containing staff
+       * @param {Number} staff_n the number of the containing staff
        */
       processTuplet : function(element, staff, staff_n) {
         var me = this, elements, tuplet, bracketVisible, bracketPlace;
         var process = function() {
           // make sure to get vexNote out of wrapped note objects
           var proc_element = me.processNoteLikeElement(this, staff, staff_n);
-          return proc_element ? (proc_element.vexNote || proc_element) : null;
+          return proc_element.vexNote || proc_element;
         };
         elements = $(element).children().map(process).get();
 
@@ -1353,6 +1375,10 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         bracketVisible = element.getAttribute('bracket.visible');
         if (bracketVisible) {
           tuplet.setBracketed((bracketVisible === 'true') ? true : false);
+        } else {
+          if (elements[0] instanceof VF.GraceNote) {
+            tuplet.setBracketed(false);
+          }
         }
 
         bracketPlace = element.getAttribute('bracket.place');
@@ -1426,7 +1452,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       },
 
       /**
-       * @method parse_slure_attribute
+       * @method parse_slur_attribute
        */
       parse_slur_attribute : function(slur_str) {
         var result = [], numbered_tokens, numbered_token, i, j, num;
