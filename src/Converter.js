@@ -299,11 +299,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
          */
         me.currentSystem_n = 0;
         /**
-         * Grace note or grace chord objects to be added to the next non-grace note or chord
-         * @property {Vex.Flow.StaveNote[]} currentGraceNotes
-         */
-        me.currentGraceNotes = [];
-        /**
          * indicates if a system break is currently to be processed
          * @property {Boolean} pendingSystemBreak
          */
