@@ -118,10 +118,17 @@ MeiLibTest = function(){
     '5m+3.75',
     '5m+3.75',
     '5m+3.75',
-    '5m+4'
+    '5m+4',
+    '6m+1',
+    '6m+1',
+    '6m+3',
+    '6m+3',
+    '6m+3',
+    '6m+3',
+    '6m+3'
   ]
   
-  for (var i=1; i<=41; ++i) {
+  for (var i=1; i<=48; ++i) {
     var id = 'v1e' + ((i<10)?'0':'') + i.toString();
     tstamp =  MeiLib.id2tstamp(id, context);
     assert(tstamp, tstamp_assert_table[i-1]);
@@ -178,6 +185,15 @@ MeiLibTest = function(){
       1.75,
       0.25,
       1
+    ],
+    [
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      2
     ]
   ]
   
@@ -256,11 +272,12 @@ MeiLibTest = function(){
                 { name:'TEST: mRest', measure:3 },
                 { name:'TEST: beams and chord', measure:4 },
                 { name:'TEST: chords', measure:5 },
-                { name:'TEST: dots', measure:6 } ]
+                { name:'TEST: dots', measure:6 },
+                { name:'TEST: grace notes', measure:7 } ]
   }
 
   for (var k=0; k<TCs.tstamp2id.length; ++k) {
-    console.log('=================== ' + TCs.tstamp2id[k].name + mei_xml + ':meausre #' + TCs.tstamp2id[k].measure.toString());
+    console.log('=================== ' + TCs.tstamp2id[k].name + mei_xml + ':measure #' + TCs.tstamp2id[k].measure.toString());
     var index=TCs.tstamp2id[k].measure-1;
     var tstamps = ['1', '1.1', '1.25', '1.5', '1.75', '2', '2.1', '2.25', '2.5', '2.9', '3', '3.1', '3.5', '3.9', '4', '4.25', '4.5', '4.75', '5' ];
     for (var i=0; i<tstamps.length; ++i) {

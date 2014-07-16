@@ -118,6 +118,21 @@
 								</layer>
 							</staff>
 						</measure>
+                        <measure n="7">
+                            <staff n="1">
+                                <layer>
+                                    <note xml:id="v1e43" dur="2" grace="unknown"/>
+                                    <note xml:id="v1e44" dur="2"/>
+                                    <beam>
+                                        <note xml:id="v1e45" dur="8" grace="unknown"/>
+                                        <note xml:id="v1e46" dur="8" grace="unknown"/>
+                                        <note xml:id="v1e47" dur="8" grace="unknown"/>
+                                        <note xml:id="v1e48" dur="8" grace="unknown"/>
+                                    </beam>
+                                    <note xml:id="v1e49" dur="2"/>
+                                </layer>
+                            </staff>
+                        </measure>
 					</section>
 				</score>
 			</mdiv>
