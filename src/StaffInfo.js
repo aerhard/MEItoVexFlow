@@ -43,7 +43,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       me.updateMeter();
       me.updateStaveLabels();
       me.updateSpacing();
-      me.currentClef = me.convertClef();
+      me.currentClef = me.convertClef(me.staffDefObj);
     };
 
     m2v.StaffInfo.prototype = {
@@ -116,27 +116,52 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         }
       },
 
-      convertClef : function() {
+      initialClefCopy : null,
+
+      clefChangeInMeasure : function(staffDefObj) {
+        var me = this;
+        me.initialClefCopy = me.currentClef;
+        me.currentClef = me.convertClef(staffDefObj);
+        return me.currentClef + '_small';
+      },
+
+      checkInitialClef : function() {
+        var me = this;
+        if (me.initialClefCopy) {
+          me.currentClef = me.initialClefCopy;
+        }
+      },
+
+      removeInitialClefCopy : function() {
+        this.initialClefCopy = null;
+      },
+
+      convertClef : function(staffDefObj) {
         var me = this, clef_shape, clef_line, clef_dis, clef_dis_place;
-        clef_shape = me.staffDefObj['clef.shape'];
+        clef_shape = staffDefObj['clef.shape'];
         if (!clef_shape) {
           throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.MissingAttribute', 'Attribute clef.shape is mandatory.');
         }
-        clef_line = me.staffDefObj['clef.line'];
-        clef_dis = me.staffDefObj['clef.dis'];
-        clef_dis_place = me.staffDefObj['clef.dis.place'];
+        clef_line = staffDefObj['clef.line'];
+        clef_dis = staffDefObj['clef.dis'];
+        clef_dis_place = staffDefObj['clef.dis.place'];
         if (clef_shape === 'G' && (!clef_line || clef_line === '2')) {
           if (clef_dis === '8' && clef_dis_place === 'below' && VF.clefProperties.values.octave != undefined) {
             return 'octave';
           }
           return 'treble';
         }
-        if (clef_shape === 'F' && (!clef_line || clef_line === '4'))
+        if (clef_shape === 'F') {
+          if (clef_line === '3') return 'baritone-f';
           return 'bass';
-        if (clef_shape === 'C' && clef_line === '3')
-          return 'alto';
-        if (clef_shape === 'C' && clef_line === '4')
-          return 'tenor';
+        }
+        if (clef_shape === 'C') {
+          if (clef_line === '1') return 'soprano';
+          if (clef_line === '2') return 'mezzo-soprano';
+          if (clef_line === '3') return 'alto';
+          if (clef_line === '4') return 'tenor';
+          if (clef_line === '5') return 'baritone-c';
+        }
         throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Clef definition is not supported: [ clef.shape="' + clef_shape + '" ' + ( clef_line ? ('clef.line="' + clef_line + '"') : '') + ' ]');
       },
 
@@ -222,7 +247,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         me.updateMeter();
         me.updateStaveLabels();
         me.updateSpacing();
-        me.currentClef = me.convertClef();
+        me.currentClef = me.convertClef(me.staffDefObj);
       }
     };
 

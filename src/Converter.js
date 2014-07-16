@@ -628,7 +628,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         // the staff objects will be stored in two places:
         // 1) in each MEI2VF.Measure
         // 2) in MEI2VF.Converter.allVexMeasureStaffs
-        var staffs = me.initializeMeasureStaffs(system, staffElements, left_barline, right_barline);
+        var staffs = me.initializeMeasureStaffs(system, staffElements, left_barline, right_barline, atSystemStart);
         me.allVexMeasureStaffs[measure_n] = staffs;
 
         var currentStaveVoices = new m2v.StaveVoices();
@@ -674,11 +674,16 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * measure
        * @param {String} left_barline the left barline
        * @param {String} right_barline the right barline
+       * @param {Boolean} atSystemStart indicates if the current measure is the system's start measure
        */
-      initializeMeasureStaffs : function(system, staffElements, left_barline, right_barline) {
-        var me = this, staff, staff_n, staffs, isFirst = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0;
+      initializeMeasureStaffs : function(system, staffElements, left_barline, right_barline, atSystemStart) {
+        var me = this, staff, staff_n, staffs, isFirst = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaffs;
 
         staffs = [];
+
+        if (!atSystemStart) {
+          precedingMeasureStaffs = system.getLastMeasure().getStaffs();
+        }
 
         // first run: create Vex.Flow.Staff objects, store them in the staffs
         // array. Set staff barlines and staff volta. Add clef. Get each staff's
@@ -698,9 +703,15 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           if (isFirst && me.currentVoltaType) {
             me.addStaffVolta(staff);
           }
-          me.addStaffClef(staff, staff_n);
-          clefOffsets[staff_n] = staff.getModifierXShift();
-          maxClefOffset = Math.max(maxClefOffset, clefOffsets[staff_n]);
+          if (precedingMeasureStaffs && precedingMeasureStaffs[staff_n]) {
+            me.addStaffEndClef(precedingMeasureStaffs[staff_n], staff_n);
+            clefOffsets[staff_n] = 0;
+            maxClefOffset = 0;
+          } else {
+            me.addStaffClef(staff, staff_n);
+            clefOffsets[staff_n] = staff.getModifierXShift();
+            maxClefOffset = Math.max(maxClefOffset, clefOffsets[staff_n]);
+          }
           isFirst = false;
         });
 
@@ -757,7 +768,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       },
 
       /**
-       * Adds clef to a Vex.Flow.Staff.
+       * Adds a clef to a Vex.Flow.Staff.
        *
        * @method addStaffClef
        * @param {Vex.Flow.Stave} staff The stave object
@@ -768,6 +779,21 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
         if (currentStaffInfo.showClefCheck()) {
           staff.addClef(currentStaffInfo.getClef());
+        }
+      },
+
+      /**
+       * Adds a clef to the end of a Vex.Flow.Staff.
+       *
+       * @method addStaffClef
+       * @param {Vex.Flow.Stave} staff The stave object
+       * @param {Number} staff_n the staff number
+       */
+      addStaffEndClef : function(staff, staff_n) {
+        var me = this, currentStaffInfo;
+        currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
+        if (currentStaffInfo.showClefCheck()) {
+          staff.addEndClef(currentStaffInfo.getClef() + '_small');
         }
       },
 
@@ -858,10 +884,12 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * object
        */
       processStaffEvents : function(staffs, staff_element, measure_n, currentStaveVoices) {
-        var me = this, staff, staff_n, readEvents, layerElements, i, j, layer_events, layerDir, currentGraceNotes = [], GN = VF.GraceNote;
+        var me = this, staff, staff_n, readEvents, layerElements, i, j, layer_events, layerDir, currentGraceNotes = [], GN = VF.GraceNote, staffInfo;
 
         staff_n = +$(staff_element).attr('n');
         staff = staffs[staff_n];
+
+        staffInfo = me.systemInfo.getStaffInfo(staff_n);
 
         var evalEvent = function (event) {
           if (event instanceof GN) {
@@ -884,7 +912,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         };
 
         readEvents = function() {
-          var event = me.processNoteLikeElement(this, staff, staff_n, layerDir);
+          var event = me.processNoteLikeElement(this, staff, staff_n, layerDir, staffInfo);
           return evalEvent(event.vexNote || event);
         };
 
@@ -894,15 +922,24 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
         for (i=0,j = layerElements.length; i < j; i++) {
           layerDir = (j > 1) ? (i === 0 ? VF.StaveNote.STEM_UP : i === j - 1 ? VF.StaveNote.STEM_DOWN : null) : null;
-          me.resolveUnresolvedTimestamps(layerElements[i], staff_n, measure_n);
+          me.resolveUnresolvedTimestamps(layerElements[i], staff_n, measure_n, staffInfo.meter);
+          staffInfo.checkInitialClef();
           layer_events = $(layerElements[i]).children().map(readEvents).get();
-          currentStaveVoices.addVoice(me.createVexVoice(layer_events, staff_n), staff_n);
+          currentStaveVoices.addVoice(me.createVexVoice(layer_events, staffInfo.meter), staff_n);
 
         }
+
+//        $(staff_element).find('layer').each(function() {
+//          me.resolveUnresolvedTimestamps(this, staff_n, measure_n, staffInfo.meter);
+//          staffInfo.checkInitialClef();
+//          layer_events = $(this).children().map(readEvents).get();
+//          currentStaveVoices.addVoice(me.createVexVoice(layer_events, staffInfo.meter), staff_n);
+//        });
 
 //        layerElements.each(function() {
 //        });
 
+        staffInfo.removeInitialClefCopy();
       },
 
       /**
@@ -910,15 +947,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @method createVexVoice
        * @param {Array} voice_contents The contents of the voice, an array of
        * tickables
-       * @param {Number} staff_n The number of the enclosing staff element
+       * @param {Object} meter The meter of the enclosing staff element
        * return {Vex.Flow.Voice}
        */
-      createVexVoice : function(voice_contents, staff_n) {
-        var me = this, voice, meter;
+      createVexVoice : function(voice_contents, meter) {
+        var me = this, voice;
         if (!$.isArray(voice_contents)) {
           throw new m2v.RUNTIME_ERROR('BadArguments', 'me.createVexVoice() voice_contents argument must be an array.');
         }
-        meter = me.systemInfo.getStaffInfo(staff_n).meter;
         voice = new VF.Voice({
           num_beats : meter.count,
           beat_value : meter.unit,
@@ -932,7 +968,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        * @method resolveUnresolvedTimestamps
        */
-      resolveUnresolvedTimestamps : function(layer, staff_n, measure_n) {
+      resolveUnresolvedTimestamps : function(layer, staff_n, measure_n, meter) {
         var me = this, refLocationIndex;
         // check if there's an unresolved TStamp2 reference to this location
         // (measure, staff, layer):
@@ -944,7 +980,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           $(me.unresolvedTStamp2[refLocationIndex]).each(function(i) {
             this.setContext({
               layer : layer,
-              meter : me.systemInfo.getStaffInfo(staff_n).meter
+              meter : meter
             });
             // TODO: remove eventLink from the list
             me.unresolvedTStamp2[refLocationIndex][i] = null;
@@ -965,23 +1001,25 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
        * layer
        */
-      processNoteLikeElement : function(element, staff, staff_n, layerDir) {
+      processNoteLikeElement : function(element, staff, staff_n, layerDir, staffInfo) {
         var me = this;
         switch (element.localName) {
           case 'rest' :
             return me.processRest(element, staff, staff_n);
           case 'mRest' :
-            return me.processmRest(element, staff, staff_n);
+            return me.processmRest(element, staff, staff_n, layerDir, staffInfo);
           case 'space' :
             return me.processSpace(element, staff);
           case 'note' :
             return me.processNote(element, staff, staff_n, layerDir);
           case 'beam' :
-            return me.processBeam(element, staff, staff_n, layerDir);
+            return me.processBeam(element, staff, staff_n, layerDir, staffInfo);
           case 'tuplet' :
-            return me.processTuplet(element, staff, staff_n, layerDir);
+            return me.processTuplet(element, staff, staff_n, layerDir, staffInfo);
           case 'chord' :
-            return me.processChord(element, staff, staff_n, layerDir);
+            return me.processChord(element, staff, staff_n, layerDir, staffInfo);
+          case 'clef' :
+            return me.processClef(element, staff, staff_n, layerDir, staffInfo);
           case 'anchoredText' :
             return;
           default :
@@ -1059,9 +1097,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           }
 
           // FIXME For now, we'll remove any child nodes of <note>
-          $.each($(element).children(), function() {
-            $(this).remove();
-          });
+          // $.each($(element).children(), function() {
+            // $(this).remove();
+          // });
 
           // Build a note object that keeps the xml:id
 
@@ -1095,7 +1133,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        * @method processChord
        */
-      processChord : function(element, staff, staff_n, layerDir) {
+      processChord : function(element, staff, staff_n, layerDir, staffInfo) {
         var me = this, i, j, hasDots, children, keys = [], duration, durations = [], durAtt, xml_id, chord, chord_opts, atts;
 
         children = $(element).children();
@@ -1269,7 +1307,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        * @method processmRest
        */
-      processmRest : function(element, staff, staff_n) {
+      processmRest : function(element, staff, staff_n, layerDir, staffInfo) {
         var me = this, mRest, atts, xml_id, meter, duration;
 
         meter = me.systemInfo.getStaffInfo(staff_n).meter;
@@ -1345,6 +1383,33 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       },
 
       /**
+       * @method processClef
+       * @param {XMLElement} element the MEI clef element
+       * @param {Vex.Flow.Staff} staff the containing staff
+       * @param {Number} the number of the containing staff
+       */
+      processClef : function(element, staff, staff_n, layerDir, staffInfo) {
+        var me = this, clef, xml_id, atts, clefDef;
+        atts = m2v.Util.attsToObj(element);
+        clefDef = {
+          "clef.line" : atts.line,
+          "clef.shape" : atts.shape,
+          "clef.dis" : atts.dis,
+          "clef.dis.place": atts['dis.place']
+        };
+        try {
+          clef = new VF.ClefNote(staffInfo.clefChangeInMeasure(clefDef));
+          clef.setStave(staff);
+          return {
+            vexNote : clef
+          };
+        } catch (e) {
+          throw e;
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the <clef>: ' + m2v.Util.attsToString(element));
+        }
+      },
+
+      /**
        * @method processBeam
        * @param {XMLElement} element the MEI beam element
        * @param {Vex.Flow.Staff} staff the containing staff
@@ -1352,12 +1417,12 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
        * layer
        */
-      processBeam : function(element, staff, staff_n, layerDir) {
+      processBeam : function(element, staff, staff_n, layerDir, staffInfo) {
         var me = this, elements, regularBeamElements = [], GN = VF.GraceNote;
 
         var process = function() {
           // make sure to get vexNote out of wrapped note objects
-          var proc_element = me.processNoteLikeElement(this, staff, staff_n, layerDir);
+          var proc_element = me.processNoteLikeElement(this, staff, staff_n, layerDir, staffInfo);
           return proc_element.vexNote || proc_element;
         };
         elements = $(element).children().map(process).get();
@@ -1390,11 +1455,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
        * layer
        */
-      processTuplet : function(element, staff, staff_n, layerDir) {
+      processTuplet : function(element, staff, staff_n, layerDir, staffInfo) {
         var me = this, elements, tuplet, bracketVisible, bracketPlace;
         var process = function() {
           // make sure to get vexNote out of wrapped note objects
-          var proc_element = me.processNoteLikeElement(this, staff, staff_n, layerDir);
+          var proc_element = me.processNoteLikeElement(this, staff, staff_n, layerDir, staffInfo);
           return proc_element.vexNote || proc_element;
         };
         elements = $(element).children().map(process).get();

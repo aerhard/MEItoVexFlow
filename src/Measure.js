@@ -73,6 +73,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
          */
         me.maxNoteStartX = 0;
         /**
+         * @property {Number} maxEndModifierW the maximum width of the end 
+         * modifiers in all Vex.Flow.Stave objects in the current measure
+         */
+        me.maxEndModifierW = 0;
+        /**
          * @property {Number} meiW the width attribute of the measure element or
          * null if NaN
          */
@@ -176,6 +181,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       calculateMinWidth : function() {
         var me = this;
         me.calculateMaxNoteStartX();
+        me.calculateMaxEndModifierWidth();
         me.calculateRepeatPadding();
         /**
          * @property {Number} minVoicesW the minimum width of the voices in the
@@ -185,7 +191,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         /**
          * @property {Number} minWidth the minimum width of the measure
          */
-        me.minWidth = me.maxNoteStartX + me.minVoicesW + me.repeatPadding;
+        me.minWidth = me.maxNoteStartX + me.maxEndModifierW + me.minVoicesW + me.repeatPadding;
       },
 
       /**
@@ -193,6 +199,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        */
       getMinWidth : function() {
         return this.minWidth;
+      },
+
+      setFinalWidth : function(additionalWidth) {
+        var me = this;
+        me.w = (me.meiW === null) ?  me.minWidth + additionalWidth : me.meiW;
       },
 
       /**
@@ -207,6 +218,18 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           staff = staffs[i];
           if (staff) {
             me.maxNoteStartX = Math.max(me.maxNoteStartX, staff.getNoteStartX());
+          }
+        }
+      },
+
+      calculateMaxEndModifierWidth : function() {
+        var me = this, i, staffs, staff;
+        staffs = me.staffs;
+        i = staffs.length;
+        while (i--) {
+          staff = staffs[i];
+          if (staff) {
+            me.maxEndModifierW = Math.max(me.maxEndModifierW, staff.getGlyphEndX() - staff.end_x);
           }
         }
       },
@@ -258,6 +281,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
             staff.start_x = staff.x + me.maxNoteStartX;
             staff.setWidth(width);
+
+            staff.end_x -= me.maxEndModifierW;
             staff.modifiers[0].x += x;
           }
         }
