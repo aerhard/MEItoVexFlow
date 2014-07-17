@@ -170,11 +170,15 @@ MeiLib.EventEnumerator.prototype.step_ahead = function() {++this.i_next;
  *
  * @param evnt an XML DOM object
  * @param meter the time signature object { count, unit }
+ * @param {Boolean} zeroGraceNotes Specifies if all grace notes should return the duration 0
  */
-MeiLib.durationOf = function(evnt, meter) {
+MeiLib.durationOf = function(evnt, meter, zeroGraceNotes) {
 
-  var IsZeroDurEvent = function(evnt, tagName) {
+  var IsZeroDurEvent = zeroGraceNotes
+    ? function (evnt, tagName) {
     return evnt.hasAttribute('grace') || tagName === 'clef';
+  } : function (evnt, tagName) {
+    return tagName === 'clef';
   };
   IsSimpleEvent = function(tagName) {
     return (tagName === 'note' || tagName === 'rest' || tagName === 'space');
@@ -301,7 +305,7 @@ MeiLib.tstamp2id = function(tstamp, layer, meter) {
     evnt = eventList.nextEvent();
     dist = distF();
     if (!evnt.hasAttribute('grace')) {
-      ts_acc += MeiLib.durationOf(evnt, meter) *
+      ts_acc += MeiLib.durationOf(evnt, meter, true) *
                 eventList.outputProportion.numbase /
                 eventList.outputProportion.num;
     }
