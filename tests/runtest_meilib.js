@@ -137,7 +137,7 @@ MeiLibTest = function(){
   end_test();
   
 
-  console.log('********* TEST: EventEnumerator and durationOf() ****************');
+  console.log('********* TEST: EventEnumerator and durationOf() 1: count grace notes  ****************');
   context = [];
   start_test('event-enum-duration-of')
   
@@ -206,6 +206,83 @@ MeiLibTest = function(){
     while (!layerEnum.EoI) {
       evnt = layerEnum.nextEvent();
       var id = $(evnt).attr('xml:id'); 
+      var idstr = '['+id+']';
+      var dur = MeiLib.durationOf(evnt, meter, true);
+      assert(dur, duration_asserts[i][j]);
+      j++;
+    }
+  });
+  end_test();
+
+  console.log('********* TEST: EventEnumerator and durationOf() 2: count grace notes ****************');
+  context = [];
+  start_test('event-enum-duration-of')
+
+  var duration_asserts = [
+    [
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      0.5,
+      0.5,
+      1,
+      1,
+      0.5,
+      0.5
+    ],
+    [
+      4
+    ],
+    [
+      0.5,
+      0.25,
+      0.25,
+      0.25,
+      0.125,
+      0.125,
+      0.25,
+      0.25,
+      0.5,
+      0.5,
+      1
+    ],
+    [
+      0.5,
+      0.5,
+      1,
+      1,
+      0.5
+    ],
+    [
+      0.75,
+      0.25,
+      1.75,
+      0.25,
+      1
+    ],
+    [
+      2,
+      2,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      2
+    ]
+  ]
+
+  $(score).find('layer').each(function(i, layer) {
+    // console.log('<<<<measure ' + (i+1).toString());
+    context.push({layer:layer, meter:meter});
+    var layerEnum = new MeiLib.EventEnumerator(layer);
+    var evnt;
+    var j = 0;
+    while (!layerEnum.EoI) {
+      evnt = layerEnum.nextEvent();
+      var id = $(evnt).attr('xml:id');
       var idstr = '['+id+']';
       var dur = MeiLib.durationOf(evnt, meter);
       assert(dur, duration_asserts[i][j]);
