@@ -116,7 +116,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         lyricsFont : {
           family : 'Times',
           size : 13,
-          spacing: 1.3,
+          spacing: 1.3
         },
         /**
          * @cfg {Object} annotFont the font used for annotations (for example,
@@ -1092,9 +1092,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           }
 
           // FIXME For now, we'll remove any child nodes of <note>
-          // $.each($(element).children(), function() {
-            // $(this).remove();
-          // });
+          $(element).children().each(function() {
+            $(this).remove();
+          });
 
           // Build a note object that keeps the xml:id
 
@@ -1619,7 +1619,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           syl = {
             text : $(this).text(),
             wordpos : $(this).attr('wordpos'),
-            verse_n : $(this).parents('verse').attr('n'),
+            verse_n : $(this).parents('verse').attr('n')
           };
           if (syl) {
             annot = me.createAnnot(syl.text, me.cfg.lyricsFont).
@@ -1656,7 +1656,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           return {
             text : $(syl).text(),
             wordpos : $(syl).attr('wordpos'),
-            verse_n : $(syl).parents('verse').attr('n'),
+            verse_n : $(syl).parents('verse').attr('n')
           };
         }
       },

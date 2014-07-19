@@ -88,7 +88,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           me.hyphenations[verse_n].addSyllable(annot, wordpos, staff_n);
         }
         return me;
-      },
+      }
 
     };
 
