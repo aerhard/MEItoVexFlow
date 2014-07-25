@@ -587,7 +587,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         left_barline = element.getAttribute('left');
         right_barline = element.getAttribute('right');
 
-        var staffElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [];
+        var staffElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [], rehElements = [];
 
         $(element).find('*').each(function() {
           switch (this.localName) {
@@ -614,6 +614,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
               break;
             case 'fermata':
               fermataElements.push(this);
+              break;
+            case 'reh':
+              rehElements.push(this);
               break;
             default:
               break;
@@ -658,6 +661,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             barline_r : right_barline
           },
           tempoElements : tempoElements,
+          rehElements : rehElements,
           tempoFont : me.cfg.tempoFont
         }));
       },
@@ -1126,12 +1130,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             id : xml_id
           };
         } catch (e) {
-          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the <chord>:' + e.toString());
-          // 'A problem occurred processing the <chord>: ' +
-          // JSON.stringify($.each($(element).children(), function(i,
-          // element) {
-          // element.attrs();
-          // }).get()) + '. \"' + x.toString() + '"');
+          var childStrings =
+            $(element).children().map(function() {
+            return '\n    <' + this.localName + m2v.Util.attsToString(this) + '/>';
+          }).get().join('');
+          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing \n<chord' + m2v.Util.attsToString(element) + '>' + childStrings + '\n</chord>\nORIGINAL ERROR MESSAGE: ' + e.toString());
         }
       },
 
