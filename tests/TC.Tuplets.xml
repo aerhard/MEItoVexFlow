@@ -68,6 +68,7 @@
 										<chord>
 											<note pname="a" oct="4" dur="8"/>
 											<note pname="d" oct="5" dur="8"/>
+                                            <artic artic="acc" place="above"/>
 										</chord>
 										<chord>
 											<note pname="a" oct="4" dur="8"/>
