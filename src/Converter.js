@@ -1135,7 +1135,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       processChord : function(element, staff, staff_n, layerDir, staffInfo) {
         var me = this, i, j, hasDots, children, keys = [], duration, durations = [], durAtt, xml_id, chord, chord_opts, atts;
 
-        children = $(element).children();
+        children = $(element).children('note');
 
         atts = m2v.Util.attsToObj(element);
         durAtt = atts.dur;
@@ -1194,6 +1194,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           if (atts.ho) {
             me.processAttrHo(atts.ho, chord, staff);
           }
+          $(element).find('artic').each(function() {
+            me.addArticulation(chord, this);
+          });
           if (atts.fermata) {
             me.fermatas.addFermataToNote(chord, atts.fermata);
           }
