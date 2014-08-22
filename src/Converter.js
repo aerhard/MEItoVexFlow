@@ -774,10 +774,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {Number} staff_n the staff number
        */
       addStaffClef : function(staff, staff_n) {
-        var me = this, currentStaffInfo;
+        var me = this, currentStaffInfo, clef;
         currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
         if (currentStaffInfo.showClefCheck()) {
-          staff.addClef(currentStaffInfo.getClef());
+          clef = currentStaffInfo.getClef();
+          staff.addClef(clef.type, clef.size, clef.shift === -1 ? '8vb' : undefined);
         }
       },
 
@@ -789,10 +790,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {Number} staff_n the staff number
        */
       addStaffEndClef : function(staff, staff_n) {
-        var me = this, currentStaffInfo;
+        var me = this, currentStaffInfo, clef;
         currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
         if (currentStaffInfo.showClefCheck()) {
-          staff.addEndClef(currentStaffInfo.getClef() + '_small');
+          clef = currentStaffInfo.getClef();
+          staff.addEndClef(clef.type, 'small', clef.shift);
         }
       },
 
@@ -1030,7 +1032,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @method processNote
        */
       processNote : function(element, staff, staff_n, layerDir) {
-        var me = this, dots, mei_accid, mei_ho, pname, oct, xml_id, mei_tie, mei_slur, mei_staff_n, i, atts, note_opts, note;
+        var me = this, dots, mei_accid, mei_ho, pname, oct, xml_id, mei_tie, mei_slur, mei_staff_n, i, atts, note_opts, note, clef;
 
         atts = m2v.Util.attsToObj(element);
 
@@ -1047,10 +1049,13 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
         try {
 
+          clef = me.systemInfo.getClef(staff_n);
+
           note_opts = {
             keys : [me.processAttsPitch(element)],
-            clef : me.systemInfo.getClef(staff_n),
-            duration : me.processAttsDuration(element)
+            clef : clef.type,
+            duration : me.processAttsDuration(element),
+            octave_shift : clef.shift
           };
 
           me.setStemDir(element, note_opts, layerDir);
@@ -1133,7 +1138,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @method processChord
        */
       processChord : function(element, staff, staff_n, layerDir, staffInfo) {
-        var me = this, i, j, hasDots, children, keys = [], duration, durations = [], durAtt, xml_id, chord, chord_opts, atts;
+        var me = this, i, j, hasDots, children, keys = [], duration, durations = [], durAtt, xml_id, chord, chord_opts, atts, clef;
 
         children = $(element).children('note');
 
@@ -1164,10 +1169,13 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           if (hasDots)
             duration += 'd';
 
+          clef = me.systemInfo.getClef(staff_n);
+
           chord_opts = {
             keys : keys,
-            clef : me.systemInfo.getClef(staff_n),
-            duration : duration
+            clef : clef.type,
+            duration : duration,
+            octave_shift : clef.shift
           };
 
           me.setStemDir(element, chord_opts, layerDir);
@@ -1257,7 +1265,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @method processRest
        */
       processRest : function(element, staff, staff_n) {
-        var me = this, dur, rest, xml_id, atts;
+        var me = this, dur, rest, xml_id, atts, clef;
         try {
           atts = m2v.Util.attsToObj(element);
 
@@ -1265,9 +1273,12 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           // assign whole rests to the fourth line, all others to the
           // middle line:
 
+          clef = me.systemInfo.getClef(staff_n);
+
           var restOpts = (atts.ploc && atts.oloc) ? {
             keys : [atts.ploc + '/' + atts.oloc],
-            clef : me.systemInfo.getClef(staff_n)
+            clef : clef.type,
+            octave_shift : clef.shift
           } : {
             keys : [(dur === 'w') ? 'd/5' : 'b/4']
           };
@@ -1390,7 +1401,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {Number} the number of the containing staff
        */
       processClef : function(element, staff, staff_n, layerDir, staffInfo) {
-        var me = this, clef, xml_id, atts, clefDef;
+        var me = this, clef, xml_id, atts, clefDef, clefProp;
         atts = m2v.Util.attsToObj(element);
         clefDef = {
           "clef.line" : atts.line,
@@ -1399,7 +1410,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           "clef.dis.place": atts['dis.place']
         };
         try {
-          clef = new VF.ClefNote(staffInfo.clefChangeInMeasure(clefDef));
+          clefProp = staffInfo.clefChangeInMeasure(clefDef);
+          clef = new VF.ClefNote(clefProp.type, 'small', clefProp.shift === -1 ? '8vb' : undefined);
           clef.setStave(staff);
           return {
             vexNote : clef
