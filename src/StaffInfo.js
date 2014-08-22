@@ -120,9 +120,15 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
       clefChangeInMeasure : function(staffDefObj) {
         var me = this;
-        me.initialClefCopy = me.currentClef;
+        me.initialClefCopy = {
+          type : me.currentClef.type,
+          size : me.currentClef.size,
+          shift: me.currentClef.shift
+        };
+        console.log(me.initialClefCopy);
         me.currentClef = me.convertClef(staffDefObj);
-        return me.currentClef + '_small';
+//        return me.currentClef + '_small';
+        return me.currentClef;
       },
 
       checkInitialClef : function() {
@@ -146,21 +152,21 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         clef_dis = staffDefObj['clef.dis'];
         clef_dis_place = staffDefObj['clef.dis.place'];
         if (clef_shape === 'G' && (!clef_line || clef_line === '2')) {
-          if (clef_dis === '8' && clef_dis_place === 'below' && VF.clefProperties.values.octave != undefined) {
-            return 'octave';
+          if (clef_dis === '8' && clef_dis_place === 'below') {
+            return {type: 'treble', shift : -1};
           }
-          return 'treble';
+          return {type: 'treble'};
         }
         if (clef_shape === 'F') {
-          if (clef_line === '3') return 'baritone-f';
-          return 'bass';
+          if (clef_line === '3') return {type: 'baritone-f'};
+          if (!clef_line || clef_line === '4') return {type: 'bass'};
         }
         if (clef_shape === 'C') {
-          if (clef_line === '1') return 'soprano';
-          if (clef_line === '2') return 'mezzo-soprano';
-          if (clef_line === '3') return 'alto';
-          if (clef_line === '4') return 'tenor';
-          if (clef_line === '5') return 'baritone-c';
+          if (clef_line === '1') return {type: 'soprano'};
+          if (clef_line === '2') return {type: 'mezzo-soprano'};
+          if (clef_line === '3') return {type: 'alto'};
+          if (clef_line === '4') return {type: 'tenor'};
+          if (clef_line === '5') return {type: 'baritone-c'};
         }
         throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Clef definition is not supported: [ clef.shape="' + clef_shape + '" ' + ( clef_line ? ('clef.line="' + clef_line + '"') : '') + ' ]');
       },

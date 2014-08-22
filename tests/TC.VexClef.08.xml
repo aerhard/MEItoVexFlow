@@ -46,12 +46,16 @@
                                 <layer n="1">
 									<note xml:id="e104-3" pname="g" oct="4" dur="2" stem.dir="up"/>
                                     <clef line="2" shape="G"/>
-									<note xml:id="e104-10" pname="b" oct="4" dur="2" stem.dir="up"/>
+                                    <note xml:id="e104-14" pname="b" oct="4" dur="4" stem.dir="up"/>
+                                    <clef line="2" shape="G" dis="8" dis.place="below"/>
+                                    <note xml:id="e104-15" pname="b" oct="3" dur="4" stem.dir="up"/>
 								</layer>
                                 <layer n="2">
-                                    <note xml:id="e104-3" pname="g" oct="4" dur="2" stem.dir="down"/>
+                                    <note xml:id="e104-11" pname="g" oct="4" dur="2" stem.dir="down"/>
                                     <clef line="2" shape="G"/>
-                                    <note xml:id="e104-10" pname="b" oct="4" dur="2" stem.dir="down"/>
+                                    <note xml:id="e104-12" pname="b" oct="4" dur="4" stem.dir="down"/>
+                                    <clef line="2" shape="G" dis="8" dis.place="below"/>
+                                    <note xml:id="e104-13" pname="b" oct="3" dur="4" stem.dir="down"/>
                                 </layer>
 							</staff>
 						</measure>
