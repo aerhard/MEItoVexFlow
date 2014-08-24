@@ -931,7 +931,7 @@ Vex.Flow.Stave = (function() {
     setX: function(x) {
       var i;
       var dx = (typeof this.x == "number") ? x - this.x : 0;
-      console.log('dx: ' + dx.toString());
+//      console.log('dx: ' + dx.toString());
       this.x = x;
       this.bounds.x = x;
       this.start_x += dx;

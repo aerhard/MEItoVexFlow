@@ -919,7 +919,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
         layerElements = $(staff_element).find('layer');
 
-        console.log(j);
+//        console.log(j);
 
         for (i=0,j = layerElements.length; i < j; i++) {
           layerDir = (j > 1) ? (i === 0 ? VF.StaveNote.STEM_UP : i === j - 1 ? VF.StaveNote.STEM_DOWN : null) : null;

@@ -125,7 +125,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           size : me.currentClef.size,
           shift: me.currentClef.shift
         };
-        console.log(me.initialClefCopy);
+//        console.log(me.initialClefCopy);
         me.currentClef = me.convertClef(staffDefObj);
 //        return me.currentClef + '_small';
         return me.currentClef;

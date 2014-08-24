@@ -187,7 +187,7 @@ MeiLib.durationOf = function(evnt, meter, zeroGraceNotes) {
     var dur = $(simple_evnt).attr('dur');
     if (!dur)
       throw new MeiLib.RuntimeError('MeiLib.durationOf:E04', '@dur of <b>note</b>, <b>rest</b> or <b>space</b> must be specified.');
-    console.log(MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter));
+//    console.log(MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter));
     return MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter);
   };
   var durationOf_Chord = function(chord, meter, layer_no) {
@@ -1064,7 +1064,7 @@ MeiLib.MeiDoc.prototype.updateSectionView = function(sectionplaneUpdate) {
           res++;
         }
       }
-      console.log('vars_match: ' + res);
+//      console.log('vars_match: ' + res);
       return res;
     }
     var max = 0;
@@ -1161,7 +1161,7 @@ MeiLib.MeiDoc.prototype.replaceAltInstance = function(alt_inst_update) {
       nodes2insert = extendWithNodeList(nodes2insert, var_inst_elem.childNodes);
     };
   }
-  console.log(nodes2insert)
+//  console.log(nodes2insert)
 
   var match_pseudo_attrValues = function(data1, data2) {
     data1 = data1.replace("'", '"');
