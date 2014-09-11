@@ -349,6 +349,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         f_note = notes_by_id[this.getFirstId()] || {};
         l_note = notes_by_id[this.getLastId()] || {};
 
+        if (!f_note.vexNote && !l_note.vexNote) {
+          m2v.L('Could not render slur with ids "' + this.getFirstId() + '" and "' + this.getLastId() + '"');
+          return true;
+        }
+
         if (!this.params.curvedir) {
           var layerDir = f_note.layerDir || l_note.layerDir;
           if (layerDir) {
@@ -370,6 +375,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             }
           }
         }
+
         if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
           me.createSingleStaveTie(f_note, {}, this.params);
           if (!this.params.curvedir) {
