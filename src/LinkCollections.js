@@ -350,7 +350,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         l_note = notes_by_id[this.getLastId()] || {};
 
         if (!f_note.vexNote && !l_note.vexNote) {
-          m2v.L('Could not render slur with ids "' + this.getFirstId() + '" and "' + this.getLastId() + '"');
+          m2v.L('Could not render tie/slur with ids "' + this.getFirstId() + '" and "' + this.getLastId() + '"');
           return true;
         }
 
