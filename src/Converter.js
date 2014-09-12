@@ -444,7 +444,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       createNewSystem : function() {
         var me = this, system, coords;
 
-        m2v.L('Converter.createNewSystem()', '{enter}');
+        m2v.L('debug', 'Converter.createNewSystem()', '{enter}');
 
         me.pendingSystemBreak = false;
         me.currentSystem_n += 1;
@@ -548,7 +548,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             me.processEnding(element);
             break;
           default :
-            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Element <' + element.localName + '> is not supported in <section>');
+            m2v.L('info', 'Converter.processSectionChild()', 'Element <' + element.localName + '> is not supported in <section>');
         }
       },
 
@@ -581,7 +581,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           atSystemStart = false;
         }
 
-        m2v.L('Converter.processMeasure()', '{enter}');
+        m2v.L('debug', 'Converter.processMeasure()', '{enter}');
 
         measure_n = +element.getAttribute('n');
         left_barline = element.getAttribute('left');
@@ -1024,7 +1024,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           case 'anchoredText' :
             return;
           default :
-            throw new m2v.RUNTIME_ERROR('BadArguments', 'Rendering of element "' + element.localName + '" is not supported.');
+            m2v.L('info', 'Converter.processNoteLikeElement()', 'Rendering of element "' + element.localName + '" is not supported.');
         }
       },
 

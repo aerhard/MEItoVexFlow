@@ -241,7 +241,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
         me.allVexObjects.push(hairpin);
       } else {
-        m2v.L('Hairpins', 'Hairpin cannot be rendered:');
+        m2v.L('debug', 'Hairpins', 'Hairpin cannot be rendered:');
         console.log(arguments);
       }
 
@@ -354,7 +354,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         l_note = notes_by_id[this.getLastId()] || {};
 
         if (!f_note.vexNote && !l_note.vexNote) {
-          m2v.L('Could not render tie/slur with ids "' + this.getFirstId() + '" and "' + this.getLastId() + '"');
+          m2v.L('debug', 'Could not render tie/slur with ids "' + this.getFirstId() + '" and "' + this.getLastId() + '"');
           return true;
         }
 

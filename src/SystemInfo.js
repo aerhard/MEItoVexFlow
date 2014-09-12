@@ -65,7 +65,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         symbol = $(staffGrp).attr('symbol');
         barthru = $(staffGrp).attr('barthru');
 
-        m2v.L('Converter.setConnectorModels() {2}', 'symbol: ' + symbol, ' range.first_n: ' + first_n, ' range.last_n: ' + last_n);
+        m2v.L('debug', 'Converter.setConnectorModels() {2}', 'symbol: ' + symbol, ' range.first_n: ' + first_n, ' range.last_n: ' + last_n);
 
         // 1. left connectors specified in the MEI file:
         me.setModelForStaveRange(me.startConnectorInfos, {
@@ -196,7 +196,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           case 'pgHead' :
             break;
           default :
-            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Element <' + element.localName + '> is not supported in <scoreDef>');
+            m2v.L('info', 'SystemInfo.processScoreDef_child()', 'Element <' + element.localName + '> is not supported in <scoreDef>');
         }
       },
 
@@ -214,7 +214,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         var me = this, range = {};
         $(staffGrp).children().each(function(i, childElement) {
           var childRange = me.processStaffGrp_child(childElement);
-          m2v.L('Converter.processStaffGrp() {1}.{a}', 'childRange.first_n: ' + childRange.first_n, ' childRange.last_n: ' + childRange.last_n);
+          m2v.L('debug', 'Converter.processStaffGrp() {1}.{a}', 'childRange.first_n: ' + childRange.first_n, ' childRange.last_n: ' + childRange.last_n);
           if (i === 0)
             range.first_n = childRange.first_n;
           range.last_n = childRange.last_n;
@@ -245,7 +245,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           case 'staffGrp' :
             return me.processStaffGrp(element, true);
           default :
-            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Element <' + element.localName + '> is not supported in <staffGrp>');
+            m2v.L('info', 'SystemInfo.processScoreDef_child()', 'Element <' + element.localName + '> is not supported in <staffGrp>');
         }
       },
 
