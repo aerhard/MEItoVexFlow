@@ -1447,7 +1447,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           }
         }
 
-        if (regularBeamElements.length > 0) me.allBeams.push(new VF.Beam(regularBeamElements));
+        // set autostem parameter of VF.Beam to true if layerDir is null, otherwise (1, -1) false
+        if (regularBeamElements.length > 0) me.allBeams.push(new VF.Beam(regularBeamElements, !layerDir));
         return elements;
       },
 
