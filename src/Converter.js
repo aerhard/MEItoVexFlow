@@ -179,7 +179,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @property {MEI2VF.SystemInfo} systemInfo
        */
       me.systemInfo = new m2v.SystemInfo();
-
       /**
        * The print space coordinates calculated from the page config.
        * @property {Object} printSpace
@@ -293,6 +292,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * object
        */
       me.notes_by_id = {};
+      /**
+       * @property {Number} inBeamNo specifies the number of beams the current events are under
+       */
+      me.inBeamNo = 0;
+      /**
+       * @property {Boolean} stemDirInBeam specifies if a stem.dir has been specified in the current beam
+       */
+      me.stemDirInBeam = false;
       /**
        * Grace note or grace chord objects to be added to the next non-grace note or chord
        * @property {Vex.Flow.StaveNote[]} currentGraceNotes
@@ -1422,7 +1429,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      */
     processBeam : function(element, staff, staff_n, layerDir, staffInfo) {
       var me = this, elements, regularBeamElements = [], GN = VF.GraceNote;
-
+      me.inBeamNo += 1;
       var process = function() {
         // make sure to get vexNote out of wrapped note objects
         var proc_element = me.processNoteLikeElement(this, staff, staff_n, layerDir, staffInfo);
@@ -1432,7 +1439,12 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
 
       // set autostem parameter of VF.Beam to true if layerDir is null, otherwise (1, -1) false
-      if (elements.length > 0) me.allBeams.push(new VF.Beam(elements, !layerDir));
+      if (elements.length > 0) me.allBeams.push(new VF.Beam(elements, !layerDir && !me.stemDirInBeam));
+
+      me.inBeamNo -= 1;
+      if (me.inBeamNo === 0) {
+        me.stemDirInBeam = false;
+      }
       return elements;
     },
 
@@ -1725,11 +1737,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * layer
      */
     setStemDir : function(element, optionsObj, layerDir) {
-      var specified_dir = {
+      var me=this,specified_dir = {
         down : VF.StaveNote.STEM_DOWN,
         up : VF.StaveNote.STEM_UP
       }[$(element).attr('stem.dir')];
       if (specified_dir) {
+        if (me.inBeamNo > 0) {
+          me.stemDirInBeam = true;
+        }
         optionsObj.stem_direction = specified_dir;
       } else if (layerDir) {
         optionsObj.stem_direction = layerDir;
