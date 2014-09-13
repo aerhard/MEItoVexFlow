@@ -1707,7 +1707,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
     translateDuration : function(mei_dur) {
       var result = m2v.tables.durations[mei_dur + ''], alias;
       alias = {
-        'brevis' : 'breve'
+        'brevis' : 'breve',
+        'longa' : 'long'
       };
       if (result) {
         return result;
