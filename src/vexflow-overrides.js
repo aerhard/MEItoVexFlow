@@ -1,4 +1,16 @@
 
+
+
+Vex.Flow.StaveNote.prototype.getTieRightX = function() {
+  var tieStartX = this.getAbsoluteX();
+  tieStartX += this.glyph.head_width + this.x_shift + this.extraRightPx;
+  //if (this.modifierContext) tieStartX += this.modifierContext.getExtraRightPx();
+  return tieStartX;
+};
+
+
+
+
 // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
 // Author: Cyril Silverman
 //
