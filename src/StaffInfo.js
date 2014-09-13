@@ -50,6 +50,21 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
   m2v.StaffInfo.prototype = {
 
+    clefTypeMap : {
+      G: 'treble',
+      G1: 'french',
+      G2: 'treble',
+      F3: 'baritone-f',
+      F4: 'bass',
+      F5: 'subbass',
+      C1: 'soprano',
+      C2: 'mezzo-soprano',
+      C3: 'alto',
+      C4: 'tenor',
+      C5: 'baritone-c',
+      perc: 'percussion'
+    },
+
     updateMeter : function() {
       var me = this;
       if (me.staffDefObj.hasOwnProperty('meter.count') && me.staffDefObj.hasOwnProperty('meter.unit')) {
@@ -125,18 +140,16 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     },
 
-    initialClefCopy : null,
-
-    clefChangeInMeasure : function(staffDefObj) {
+    clefChangeInMeasure : function(newClefDef) {
       var me = this;
-      me.initialClefCopy = {
-        type : me.currentClef.type,
-        size : me.currentClef.size,
-        shift: me.currentClef.shift
-      };
-      //        console.log(me.initialClefCopy);
-      me.currentClef = me.convertClef(staffDefObj);
-      //        return me.currentClef + '_small';
+      if (!me.initialClefCopy) {
+        me.initialClefCopy = {
+          type : me.currentClef.type,
+          size : me.currentClef.size,
+          shift: me.currentClef.shift
+        };
+      }
+      me.currentClef = me.convertClef(newClefDef);
       return me.currentClef;
     },
 
@@ -152,32 +165,24 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
     },
 
     convertClef : function(staffDefObj) {
-      var me = this, clef_shape, clef_line, clef_dis, clef_dis_place;
-      clef_shape = staffDefObj['clef.shape'];
-      if (!clef_shape) {
+      var me = this, clefShape, clefDis, clefDisPlace, clefType;
+      clefShape = staffDefObj['clef.shape'];
+      if (!clefShape) {
         throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.MissingAttribute', 'Attribute clef.shape is mandatory.');
       }
-      clef_line = staffDefObj['clef.line'];
-      clef_dis = staffDefObj['clef.dis'];
-      clef_dis_place = staffDefObj['clef.dis.place'];
-      if (clef_shape === 'G' && (!clef_line || clef_line === '2')) {
-        if (clef_dis === '8' && clef_dis_place === 'below') {
-          return {type: 'treble', shift : -1};
+
+      clefType = clefShape + (staffDefObj['clef.line'] || '');
+      clefDis = staffDefObj['clef.dis'];
+      clefDisPlace = staffDefObj['clef.dis.place'];
+
+      var type = me.clefTypeMap[clefType];
+      if (type) {
+        if (clefDis === '8' && clefDisPlace === 'below') {
+          return {type: type, shift : -1};
         }
-        return {type: 'treble'};
-      }
-      if (clef_shape === 'F') {
-        if (clef_line === '3') return {type: 'baritone-f'};
-        if (!clef_line || clef_line === '4') return {type: 'bass'};
-      }
-      if (clef_shape === 'C') {
-        if (clef_line === '1') return {type: 'soprano'};
-        if (clef_line === '2') return {type: 'mezzo-soprano'};
-        if (clef_line === '3') return {type: 'alto'};
-        if (clef_line === '4') return {type: 'tenor'};
-        if (clef_line === '5') return {type: 'baritone-c'};
-      }
-      throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Clef definition is not supported: [ clef.shape="' + clef_shape + '" ' + ( clef_line ? ('clef.line="' + clef_line + '"') : '') + ' ]');
+        return {type: type};
+      };
+      throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Clef definition is not supported: [ clef.shape="' + clefShape + '" ' + (staffDefObj['clef.line'] ? ('clef.line="' + staffDefObj['clef.line'] + '"') : '') + ' ]');
     },
 
     getClef : function() {

@@ -941,6 +941,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       //        });
 
       staffInfo.removeInitialClefCopy();
+      console.log(staffInfo.initialClefCopy);
     },
 
     /**
