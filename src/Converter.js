@@ -688,7 +688,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @param {Boolean} atSystemStart indicates if the current measure is the system's start measure
      */
     initializeMeasureStaffs : function(system, staffElements, left_barline, right_barline, atSystemStart) {
-      var me = this, staff, staff_n, staffs, isFirst = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaffs;
+      var me = this, staff, staff_n, staffs, isFirst = true, clefOffsets = {}, maxClefOffset = 0,
+          keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaffs, newClef;
 
       staffs = [];
 
@@ -715,7 +716,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           me.addStaffVolta(staff);
         }
         if (precedingMeasureStaffs && precedingMeasureStaffs[staff_n]) {
-          me.addStaffEndClef(precedingMeasureStaffs[staff_n], staff_n);
+          newClef = me.addStaffEndClef(precedingMeasureStaffs[staff_n], staff_n);
+          staff.clef = newClef;
           clefOffsets[staff_n] = 0;
           maxClefOffset = 0;
         } else {
@@ -797,17 +799,20 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
     /**
      * Adds a clef to the end of a Vex.Flow.Staff.
      *
-     * @method addStaffClef
+     * @method addStaffEndClef
      * @param {Vex.Flow.Stave} staff The stave object
      * @param {Number} staff_n the staff number
+     * @return the clef type
      */
     addStaffEndClef : function(staff, staff_n) {
       var me = this, currentStaffInfo, clef;
       currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
+      clef = currentStaffInfo.getClef();
       if (currentStaffInfo.showClefCheck()) {
-        clef = currentStaffInfo.getClef();
+        console.log(clef.type);
         staff.addEndClef(clef.type, 'small', clef.shift);
       }
+      return clef.type;
     },
 
     /**

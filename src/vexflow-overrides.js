@@ -132,6 +132,8 @@ Vex.Flow.KeySignature = (function() {
     // the  accidental `type` for the key signature ('# or 'b').
     convertAccLines: function(clef, type) {
       var offset = 0.0; // if clef === "treble"
+
+      console.log(clef);
       var tenorSharps;
       var isTenorSharps = ((clef === "tenor") && (type === "#")) ? true : false;
 
@@ -146,6 +148,25 @@ Vex.Flow.KeySignature = (function() {
           if (!isTenorSharps) {
             offset = -0.5;
           }
+          break;
+
+        case 'french':
+          offset = 1.0;
+          break;
+        case 'treble':
+          offset = 1.0;
+          break;
+        case 'baritone-f':
+          offset = 2;
+          break;
+        case 'soprano':
+          offset = -1.0;
+          break;
+        case 'mezzo-soprano':
+          offset = 1.5;
+          break;
+        case 'baritone-c':
+          offset = 2.0;
           break;
       }
 
