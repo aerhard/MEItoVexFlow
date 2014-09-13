@@ -1273,15 +1273,12 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           clef : clef.type,
           octave_shift : clef.shift
         } : {
-                         keys : [(dur === 'w') ? 'd/5' : 'b/4']
-                       };
+          keys : [(dur === 'w') ? 'd/5' : 'b/4']
+        };
 
         restOpts.duration = dur + 'r';
 
         rest = new VF.StaveNote(restOpts);
-
-        // FIXME: create separate class for rest in which no ledger lines are drawn
-        rest.drawLedgerLines = function() {};
 
         xml_id = MeiLib.XMLID(element);
 
