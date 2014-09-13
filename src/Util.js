@@ -24,8 +24,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        *
        */
-      attsToString : function(element) {
-        var result = '', i, j, atts, att;
+      serializeElement : function(element) {
+        var result = '<' + element.localName, i, j, atts, att;
         if (element.hasAttributes()) {
           atts = element.attributes;
           for ( i = 0, j = atts.length; i < j; i += 1) {
@@ -33,7 +33,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             result += ' ' + att.nodeName + '="' + att.nodeValue + '"';
           }
         }
-        return result;
+        return result + '>';
       },
 
       /**
