@@ -133,9 +133,13 @@ Vex.Flow.KeySignature = (function() {
     convertAccLines: function(clef, type) {
       var offset = 0.0; // if clef === "treble"
 
-      console.log(clef);
-      var tenorSharps;
-      var isTenorSharps = ((clef === "tenor") && (type === "#")) ? true : false;
+      var sharps;
+      var isTenorSharps = ((clef === "tenor" || clef === 'subbass') && (type === "#")) ? true : false;
+      var isSopranoSharps = ((clef === 'soprano') && (type === "#")) ? true : false;
+      var isBaritoneSharps = ((clef === 'baritone-f' || clef === 'baritone-c') && (type === "#")) ? true : false;
+
+      var isSopranoFlats = ((clef === 'soprano' || clef==='baritone-c' || clef==='baritone-f') && (type === "b")) ? true : false;
+      var isMezzoSopranoFlats = ((clef === 'mezzo-soprano') && (type === "b")) ? true : false;
 
       switch (clef) {
         case "bass":
@@ -145,9 +149,7 @@ Vex.Flow.KeySignature = (function() {
           offset = 0.5;
           break;
         case "tenor":
-          if (!isTenorSharps) {
             offset = -0.5;
-          }
           break;
 
         case 'french':
@@ -157,7 +159,7 @@ Vex.Flow.KeySignature = (function() {
           offset = 1.0;
           break;
         case 'baritone-f':
-          offset = 2;
+          offset = -1.5;
           break;
         case 'soprano':
           offset = -1.0;
@@ -166,16 +168,40 @@ Vex.Flow.KeySignature = (function() {
           offset = 1.5;
           break;
         case 'baritone-c':
-          offset = 2.0;
+          offset = -1.5;
           break;
       }
 
-      // Special-case for TenorSharps
+      // Special-case for sharps
       var i;
       if (isTenorSharps) {
-        tenorSharps = [3, 1, 2.5, 0.5, 2, 0, 1.5];
+        sharps = [3.5, 1.5, 3, 1, 2.5, 0.5, 2];
         for (i = 0; i < this.accList.length; ++i) {
-          this.accList[i].line = tenorSharps[i];
+          this.accList[i].line = sharps[i] + offset;
+        }
+      }
+      else if (isSopranoSharps) {
+        sharps = [3.5, 5, 3, 4.5, 2.5, 4, 2];
+        for (i = 0; i < this.accList.length; ++i) {
+          this.accList[i].line = sharps[i] + offset;
+        }
+      }
+      else if (isSopranoFlats) {
+        sharps = [2, 4, 2.5, 4.5, 3, 5, 3.5];
+        for (i = 0; i < this.accList.length; ++i) {
+          this.accList[i].line = sharps[i] + offset;
+        }
+      }
+      else if (isMezzoSopranoFlats) {
+        sharps = [2, 0.5, -1, 1, -0.5, 1.5, 0];
+        for (i = 0; i < this.accList.length; ++i) {
+          this.accList[i].line = sharps[i] + offset;
+        }
+      }
+      else if (isBaritoneSharps) {
+        sharps = [3.5, 1.5, 3, 1, 2.5, 4, 2];
+        for (i = 0; i < this.accList.length; ++i) {
+          this.accList[i].line = sharps[i] + offset;
         }
       }
       else {

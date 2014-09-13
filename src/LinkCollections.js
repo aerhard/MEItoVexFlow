@@ -241,8 +241,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
         me.allVexObjects.push(hairpin);
       } else {
-        m2v.L('debug', 'Hairpins', 'Hairpin cannot be rendered:');
-        console.log(arguments);
+        m2v.L('debug', 'Hairpins', 'Hairpin cannot be rendered:' + arguments.join(' '));
       }
 
     }

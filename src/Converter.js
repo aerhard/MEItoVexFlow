@@ -809,7 +809,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
       clef = currentStaffInfo.getClef();
       if (currentStaffInfo.showClefCheck()) {
-        console.log(clef.type);
         staff.addEndClef(clef.type, 'small', clef.shift);
       }
       return clef.type;
@@ -924,9 +923,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         currentStaveVoices.addVoice(me.createVexVoice(layer_events, staffInfo.meter), staff_n);
 
       }
-
       staffInfo.removeInitialClefCopy();
-      console.log(staffInfo.initialClefCopy);
     },
 
     /**
