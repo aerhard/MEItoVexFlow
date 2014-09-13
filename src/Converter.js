@@ -294,6 +294,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        */
       me.notes_by_id = {};
       /**
+       * Grace note or grace chord objects to be added to the next non-grace note or chord
+       * @property {Vex.Flow.StaveNote[]} currentGraceNotes
+       */
+      me.currentGraceNotes = [];
+      /**
        * the number of the current system
        * @property {Number} currentSystem_n
        */
@@ -892,34 +897,12 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
       staffInfo = me.systemInfo.getStaffInfo(staff_n);
 
-      var evalEvent = function (event) {
-        if (event instanceof GN) {
-          currentGraceNotes.push(event);
-          return null;
-        }
-        if ($.isArray(event)) {
-          var n = [];
-          for (var i=0,j=event.length;i<j;i++) {
-            var ev = evalEvent(event[i]);
-            if (ev !== null) n.push(ev);
-          }
-          return n;
-        }
-        if (currentGraceNotes.length > 0) {
-          event.addModifier(0, new Vex.Flow.GraceNoteGroup(currentGraceNotes, false).beamNotes());
-          currentGraceNotes = [];
-        }
-        return event;
-      };
-
       readEvents = function() {
         var event = me.processNoteLikeElement(this, staff, staff_n, layerDir, staffInfo);
-        return evalEvent(event.vexNote || event);
+        return event ? (event.vexNote || event) : null;
       };
 
       layerElements = $(staff_element).find('layer');
-
-      //        console.log(j);
 
       for (i=0,j = layerElements.length; i < j; i++) {
         layerDir = (j > 1) ? (i === 0 ? VF.StaveNote.STEM_UP : i === j - 1 ? VF.StaveNote.STEM_DOWN : null) : null;
@@ -929,16 +912,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         currentStaveVoices.addVoice(me.createVexVoice(layer_events, staffInfo.meter), staff_n);
 
       }
-
-      //        $(staff_element).find('layer').each(function() {
-      //          me.resolveUnresolvedTimestamps(this, staff_n, measure_n, staffInfo.meter);
-      //          staffInfo.checkInitialClef();
-      //          layer_events = $(this).children().map(readEvents).get();
-      //          currentStaveVoices.addVoice(me.createVexVoice(layer_events, staffInfo.meter), staff_n);
-      //        });
-
-      //        layerElements.each(function() {
-      //        });
 
       staffInfo.removeInitialClefCopy();
       console.log(staffInfo.initialClefCopy);
@@ -1125,6 +1098,16 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           layerDir : layerDir
         };
 
+        if (atts.grace) {
+          note.slash = atts['stem.mod'] === '1slash';
+          me.currentGraceNotes.push(note);
+          return;
+        } else {
+          if (me.currentGraceNotes.length > 0) {
+            note.addModifier(0, new Vex.Flow.GraceNoteGroup(me.currentGraceNotes, false).beamNotes());
+            me.currentGraceNotes = [];
+          }
+        }
         return {
           vexNote : note,
           id : xml_id
@@ -1218,6 +1201,15 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           layerDir : layerDir
         };
 
+        if (atts.grace) {
+          me.currentGraceNotes.push(chord);
+          return;
+        } else {
+          if (me.currentGraceNotes.length > 0) {
+            chord.addModifier(0, new Vex.Flow.GraceNoteGroup(me.currentGraceNotes, false).beamNotes());
+            me.currentGraceNotes = [];
+          }
+        }
         return {
           vexNote : chord,
           id : xml_id
@@ -1437,19 +1429,13 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       var process = function() {
         // make sure to get vexNote out of wrapped note objects
         var proc_element = me.processNoteLikeElement(this, staff, staff_n, layerDir, staffInfo);
-        return proc_element.vexNote || proc_element;
+        return proc_element ? (proc_element.vexNote || proc_element) : null;
       };
       elements = $(element).children().map(process).get();
 
-      // exclude grace notes from regular beams:
-      for (var i= 0,j=elements.length;i<j;i++) {
-        if (!(elements[i] instanceof GN)) {
-          regularBeamElements.push(elements[i]);
-        }
-      }
 
       // set autostem parameter of VF.Beam to true if layerDir is null, otherwise (1, -1) false
-      if (regularBeamElements.length > 0) me.allBeams.push(new VF.Beam(regularBeamElements, !layerDir));
+      if (elements.length > 0) me.allBeams.push(new VF.Beam(elements, !layerDir));
       return elements;
     },
 
@@ -1471,11 +1457,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * layer
      */
     processTuplet : function(element, staff, staff_n, layerDir, staffInfo) {
-      var me = this, elements, tuplet, bracketVisible, bracketPlace;
+      var me = this, elements, tuplet, bracketPlace;
       var process = function() {
         // make sure to get vexNote out of wrapped note objects
         var proc_element = me.processNoteLikeElement(this, staff, staff_n, layerDir, staffInfo);
-        return proc_element.vexNote || proc_element;
+        return proc_element ? (proc_element.vexNote || proc_element) : null;
       };
       elements = $(element).children().map(process).get();
 
@@ -1488,14 +1474,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         tuplet.setRatioed(true);
       }
 
-      bracketVisible = element.getAttribute('bracket.visible');
-      if (bracketVisible) {
-        tuplet.setBracketed((bracketVisible === 'true') ? true : false);
-      } else {
-        if (elements[0] instanceof VF.GraceNote) {
-          tuplet.setBracketed(false);
-        }
-      }
+      tuplet.setBracketed(element.getAttribute('bracket.visible') === 'true');
 
       bracketPlace = element.getAttribute('bracket.place');
       if (bracketPlace) {

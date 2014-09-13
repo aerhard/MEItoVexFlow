@@ -69,20 +69,18 @@
                                     </beam>
                                     <note xml:id="f05" pname="d" oct="4" dur="2"/>
                                     <beam>
-                                        <tuplet>
-                                            <chord grace="unknown">
-                                                <note xml:id="fg09" pname="a" oct="3" dur="16"/>
-                                                <note xml:id="fg08" pname="d" oct="4" dur="16"/>
-                                            </chord>
-                                            <chord grace="unknown">
-                                                <note xml:id="fg11" pname="a" accid="f" oct="3" dur="16"/>
-                                                <note xml:id="fg10" pname="d" accid="f" oct="4" dur="16"/>
-                                            </chord>
-                                            <chord grace="unknown">
-                                                <note xml:id="fga09" pname="g" oct="3" dur="16"/>
-                                                <note xml:id="fga08" pname="c" oct="4" dur="16"/>
-                                            </chord>
-                                        </tuplet>
+                                        <chord grace="unknown">
+                                            <note xml:id="fg09" pname="a" oct="3" dur="16"/>
+                                            <note xml:id="fg08" pname="d" oct="4" dur="16"/>
+                                        </chord>
+                                        <chord grace="unknown">
+                                            <note xml:id="fg11" pname="a" accid="f" oct="3" dur="16"/>
+                                            <note xml:id="fg10" pname="d" accid="f" oct="4" dur="16"/>
+                                        </chord>
+                                        <chord grace="unknown">
+                                            <note xml:id="fga09" pname="g" oct="3" dur="16"/>
+                                            <note xml:id="fga08" pname="c" oct="4" dur="16"/>
+                                        </chord>
                                     </beam>
                                     <chord xml:id="fc02">
                                         <note xml:id="fn13" pname="f" accid="s" oct="3" dur="8"/>
@@ -203,13 +201,11 @@
                                     </beam>
                                     <rest dur="8"/>
                                     <beam>
-                                        <tuplet bracket.visible="true">
-                                            <beam>
-                                                <note pname="d" oct="3" dur="16" grace="unknown"/>
-                                                <note pname="e" oct="3" dur="16" grace="unknown"/>
-                                                <note pname="f" oct="3" dur="16" grace="unknown"/>
-                                            </beam>
-                                        </tuplet>
+                                        <beam>
+                                            <note pname="d" oct="3" dur="16" grace="unknown"/>
+                                            <note pname="e" oct="3" dur="16" grace="unknown"/>
+                                            <note pname="f" oct="3" dur="16" grace="unknown"/>
+                                        </beam>
                                         <note pname="e" oct="3" dur="16" grace="unknown"/>
                                         <note pname="f" oct="3" dur="16" grace="unknown"/>
                                     </beam>
