@@ -66,7 +66,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
     },
 
     updateMeter : function() {
-      var me = this;
+      var me = this, meter;
       if (me.staffDefObj.hasOwnProperty('meter.count') && me.staffDefObj.hasOwnProperty('meter.unit')) {
         me.meter = {
           count : +me.staffDefObj['meter.count'],
@@ -125,7 +125,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       var me = this;
       if (me.renderWith.keysig) {
         me.renderWith.keysig = false;
-        if (me.staffDefObj['key.sig.show'] !== 'false')
+        if (me.staffDefObj['key.sig.show'] === 'true' || me.scoreDefObj['key.sig.show'] !== 'false')
           return true;
       }
     },
@@ -134,7 +134,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       var me = this;
       if (me.renderWith.timesig) {
         me.renderWith.timesig = false;
-        if (me.staffDefObj['meter.rend'] === 'norm' || me.staffDefObj['meter.rend'] === undefined) {
+        if (me.staffDefObj['meter.rend'] === 'norm' || me.scoreDefObj['meter.rend'] !== 'invis') {
           return true;
         }
       }
@@ -168,7 +168,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       var me = this, clefShape, clefDis, clefDisPlace, clefType;
       clefShape = staffDefObj['clef.shape'];
       if (!clefShape) {
-        throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.MissingAttribute', 'Attribute clef.shape is mandatory.');
+        m2v.L('warn', '@clef.shape expected', 'No clef shape attribute found. Setting default clef.shape "G".');
+        clefShape = 'G';
       }
 
       clefType = clefShape + (staffDefObj['clef.line'] || '');
@@ -182,7 +183,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         }
         return {type: type};
       };
-      throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.NotSupported', 'Clef definition is not supported: [ clef.shape="' + clefShape + '" ' + (staffDefObj['clef.line'] ? ('clef.line="' + staffDefObj['clef.line'] + '"') : '') + ' ]');
+      m2v.L('warn', 'Not supported', 'Clef definition is not supported: [ clef.shape="' + clefShape + '" ' + (staffDefObj['clef.line'] ? ('clef.line="' + staffDefObj['clef.line'] + '"') : '') + ' ]. Setting default treble clef.');
+      return {type: 'treble'};
     },
 
     getClef : function() {
@@ -190,29 +192,37 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
     },
 
     getKeySpec : function() {
-      var me = this, keyname, key_accid, key_mode;
+      var me = this;
       if (me.staffDefObj['key.pname'] !== undefined) {
-        keyname = me.staffDefObj['key.pname'].toUpperCase();
-        key_accid = me.staffDefObj['key.accid'];
-        if (key_accid !== undefined) {
-          switch (key_accid) {
-            case 's' :
-              keyname += '#';
-              break;
-            case 'f' :
-              keyname += 'b';
-              break;
-            default :
-              throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.UnexpectedAttributeValue', "Value of key.accid must be 's' or 'f'");
-          }
-        }
-        key_mode = me.staffDefObj['key.mode'];
-        if (key_mode !== undefined)
-          keyname += (key_mode === 'major') ? '' : 'm';
-        return keyname;
+        return me.convertKeySpec(me.staffDefObj);
+      }
+      if (me.scoreDefObj['key.pname'] !== undefined) {
+        return me.convertKeySpec(me.scoreDefObj);
       }
       return 'C';
     },
+
+    convertKeySpec : function(defObj) {
+      var me = this, keyname, key_accid, key_mode;
+      keyname = defObj['key.pname'].toUpperCase();
+      key_accid = defObj['key.accid'];
+      if (key_accid !== undefined) {
+        switch (key_accid) {
+          case 's' :
+            keyname += '#';
+            break;
+          case 'f' :
+            keyname += 'b';
+            break;
+          default :
+            m2v.L('warn', 'Not supported', 'expected to find value "s" or "f" instead of "' +key_accid+'" in @key.accid. Skipping processing of this attribute.');
+        }
+      }
+      key_mode = defObj['key.mode'];
+      if (key_mode !== undefined) keyname += (key_mode === 'major') ? '' : 'm';
+      return keyname;
+    },
+
 
     /**
      * gets the vexFlow time signature from an MEI staffDef element
@@ -282,7 +292,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           count : +me.scoreDefObj['meter.count'],
           unit : +me.scoreDefObj['meter.unit'],
           sym : me.scoreDefObj['meter.sym']
-        }
+        };
         me.renderWith.timesig = true;
       }
     }

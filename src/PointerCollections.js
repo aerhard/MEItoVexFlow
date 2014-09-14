@@ -134,7 +134,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         model = me.allModels[i];
         note = notes_by_id[model.startid];
         if (note) {
-          annot = (new VF.Annotation($(model.element).text().trim())).setFont(me.font.family, me.font.size, me.font.weight);
+          annot = (new VF.Annotation($(model.element).text().replace(/\s+/g,' ').trim())).setFont(me.font.family, me.font.size, me.font.weight);
 
           // TEMPORARY: set width of modifier to zero so voices with modifiers
           // don't get too much width; remove when the width calculation in

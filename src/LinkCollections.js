@@ -283,9 +283,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
       allTies = this.getModels();
 
-//      cmpLinkCond = function(lc1, lc2) {
-//        return (lc1 && lc2 && lc1.pname === lc2.pname && lc1.oct === lc2.oct);
-//      };
+      //      cmpLinkCond = function(lc1, lc2) {
+      //        return (lc1 && lc2 && lc1.pname === lc2.pname && lc1.oct === lc2.oct);
+      //      };
       cmpLinkCond = function(lc1, lc2) {
         return (lc1 && lc2 && lc1.pname === lc2.pname && lc1.oct === lc2.oct
           && lc1.staff_n === lc2.staff_n);
@@ -353,7 +353,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         l_note = notes_by_id[this.getLastId()] || {};
 
         if (!f_note.vexNote && !l_note.vexNote) {
-          m2v.L('debug', 'Could not render tie/slur with ids "' + this.getFirstId() + '" and "' + this.getLastId() + '"');
+          m2v.L('warn', 'Tie/slur could not be rendered', 'Neither xml:id could be found: "' + this.getFirstId() + '" / "' + this.getLastId() + '"');
           return true;
         }
 
