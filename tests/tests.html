@@ -132,6 +132,24 @@
     var testItem_html = "<h2><span class='test-title' property='dc:title'>Title of Test Comes Here</span></h2><div class='a'><canvas width='1031' height='450' style='border: none'></canvas></div>"
     MEI2VF.setLogging(true);
     $(document).ready(function(){
+
+        var warn = window.console.warn;
+        var info = window.console.info;
+
+        window.console.info = function() {
+            info.apply(window, arguments);
+            throw { toString: function (){return 'stopped flow for debugging';}};
+        };
+        window.console.warn = function() {
+            warn.apply(window, arguments);
+            throw { toString: function (){return 'stopped flow for debugging';}};
+        };
+        window.console.error = function() {
+            error.apply(window, arguments);
+            throw { toString: function (){return 'stopped flow for debugging';}};
+        };
+
+
         var test_cases = new Array();
 
         /**

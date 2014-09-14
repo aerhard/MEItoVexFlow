@@ -17,7 +17,7 @@
  * the License.
  */
 
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
   /**
    * @class MEI2VF.StaffInfo
@@ -32,181 +32,285 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
    * @param w_keysig
    * @param w_timesig
    */
-  m2v.StaffInfo = function(staffdef, scoredef, w_clef, w_keysig, w_timesig) {
+  m2v.StaffInfo = function (staffdef, scoredef, w_clef, w_keysig, w_timesig) {
     var me = this;
-    me.scoreDefObj = scoredef ? m2v.Util.attsToObj(scoredef) : {};
+    /**
+     * @private
+     */
+    me.scoreDef = scoredef;
+    /**
+     * @private
+     */
+    me.staffDef = staffdef;
+    /**
+     * @private
+     */
     me.renderWith = {
       clef : w_clef,
       keysig : w_keysig,
       timesig : w_timesig
     };
+    /**
+     * @private
+     */
+    me.keySpec = 'C'; // default key
+    /**
+     * @private
+     */
+    me.meter = null;
+    /**
+     * @private
+     */
+    me.labels = null;
+    /**
+     * @private
+     */
     me.spacing = null;
-    me.staffDefObj = m2v.Util.attsToObj(staffdef);
+    /**
+     * @private
+     */
+    me.clef = null;
+
+    me.updateKeySpec();
     me.updateMeter();
-    me.updateStaveLabels();
+    me.updateLabels();
     me.updateSpacing();
-    me.currentClef = me.convertClef(me.staffDefObj);
+    me.updateClef(me.staffDef);
   };
 
   m2v.StaffInfo.prototype = {
 
+    /**
+     * @private
+     */
     clefTypeMap : {
-      G: 'treble',
-      G1: 'french',
-      G2: 'treble',
-      F3: 'baritone-f',
-      F4: 'bass',
-      F5: 'subbass',
-      C1: 'soprano',
-      C2: 'mezzo-soprano',
-      C3: 'alto',
-      C4: 'tenor',
-      C5: 'baritone-c',
-      perc: 'percussion'
+      G : 'treble',
+      G1 : 'french',
+      G2 : 'treble',
+      F3 : 'baritone-f',
+      F4 : 'bass',
+      F5 : 'subbass',
+      C1 : 'soprano',
+      C2 : 'mezzo-soprano',
+      C3 : 'alto',
+      C4 : 'tenor',
+      C5 : 'baritone-c',
+      perc : 'percussion'
     },
 
-    updateMeter : function() {
+    /**
+     * @private
+     */
+    updateMeter : function () {
       var me = this, meter;
-      if (me.staffDefObj.hasOwnProperty('meter.count') && me.staffDefObj.hasOwnProperty('meter.unit')) {
+      if (me.staffDef.hasAttribute('meter.count') && me.staffDef.hasAttribute('meter.unit')) {
         me.meter = {
-          count : +me.staffDefObj['meter.count'],
-          unit : +me.staffDefObj['meter.unit'],
-          sym : me.staffDefObj['meter.sym']
+          count : +me.staffDef.getAttribute('meter.count'),
+          unit : +me.staffDef.getAttribute('meter.unit'),
+          sym : me.staffDef.getAttribute('meter.sym')
         };
-      } else if (me.scoreDefObj.hasOwnProperty('meter.count') && me.scoreDefObj.hasOwnProperty('meter.unit')) {
+      } else if (me.scoreDef.hasAttribute('meter.count') && me.scoreDef.hasAttribute('meter.unit')) {
         me.meter = {
-          count : +me.scoreDefObj['meter.count'],
-          unit : +me.scoreDefObj['meter.unit'],
-          sym : me.scoreDefObj['meter.sym']
+          count : +me.scoreDef.getAttribute('meter.count'),
+          unit : +me.scoreDef.getAttribute('meter.unit'),
+          sym : me.scoreDef.getAttribute('meter.sym')
         };
       }
     },
 
-    updateStaveLabels : function() {
-      var me = this, label, labelAbbr;
-      label = me.staffDefObj.label;
-      if ( typeof label === 'string')
-        me.label = label;
-      labelAbbr = me.staffDefObj['label.abbr'];
-      if ( typeof labelAbbr === 'string')
-        me.labelAbbr = labelAbbr;
+    /**
+     * @private
+     */
+    updateKeySpec : function () {
+      var me = this;
+      if (me.staffDef.hasAttribute('key.pname')) {
+        me.keySpec = me.convertKeySpec(me.staffDef);
+      }
+      if (me.scoreDef.hasAttribute('key.pname')) {
+        me.keySpec = me.convertKeySpec(me.scoreDef);
+      }
     },
 
-    updateSpacing : function() {
+    /**
+     * @private
+     */
+    updateLabels : function () {
+      var me = this, label, labelAbbr;
+      label = me.staffDef.getAttribute('label');
+      if (typeof label === 'string') {
+        me.label = label;
+      }
+      labelAbbr = me.staffDef.getAttribute('label.abbr');
+      if (typeof labelAbbr === 'string') {
+        me.labelAbbr = labelAbbr;
+      }
+    },
+
+    /**
+     * @private
+     * @returns {number|*|m2v.StaffInfo.spacing}
+     */
+    updateSpacing : function () {
       var me = this, spacing;
-      spacing = +me.staffDefObj.spacing;
-      if (!isNaN(spacing))
-        me.spacing = spacing;
+      spacing = me.staffDef.getAttribute('spacing');
+      if (spacing !== null && !isNaN(spacing)) {
+        me.spacing = +spacing;
+      }
       return me.spacing;
     },
 
-    forceSectionStartInfo : function() {
+    /**
+     * @public
+     */
+    forceSectionStartInfo : function () {
       var me = this;
       me.renderWith.clef = true;
       me.renderWith.keysig = true;
       me.renderWith.timesig = true;
     },
 
-    forceStaveStartInfo : function() {
+    /**
+     * @public
+     */
+    forceStaveStartInfo : function () {
       var me = this;
       me.renderWith.clef = true;
       me.renderWith.keysig = true;
     },
 
-    showClefCheck : function() {
+    /**
+     * @public
+     */
+    showClefCheck : function () {
       var me = this;
-      if (me.renderWith.clef && me.staffDefObj['clef.visible'] !== 'false') {
+      if (me.renderWith.clef && me.staffDef.getAttribute('clef.visible') !== 'false') {
         me.renderWith.clef = false;
         return true;
       }
     },
 
-    showKeysigCheck : function() {
+    /**
+     * @public
+     */
+    showKeysigCheck : function () {
       var me = this;
       if (me.renderWith.keysig) {
         me.renderWith.keysig = false;
-        if (me.staffDefObj['key.sig.show'] === 'true' || me.scoreDefObj['key.sig.show'] !== 'false')
-          return true;
-      }
-    },
-
-    showTimesigCheck : function() {
-      var me = this;
-      if (me.renderWith.timesig) {
-        me.renderWith.timesig = false;
-        if (me.staffDefObj['meter.rend'] === 'norm' || me.scoreDefObj['meter.rend'] !== 'invis') {
+        if (me.staffDef.getAttribute('key.sig.show') === 'true' ||
+            me.scoreDef.getAttribute('key.sig.show') !== 'false') {
           return true;
         }
       }
     },
 
-    clefChangeInMeasure : function(newClefDef) {
+    /**
+     * @public
+     */
+    showTimesigCheck : function () {
+      var me = this;
+      if (me.renderWith.timesig) {
+        me.renderWith.timesig = false;
+        if (me.staffDef.getAttribute('meter.rend') === 'norm' || me.scoreDef.getAttribute('meter.rend') !== 'invis') {
+          return true;
+        }
+      }
+    },
+
+    /**
+     * @public
+     * @param newClefDef
+     * @returns {*|m2v.StaffInfo.currentClef}
+     */
+    clefChangeInMeasure : function (clefElement) {
       var me = this;
       if (!me.initialClefCopy) {
         me.initialClefCopy = {
-          type : me.currentClef.type,
-          size : me.currentClef.size,
-          shift: me.currentClef.shift
+          type : me.clef.type,
+          size : me.clef.size,
+          shift : me.clef.shift
         };
       }
-      me.currentClef = me.convertClef(newClefDef);
-      return me.currentClef;
+      me.updateClef(clefElement);
+      return me.clef;
     },
 
-    checkInitialClef : function() {
+    /**
+     * @public
+     */
+    checkInitialClef : function () {
       var me = this;
       if (me.initialClefCopy) {
-        me.currentClef = me.initialClefCopy;
+        me.clef = me.initialClefCopy;
       }
     },
 
-    removeInitialClefCopy : function() {
+    /**
+     * @public
+     */
+    removeInitialClefCopy : function () {
       this.initialClefCopy = null;
     },
 
-    convertClef : function(staffDefObj) {
-      var me = this, clefShape, clefDis, clefDisPlace, clefType;
-      clefShape = staffDefObj['clef.shape'];
+    /**
+     * @private
+     * @param element
+     * @returns {*}
+     */
+    updateClef : function (element) {
+      var me = this, clefShape, clefDis, clefDisPlace, clefType, prefix;
+
+      prefix = (element.localName === 'clef') ? '' : 'clef.';
+
+      clefShape = element.getAttribute(prefix + 'shape');
       if (!clefShape) {
-        m2v.L('warn', '@clef.shape expected', 'No clef shape attribute found. Setting default clef.shape "G".');
+        m2v.L('warn', '@clef.shape expected', 'No clef shape attribute found in ' + m2v.Util.serializeElement(element) +
+                                              '. Setting default clef.shape "G".');
         clefShape = 'G';
       }
-
-      clefType = clefShape + (staffDefObj['clef.line'] || '');
-      clefDis = staffDefObj['clef.dis'];
-      clefDisPlace = staffDefObj['clef.dis.place'];
+      clefType = clefShape + (element.getAttribute(prefix + 'line') || '');
+      clefDis = element.getAttribute(prefix + 'dis');
+      clefDisPlace = element.getAttribute(prefix + 'dis.place');
 
       var type = me.clefTypeMap[clefType];
       if (type) {
         if (clefDis === '8' && clefDisPlace === 'below') {
-          return {type: type, shift : -1};
+          me.clef = {type : type, shift : -1};
+        } else {
+          me.clef = {type : type};
         }
-        return {type: type};
-      };
-      m2v.L('warn', 'Not supported', 'Clef definition is not supported: [ clef.shape="' + clefShape + '" ' + (staffDefObj['clef.line'] ? ('clef.line="' + staffDefObj['clef.line'] + '"') : '') + ' ]. Setting default treble clef.');
-      return {type: 'treble'};
-    },
-
-    getClef : function() {
-      return this.currentClef;
-    },
-
-    getKeySpec : function() {
-      var me = this;
-      if (me.staffDefObj['key.pname'] !== undefined) {
-        return me.convertKeySpec(me.staffDefObj);
+      } else {
+        me.clef = {type : 'treble'};
+        m2v.L('warn', 'Not supported', 'Clef definition in ' + m2v.Util.serializeElement(element) +
+                                       ' is not supported. Setting default treble clef.');
       }
-      if (me.scoreDefObj['key.pname'] !== undefined) {
-        return me.convertKeySpec(me.scoreDefObj);
-      }
-      return 'C';
     },
 
-    convertKeySpec : function(defObj) {
+    /**
+     * @public
+     * @returns {*|m2v.StaffInfo.currentClef}
+     */
+    getClef : function () {
+      return this.clef;
+    },
+
+    /**
+     * @public
+     * @returns {*|m2v.StaffInfo.keySpec}
+     */
+    getKeySpec : function () {
+      return this.keySpec;
+    },
+
+    /**
+     * @private
+     * @param element
+     * @returns {*}
+     */
+    convertKeySpec : function (element) {
       var me = this, keyname, key_accid, key_mode;
-      keyname = defObj['key.pname'].toUpperCase();
-      key_accid = defObj['key.accid'];
-      if (key_accid !== undefined) {
+      keyname = element.getAttribute('key.pname').toUpperCase();
+      key_accid = element.getAttribute('key.accid');
+      if (key_accid !== null) {
         switch (key_accid) {
           case 's' :
             keyname += '#';
@@ -215,21 +319,25 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             keyname += 'b';
             break;
           default :
-            m2v.L('warn', 'Not supported', 'expected to find value "s" or "f" instead of "' +key_accid+'" in @key.accid. Skipping processing of this attribute.');
+            m2v.L('warn', 'Not supported', 'expected to find value "s" or "f" instead of "' + key_accid +
+                                           '" in @key.accid of ' + m2v.Util.serializeElement(element) +
+                                           '. Skipping processing of this attribute.');
         }
       }
-      key_mode = defObj['key.mode'];
-      if (key_mode !== undefined) keyname += (key_mode === 'major') ? '' : 'm';
+      key_mode = element.getAttribute('key.mode');
+      if (key_mode !== null) {
+        keyname += (key_mode === 'major') ? '' : 'm';
+      }
       return keyname;
     },
 
 
     /**
      * gets the vexFlow time signature from an MEI staffDef element
-     *
+     * @public
      * @return {String} the vexFlow time signature or undefined
      */
-    getTimeSig : function() {
+    getTimeSig : function () {
       var me = this, symbol, count, unit;
       symbol = me.meter.sym;
       if (symbol) {
@@ -240,7 +348,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       return (count && unit) ? count + '/' + unit : undefined;
     },
 
-    updateRenderWith : function(newStaffDef) {
+    /**
+     * @private
+     * @param newStaffDef
+     */
+    updateRenderWith : function (newStaffDef) {
       var me = this, result, hasEqualAtt;
 
       result = {
@@ -253,8 +365,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       // return result;
       // }
 
-      hasEqualAtt = function(attr_name) {
-        return me.staffDefObj[attr_name] === newStaffDef[attr_name];
+      hasEqualAtt = function (attr_name) {
+        return me.staffDef.getAttribute(attr_name) === newStaffDef.getAttribute(attr_name);
       };
 
       if (!hasEqualAtt('clef.shape') || !hasEqualAtt('clef.line')) {
@@ -270,28 +382,39 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       me.renderWith = result;
     },
 
-    updateDef : function(staffDef, scoreDef) {
-      var me = this, newStaffDef;
-      newStaffDef = m2v.Util.attsToObj(staffDef);
-      me.updateRenderWith(newStaffDef);
-      me.staffDefObj = newStaffDef;
-      me.scoreDefObj = scoreDef ? m2v.Util.attsToObj(scoreDef) : {};
+    /**
+     * @public
+     * @param staffDef
+     * @param scoreDef
+     */
+    updateDef : function (staffDef, scoreDef) {
+      var me = this;
+      me.updateRenderWith(staffDef);
+      me.staffDef = staffDef;
+      me.scoreDef = scoreDef;
+      me.updateKeySpec();
       me.updateMeter();
-      me.updateStaveLabels();
+      me.updateLabels();
       me.updateSpacing();
-      me.currentClef = me.convertClef(me.staffDefObj);
+      if (staffDef.hasAttribute('clef.shape')) {
+        me.updateClef(staffDef);
+      }
     },
 
+    /**
+     * @public
+     * @param scoreDef
+     */
     overrideWithScoreDef : function (scoreDef) {
-      var me=this;
+      var me = this;
 
-      me.scoreDefObj = scoreDef ? m2v.Util.attsToObj(scoreDef) : {};
+      me.scoreDef = scoreDef;
 
-      if (me.scoreDefObj.hasOwnProperty('meter.count') && me.scoreDefObj.hasOwnProperty('meter.unit')) {
+      if (me.scoreDef.hasAttribute('meter.count') && me.scoreDef.hasAttribute('meter.unit')) {
         me.meter = {
-          count : +me.scoreDefObj['meter.count'],
-          unit : +me.scoreDefObj['meter.unit'],
-          sym : me.scoreDefObj['meter.sym']
+          count : +me.scoreDef.getAttribute('meter.count'),
+          unit : +me.scoreDef.getAttribute('meter.unit'),
+          sym : me.scoreDef.getAttribute('meter.sym')
         };
         me.renderWith.timesig = true;
       }

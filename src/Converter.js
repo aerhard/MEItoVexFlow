@@ -1410,14 +1410,14 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
     processClef : function (element, staff, staff_n, layerDir, staffInfo) {
       var me = this, clef, xml_id, atts, clefDef, clefProp;
       atts = m2v.Util.attsToObj(element);
-      clefDef = {
-        "clef.line" : atts.line,
-        "clef.shape" : atts.shape,
-        "clef.dis" : atts.dis,
-        "clef.dis.place" : atts['dis.place']
-      };
+//      clefDef = {
+//        "clef.line" : atts.line,
+//        "clef.shape" : atts.shape,
+//        "clef.dis" : atts.dis,
+//        "clef.dis.place" : atts['dis.place']
+//      };
       try {
-        clefProp = staffInfo.clefChangeInMeasure(clefDef);
+        clefProp = staffInfo.clefChangeInMeasure(element);
         clef = new VF.ClefNote(clefProp.type, 'small', clefProp.shift === -1 ? '8vb' : undefined);
         clef.setStave(staff);
         return {

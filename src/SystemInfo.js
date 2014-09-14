@@ -180,6 +180,10 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     },
 
+    /**
+     * TODO CHANGE
+     * @param scoredef
+     */
     updateStaffDefs : function(scoredef) {
       var me = this, i = me.currentStaffInfos.length;
       while (i--) {
