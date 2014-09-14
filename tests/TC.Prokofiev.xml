@@ -63,8 +63,8 @@
 									</beam>
 								</layer>
 							</staff>
-							<tie startid="op36-e8a" endid="op36-e8b"/>
-							<tie startid="op36-e8b" endid="op36-e8c"/>
+							<tie startid="#op36-e8a" endid="#op36-e8b"/>
+							<tie startid="#op36-e8b" endid="#op36-e8c"/>
 						</mei:measure>
 						<measure n="2">
 							<staff n="1">
@@ -151,7 +151,7 @@
 									</beam>
 								</layer>
 							</staff>
-							<hairpin xml:id="d1e352" startid="op36-e43" endid="op36-e45" form="cres" place="below" staff="3"/>
+							<hairpin xml:id="d1e352" startid="#op36-e43" endid="#op36-e45" form="cres" place="below" staff="3"/>
 						</measure>
 						<measure n="4">
 							<staff n="1">

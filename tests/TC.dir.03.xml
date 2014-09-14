@@ -27,7 +27,7 @@
 									<note xml:id="n02" pname="d" oct="4" dur="4"></note>
 								</layer>
 							</staff>
-							<dir startid="n01" place="below">marcato</dir>
+							<dir startid="#n01" place="below">marcato</dir>
 						</measure>
 						<measure n="2">
 							<staff n="1">

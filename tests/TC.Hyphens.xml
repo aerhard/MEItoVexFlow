@@ -176,10 +176,10 @@
 									</note>
 								</layer>
 							</staff>
-							<dir startid="nc32" place="above" type="pitch">a</dir>
-							<dir startid="nc33" place="above" type="pitch">h</dir>
-							<dir startid="nc34" place="above" type="pitch">cis</dir>
-							<dir startid="nc35" place="above" type="pitch">e</dir>
+							<dir startid="#nc32" place="above" type="pitch">a</dir>
+							<dir startid="#nc33" place="above" type="pitch">h</dir>
+							<dir startid="#nc34" place="above" type="pitch">cis</dir>
+							<dir startid="#nc35" place="above" type="pitch">e</dir>
 						</measure>
 						<measure n="5" right="dbl">
 							<staff n="1">

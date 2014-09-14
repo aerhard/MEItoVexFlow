@@ -43,10 +43,10 @@
 									<note xml:id="v1e10" pname="b" oct="4" dur="4"/>
 								</layer>
 							</staff>
-							<tie staff="1" startid="v1e06" endid="v1e07" bulge="-1"/>
-							<tie staff="1" startid="v1e07" endid="v1e08" bulge="-1"/>
-							<tie staff="1" startid="v1e08" endid="v1e09" bulge="-1"/>
-							<tie staff="1" startid="v1e10" endid="v1e11" bulge="-1"/>
+							<tie staff="1" startid="#v1e06" endid="#v1e07" bulge="-1"/>
+							<tie staff="1" startid="#v1e07" endid="#v1e08" bulge="-1"/>
+							<tie staff="1" startid="#v1e08" endid="#v1e09" bulge="-1"/>
+							<tie staff="1" startid="#v1e10" endid="#v1e11" bulge="-1"/>
 						</measure>
 						<measure n="3">
 							<staff n="1">
@@ -58,10 +58,10 @@
 									<note xml:id="v1e15" pname="c" oct="5" dur="4"/>
 								</layer>
 							</staff>
-							<tie staff="1" startid="v1e11" endid="v1e12" bulge="-1"/>
-							<tie staff="1" startid="v1e12" endid="v1e13" bulge="-1"/>
-							<tie staff="1" startid="v1e13" endid="v1e14" bulge="-1"/>
-							<tie staff="1" startid="v1e15" bulge="-1"/>
+							<tie staff="1" startid="#v1e11" endid="#v1e12" bulge="-1"/>
+							<tie staff="1" startid="#v1e12" endid="#v1e13" bulge="-1"/>
+							<tie staff="1" startid="#v1e13" endid="#v1e14" bulge="-1"/>
+							<tie staff="1" startid="#v1e15" bulge="-1"/>
 						</measure>
 						<measure n="4">
 							<staff n="1">

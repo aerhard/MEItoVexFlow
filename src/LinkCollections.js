@@ -100,7 +100,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         // element, tstamp will be calculated.
         startid = atts.startid;
         if (startid) {
-          eventLink.setFirstId(startid);
+          eventLink.setFirstId(startid.substring(1));
         } else {
           tstamp = atts.tstamp;
           if (tstamp) {
@@ -116,7 +116,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         // find end reference value (id/tstamp) of eventLink:
         endid = atts.endid;
         if (endid) {
-          eventLink.setLastId(endid);
+          eventLink.setLastId(endid.substring(1));
         } else {
           tstamp2 = atts.tstamp2;
           if (tstamp2) {
@@ -351,6 +351,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         var keysInChord;
         f_note = notes_by_id[this.getFirstId()] || {};
         l_note = notes_by_id[this.getLastId()] || {};
+
+        console.log(this.getFirstId());
+//        console.log(this.getLastId());
 
         if (!f_note.vexNote && !l_note.vexNote) {
           m2v.L('warn', 'Tie/slur could not be rendered', 'Neither xml:id could be found: "' + this.getFirstId() + '" / "' + this.getLastId() + '"');

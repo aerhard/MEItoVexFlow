@@ -57,7 +57,7 @@
 									<mRest/>		
 								</layer>
 							</staff>
-							<dynam startid="n01">f</dynam>
+							<dynam startid="#n01">f</dynam>
 							<dynam tstamp="2.666" staff="1">p</dynam>
 							<dynam tstamp="2.5" staff="2">p</dynam>
 						</measure>

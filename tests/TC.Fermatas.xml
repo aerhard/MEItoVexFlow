@@ -91,7 +91,7 @@
                                     <rest dur="4" fermata="below"/>
                                 </layer>
                             </staff>
-                            <fermata startid="e09" place="above"/>
+                            <fermata startid="#e09" place="above"/>
                             <fermata tstamp="2" place="below"/>
                         </measure>
 

@@ -49,9 +49,9 @@
 									<note xml:id="v1e12" pname="d" oct="4" dur="4"/>
 								</layer>
 							</staff>
-							<slur staff="1" startid="v1e07" endid="v1e10"/>
-							<slur staff="1" startid="v1e11" endid="v1e12"/>
-							<slur staff="1" startid="v1e07" endid="v1e12"/>
+							<slur staff="1" startid="#v1e07" endid="#v1e10"/>
+							<slur staff="1" startid="#v1e11" endid="#v1e12"/>
+							<slur staff="1" startid="#v1e07" endid="#v1e12"/>
 						</measure>
 					</section>
 				</score>

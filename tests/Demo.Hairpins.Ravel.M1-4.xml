@@ -44,8 +44,8 @@
 									</beam>
 								</layer>
 							</staff>
-							<hairpin startid="FltM01N01" endid="FltM01N02" staff="1" place="below" form="cres" />
-							<hairpin startid="CltM01N01" endid="CltM01N02" staff="2" place="below" form="cres" />
+							<hairpin startid="#FltM01N01" endid="#FltM01N02" staff="1" place="below" form="cres" />
+							<hairpin startid="#CltM01N01" endid="#CltM01N02" staff="2" place="below" form="cres" />
 							<hairpin tstamp="3" tstamp2="5" staff="1" place="below" form="dim"/>
 							<hairpin tstamp="3" tstamp2="5" staff="2" place="below" form="dim"/>
 						</measure>

@@ -1559,12 +1559,12 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
         // create a list of { letter, num }
         tokens = me.parse_slur_attribute(mei_slur);
         $.each(tokens, function () {
-          if (this.letter === 't' || this.letter === 'm') {
+          if (this.letter === 't') {
             me.slurs.terminate_slur(xml_id, {
               nesting_level : this.nesting_level
             });
           }
-          if (this.letter === 'i' || this.letter === 'i') {
+          if (this.letter === 'i') {
             me.slurs.start_tieslur(xml_id, {
               nesting_level : this.nesting_level
             });

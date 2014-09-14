@@ -41,9 +41,9 @@
 									<note xml:id="n06" pname="f" oct="4" dur="4"/>
 								</layer>
 							</staff>
-							<slur startid="n01" endid="n04" startvo="10" bezier="-10 30 0 30"/>
-							<slur startid="n05" endid="n06" bezier="0 10 0 5"/>
-							<slur startid="n01" endid="n06" startvo="20" endvo="5" bezier="-35 30 0 30"/>
+							<slur startid="#n01" endid="#n04" startvo="10" bezier="-10 30 0 30"/>
+							<slur startid="#n05" endid="#n06" bezier="0 10 0 5"/>
+							<slur startid="#n01" endid="#n06" startvo="20" endvo="5" bezier="-35 30 0 30"/>
 							
 							
 							<slur staff="1" tstamp="1" tstamp2="2m+4" startvo="30" endvo="10" bezier="-190 50 120 50"/>

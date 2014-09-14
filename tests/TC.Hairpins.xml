@@ -35,8 +35,8 @@
 									<note xml:id="v1e06" pname="f" oct="4" dur="4" slur="t1"/>
 								</layer>
 							</staff>
-							<hairpin xml:id="v1_lnk01" startid="v1e01" endid="v1e04" form="cres" place="below" staff="1"/>
-							<hairpin xml:id="v1_lnk02" tstamp="3" endid="v1e06" form="dim" place="below" staff="1"/>
+							<hairpin xml:id="v1_lnk01" startid="#v1e01" endid="#v1e04" form="cres" place="below" staff="1"/>
+							<hairpin xml:id="v1_lnk02" tstamp="3" endid="#v1e06" form="dim" place="below" staff="1"/>
 						</measure>
 						<measure n="2">
 							<staff n="1">
@@ -54,7 +54,7 @@
 							<slur staff="1" tstamp="1" tstamp2="2.5"/>
 							<slur staff="1" tstamp="3" tstamp2="4"/>
 							<slur staff="1" tstamp="1" tstamp2="4"/>
-							<hairpin xml:id="v1_lnk03" startid="v1e07" tstamp2="2.5" form="cres" place="below" staff="1"/>
+							<hairpin xml:id="v1_lnk03" startid="#v1e07" tstamp2="2.5" form="cres" place="below" staff="1"/>
 							<hairpin xml:id="v1_lnk04" tstamp="3" tstamp2="1m+4" form="dim" staff="1"/>
 						</measure>
 						<measure n="3">

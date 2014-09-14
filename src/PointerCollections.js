@@ -77,7 +77,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         atts = m2v.Util.attsToObj(this);
 
         startid = atts.startid;
-        if (!startid) {
+        if (startid) {
+          startid = startid.substring(1);
+        } else {
           tstamp = atts.tstamp;
           if (tstamp) {
             startid = local_tstamp2id(tstamp, this, measureElement);

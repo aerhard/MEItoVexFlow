@@ -26,7 +26,7 @@
 									<note xml:id="n01" pname="d" oct="4" dur="4"></note>
 								</layer>
 							</staff>
-							<dir startid="n01" place="below">espressivo</dir>
+							<dir startid="#n01" place="below">espressivo</dir>
 						</measure>
 					</section>
 				</score>

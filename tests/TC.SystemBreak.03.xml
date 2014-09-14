@@ -43,7 +43,7 @@
 									<note xml:id="e01.l2" pname="e" oct="4" dur="1"/>
 								</layer>
 							</staff>
-							<tie staff="1" startid="e01.l2" endid="e02.l2"/>
+							<tie staff="1" startid="#e01.l2" endid="#e02.l2"/>
 						</measure>
 						<sb/>
 						<measure n="3">
@@ -76,7 +76,7 @@
 									<note xml:id="e04.2" pname="a" oct="3" dur="1"/>
 								</layer>
 							</staff>
-							<slur staff="1" startid="e03.2" endid="e04.2"/>
+							<slur staff="1" startid="#e03.2" endid="#e04.2"/>
 						</measure>
 						<measure n="6">
 							<staff n="1">

@@ -120,10 +120,10 @@
                                     </chord>
                                 </layer>
                             </staff>
-                            <slur startid="g02" endid="e02"/>
-                            <slur startid="f03" endid="f05"/>
-                            <slur startid="g04" endid="n12"/>
-                            <slur startid="fg09" endid="fn13"/>
+                            <slur startid="#g02" endid="#e02"/>
+                            <slur startid="#f03" endid="#f05"/>
+                            <slur startid="#g04" endid="#n12"/>
+                            <slur startid="#fg09" endid="#fn13"/>
                             <dynam tstamp="1" staff="1">ff</dynam>
                             <dynam tstamp="1" staff="2">ff</dynam>
                             <dynam tstamp="1" staff="3">ff</dynam>

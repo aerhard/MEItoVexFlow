@@ -116,7 +116,7 @@
 									<rest dur="8"/>
 								</layer>
 							</staff>
-							<hairpin staff="2" form="dim" startid="m2n4" endid="m2n6"/>
+							<hairpin staff="2" form="dim" startid="#m2n4" endid="#m2n6"/>
 						</measure>
 						<scoreDef>
 							<staffGrp symbol="brace">
