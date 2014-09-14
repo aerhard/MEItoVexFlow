@@ -160,7 +160,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         vertical_bar_width : 20, // 10 // Width around vertical bar end-marker
         top_text_position : 1.5, // 1 // in staff lines
         bottom_text_position :
-          7.5
+          6.5
       }
     },
 

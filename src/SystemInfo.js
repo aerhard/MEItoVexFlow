@@ -57,7 +57,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
     /**
      * @method
      */
-    setConnectorModels : function(staffGrp, range, isChild) {
+    setConnectorModels : function(staffGrp, range, isChild, ancestorSymbols) {
       var me = this, symbol, barthru, first_n, last_n;
 
       first_n = range.first_n;
@@ -73,7 +73,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         bottom_staff_n : last_n,
         symbol : symbol || 'line',
         label : $(staffGrp).attr('label'),
-        labelAbbr : $(staffGrp).attr('label.abbr')
+        labelAbbr : $(staffGrp).attr('label.abbr'),
+        ancestorSymbols : ancestorSymbols
       });
 
       // 2. left auto line, only (if at all) attached to
@@ -225,16 +226,16 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @return {Object} the range of the current staff group. Properties:
      *         first_n, last_n
      */
-    processStaffGrp : function(staffGrp, isChild) {
+    processStaffGrp : function(staffGrp, isChild, ancestorSymbols) {
       var me = this, range = {};
       $(staffGrp).children().each(function(i, childElement) {
-        var childRange = me.processStaffGrp_child(childElement);
+        var childRange = me.processStaffGrp_child(staffGrp, childElement, ancestorSymbols);
         m2v.L('debug', 'Converter.processStaffGrp() {1}.{a}', 'childRange.first_n: ' + childRange.first_n, ' childRange.last_n: ' + childRange.last_n);
         if (i === 0)
           range.first_n = childRange.first_n;
         range.last_n = childRange.last_n;
       });
-      me.setConnectorModels(staffGrp, range, isChild);
+      me.setConnectorModels(staffGrp, range, isChild, ancestorSymbols);
       return range;
     },
 
@@ -245,11 +246,12 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      *
      * Supported elements: <b>staffGrp</b> <b>staffDef</b>
      *
+     * @param {XMLElement} parent
      * @param {XMLElement} element
      * @return {Object} the range of staffs. Properties: first_n, last_n
      */
-    processStaffGrp_child : function(element) {
-      var me = this, staff_n;
+    processStaffGrp_child : function(parent, element, ancestorSymbols) {
+      var me = this, staff_n, myAncestorSymbols;
       switch (element.localName) {
         case 'staffDef' :
           staff_n = me.processStaffDef(element);
@@ -258,7 +260,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             last_n : staff_n
           };
         case 'staffGrp' :
-          return me.processStaffGrp(element, true);
+          myAncestorSymbols = (!ancestorSymbols) ? [parent.getAttribute('symbol')] : ancestorSymbols.concat(parent.getAttribute('symbol'));
+          return me.processStaffGrp(element, true, myAncestorSymbols);
         default :
           m2v.L('info', 'SystemInfo.processScoreDef_child()', 'Element <' + element.localName + '> is not supported in <staffGrp>');
       }

@@ -80,6 +80,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           if ( typeof vexType === 'number' && top_staff && bottom_staff) {
             vexConnector = new VF.StaveConnector(top_staff, bottom_staff);
             vexConnector.setType(vexType);
+
+            // TODO implement offset in VexFlow
+            // offset nested connectors
+            if (this.ancestorSymbols) {
+              //console.log(this.ancestorSymbols);
+              //vexConnector.x_shift = -30;
+            }
+
             me.allVexConnectors.push(vexConnector);
             if (labelMode === 'full') {
               label = (system_n === 1) ? this.label : this.labelAbbr;
