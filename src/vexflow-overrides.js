@@ -652,6 +652,10 @@ Vex.Flow.Syllable = (function() {
 
 
 
+
+
+
+
 // VexFlow - Music Engraving for HTML5
 // Copyright Mohit Muthanna 2010
 //

@@ -1505,14 +1505,15 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
     processAttrTie : function(mei_tie, xml_id, pname, oct, staff_n) {
       var me = this, i, j;
       for ( i = 0, j = mei_tie.length; i < j; ++i) {
-        if (mei_tie[i] === 'i') {
-          me.ties.start_tieslur(xml_id, {
+        if (mei_tie[i] === 't' || mei_tie[i] === 'm') {
+          me.ties.terminate_tie(xml_id, {
             pname : pname,
             oct : oct,
             staff_n: staff_n
           });
-        } else if (mei_tie[i] === 't') {
-          me.ties.terminate_tie(xml_id, {
+        }
+        if (mei_tie[i] === 'i' || mei_tie[i] === 'm') {
+          me.ties.start_tieslur(xml_id, {
             pname : pname,
             oct : oct,
             staff_n: staff_n
@@ -1530,12 +1531,13 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         // create a list of { letter, num }
         tokens = me.parse_slur_attribute(mei_slur);
         $.each(tokens, function() {
-          if (this.letter === 'i') {
-            me.slurs.start_tieslur(xml_id, {
+          if (this.letter === 't' || this.letter === 'm') {
+            me.slurs.terminate_slur(xml_id, {
               nesting_level : this.nesting_level
             });
-          } else if (this.letter === 't') {
-            me.slurs.terminate_slur(xml_id, {
+          }
+          if (this.letter === 'i' || this.letter === 'i') {
+            me.slurs.start_tieslur(xml_id, {
               nesting_level : this.nesting_level
             });
           }
