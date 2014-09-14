@@ -277,12 +277,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        */
       me.hairpins = new m2v.Hairpins(me.systemInfo, me.unresolvedTStamp2);
       /**
-       * an instance of MEI2VF.Verses dealing with and storing all verse lines
-       * found in the MEI document
-       * @property {MEI2VF.Verses} verses
-       */
-      me.verses = new m2v.Verses(me.cfg.lyricsFont, me.printSpace.right, me.cfg.maxHyphenDistance);
-      /**
        * contains all note-like objects in the current MEI document, accessible
        * by their xml:id
        * @property {Object} notes_by_id
@@ -373,7 +367,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       me.ties.setContext(ctx).draw();
       me.slurs.setContext(ctx).draw();
       me.hairpins.setContext(ctx).draw();
-      me.verses.drawHyphens(ctx);
       return me;
     },
 
@@ -470,7 +463,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         leftMar : me.systemInfo.getLeftMar(),
         coords : coords,
         staffYs : me.systemInfo.getYs(coords.y),
-        labels : me.getStaffLabels()
+        labels : me.getStaffLabels(),
+        versesCfg: {
+          font: me.cfg.lyricsFont,
+          maxHyphenDistance: me.cfg.maxHyphenDistance
+        }
       });
 
       if (me.pendingSectionBreak) {
@@ -479,10 +476,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       } else {
         me.systemInfo.forceStaveStartInfos();
       }
-
-      me.verses.addLineBreaks(me.systemInfo.getAllStaffInfos(), {
-        system : system
-      });
 
       me.systems[me.currentSystem_n] = system;
       return system;
@@ -503,7 +496,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      */
     processSection : function(element) {
       var me = this, i, j, sectionChildren = $(element).children();
-      me.verses.initHyphenations( $(element).find('syl') );
       for ( i = 0, j = sectionChildren.length; i < j; i += 1) {
         me.processSectionChild(sectionChildren[i]);
       }
@@ -654,7 +646,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         n : measure_n,
         staffs : staffs,
         voices : currentStaveVoices,
-        verses : me.verses,
         startConnectorCfg : (atSystemStart) ? {
           labelMode : me.cfg.labelMode,
           models : me.systemInfo.startConnectorInfos,
@@ -1434,8 +1425,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       };
       elements = $(element).children().map(process).get();
 
-
-      // set autostem parameter of VF.Beam to true if layerDir is null, otherwise (1, -1) false
+      // set autostem parameter of VF.Beam to true if neither layerDir nor any stem direction in the beam is specified
       if (elements.length > 0) me.allBeams.push(new VF.Beam(elements, !layerDir && !me.stemDirInBeam));
 
       me.inBeamNo -= 1;
@@ -1633,7 +1623,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             setVerticalJustification(me.BOTTOM).
             setLineSpacing(me.cfg.lyricsFont.spacing);
           note.addAnnotation(0, annot);
-          me.verses.addSyllable(annot, syl.wordpos, syl.verse_n, staff_n)
+
+          me.systems[me.currentSystem_n].verses.addSyllable(annot, syl.wordpos, syl.verse_n, staff_n);
         }
       });
     },

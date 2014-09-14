@@ -39,10 +39,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
          */
         me.voices = config.voices;
         /**
-         * @cfg {MEI2VF.Verses} verses All verses in the entire score
-         */
-         me.verses = config.verses;
-        /**
          * @cfg {MEI2VF.Connectors} startConnectors an instance of
          * MEI2VF.Connectors handling all left connectors (only the first measure
          * in a system has data)
@@ -309,7 +305,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           }
         }
         me.voices.format(me.getFirstDefinedStaff());
-        me.verses.format();
       },
 
       /**

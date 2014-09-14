@@ -5,62 +5,55 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @private
      *
      * @constructor
-     * @param {Object} cfg
+     * @param {Object} config
      */
-    m2v.Verses = function(font, printSpaceRight, maxHyphenDistance) {
+    m2v.Verses = function(config) {
       var me = this;
-      me.hyphenations = {};
-      me.verses = {};
-      me.printSpaceRight = printSpaceRight;
-      me.font = font;
-      me.maxHyphenDistance = maxHyphenDistance;
+      me.hyphensByVerse = {};
+      me.syllablesByVerse = {};
+      me.font = config.font;
+      me.maxHyphenDistance = config.maxHyphenDistance;
     };
 
     m2v.Verses.prototype = {
 
-      newHyphenation : function() {
-        return new m2v.Hyphenation(this.font, this.printSpaceRight, this.maxHyphenDistance);
-      },
-
-      addHyphenation : function(verse_n) {
+      /**
+       * @public
+       * @param annot
+       * @param wordpos
+       * @param verse_n
+       * @param staff_n
+       * @returns {m2v.Verses}
+       */
+      addSyllable : function(annot, wordpos, verse_n, staff_n) {
         var me = this;
-        if (!me.hyphenations[verse_n]) {
-          me.hyphenations[verse_n] = me.newHyphenation();
+        verse_n = verse_n || '1';
+        if (!me.syllablesByVerse[verse_n]) {
+          me.syllablesByVerse[verse_n] = [];
+        }
+        me.syllablesByVerse[verse_n].push(annot);
+        if (wordpos) {
+          if (!me.hyphensByVerse[verse_n]) {
+            me.hyphensByVerse[verse_n] = me.newHyphenation();
+          }
+          me.hyphensByVerse[verse_n].addSyllable(annot, wordpos, staff_n);
         }
         return me;
       },
 
-      getHyphenation : function(verse_n) {
-        var me = this, hyphenation;
-        hyphenation = me.hyphenations[verse_n];
-        if (!hyphenation) {
-          hyphenation = me.newHyphenation();
-          me.hyphenations[verse_n] = hyphenation;
-        }
-        return hyphenation;
+      newHyphenation : function() {
+        return new m2v.Hyphenation(this.font, this.maxHyphenDistance);
       },
 
-      initHyphenations : function(elems) {
-        var me = this, verse_n;
-        $.each(elems, function(i) {
-          verse_n = $(elems[i]).parents('verse').attr('n') || '1';
-          me.addHyphenation(verse_n);
-        });
-      },
-
-      drawHyphens : function(ctx) {
-        var me = this, verse_n, i, hyph;
-        for (verse_n in me.hyphenations) {
-          me.getHyphenation(verse_n).setContext(ctx).draw();
-        };
-        return me;
-      },
-
+      /**
+       * @public
+       * @returns {m2v.Verses}
+       */
       format : function() {
         var me = this, verse_n, text_line, verse, i, j;
         text_line = 0;
-        for (verse_n in me.verses) {
-          verse = me.verses[verse_n];
+        for (verse_n in me.syllablesByVerse) {
+          verse = me.syllablesByVerse[verse_n];
           for (i = 0, j = verse.length; i < j; i++) {
             verse[i].setTextLine(text_line);
           }
@@ -69,24 +62,18 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         return me;
       },
 
-      addLineBreaks : function(staffInfos, measureX) {
-        var me = this;
-        for (verse_n in me.hyphenations){
-          me.hyphenations[verse_n].addLineBreaks(staffInfos, measureX);
+      /**
+       * @public
+       * @param ctx
+       * @param leftX
+       * @param rightX
+       * @returns {m2v.Verses}
+       */
+      drawHyphens : function(ctx, leftX, rightX) {
+        var me = this, verse_n;
+        for (verse_n in me.hyphensByVerse) {
+          me.hyphensByVerse[verse_n].setContext(ctx).draw(leftX, rightX);
         };
-        return me;
-      },
-
-      addSyllable : function(annot, wordpos, verse_n, staff_n) {
-        var me = this;
-        verse_n = verse_n || '1';
-        if (!me.verses[verse_n]) {
-          me.verses[verse_n] = [];
-        }
-        me.verses[verse_n].push(annot);
-        if (wordpos) {
-          me.hyphenations[verse_n].addSyllable(annot, wordpos, staff_n);
-        }
         return me;
       }
 

@@ -22,7 +22,7 @@
 				<score>
 					<scoreDef page.width="1200" page.scale="80%">
 						<staffGrp symbol="none">
-							<staffDef n="1" lines="5" clef.line="2" clef.shape="G" meter.count="4" meter.unit="4" meter.rend="invis" key.pname="c" key.mode="major"/>
+							<staffDef n="1" lines="5" clef.line="2" clef.shape="G" meter.count="4" meter.unit="4" meter.rend="invis" key.pname="c" key.mode="major" label="Voice"/>
 						</staffGrp>
 					</scoreDef>
 					<section>

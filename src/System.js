@@ -26,7 +26,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        */
       init : function(config) {
         var me = this;
-
         /**
          * @cfg {Number|null} leftMar the left system margin as specified in the
          * MEI file or null if there is no margin specified. In the latter case,
@@ -45,6 +44,12 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
          * system
          */
         me.staffYs = config.staffYs;
+        /**
+         * an instance of MEI2VF.Verses dealing with and storing all verse lines
+         * found in the MEI document
+         * @property {MEI2VF.Verses} verses
+         */
+        me.verses = new m2v.Verses(config.versesCfg);
         /**
          * @cfg {String[]} labels the labels of all staffs in the current system
          */
@@ -178,6 +183,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           measures[i].addRehearsalMarks();
           measures[i].addTempoToStaves();
         }
+        me.verses.format();
         return me;
       },
 
@@ -192,6 +198,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             me.measures[i].draw(ctx);
           }
         }
+        me.verses.drawHyphens(ctx, me.leftMar, me.coords.x + me.coords.w);
       }
     };
 
