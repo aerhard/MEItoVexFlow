@@ -277,11 +277,10 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        */
       me.hairpins = new m2v.Hairpins(me.systemInfo, me.unresolvedTStamp2);
       /**
-       * an instance of MEI2VF.Hyphenation dealing with and storing all lyrics
-       * hyphens found in the MEI document
-       * @property {MEI2VF.Hyphenation} hyphenation
+       * an instance of MEI2VF.Verses dealing with and storing all verse lines
+       * found in the MEI document
+       * @property {MEI2VF.Verses} verses
        */
-      me.hyphenation = new m2v.Hyphenation(me.cfg.lyricsFont, me.printSpace.right, me.cfg.maxHyphenDistance);
       me.verses = new m2v.Verses(me.cfg.lyricsFont, me.printSpace.right, me.cfg.maxHyphenDistance);
       /**
        * contains all note-like objects in the current MEI document, accessible
@@ -480,10 +479,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       } else {
         me.systemInfo.forceStaveStartInfos();
       }
-
-      me.hyphenation.addLineBreaks(me.systemInfo.getAllStaffInfos(), {
-        system : system
-      });
 
       me.verses.addLineBreaks(me.systemInfo.getAllStaffInfos(), {
         system : system
@@ -1639,38 +1634,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             setLineSpacing(me.cfg.lyricsFont.spacing);
           note.addAnnotation(0, annot);
           me.verses.addSyllable(annot, syl.wordpos, syl.verse_n, staff_n)
-          if (syl.wordpos) {
-            me.hyphenation.addSyllable(annot, syl.wordpos, staff_n);
-          }
         }
       });
-    },
-
-    // processSyllable : function(mei_note) {
-    // var me = this, syl, full_syl = '', dash;
-    // syl = $(mei_note).find('syl');
-    // $(syl).each(function(i, s) {
-    // dash = ($(s).attr('wordpos') === 'i' || $(s).attr('wordpos') === 'm')
-    // ?
-    // '-' : '';
-    // full_syl += (i > 0 ? '\n' : '') + $(s).text() + dash;
-    // });
-    // return full_syl;
-    // },
-
-    // temporarily only handle one syllable per note
-    /**
-     * @method processSyllable
-     */
-    processSyllable : function(mei_note) {
-      var syl = $(mei_note).find('syl')[0];
-      if (syl) {
-        return {
-          text : $(syl).text(),
-          wordpos : $(syl).attr('wordpos'),
-          verse_n : $(syl).parents('verse').attr('n')
-        };
-      }
     },
 
     // Support for annotations
