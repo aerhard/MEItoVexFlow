@@ -159,7 +159,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       staff : {
         vertical_bar_width : 20, // 10 // Width around vertical bar end-marker
         top_text_position : 1.5, // 1 // in staff lines
-        bottom_text_position : 7.5
+        bottom_text_position :
+          7.5
       }
     },
 
@@ -760,8 +761,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       var me = this, staff;
       staff = new VF.Stave();
       staff.init(0, y, 1000, me.cfg.staff);
-      // temporary; (due to a bug?) in VexFlow, bottom_text_position does
-      // not work when it's passed in the config object
       staff.options.bottom_text_position = me.cfg.staff.bottom_text_position;
       return staff;
     },
@@ -1024,7 +1023,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           keys : [me.processAttsPitch(element)],
           clef : clef.type,
           duration : me.processAttsDuration(element),
-          octave_shift : clef.shift
+          octave_shift : clef.shift,
         };
 
         me.setStemDir(element, note_opts, layerDir);
@@ -1609,7 +1608,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @method processSyllables
      */
     processSyllables : function(note, element, staff_n) {
-      var me = this, annot, syl, verse, text_line, verse_n, syls;
+      var me = this, vexSyllable, syl, verse, text_line, verse_n, syls;
       // syl = me.processSyllable(element);
       syls = $(element).find('syl');
       $.each(syls, function(i) {
@@ -1619,14 +1618,22 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           verse_n : $(this).parents('verse').attr('n')
         };
         if (syl) {
-          annot = me.createAnnot(syl.text, me.cfg.lyricsFont).
+          vexSyllable = me.createSyllable(syl.text, me.cfg.lyricsFont).
             setVerticalJustification(me.BOTTOM).
             setLineSpacing(me.cfg.lyricsFont.spacing);
-          note.addAnnotation(0, annot);
+          note.addAnnotation(0, vexSyllable);
 
-          me.systems[me.currentSystem_n].verses.addSyllable(annot, syl.wordpos, syl.verse_n, staff_n);
+          me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, syl.wordpos, syl.verse_n, staff_n);
         }
       });
+    },
+
+    // Support for annotations
+    /**
+     * @method createAnnot
+     */
+    createSyllable : function(text, annotFont) {
+      return (new VF.Syllable(text)).setFont(annotFont.family, annotFont.size, annotFont.weight);
     },
 
     // Support for annotations

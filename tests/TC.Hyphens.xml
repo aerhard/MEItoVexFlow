@@ -29,7 +29,7 @@
 						<measure n="0" width="320" unit="px" right="dbl">
 							<staff n="1">
 								<layer>
-									<note xml:id="n02" pname="c" oct="5" dur="4" dots="1" accid="n">
+                                        <note xml:id="n02" pname="b" oct="3" dur="4" dots="1" accid="n">
 										<syl wordpos="t">mer</syl>
 									</note>
 									<note xml:id="n03" pname="c" oct="5" dur="8">

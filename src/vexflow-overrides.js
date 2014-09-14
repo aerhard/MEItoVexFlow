@@ -8,6 +8,12 @@ Vex.Flow.StaveNote.prototype.getTieRightX = function() {
   return tieStartX;
 };
 
+Vex.Flow.StaveNote.prototype.getYForBottomText = function(text_line) {
+  var extents = this.getStemExtents();
+  return Vex.Max(this.stave.getYForBottomText(text_line),
+      extents.baseY + (this.render_options.annotation_spacing * (text_line +1)));
+};
+
 
 
 
@@ -429,51 +435,43 @@ Vex.Flow.Curve.prototype.renderCurve = function(params) {
   ctx.fill();
 };
 
-// [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
-//
-// ## Description
-//
-// This file implements text annotations as modifiers that can be attached to
-// notes.
-//
-// See `tests/annotation_tests.js` for usage examples.
-
-Vex.Flow.Annotation = (function() {
-  function Annotation(text) {
+/**
+ * Syllable class, based on Vex.Flow.Annotation
+ */
+Vex.Flow.Syllable = (function() {
+  function Syllable(text) {
     if (arguments.length > 0) this.init(text);
   }
-  Annotation.CATEGORY = "annotations";
+  Syllable.CATEGORY = "annotations";
 
-  // To enable logging for this class. Set `Vex.Flow.Annotation.DEBUG` to `true`.
-  function L() { if (Annotation.DEBUG) Vex.L("Vex.Flow.Annotation", arguments); }
+  // To enable logging for this class. Set `Vex.Flow.Syllable.DEBUG` to `true`.
+  function L() { if (Syllable.DEBUG) Vex.L("Vex.Flow.Syllable", arguments); }
 
     // START ADDITION
-    Annotation.DEFAULT_FONT_SIZE = 10;
+    Syllable.DEFAULT_FONT_SIZE = 10;
     // END ADDITION
 
   // Text annotations can be positioned and justified relative to the note.
-  Annotation.Justify = {
+  Syllable.Justify = {
     LEFT: 1,
     CENTER: 2,
     RIGHT: 3,
     CENTER_STEM: 4
   };
 
-  Annotation.VerticalJustify = {
+  Syllable.VerticalJustify = {
     TOP: 1,
-    CENTER: 2,
-    BOTTOM: 3,
-    CENTER_STEM: 4
+    BOTTOM: 3
   };
 
   // Arrange annotations within a `ModifierContext`
-  Annotation.format = function(annotations, state) {
+  Syllable.format = function(annotations, state) {
     if (!annotations || annotations.length === 0) return false;
 
     var text_line = state.text_line;
     var max_width = 0;
 
-    // Format Annotations
+    // Format Syllables
     var width;
     for (var i = 0; i < annotations.length; ++i) {
       var annotation = annotations[i];
@@ -490,24 +488,24 @@ Vex.Flow.Annotation = (function() {
 
   // ## Prototype Methods
   //
-  // Annotations inherit from `Modifier` and is positioned correctly when
+  // Syllables inherit from `Modifier` and is positioned correctly when
   // in a `ModifierContext`.
   var Modifier = Vex.Flow.Modifier;
-  Vex.Inherit(Annotation, Modifier, {
-    // Create a new `Annotation` with the string `text`.
+  Vex.Inherit(Syllable, Modifier, {
+    // Create a new `Syllable` with the string `text`.
     init: function(text) {
-      Annotation.superclass.init.call(this);
+      Syllable.superclass.init.call(this);
 
       this.note = null;
       this.index = null;
       this.text_line = 0;
       this.text = text;
-      this.justification = Annotation.Justify.CENTER;
-      this.vert_justification = Annotation.VerticalJustify.TOP;
+      this.justification = Syllable.Justify.CENTER;
+      this.vert_justification = Syllable.VerticalJustify.TOP;
       this.font = {
         family: "Arial",
-          // START MODFICATION
-          size : Annotation.DEFAULT_FONT_SIZE,
+          // START MODIFICATION
+          size : Syllable.DEFAULT_FONT_SIZE,
           // END MODIFICATION
           weight : ""
         };
@@ -538,23 +536,75 @@ Vex.Flow.Annotation = (function() {
     },
 
     // Set vertical position of text (above or below stave). `just` must be
-    // a value in `Annotation.VerticalJustify`.
+    // a value in `Syllable.VerticalJustify`.
     setVerticalJustification: function(just) {
       this.vert_justification = just;
       return this;
     },
 
     // Get and set horizontal justification. `justification` is a value in
-    // `Annotation.Justify`.
+    // `Syllable.Justify`.
     getJustification: function() { return this.justification; },
     setJustification: function(justification) {
       this.justification = justification; return this; },
+
+
+    preProcess : function() {
+
+      var PADDING = 5;
+
+      var y;
+
+      var stem_ext, spacing;
+      var has_stem = this.note.hasStem();
+      var stave = this.note.getStave();
+
+      // The position of the text varies based on whether or not the note
+      // has a stem.
+      if (has_stem) {
+        stem_ext = this.note.getStem().getExtents();
+        spacing = stave.getSpacingBetweenLines();
+      }
+
+      // START ADDITION
+      var font_scale = this.font.size / Syllable.DEFAULT_FONT_SIZE * this.line_spacing;
+      // END ADDITION
+
+      if (this.vert_justification == Syllable.VerticalJustify.BOTTOM) {
+        y = stave.getYForBottomText(this.text_line);
+        if (has_stem) {
+          var stem_base = (this.note.getStemDirection() === 1 ? stem_ext.baseY + 2*PADDING : stem_ext.topY + PADDING);
+
+          // START MODIFICATION
+          y = Math.max(y,
+              stem_base + ( spacing * (this.text_line + 1) * font_scale + ( spacing * (this.text_line) ) )
+          );
+          // END MODIFICATION
+        }
+
+        // TODO refactor top text, too
+      } else if (this.vert_justification == Syllable.VerticalJustify.TOP) {
+        y = Math.min(stave.getYForTopText(this.text_line), this.note.getYs()[0] - 10);
+        if (has_stem) {
+          y = Math.min(y, (stem_ext.topY - 5) - (spacing * this.text_line));
+        }
+      }
+
+      this.y = y;
+      return y;
+    },
+
+    setY: function (y) {
+      this.y = y;
+    },
+
+
 
     // Render text beside the note.
     draw: function() {
       if (!this.context) throw new Vex.RERR("NoContext",
         "Can't draw text annotation without a context.");
-      if (!this.note) throw new Vex.RERR("NoNoteForAnnotation",
+      if (!this.note) throw new Vex.RERR("NoNoteForSyllable",
         "Can't draw text annotation without an attached note.");
 
       var start = this.note.getModifierStartXY(Modifier.Position.ABOVE,
@@ -572,60 +622,21 @@ Vex.Flow.Annotation = (function() {
       var text_height = this.context.measureText("m").width;
       var x, y;
 
-      if (this.justification == Annotation.Justify.LEFT) {
+      if (this.justification == Syllable.Justify.LEFT) {
         x = start.x;
-      } else if (this.justification == Annotation.Justify.RIGHT) {
+      } else if (this.justification == Syllable.Justify.RIGHT) {
         x = start.x - text_width;
-      } else if (this.justification == Annotation.Justify.CENTER) {
+      } else if (this.justification == Syllable.Justify.CENTER) {
         x = start.x - text_width / 2;
       } else /* CENTER_STEM */ {
         x = this.note.getStemX() - text_width / 2;
       }
 
-      var stem_ext, spacing;
-      var has_stem = this.note.hasStem();
-      var stave = this.note.getStave();
-
-      // The position of the text varies based on whether or not the note
-      // has a stem.
-      if (has_stem) {
-        stem_ext = this.note.getStem().getExtents();
-        spacing = stave.getSpacingBetweenLines();
-      }
-
-        // START ADDITION
-        font_scale = this.font.size / Annotation.DEFAULT_FONT_SIZE * this.line_spacing;
-        // END ADDITION
-
-      if (this.vert_justification == Annotation.VerticalJustify.BOTTOM) {
-        y = stave.getYForBottomText(this.text_line);
-        if (has_stem) {
-          var stem_base = (this.note.getStemDirection() === 1 ? stem_ext.baseY : stem_ext.topY);
-
-            // START MODIFICATION
-            y = Math.max(y, stem_base + ( spacing * (this.text_line + 1) * font_scale + ( spacing * (this.text_line) ) ) );
-            // END MODIFICATION
-        }
-      } else if (this.vert_justification ==
-                 Annotation.VerticalJustify.CENTER) {
-        var yt = this.note.getYForTopText(this.text_line) - 1;
-        var yb = stave.getYForBottomText(this.text_line);
-        y = yt + ( yb - yt ) / 2 + text_height / 2;
-      } else if (this.vert_justification ==
-                 Annotation.VerticalJustify.TOP) {
-        y = Math.min(stave.getYForTopText(this.text_line), this.note.getYs()[0] - 10);
-        if (has_stem) {
-          y = Math.min(y, (stem_ext.topY - 5) - (spacing * this.text_line));
-        }
-      } else /* CENTER_STEM */{
-        var extents = this.note.getStemExtents();
-        y = extents.topY + (extents.baseY - extents.topY) / 2 +
-            text_height / 2;
-      }
-
         // START ADDITION
         this.x = x;
-        this.y = y;
+
+        y = this.y;
+
         this.text_height = text_height;
         this.text_width = text_width;
         // END ADDITION
@@ -636,8 +647,10 @@ Vex.Flow.Annotation = (function() {
       }
     });
 
-    return Annotation;
+    return Syllable;
   }());
+
+
 
 // VexFlow - Music Engraving for HTML5
 // Copyright Mohit Muthanna 2010

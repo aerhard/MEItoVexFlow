@@ -11,6 +11,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       var me = this;
       me.hyphensByVerse = {};
       me.syllablesByVerse = {};
+      me.verseYs = {};
       me.font = config.font;
       me.maxHyphenDistance = config.maxHyphenDistance;
     };
@@ -41,6 +42,10 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         return me;
       },
 
+      getLowestY: function() {
+        return this.lowestY;
+      },
+
       newHyphenation : function() {
         return new m2v.Hyphenation(this.font, this.maxHyphenDistance);
       },
@@ -50,15 +55,26 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @returns {m2v.Verses}
        */
       format : function() {
-        var me = this, verse_n, text_line, verse, i, j;
+        var me = this, verse_n, text_line, verse, i, j, lowestY = -20;
+
+        var padding = 20;
+
         text_line = 0;
         for (verse_n in me.syllablesByVerse) {
           verse = me.syllablesByVerse[verse_n];
+          lowestY += padding;
+          // first pass: get lowest y
           for (i = 0, j = verse.length; i < j; i++) {
             verse[i].setTextLine(text_line);
+            lowestY = Math.max(lowestY, verse[i].preProcess());
+          }
+          // second pass: set lowest y
+          for (i = 0, j; i < j; i++) {
+            verse[i].setY(lowestY);
           }
           text_line += 1;
         };
+        me.lowestY = lowestY;
         return me;
       },
 
