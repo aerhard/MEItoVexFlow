@@ -352,9 +352,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         f_note = notes_by_id[this.getFirstId()] || {};
         l_note = notes_by_id[this.getLastId()] || {};
 
-        console.log(this.getFirstId());
-//        console.log(this.getLastId());
-
         if (!f_note.vexNote && !l_note.vexNote) {
           m2v.L('warn', 'Tie/slur could not be rendered', 'Neither xml:id could be found: "' + this.getFirstId() + '" / "' + this.getLastId() + '"');
           return true;
