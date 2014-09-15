@@ -96,7 +96,7 @@ var MEI2VF = (function(m2v, MeiLib, VF, $, undefined) {
           ctx.paper.setSize(width, height);
         }
 
-        cfg.page_width = width;
+        cfg.pageWidth = width;
 
         this.Converter.initConfig(cfg);
         this.Converter.process(xmlDoc[0] || xmlDoc);

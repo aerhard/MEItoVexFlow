@@ -125,8 +125,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       var me = this;
       if (me.staffDef.hasAttribute('key.pname')) {
         me.keySpec = me.convertKeySpec(me.staffDef);
-      }
-      if (me.scoreDef.hasAttribute('key.pname')) {
+      } else if (me.scoreDef.hasAttribute('key.pname')) {
         me.keySpec = me.convertKeySpec(me.scoreDef);
       }
     },
@@ -259,6 +258,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
     updateClef : function (element) {
       var me = this, clefShape, clefDis, clefDisPlace, clefType, prefix;
 
+      // prefix for clef attribute names
       prefix = (element.localName === 'clef') ? '' : 'clef.';
 
       clefShape = element.getAttribute(prefix + 'shape');

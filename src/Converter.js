@@ -54,21 +54,21 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
     defaults : {
       /**
-       * @cfg {Number} page_width The width of the page
+       * @cfg {Number} pageWidth The width of the page
        */
-      page_width : 800,
+      pageWidth : 800,
       /**
-       * @cfg {Number} page_margin_top The top page margin
+       * @cfg {Number} pageTopMar The top page margin
        */
-      page_margin_top : 60,
+      pageTopMar : 60,
       /**
-       * @cfg {Number} page_margin_left The left page margin
+       * @cfg {Number} pageLeftMar The left page margin
        */
-      page_margin_left : 20,
+      pageLeftMar : 20,
       /**
-       * @cfg {Number} page_margin_right The right page margin
+       * @cfg {Number} pageRightMar The right page margin
        */
-      page_margin_right : 20,
+      pageRightMar : 20,
       /**
        * @cfg {Number} systemSpacing The spacing between two staff
        * systems
@@ -189,13 +189,13 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
        * @property {Number} printSpace.width
        */
       me.printSpace = {
-        // substract four line distances (40px) from page_margin_top in order
+        // substract four line distances (40px) from pageTopMar in order
         // to compensate VexFlow's default top spacing / allow specifying
         // absolute values
-        top : me.cfg.page_margin_top - 40,
-        left : me.cfg.page_margin_left,
-        right : me.cfg.page_width - me.cfg.page_margin_right,
-        width : Math.floor(me.cfg.page_width - me.cfg.page_margin_right - me.cfg.page_margin_left) - 1
+        top : me.cfg.pageTopMar - 40,
+        left : me.cfg.pageLeftMar,
+        right : me.cfg.pageWidth - me.cfg.pageRightMar,
+        width : Math.floor(me.cfg.pageWidth - me.cfg.pageRightMar - me.cfg.pageLeftMar) - 1
       };
       return me;
 
