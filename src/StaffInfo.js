@@ -1,4 +1,8 @@
 /*
+ * Reworking: Alexander Erhard
+ */
+
+/*
  * StaffInfo.js Author: Zoltan Komives (zolaemil@gmail.com) Created: 03.07.2013
  *
  * Copyright © 2012, 2013 Richard Lewis, Raffaele Viglianti, Zoltan Komives,

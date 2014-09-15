@@ -1,4 +1,8 @@
 /*
+ * Contributor: Alexander Erhard
+ */
+
+/*
  * StaveConnector.js Author: Zoltan Komives (zolaemil@gmail.com) Created:
  * 24.07.2013
  *

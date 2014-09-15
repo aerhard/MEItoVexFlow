@@ -1,4 +1,8 @@
 /*
+ * Contributor: Alexander Erhard
+ */
+
+/*
  * StaveVoices.js Author: Zoltan Komives (zolaemil@gmail.com) Created:
  * 25.07.2013
  *

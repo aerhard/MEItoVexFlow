@@ -1,3 +1,23 @@
+/*
+ * MEItoVexFlow, Util class
+ *
+ * Author: Alexander Erhard
+ *
+ * Copyright © 2014 Richard Lewis, Raffaele Viglianti, Zoltan Komives,
+ * University of Maryland
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
     /**
@@ -34,76 +54,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           }
         }
         return result + '>';
-      },
-
-      /**
-       *
-       */
-      drawBoundingBoxes : function(ctx, options) {
-        var me = this, i, j, k, l, measure, m, coords;
-        options = options || {};
-        ctx.save();
-        if (options.staffs && options.staffs.data) {
-          for ( i = 0, j = options.staffs.data.length; i < j; i += 1) {
-            measure = options.staffs.data[i];
-            if (measure) {
-              for ( k = 0, l = measure.length; k < l; k += 1) {
-                if (measure[k]) {
-                  m = measure[k];
-                  measure[k].getBoundingBox().draw(ctx);
-                  // ############### NOTEAREA ##############
-                  coords = {
-                    x : m.getNoteStartX(),
-                    y : m.getYForLine(0) - 30,
-                    w : m.getNoteEndX() - m.getNoteStartX(),
-                    h : m.getYForLine(4) - m.getYForLine(0) + 60
-                  };
-                  me.drawRectangle(coords, '120, 80, 200', ctx, options.frame);
-                  // ############### MODIFIERS ##############
-                  coords = {
-                    x : m.x,
-                    y : m.getYForLine(0) - 30,
-                    w : m.getModifierXShift(),
-                    h : m.getYForLine(4) - m.getYForLine(0) + 60
-                  };
-                  me.drawRectangle(coords, '100, 100, 0', ctx, options.frame);
-                }
-              }
-            }
-          }
-        }
-        if (options.voices && options.voices.data) {
-          $.each(options.voices.data, function() {
-            if (this && this.all_voices) {
-              $.each(this.all_voices, function() {
-                if (this && this.voice) {
-                  if (this.voice.boundingBox && options.voices.drawFrame) {
-                    this.voice.getBoundingBox().draw(ctx);
-                  }
-                  if (options.voices.drawTickables) {
-                    $.each(this.voice.tickables, function() {
-                      this.getBoundingBox().draw(ctx);
-                    });
-                  }
-                }
-              });
-            }
-          });
-        }
-        ctx.restore();
-      },
-
-      /**
-       *
-       */
-      drawRectangle : function(coords, color, ctx, frame) {
-        if (frame) {
-          ctx.strokeStyle = 'rgba(' + color + ', 0.5)';
-          ctx.rect(coords.x, coords.y, coords.w, coords.h);
-        }
-        ctx.fillStyle = 'rgba(' + color + ', 0.1)';
-        ctx.fillRect(coords.x, coords.y, coords.w, coords.h);
-        ctx.stroke();
       }
     };
 

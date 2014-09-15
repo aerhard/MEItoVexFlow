@@ -1,3 +1,7 @@
+/**
+ * Contributor: Alexander Erhard
+ */
+
 /*
  * meilib.js
  *

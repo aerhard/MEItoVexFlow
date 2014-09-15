@@ -1,3 +1,7 @@
+/**
+ * Contributor: Alexander Erhard
+ */
+
 /*
 * Component of MEItoVexFlow Author: Raffaele Viglianti, 2012
 *
