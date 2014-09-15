@@ -69,7 +69,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             lowestY = Math.max(lowestY, verse[i].preProcess());
           }
           // second pass: set lowest y
-          for (i = 0, j; i < j; i++) {
+          for (i = 0; i < j; i++) {
             verse[i].setY(lowestY);
           }
           text_line += 1;

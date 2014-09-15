@@ -83,10 +83,10 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
             // TODO implement offset in VexFlow
             // offset nested connectors
-            if (this.ancestorSymbols) {
+            //if (this.ancestorSymbols) {
               //console.log(this.ancestorSymbols);
               //vexConnector.x_shift = -30;
-            }
+            //}
 
             me.allVexConnectors.push(vexConnector);
             if (labelMode === 'full') {
