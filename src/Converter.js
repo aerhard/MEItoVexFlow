@@ -1,5 +1,5 @@
 /*
- * MEItoVexFlow, Converver class
+ * MEItoVexFlow, Converter class
  * (based on meitovexflow.js)
  * Author of reworkings: Alexander Erhard
  *
