@@ -1256,7 +1256,6 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
         restOpts.duration = dur + 'r';
 
-        console.log(m2v.Rest);
         rest = new m2v.Rest(restOpts);
 
         xml_id = MeiLib.XMLID(element);

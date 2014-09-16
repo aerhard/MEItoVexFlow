@@ -24,88 +24,95 @@
 
 var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
-    /**
-     * @class MEI2VF.StaffVoice
-     * @private
-     *
-     * @constructor
-     * @param {Object} voice
-     * @param {Object} staff_n
-     */
-    m2v.StaffVoice = function(voice, staff_n) {
-      this.voice = voice;
-      this.staff_n = staff_n;
-    };
+  /**
+   * @class MEI2VF.StaffVoice
+   * @private
+   *
+   * @constructor
+   * @param {Object} voice
+   * @param {Object} staff_n
+   */
+  m2v.StaffVoice = function(voice, staff_n) {
+    this.voice = voice;
+    this.staff_n = staff_n;
+  };
 
-    /**
-     * @class MEI2VF.StaveVoices
-     * Stores all voices in a given measure along with the respective staff id.
-     * Passes all voices to Vex.Flow.Formatter and calls joinVoices, then draws
-     * all voices.
-     * @private
-     *
-     * @constructor
-     */
-    m2v.StaveVoices = function() {
+  /**
+   * @class MEI2VF.StaveVoices
+   * Stores all voices in a given measure along with the respective staff id.
+   * Passes all voices to Vex.Flow.Formatter and calls joinVoices, then draws
+   * all voices.
+   * @private
+   *
+   * @constructor
+   */
+  m2v.StaveVoices = function() {
+    this.all_voices = [];
+    this.formatter = new VF.Formatter();
+  };
+
+  m2v.StaveVoices.prototype = {
+    addStaffVoice : function(staffVoice) {
+      this.all_voices.push(staffVoice);
+    },
+
+    addVoice : function(voice, staff_n) {
+      this.addStaffVoice(new m2v.StaffVoice(voice, staff_n));
+    },
+
+    reset : function() {
       this.all_voices = [];
-      this.formatter = new VF.Formatter();
-    };
+    },
 
-    m2v.StaveVoices.prototype = {
-      addStaffVoice : function(staffVoice) {
-        this.all_voices.push(staffVoice);
-      },
-
-      addVoice : function(voice, staff_n) {
-        this.addStaffVoice(new m2v.StaffVoice(voice, staff_n));
-      },
-
-      reset : function() {
-        this.all_voices = [];
-      },
-
-      preFormat : function() {
-        var me = this, all, staff_n, i;
-        all = me.all_voices;
-        me.vexVoices = [];
-        me.vexVoicesStaffWise = {};
-        i = all.length;
-        while (i--) {
-          me.vexVoices.push(all[i].voice);
-          staff_n = all[i].staff_n;
-          if (me.vexVoicesStaffWise[staff_n]) {
-            me.vexVoicesStaffWise[staff_n].push(all[i].voice);
-          } else {
-            me.vexVoicesStaffWise[staff_n] = [all[i].voice];
-          }
-        }
-        me.formatter.preCalculateMinTotalWidth(me.vexVoices);
-        return me.formatter.getMinTotalWidth();
-      },
-
-      /**
-       *
-       * @param {Object} staff a staff in the current measure used to set
-       * the x dimensions of the voice
-       */
-      format : function(staff) {
-        var me = this, i, f;
-        f = me.formatter;
-        for (i in me.vexVoicesStaffWise) {
-          f.joinVoices(me.vexVoicesStaffWise[i], {align_rests: true});
-        }
-        f.formatToStave(me.vexVoices, staff);
-      },
-
-      draw : function(context, staves) {
-        var i, staffVoice, all_voices = this.all_voices;
-        for ( i = 0; i < all_voices.length; ++i) {
-          staffVoice = all_voices[i];
-          staffVoice.voice.draw(context, staves[staffVoice.staff_n]);
+    preFormat : function() {
+      var me = this, all, staff_n, i;
+      all = me.all_voices;
+      me.vexVoices = [];
+      me.vexVoicesStaffWise = {};
+      i = all.length;
+      while (i--) {
+        me.vexVoices.push(all[i].voice);
+        staff_n = all[i].staff_n;
+        if (me.vexVoicesStaffWise[staff_n]) {
+          me.vexVoicesStaffWise[staff_n].push(all[i].voice);
+        } else {
+          me.vexVoicesStaffWise[staff_n] = [all[i].voice];
         }
       }
-    };
+      me.formatter.preCalculateMinTotalWidth(me.vexVoices);
+      return me.formatter.getMinTotalWidth();
+    },
 
-    return m2v;
+    /**
+     *
+     * @param {Object} staff a staff in the current measure used to set
+     * the x dimensions of the voice
+     */
+    format : function(staff) {
 
-  }(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+      var me = this, i, f, alignRests;
+      f = me.formatter;
+      for (i in me.vexVoicesStaffWise) {
+        alignRests = (me.vexVoicesStaffWise[i].length > 1);
+
+        f.joinVoices(me.vexVoicesStaffWise[i], {align_rests: alignRests});
+      }
+
+      // TODO make formatter handle simultaneous staves where rests are aligned and staves where
+      // they aren't
+      //f.formatToStave(me.vexVoices, staff, {align_rests: true});
+      f.formatToStave(me.vexVoices, staff, {align_rests: false});
+    },
+
+    draw : function(context, staves) {
+      var i, staffVoice, all_voices = this.all_voices;
+      for ( i = 0; i < all_voices.length; ++i) {
+        staffVoice = all_voices[i];
+        staffVoice.voice.draw(context, staves[staffVoice.staff_n]);
+      }
+    }
+  };
+
+  return m2v;
+
+}(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
