@@ -3,6 +3,7 @@
  *
  * Author: Alexander Erhard
  * (process... methods based on meitovexflow.js)
+ * Contributor: @davethehat
  *
  * Copyright © 2014 Richard Lewis, Raffaele Viglianti, Zoltan Komives,
  * University of Maryland

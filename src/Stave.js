@@ -23,7 +23,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
   Vex.Inherit(m2v.Stave, VF.Stave, {
 
-    // TODO noch prüfen ob die Abweichung mit dem shift bei clef und end clef OK ist!
+    // FIXME check if deviation of clef.shift between clef and end clef is OK
     addClefFromInfo : function (clef) {
       var me = this;
       me.addClef(clef.type, clef.size, clef.shift === -1 ? '8vb' : undefined);

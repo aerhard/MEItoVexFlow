@@ -1,5 +1,5 @@
 /*
- * Reworking: Alexander Erhard
+ * Contributors and reworking: Alexander Erhard, @davethehat
  */
 
 /*
