@@ -18,17 +18,13 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
 
   m2v.Rest = function (options) {
+    VF.StaveNote.call(this, options);
     this.init(options);
   };
 
-  Vex.Inherit(m2v.Rest, VF.StaveNote, {
+  m2v.Rest.prototype = Object.create(VF.StaveNote.prototype);
 
-    init: function (options) {
-      m2v.Rest.superclass.init.call(this, options);
-      this.beamable = true;
-    }
-
-  });
+  m2v.Rest.prototype.beamable = true;
 
 
   return m2v;

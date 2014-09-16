@@ -1001,8 +1001,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           note = new VF.GraceNote(note_opts);
           note.slash = atts['stem.mod'] === '1slash';
         } else {
-          //note = new m2v.Note(note_opts);
-          note = new VF.StaveNote(note_opts);
+          note = new m2v.Note(note_opts);
         }
 
         if (mei_staff_n === staff_n) {
@@ -1144,8 +1143,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           chord = new VF.GraceNote(chord_opts);
           chord.slash = atts['stem.mod'] === '1slash';
         } else {
-          //chord = new m2v.Chord(chord_opts);
-          chord = new VF.StaveNote(chord_opts);
+          chord = new m2v.Chord(chord_opts);
         }
 
         chord.setStave(staff);
@@ -1258,8 +1256,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
         restOpts.duration = dur + 'r';
 
-        //rest = new m2v.Rest(restOpts);
-        rest = new VF.StaveNote(restOpts);
+        rest = new m2v.Rest(restOpts);
 
         xml_id = MeiLib.XMLID(element);
 
@@ -1407,7 +1404,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
      * layer
      */
     processBeam : function (element, staff, staff_n, layerDir, staffInfo) {
-      var me = this, elements, regularBeamElements = [], StaveNote = VF.StaveNote;
+      var me = this, elements, regularBeamElements = [];
       me.inBeamNo += 1;
       var process = function () {
         // make sure to get vexNote out of wrapped note objects
@@ -1418,8 +1415,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
       // TODO remove filter later and modify beam object to skip objects other than note and clef
       var filteredElements = elements.filter(function (element) {
-        return element instanceof StaveNote;
-        //return element.beamable === true;
+        return element.beamable === true;
       });
 
       // set autostem parameter of VF.Beam to true if neither layerDir nor any stem direction in the beam is specified
