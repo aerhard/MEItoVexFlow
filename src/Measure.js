@@ -202,7 +202,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
           // if a staff has a time signature, set the tempo on top of the time
           // signature instead of the first note
-          if (vexStaff.hasTimeSig) {
+          if (vexStaff.hasTimeSig()) {
             offsetX -= 24;
           }
           if (atts.ho) {

@@ -58,7 +58,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
     },
 
     createVexFromInfos : function() {
-      throw new m2v.RUNTIME_ERROR('MEI2VF.DEVELOPMENT_ERROR.createVexFromInfos', 'You have to prodide a createVexFromInfos method when inheriting MEI2VF.PointerCollection.');
+      throw new m2v.RUNTIME_ERROR('MEI2VF.DEVELOPMENT_ERROR.createVexFromInfos', 'You have to provide a createVexFromInfos method when inheriting MEI2VF.PointerCollection.');
     },
 
     createInfos : function(elements, measureElement) {
@@ -86,7 +86,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         var staffdef = me.systemInfo.getStaffInfo(stffinf.staff_n);
         if (!staffdef)
           throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.createInfos:E02', 'Cannot determine staff definition.');
-        var meter = staffdef.meter;
+        var meter = staffdef.getTimeSpec();
         if (!meter.count || !meter.unit)
           throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.createInfos:E03', "Cannot determine meter; missing or incorrect @meter.count or @meter.unit.");
         return MeiLib.tstamp2id(tstamp, layer, meter);
@@ -105,7 +105,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           if (tstamp) {
             startid = local_tstamp2id(tstamp, this, measureElement);
           } else {
-            throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.createInfos', "Neither @startid nor @tstamp are specified");
+            m2v.log('warn', '@startid or @tstamp expected', m2v.Util.serializeElement(this) + ' could not be processed because neither @startid nor @tstamp are specified.');
+            return;
           }
         }
         me.allModels.push({
@@ -170,7 +171,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             note.vexNote.addAnnotation(0, annot);
           }
         } else {
-          m2v.L('warn', 'Input error', m2v.Util.serializeElement(model.element) + ' could not be rendered because the reference "' + model.startid + '" could not be resolved.');
+          m2v.log('warn', 'Input error', m2v.Util.serializeElement(model.element) + ' could not be rendered because the reference "' + model.startid + '" could not be resolved.');
         }
       }
     }
@@ -208,7 +209,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             note.vexNote.addAnnotation(0, annot.setVerticalJustification(me.BOTTOM));
           }
         } else {
-          m2v.L('warn', 'Input error', m2v.Util.serializeElement(model.element) + ' could not be rendered because the reference "' + model.startid + '" could not be resolved.');
+          m2v.log('warn', 'Input error', m2v.Util.serializeElement(model.element) + ' could not be rendered because the reference "' + model.startid + '" could not be resolved.');
         }
       }
 
@@ -242,7 +243,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           me.addFermataToNote(note.vexNote, model.atts.place);
         } else {
           console.log(model);
-          m2v.L('warn', 'Input error', m2v.Util.serializeElement(model.element) + ' could not be rendered because the reference "' + model.startid + '" could not be resolved.');
+          m2v.log('warn', 'Input error', m2v.Util.serializeElement(model.element) + ' could not be rendered because the reference "' + model.startid + '" could not be resolved.');
         }
       }
 

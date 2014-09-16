@@ -26,7 +26,9 @@ module.exports = function(grunt) {
         options: {
           separator: ';'
         },
-        src: ['src/meilib.js',
+        src: ['src/vexflow-overrides.js',
+              'src/meilib.js',
+              'src/Chord.js',
               'src/Converter.js',
               'src/EventLink.js',
               'src/EventReference.js',
@@ -36,13 +38,15 @@ module.exports = function(grunt) {
               'src/PointerCollections.js',
               'src/Measure.js',
               'src/MEI2VF.js',
+              'src/Note.js',
               'src/tables.js',
+              'src/Rest.js',
               'src/StaffInfo.js',
+              'src/Stave.js',
               'src/StaveConnector.js',
               'src/StaveVoices.js',
               'src/System.js',
               'src/SystemInfo.js',
-              'src/vexflow-overrides.js',
               'src/Util.js',
               'src/Interface.js'],
         dest: 'dist/meitovexflow.js'

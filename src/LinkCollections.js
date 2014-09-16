@@ -92,7 +92,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         var staffdef = systemInfo.getStaffInfo(stffinf.staff_n);
         if (!staffdef)
           throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.createInfos:E02', 'Cannot determine staff definition.');
-        var meter = staffdef.meter;
+        var meter = staffdef.getTimeSpec();
         if (!meter.count || !meter.unit)
           throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.createInfos:E03', "Cannot determine meter; missing or incorrect @meter.count or @meter.unit.");
         return MeiLib.tstamp2id(tstamp, layer, meter);
@@ -262,7 +262,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
         me.allVexObjects.push(hairpin);
       } else {
-        m2v.L('debug', 'Hairpins', 'Hairpin cannot be rendered:' + arguments.join(' '));
+        m2v.log('debug', 'Hairpins', 'Hairpin cannot be rendered:' + arguments.join(' '));
       }
 
     }
@@ -375,7 +375,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
 
         if (!f_note.vexNote && !l_note.vexNote) {
-          m2v.L('warn', 'Tie/slur could not be rendered', 'Neither xml:id could be found: "' + this.getFirstId() + '" / "' + this.getLastId() + '"');
+          m2v.log('warn', 'Tie/slur could not be rendered', 'Neither xml:id could be found: "' + this.getFirstId() + '" / "' + this.getLastId() + '"');
           return true;
         }
 

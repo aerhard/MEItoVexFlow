@@ -191,7 +191,7 @@ MeiLib.durationOf = function(evnt, meter, zeroGraceNotes) {
     var dur = $(simple_evnt).attr('dur');
     if (!dur)
       throw new MeiLib.RuntimeError('MeiLib.durationOf:E04', '@dur of <b>note</b>, <b>rest</b> or <b>space</b> must be specified.');
-//    console.log(MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter));
+    //    console.log(MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter));
     return MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter);
   };
   var durationOf_Chord = function(chord, meter, layer_no) {
@@ -235,7 +235,8 @@ MeiLib.durationOf = function(evnt, meter, zeroGraceNotes) {
       } else if (tagName === 'tuplet') {
         dur_b = durationOf_Tuplet(this, meter);
       } else {
-        throw new MeiLib.RuntimeError('MeiLib.durationOf:E03', "Not supported element '" + tagName + "'");
+        dur_b = 0;
+        //throw new MeiLib.RuntimeError('MeiLib.durationOf:E03', "Not supported element '" + tagName + "'");
       }
       acc += dur_b;
     });
@@ -270,7 +271,8 @@ MeiLib.durationOf = function(evnt, meter, zeroGraceNotes) {
   if (evnt_name === 'tuplet') {
     return durationOf_Tuplet(evnt, meter);
   }
-  throw new MeiLib.RuntimeError('MeiLib.durationOf:E05', "Not supported element: '" + evnt_name + "'");
+  return 0;
+  //throw new MeiLib.RuntimeError('MeiLib.durationOf:E05', "Not supported element: '" + evnt_name + "'");
 
 }
 /**
@@ -313,8 +315,8 @@ MeiLib.tstamp2id = function(tstamp, layer, meter) {
                 eventList.outputProportion.numbase /
                 eventList.outputProportion.num;
     }
-//    m = meter;
-//    e = evnt;
+    //    m = meter;
+    //    e = evnt;
   }
 
   if (dist === undefined)
@@ -724,7 +726,7 @@ MeiLib.Alt.prototype.getDefaultItem = function() {
   if (this.tagname === 'choice') {
     return findDefault(this.altitems, 'corr', 'sic');
   } else if (this.tagname === 'app') {
-    return findDefault(this.altitems, 'lem');
+    return findDefault(this.altitems, 'lem', 'rdg');
   }
 }
 /**
@@ -962,7 +964,15 @@ MeiLib.MeiDoc.prototype.selectDefaultAlternative = function(alt) {
       result.alt_item = lem;
       //...or nothing:
     } else {
-      result = {};
+      var rdg = $(alt).find('rdg')[0];
+      if (rdg) {
+        // ...the first rdg...
+        result.alt_item_xml_id = MeiLib.XMLID(rdg);
+        result.alt_item = rdg;
+        //...or nothing:
+      } else {
+        result = {};
+      }
     }
   }
   return result;
@@ -1068,7 +1078,7 @@ MeiLib.MeiDoc.prototype.updateSectionView = function(sectionplaneUpdate) {
           res++;
         }
       }
-//      console.log('vars_match: ' + res);
+      //      console.log('vars_match: ' + res);
       return res;
     }
     var max = 0;
@@ -1165,7 +1175,7 @@ MeiLib.MeiDoc.prototype.replaceAltInstance = function(alt_inst_update) {
       nodes2insert = extendWithNodeList(nodes2insert, var_inst_elem.childNodes);
     };
   }
-//  console.log(nodes2insert)
+  //  console.log(nodes2insert)
 
   var match_pseudo_attrValues = function(data1, data2) {
     data1 = data1.replace("'", '"');

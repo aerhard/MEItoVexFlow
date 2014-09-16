@@ -869,21 +869,33 @@ Vex.Flow.StaveTie = ( function() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Vex Flow
 // Mohit Muthanna <mohit@muthanna.com>
 //
 // Copyright Mohit Cheppudira 2010
 
 /** @constructor */
-Vex.Flow.Stave = (function() {
+Vex.Flow.Stave = (function () {
   function Stave(x, y, width, options) {
     if (arguments.length > 0) this.init(x, y, width, options);
   }
 
-  var THICKNESS = (Vex.Flow.STAVE_LINE_THICKNESS > 1 ?
-                   Vex.Flow.STAVE_LINE_THICKNESS : 0);
+  var THICKNESS = (Vex.Flow.STAVE_LINE_THICKNESS > 1 ? Vex.Flow.STAVE_LINE_THICKNESS : 0);
   Stave.prototype = {
-    init: function(x, y, width, options) {
+    init : function (x, y, width, options) {
       this.x = x;
       this.y = y;
       this.width = width;
@@ -896,72 +908,83 @@ Vex.Flow.Stave = (function() {
       this.measure = 0;
       this.clef = "treble";
       this.font = {
-        family: "sans-serif",
-        size: 8,
-        weight: ""
+        family : "sans-serif",
+        size : 8,
+        weight : ""
       };
       this.options = {
-        vertical_bar_width: 10,       // Width around vertical bar end-marker
-        glyph_spacing_px: 10,
-        num_lines: 5,
-        fill_style: "#999999",
-        spacing_between_lines_px: 10, // in pixels
-        space_above_staff_ln: 4,      // in staff lines
-        space_below_staff_ln: 4,      // in staff lines
-        top_text_position: 1          // in staff lines
+        vertical_bar_width : 10,       // Width around vertical bar end-marker
+        glyph_spacing_px : 10,
+        num_lines : 5,
+        fill_style : "#999999",
+        spacing_between_lines_px : 10, // in pixels
+        space_above_staff_ln : 4,      // in staff lines
+        space_below_staff_ln : 4,      // in staff lines
+        top_text_position : 1          // in staff lines
       };
-      this.bounds = {x: this.x, y: this.y, w: this.width, h: 0};
+      this.bounds = {x : this.x, y : this.y, w : this.width, h : 0};
       Vex.Merge(this.options, options);
 
       this.resetLines();
 
-      this.modifiers.push(
-        new Vex.Flow.Barline(Vex.Flow.Barline.type.SINGLE, this.x)); // beg bar
-      this.modifiers.push(
-        new Vex.Flow.Barline(Vex.Flow.Barline.type.SINGLE,
-            this.x + this.width)); // end bar
+      this.modifiers.push(new Vex.Flow.Barline(Vex.Flow.Barline.type.SINGLE, this.x)); // beg bar
+      this.modifiers.push(new Vex.Flow.Barline(Vex.Flow.Barline.type.SINGLE, this.x + this.width)); // end bar
     },
 
-    getGlyphStartX: function() {
+    getGlyphStartX : function () {
       return this.x + 5;
     },
 
-    getGlyphEndX: function() {
+    getGlyphEndX : function () {
       return this.x + this.width;
     },
 
-    resetLines: function() {
+    resetLines : function () {
       this.options.line_config = [];
       for (var i = 0; i < this.options.num_lines; i++) {
-        this.options.line_config.push({visible: true});
+        this.options.line_config.push({visible : true});
       }
-      this.height = (this.options.num_lines + this.options.space_above_staff_ln) *
-                    this.options.spacing_between_lines_px;
+      this.height =
+      (this.options.num_lines + this.options.space_above_staff_ln) * this.options.spacing_between_lines_px;
       this.options.bottom_text_position = this.options.num_lines + 1;
     },
 
-    setNoteStartX: function(x) { this.start_x = x; return this; },
-    getNoteStartX: function() {
+    setNoteStartX : function (x) {
+      this.start_x = x;
+      return this;
+    },
+    getNoteStartX : function () {
       var start_x = this.start_x;
 
       // Add additional space if left barline is REPEAT_BEGIN and there are other
       // start modifiers than barlines
-      if (this.modifiers[0].barline == Vex.Flow.Barline.type.REPEAT_BEGIN &&
-          this.modifiers.length > 2)
+      if (this.modifiers[0].barline == Vex.Flow.Barline.type.REPEAT_BEGIN && this.modifiers.length > 2) {
         start_x += 20;
+      }
       return start_x;
     },
 
-    getNoteEndX: function() { return this.end_x; },
-    getTieStartX: function() { return this.start_x; },
-    getTieEndX: function() { return this.x + this.width; },
-    setContext: function(context) { this.context = context; return this; },
-    getContext: function() { return this.context; },
+    getNoteEndX : function () {
+      return this.end_x;
+    },
+    getTieStartX : function () {
+      return this.start_x;
+    },
+    getTieEndX : function () {
+      return this.x + this.width;
+    },
+    setContext : function (context) {
+      this.context = context;
+      return this;
+    },
+    getContext : function () {
+      return this.context;
+    },
 
-    setX: function(x) {
+    setX : function (x) {
       var i;
       var dx = (typeof this.x == "number") ? x - this.x : 0;
-//      console.log('dx: ' + dx.toString());
+      //      console.log('dx: ' + dx.toString());
       this.x = x;
       this.bounds.x = x;
       this.start_x += dx;
@@ -971,16 +994,23 @@ Vex.Flow.Stave = (function() {
       return this;
     },
 
-    getX: function() { return this.x; },
-    getNumLines: function() { return this.options.num_lines; },
-    setNumLines: function(lines) {
+    getX : function () {
+      return this.x;
+    },
+    getNumLines : function () {
+      return this.options.num_lines;
+    },
+    setNumLines : function (lines) {
       this.options.num_lines = parseInt(lines, 10);
       this.resetLines();
       return this;
     },
-    setY: function(y) { this.y = y; return this; },
+    setY : function (y) {
+      this.y = y;
+      return this;
+    },
 
-    setWidth: function(width) {
+    setWidth : function (width) {
       this.width = width;
       this.end_x = this.getGlyphEndX();
 
@@ -989,27 +1019,30 @@ Vex.Flow.Stave = (function() {
       return this;
     },
 
-    getWidth: function() {
+    getWidth : function () {
       return this.width;
     },
 
-    setMeasure: function(measure) { this.measure = measure; return this; },
+    setMeasure : function (measure) {
+      this.measure = measure;
+      return this;
+    },
 
     // Bar Line functions
-    setBegBarType: function(type) {
+    setBegBarType : function (type) {
       // Only valid bar types at beginning of stave is none, single or begin repeat
-      if (type == Vex.Flow.Barline.type.SINGLE ||
-          type == Vex.Flow.Barline.type.REPEAT_BEGIN ||
+      if (type == Vex.Flow.Barline.type.SINGLE || type == Vex.Flow.Barline.type.REPEAT_BEGIN ||
           type == Vex.Flow.Barline.type.NONE) {
         this.modifiers[0] = new Vex.Flow.Barline(type, this.x);
       }
       return this;
     },
 
-    setEndBarType: function(type) {
+    setEndBarType : function (type) {
       // Repeat end not valid at end of stave
-      if (type != Vex.Flow.Barline.type.REPEAT_BEGIN)
+      if (type != Vex.Flow.Barline.type.REPEAT_BEGIN) {
         this.modifiers[1] = new Vex.Flow.Barline(type, this.x + this.width);
+      }
       return this;
     },
 
@@ -1019,10 +1052,9 @@ Vex.Flow.Stave = (function() {
      * @param  {Number} index The index from which to determine the shift
      * @return {Number}       The amount of pixels shifted
      */
-    getModifierXShift: function(index) {
-      if (typeof index === 'undefined') index = this.glyphs.length -1;
-      if (typeof index !== 'number') new Vex.RERR("InvalidIndex",
-        "Must be of number type");
+    getModifierXShift : function (index) {
+      if (typeof index === 'undefined') index = this.glyphs.length - 1;
+      if (typeof index !== 'number') new Vex.RERR("InvalidIndex", "Must be of number type");
 
       var x = this.getGlyphStartX();
       var bar_x_shift = 0;
@@ -1040,90 +1072,88 @@ Vex.Flow.Stave = (function() {
     },
 
     // Coda & Segno Symbol functions
-    setRepetitionTypeLeft: function(type, y) {
+    setRepetitionTypeLeft : function (type, y) {
       this.modifiers.push(new Vex.Flow.Repetition(type, this.x, y));
       return this;
     },
 
-    setRepetitionTypeRight: function(type, y) {
-      this.modifiers.push(new Vex.Flow.Repetition(type, this.x, y) );
+    setRepetitionTypeRight : function (type, y) {
+      this.modifiers.push(new Vex.Flow.Repetition(type, this.x, y));
       return this;
     },
 
     // Volta functions
-    setVoltaType: function(type, number_t, y) {
+    setVoltaType : function (type, number_t, y) {
       this.modifiers.push(new Vex.Flow.Volta(type, number_t, this.x, y));
       return this;
     },
 
     // Section functions
-    setSection: function(section, y) {
+    setSection : function (section, y) {
       this.modifiers.push(new Vex.Flow.StaveSection(section, this.x, y));
       return this;
     },
 
     // Tempo functions
-    setTempo: function(tempo, y) {
+    setTempo : function (tempo, y) {
       this.modifiers.push(new Vex.Flow.StaveTempo(tempo, this.x, y));
       return this;
     },
 
     // Text functions
-    setText: function(text, position, options) {
+    setText : function (text, position, options) {
       this.modifiers.push(new Vex.Flow.StaveText(text, position, options));
       return this;
     },
 
-    getHeight: function() {
+    getHeight : function () {
       return this.height;
     },
 
-    getSpacingBetweenLines: function() {
+    getSpacingBetweenLines : function () {
       return this.options.spacing_between_lines_px;
     },
 
-    getBoundingBox: function() {
+    getBoundingBox : function () {
       return new Vex.Flow.BoundingBox(this.x, this.y, this.width, this.getBottomY() - this.y);
       // body...
     },
 
-    getBottomY: function() {
+    getBottomY : function () {
       var options = this.options;
       var spacing = options.spacing_between_lines_px;
-      var score_bottom = this.getYForLine(options.num_lines) +
-                         (options.space_below_staff_ln * spacing);
+      var score_bottom = this.getYForLine(options.num_lines) + (options.space_below_staff_ln * spacing);
 
       return score_bottom;
     },
 
-    getBottomLineY: function() {
+    getBottomLineY : function () {
       return this.getYForLine(this.options.num_lines);
     },
 
-    getYForLine: function(line) {
+    getYForLine : function (line) {
       var options = this.options;
       var spacing = options.spacing_between_lines_px;
       var headroom = options.space_above_staff_ln;
 
-      var y = this.y + ((line * spacing) + (headroom * spacing)) -
-              (THICKNESS / 2);
+      var y = this.y + ((line * spacing) + (headroom * spacing)) - (THICKNESS / 2);
 
       return y;
     },
 
-    getYForTopText: function(line, font_scale) {
+    getYForTopText : function (line, font_scale) {
       var l = line || 0;
       var scale = font_scale || 1;
       return this.getYForLine(-(l * scale) - this.options.top_text_position);
     },
 
-    getYForBottomText: function(line, font_scale) {
+    getYForBottomText : function (line, font_scale) {
       var l = line || 0;
       var scale = font_scale || 1;
       return this.getYForLine(this.options.bottom_text_position + (l * scale));
     },
 
-    getYForNote: function(line) {
+    getYForNote : function (line) {
       var options = this.options;
       var spacing = options.spacing_between_lines_px;
       var headroom = options.space_above_staff_ln;
@@ -1132,62 +1162,62 @@ Vex.Flow.Stave = (function() {
       return y;
     },
 
-    getYForGlyphs: function() {
+    getYForGlyphs : function () {
       return this.getYForLine(3);
     },
 
-    addGlyph: function(glyph) {
+    addGlyph : function (glyph) {
       glyph.setStave(this);
       this.glyphs.push(glyph);
       this.start_x += glyph.getMetrics().width;
       return this;
     },
 
-    addEndGlyph: function(glyph) {
+    addEndGlyph : function (glyph) {
       glyph.setStave(this);
       this.end_glyphs.push(glyph);
       this.end_x -= glyph.getMetrics().width;
       return this;
     },
 
-    addModifier: function(modifier) {
+    addModifier : function (modifier) {
       this.modifiers.push(modifier);
       modifier.addToStave(this, (this.glyphs.length === 0));
       return this;
     },
 
-    addEndModifier: function(modifier) {
+    addEndModifier : function (modifier) {
       this.modifiers.push(modifier);
       modifier.addToStaveEnd(this, (this.end_glyphs.length === 0));
       return this;
     },
 
-    addKeySignature: function(keySpec) {
+    addKeySignature : function (keySpec) {
       this.addModifier(new Vex.Flow.KeySignature(keySpec));
       return this;
     },
 
-    addClef: function(clef, size, annotation) {
+    addClef : function (clef, size, annotation) {
       this.clef = clef;
       this.addModifier(new Vex.Flow.Clef(clef, size, annotation));
       return this;
     },
 
-    addEndClef: function(clef, size, annotation) {
+    addEndClef : function (clef, size, annotation) {
       this.addEndModifier(new Vex.Flow.Clef(clef, size, annotation));
       return this;
     },
 
-    addTimeSignature: function(timeSpec, customPadding) {
+    addTimeSignature : function (timeSpec, customPadding) {
       this.addModifier(new Vex.Flow.TimeSignature(timeSpec, customPadding));
       return this;
     },
 
-    addEndTimeSignature: function(timeSpec, customPadding) {
+    addEndTimeSignature : function (timeSpec, customPadding) {
       this.addEndModifier(new Vex.Flow.TimeSignature(timeSpec, customPadding));
     },
 
-    addTrebleGlyph: function() {
+    addTrebleGlyph : function () {
       this.clef = "treble";
       this.addGlyph(new Vex.Flow.Glyph("v83", 40));
       return this;
@@ -1196,9 +1226,8 @@ Vex.Flow.Stave = (function() {
     /**
      * All drawing functions below need the context to be set.
      */
-    draw: function() {
-      if (!this.context) throw new Vex.RERR("NoCanvasContext",
-        "Can't draw stave without canvas context.");
+    draw : function () {
+      if (!this.context) throw new Vex.RERR("NoCanvasContext", "Can't draw stave without canvas context.");
 
       var num_lines = this.options.num_lines;
       var width = this.width;
@@ -1207,7 +1236,7 @@ Vex.Flow.Stave = (function() {
       var glyph;
 
       // Render lines
-      for (var line=0; line < num_lines; line++) {
+      for (var line = 0; line < num_lines; line++) {
         y = this.getYForLine(line);
 
         this.context.save();
@@ -1244,8 +1273,9 @@ Vex.Flow.Stave = (function() {
       // Draw the modifiers (bar lines, coda, segno, repeat brackets, etc.)
       for (i = 0; i < this.modifiers.length; i++) {
         // Only draw modifier if it has a draw function
-        if (typeof this.modifiers[i].draw == "function")
+        if (typeof this.modifiers[i].draw == "function") {
           this.modifiers[i].draw(this, this.getModifierXShift());
+        }
       }
 
       // Render measure numbers
@@ -1263,28 +1293,27 @@ Vex.Flow.Stave = (function() {
 
     // Draw Simple barlines for backward compatability
     // Do not delete - draws the beginning bar of the stave
-    drawVertical: function(x, isDouble) {
+    drawVertical : function (x, isDouble) {
       this.drawVerticalFixed(this.x + x, isDouble);
     },
 
-    drawVerticalFixed: function(x, isDouble) {
-      if (!this.context) throw new Vex.RERR("NoCanvasContext",
-        "Can't draw stave without canvas context.");
+    drawVerticalFixed : function (x, isDouble) {
+      if (!this.context) throw new Vex.RERR("NoCanvasContext", "Can't draw stave without canvas context.");
 
       var top_line = this.getYForLine(0);
       var bottom_line = this.getYForLine(this.options.num_lines - 1);
-      if (isDouble)
+      if (isDouble) {
         this.context.fillRect(x - 3, top_line, 1, bottom_line - top_line + 1);
+      }
       this.context.fillRect(x, top_line, 1, bottom_line - top_line + 1);
     },
 
-    drawVerticalBar: function(x) {
+    drawVerticalBar : function (x) {
       this.drawVerticalBarFixed(this.x + x, false);
     },
 
-    drawVerticalBarFixed: function(x) {
-      if (!this.context) throw new Vex.RERR("NoCanvasContext",
-        "Can't draw stave without canvas context.");
+    drawVerticalBarFixed : function (x) {
+      if (!this.context) throw new Vex.RERR("NoCanvasContext", "Can't draw stave without canvas context.");
 
       var top_line = this.getYForLine(0);
       var bottom_line = this.getYForLine(this.options.num_lines - 1);
@@ -1295,7 +1324,7 @@ Vex.Flow.Stave = (function() {
      * Get the current configuration for the Stave.
      * @return {Array} An array of configuration objects.
      */
-    getConfigForLines: function() {
+    getConfigForLines : function () {
       return this.options.line_config;
     },
 
@@ -1306,18 +1335,15 @@ Vex.Flow.Stave = (function() {
      * @throws Vex.RERR "StaveConfigError" When the specified line number is out of
      *   range of the number of lines specified in the constructor.
      */
-    setConfigForLine: function(line_number, line_config) {
+    setConfigForLine : function (line_number, line_config) {
       if (line_number >= this.options.num_lines || line_number < 0) {
-        throw new Vex.RERR("StaveConfigError",
-          "The line number must be within the range of the number of lines in the Stave.");
+        throw new Vex.RERR("StaveConfigError", "The line number must be within the range of the number of lines in the Stave.");
       }
       if (!line_config.hasOwnProperty('visible')) {
-        throw new Vex.RERR("StaveConfigError",
-          "The line configuration object is missing the 'visible' property.");
+        throw new Vex.RERR("StaveConfigError", "The line configuration object is missing the 'visible' property.");
       }
       if (typeof(line_config.visible) !== 'boolean') {
-        throw new Vex.RERR("StaveConfigError",
-          "The line configuration objects 'visible' property must be true or false.");
+        throw new Vex.RERR("StaveConfigError", "The line configuration objects 'visible' property must be true or false.");
       }
 
       this.options.line_config[line_number] = line_config;
@@ -1334,10 +1360,9 @@ Vex.Flow.Stave = (function() {
      *   exactly the same number of elements as the num_lines configuration object set in
      *   the constructor.
      */
-    setConfigForLines: function(lines_configuration) {
+    setConfigForLines : function (lines_configuration) {
       if (lines_configuration.length !== this.options.num_lines) {
-        throw new Vex.RERR("StaveConfigError",
-          "The length of the lines configuration array must match the number of lines in the Stave");
+        throw new Vex.RERR("StaveConfigError", "The length of the lines configuration array must match the number of lines in the Stave");
       }
 
       // Make sure the defaults are present in case an incomplete set of
@@ -1358,3 +1383,4 @@ Vex.Flow.Stave = (function() {
 
   return Stave;
 }());
+

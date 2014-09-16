@@ -176,7 +176,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       },
       /**
        * @cfg {Object} staff The staff config object passed to each
-       * Vex.Flow.Staff
+       * MEI2VF.Stave
        */
       staff : {
         vertical_bar_width : 20, // 10 // Width around vertical bar end-marker
@@ -471,7 +471,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
     createNewSystem : function () {
       var me = this, system, coords;
 
-      m2v.L('debug', 'Converter.createNewSystem()', '{enter}');
+      m2v.log('debug', 'Converter.createNewSystem()', '{enter}');
 
       me.pendingSystemBreak = false;
       me.currentSystem_n += 1;
@@ -572,8 +572,8 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           me.processEnding(element);
           break;
         default :
-          m2v.L('info', 'Converter.processSectionChild()', 'Element <' + element.localName +
-                                                           '> is not supported in <section>');
+          m2v.log('info', 'Not supported', 'Element <' + element.localName +
+                                           '> is not supported in <section>. Skipping element.');
       }
     },
 
@@ -606,7 +606,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
         atSystemStart = false;
       }
 
-      m2v.L('debug', 'Converter.processMeasure()', '{enter}');
+      m2v.log('debug', 'Converter.processMeasure()', '{enter}');
 
       measure_n = +element.getAttribute('n');
       left_barline = element.getAttribute('left');
@@ -700,7 +700,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
      * @param {Boolean} atSystemStart indicates if the current measure is the system's start measure
      */
     initializeMeasureStaffs : function (system, staffElements, left_barline, right_barline, atSystemStart) {
-      var me = this, staff, staff_n, staffs, isFirst = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaffs, newClef;
+      var me = this, staff, staff_n, staffs, isFirst = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaffs, newClef, currentStaffInfo;
 
       staffs = [];
 
@@ -708,7 +708,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
         precedingMeasureStaffs = system.getLastMeasure().getStaffs();
       }
 
-      // first run: create Vex.Flow.Staff objects, store them in the staffs
+      // first run: create MEI2VF.Stave objects, store them in the staffs
       // array. Set staff barlines and staff volta. Add clef. Get each staff's
       // clefOffset and calculate the maxClefOffset.
       $.each(staffElements, function () {
@@ -727,27 +727,37 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           me.addStaffVolta(staff);
         }
         if (precedingMeasureStaffs && precedingMeasureStaffs[staff_n]) {
-          newClef = me.addStaffEndClef(precedingMeasureStaffs[staff_n], staff_n);
+          currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
+          newClef = currentStaffInfo.getClef();
+          if (currentStaffInfo.showClefCheck()) {
+            precedingMeasureStaffs[staff_n].addEndClefFromInfo(newClef);
+          }
           staff.clef = newClef;
           clefOffsets[staff_n] = 0;
           maxClefOffset = 0;
         } else {
-          me.addStaffClef(staff, staff_n);
+          currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
+          if (currentStaffInfo.showClefCheck()) {
+            staff.addClefFromInfo(currentStaffInfo.getClef());
+          }
           clefOffsets[staff_n] = staff.getModifierXShift();
           maxClefOffset = Math.max(maxClefOffset, clefOffsets[staff_n]);
         }
         isFirst = false;
       });
 
-      // second run: add key signatures; if the clefOffset of a staff is lesser
+      // second run: add key signatures; if the clefOffset of a staff is less than
       // maxClefOffset, add padding to the left of the key signature. Get each
       // staff's keySigOffset and calculate the maxKeySigOffset.
       $.each(staffs, function (i, staff) {
+        var padding;
         if (staff) {
           if (clefOffsets[i] !== maxClefOffset) {
-            me.addStaffKeySig(staff, i, maxClefOffset - clefOffsets[i] + 10);
-          } else {
-            me.addStaffKeySig(staff, i);
+            padding = maxClefOffset - clefOffsets[i] + 10;
+          }
+          currentStaffInfo = me.systemInfo.getStaffInfo(i);
+          if (currentStaffInfo.showKeysigCheck()) {
+            staff.addKeySpecFromInfo(currentStaffInfo.getKeySpec(), padding);
           }
           keySigOffsets[i] = staff.getModifierXShift();
           maxKeySigOffset = Math.max(maxKeySigOffset, keySigOffsets[i]);
@@ -755,13 +765,16 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       });
 
       // third run: add time signatures; if the keySigOffset of a staff is
-      // lesser maxKeySigOffset, add padding to the left of the time signature.
+      // less than maxKeySigOffset, add padding to the left of the time signature.
       $.each(staffs, function (i, staff) {
+        var padding;
         if (staff) {
           if (keySigOffsets[i] !== maxKeySigOffset) {
-            me.addStaffTimeSig(staff, i, maxKeySigOffset - keySigOffsets[i] + 15);
-          } else {
-            me.addStaffTimeSig(staff, i);
+            padding = maxKeySigOffset - keySigOffsets[i] + 15;
+          }
+          currentStaffInfo = me.systemInfo.getStaffInfo(i);
+          if (currentStaffInfo.showTimesigCheck()) {
+            staff.addTimeSpecFromInfo(currentStaffInfo.getTimeSpec(), padding);
           }
         }
       });
@@ -783,80 +796,10 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
      */
     createVexStaff : function (y) {
       var me = this, staff;
-      staff = new VF.Stave();
+      staff = new m2v.Stave();
       staff.init(0, y, 1000, me.cfg.staff);
       staff.options.bottom_text_position = me.cfg.staff.bottom_text_position;
       return staff;
-    },
-
-    /**
-     * Adds a clef to a Vex.Flow.Staff.
-     *
-     * @method addStaffClef
-     * @param {Vex.Flow.Stave} staff The stave object
-     * @param {Number} staff_n the staff number
-     */
-    addStaffClef : function (staff, staff_n) {
-      var me = this, currentStaffInfo, clef;
-      currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
-      if (currentStaffInfo.showClefCheck()) {
-        clef = currentStaffInfo.getClef();
-        staff.addClef(clef.type, clef.size, clef.shift === -1 ? '8vb' : undefined);
-      }
-    },
-
-    /**
-     * Adds a clef to the end of a Vex.Flow.Staff.
-     *
-     * @method addStaffEndClef
-     * @param {Vex.Flow.Stave} staff The stave object
-     * @param {Number} staff_n the staff number
-     * @return the clef type
-     */
-    addStaffEndClef : function (staff, staff_n) {
-      var me = this, currentStaffInfo, clef;
-      currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
-      clef = currentStaffInfo.getClef();
-      if (currentStaffInfo.showClefCheck()) {
-        staff.addEndClef(clef.type, 'small', clef.shift);
-      }
-      return clef.type;
-    },
-
-    /**
-     * Adds a key signature to a Vex.Flow.Staff.
-     *
-     * @method addStaffKeySig
-     * @param {Vex.Flow.Stave} staff The stave object
-     * @param {Number} staff_n the staff number
-     * @param {Number} padding the additional padding to the left of the
-     * modifier
-     */
-    addStaffKeySig : function (staff, staff_n, padding) {
-      var me = this, currentStaffInfo;
-      currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
-      if (currentStaffInfo.showKeysigCheck()) {
-        // console.log('keysg pd:'+padding);
-        staff.addModifier(new Vex.Flow.KeySignature(currentStaffInfo.getKeySpec(), padding));
-      }
-    },
-
-    /**
-     * Adds a time signature to a Vex.Flow.Staff.
-     *
-     * @method addStaffTimeSig
-     * @param {Vex.Flow.Stave} staff The stave object
-     * @param {Number} staff_n the staff number
-     * @param {Number} padding the additional padding to the left of the
-     * modifier
-     */
-    addStaffTimeSig : function (staff, staff_n, padding) {
-      var me = this, currentStaffInfo;
-      currentStaffInfo = me.systemInfo.getStaffInfo(staff_n);
-      if (currentStaffInfo.showTimesigCheck()) {
-        staff.hasTimeSig = true;
-        staff.addTimeSignature(currentStaffInfo.getTimeSig(), padding);
-      }
     },
 
     /**
@@ -916,6 +859,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       staff = staffs[staff_n];
 
       staffInfo = me.systemInfo.getStaffInfo(staff_n);
+      var meter = staffInfo.getTimeSpec();
 
       readEvents = function () {
         var event = me.processNoteLikeElement(this, staff, staff_n, layerDir, staffInfo);
@@ -926,13 +870,13 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
       for (i = 0, j = layerElements.length; i < j; i++) {
         layerDir = (j > 1) ? (i === 0 ? VF.StaveNote.STEM_UP : i === j - 1 ? VF.StaveNote.STEM_DOWN : null) : null;
-        me.resolveUnresolvedTimestamps(layerElements[i], staff_n, measure_n, staffInfo.meter);
+        me.resolveUnresolvedTimestamps(layerElements[i], staff_n, measure_n, meter);
         staffInfo.checkInitialClef();
         layer_events = $(layerElements[i]).children().map(readEvents).get();
-        currentStaveVoices.addVoice(me.createVexVoice(layer_events, staffInfo.meter), staff_n);
+        currentStaveVoices.addVoice(me.createVexVoice(layer_events, meter), staff_n);
 
       }
-      staffInfo.removeInitialClefCopy();
+      staffInfo.removeStartClefCopy();
     },
 
     /**
@@ -1017,8 +961,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
         case 'anchoredText' :
           return;
         default :
-          m2v.L('info', 'Converter.processNoteLikeElement()', 'Rendering of element "' + element.localName +
-                                                              '" is not supported.');
+          m2v.log('info', 'Not supported', 'Element "' + element.localName + '" is not supported. Skipping element.');
       }
     },
 
@@ -1049,7 +992,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           keys : [me.processAttsPitch(element)],
           clef : clef.type,
           duration : me.processAttsDuration(element),
-          octave_shift : clef.shift,
+          octave_shift : clef.shift
         };
 
         me.setStemDir(element, note_opts, layerDir);
@@ -1058,7 +1001,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           note = new VF.GraceNote(note_opts);
           note.slash = atts['stem.mod'] === '1slash';
         } else {
-          note = new VF.StaveNote(note_opts);
+          note = new m2v.Note(note_opts);
         }
 
         if (mei_staff_n === staff_n) {
@@ -1200,7 +1143,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           chord = new VF.GraceNote(chord_opts);
           chord.slash = atts['stem.mod'] === '1slash';
         } else {
-          chord = new VF.StaveNote(chord_opts);
+          chord = new m2v.Chord(chord_opts);
         }
 
         chord.setStave(staff);
@@ -1313,7 +1256,8 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
         restOpts.duration = dur + 'r';
 
-        rest = new VF.StaveNote(restOpts);
+        console.log(m2v.Rest);
+        rest = new m2v.Rest(restOpts);
 
         xml_id = MeiLib.XMLID(element);
 
@@ -1337,6 +1281,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           id : xml_id
         };
       } catch (e) {
+        console.log(e);
         throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing ' +
                                                     m2v.Util.serializeElement(element));
       }
@@ -1348,7 +1293,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
     processmRest : function (element, staff, staff_n, layerDir, staffInfo) {
       var me = this, mRest, atts, xml_id, meter, duration;
 
-      meter = me.systemInfo.getStaffInfo(staff_n).meter;
+      meter = me.systemInfo.getStaffInfo(staff_n).getTimeSpec();
       duration = new Vex.Flow.Fraction(meter.count, meter.unit);
       var dur, keys;
       if (duration.value() == 2) {
@@ -1425,18 +1370,18 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
     /**
      * @method processClef
      * @param {XMLElement} element the MEI clef element
-     * @param {Vex.Flow.Staff} staff the containing staff
+     * @param {MEI2VF.Stave} staff the containing staff
      * @param {Number} the number of the containing staff
      */
     processClef : function (element, staff, staff_n, layerDir, staffInfo) {
       var me = this, clef, xml_id, atts, clefDef, clefProp;
       atts = m2v.Util.attsToObj(element);
-//      clefDef = {
-//        "clef.line" : atts.line,
-//        "clef.shape" : atts.shape,
-//        "clef.dis" : atts.dis,
-//        "clef.dis.place" : atts['dis.place']
-//      };
+      //      clefDef = {
+      //        "clef.line" : atts.line,
+      //        "clef.shape" : atts.shape,
+      //        "clef.dis" : atts.dis,
+      //        "clef.dis.place" : atts['dis.place']
+      //      };
       try {
         clefProp = staffInfo.clefChangeInMeasure(element);
         clef = new VF.ClefNote(clefProp.type, 'small', clefProp.shift === -1 ? '8vb' : undefined);
@@ -1454,13 +1399,13 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
     /**
      * @method processBeam
      * @param {XMLElement} element the MEI beam element
-     * @param {Vex.Flow.Staff} staff the containing staff
+     * @param {MEI2VF.Stave} staff the containing staff
      * @param {Number} the number of the containing staff
      * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
      * layer
      */
     processBeam : function (element, staff, staff_n, layerDir, staffInfo) {
-      var me = this, elements, regularBeamElements = [], StaveNote = VF.StaveNote;
+      var me = this, elements, regularBeamElements = [];
       me.inBeamNo += 1;
       var process = function () {
         // make sure to get vexNote out of wrapped note objects
@@ -1469,8 +1414,9 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       };
       elements = $(element).children().map(process).get();
 
-      var filteredElements = elements.filter(function(element) {
-        return element instanceof StaveNote;
+      // TODO remove filter later and modify beam object to skip objects other than note and clef
+      var filteredElements = elements.filter(function (element) {
+        return element.beamable === true;
       });
 
       // set autostem parameter of VF.Beam to true if neither layerDir nor any stem direction in the beam is specified
@@ -1495,7 +1441,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
      *
      * @method processTuplet
      * @param {XMLElement} element the MEI tuplet element
-     * @param {Vex.Flow.Staff} staff the containing staff
+     * @param {MEI2VF.Stave} staff the containing staff
      * @param {Number} staff_n the number of the containing staff
      * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
      * layer
@@ -1534,10 +1480,11 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
      */
     processAttrAccid : function (mei_accid, vexObject, i) {
       var val = m2v.tables.accidentals[mei_accid];
-      if (!val) {
-        throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadAttributeValue', 'Invalid attribute value: ' + mei_accid);
+      if (val) {
+        vexObject.addAccidental(i, new VF.Accidental(val));
+      } else {
+        m2v.log('warn', 'Encoding error', 'Invalid accidental "' + mei_accid + '". Skipping.');
       }
-      vexObject.addAccidental(i, new VF.Accidental(val));
     },
 
     /**
@@ -1635,7 +1582,9 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       pname = $(mei_note).attr('pname');
       oct = $(mei_note).attr('oct');
       if (!pname || !oct) {
-        throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.MissingAttribute', 'pname and oct attributes must be specified for <note>');
+        m2v.log('warn', 'Encoding error', '@pname and @oct must be specified in ' +
+                                          m2v.Util.serializeElement(mei_note) + '". Setting default pitch C4.');
+        return 'C/4';
       }
       return pname + '/' + oct;
     },
@@ -1718,12 +1667,13 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
         return result;
       }
       if (alias[mei_dur]) {
-        m2v.L('info', 'Not supported', 'Duration "' + mei_dur + '" is not supported. Using "' + alias[mei_dur] +
-                                       '" instead.');
+        m2v.log('info', 'Not supported', 'Duration "' + mei_dur + '" is not supported. Using "' + alias[mei_dur] +
+                                         '" instead.');
         return m2v.tables.durations[alias[mei_dur] + ''];
       }
 
-      m2v.L('warn', 'Not supported', 'Duration "' + mei_dur + '" is not supported. Using "4" instead.');
+      m2v.log('warn', 'Not supported', 'Duration "' + mei_dur +
+                                       '" is not supported. Using "4" instead. May lead to display errors.');
       return m2v.tables.durations['4'];
     },
 
@@ -1735,8 +1685,8 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
       dur_attr = $(mei_note).attr('dur');
       if (dur_attr === undefined) {
-        m2v.L('warn', '@dur expected', 'No duration attribute found in ' + m2v.Util.serializeElement(mei_note) +
-                                        '. Using "4" instead.');
+        m2v.log('warn', '@dur expected', 'No duration attribute found in ' + m2v.Util.serializeElement(mei_note) +
+                                         '. Using "4" instead.');
         dur_attr = '4';
       }
       dur = me.translateDuration(dur_attr);

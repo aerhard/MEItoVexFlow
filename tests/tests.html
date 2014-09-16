@@ -105,8 +105,10 @@
 <!-- <script type="text/JavaScript" src="../dist/meitovexflow.js"></script>
   -->
 
+<script type="text/JavaScript" src="../src/vexflow-overrides.js"></script>
 <script type="text/JavaScript" src="../src/meilib.js"></script>
 <script type="text/JavaScript" src="../src/MEI2VF.js"></script>
+<script type="text/JavaScript" src="../src/Chord.js"></script>
 <script type="text/JavaScript" src="../src/EventLink.js"></script>
 <script type="text/JavaScript" src="../src/EventReference.js"></script>
 <script type="text/JavaScript" src="../src/Hyphenation.js"></script>
@@ -116,14 +118,16 @@
 <script type="text/JavaScript" src="../src/SystemInfo.js"></script>
 <script type="text/JavaScript" src="../src/LinkCollections.js"></script>
 <script type="text/JavaScript" src="../src/PointerCollections.js"></script>
+<script type="text/JavaScript" src="../src/Rest.js"></script>
 <script type="text/JavaScript" src="../src/Measure.js"></script>
+<script type="text/JavaScript" src="../src/Note.js"></script>
+<script type="text/JavaScript" src="../src/Stave.js"></script>
 <script type="text/JavaScript" src="../src/StaveConnector.js"></script>
 <script type="text/JavaScript" src="../src/StaveVoices.js"></script>
 <script type="text/JavaScript" src="../src/tables.js"></script>
 <script type="text/JavaScript" src="../src/Converter.js"></script>
 <script type="text/JavaScript" src="../src/Util.js"></script>
 <script type="text/JavaScript" src="../src/Interface.js"></script>
-<script type="text/JavaScript" src="../src/vexflow-overrides.js"></script>
 
 <script type="text/JavaScript" src="loadXMLDoc.js"></script>
 <script type="text/JavaScript" src="runtest.js"></script>
@@ -163,6 +167,7 @@
         test_cases.push({ title: 'KeySpec.02 - supplied pitch, default accid and mode [G major]', mei_xml: 'TC.KeySpec.02.xml'});
         test_cases.push({ title: 'KeySpec.03 - supplied pitch and accid, default mode [G-flat major]', mei_xml: 'TC.KeySpec.03.xml'});
         test_cases.push({ title: 'KeySpec.04 - supplied pitch, accid and mode [D-sharp minor]', mei_xml: 'TC.KeySpec.04.xml'});
+        test_cases.push({ title: 'KeySpec.05 - key signatures in different clefs', mei_xml: 'TC.KeySpec.05.xml', canvas_width:1300, canvas_height:350});
         test_cases.push({ title: "Directions.01 - 'pizz' above", mei_xml: 'TC.dir.01.xml'});
         test_cases.push({ title: "Directions.02 - 'espressivo' below", mei_xml: 'TC.dir.02.xml'});
         test_cases.push({ title: "Directions.03 - All execution paths", mei_xml: 'TC.dir.03.xml'});

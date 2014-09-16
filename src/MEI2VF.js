@@ -63,7 +63,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
    * console if they are listed in {@link m2v.logLevels}
    * @private
    */
-  m2v.L = function (level, caller) {
+  m2v.log = function (level, caller) {
     if (m2v.logLevels[level] === true) {
       var line = Array.prototype.slice.call(arguments, 2).join(" ");
       window.console[level]('MEI2VF (' + caller + "): " + line);
