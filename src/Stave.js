@@ -62,6 +62,25 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
     hasTimeSig : function () {
       return typeof this.meiTimeSpecElement !== 'undefined';
+    },
+
+    setSlurStartX : function (x) {
+      this.slurStartX = x;
+    },
+
+    getSlurStartX : function () {
+      // Temporary
+//      return this.getTieStartX();
+
+      return this.slurStartX;
+    },
+
+    setSlurEndX : function (x) {
+      this.slurEndX = x;
+    },
+
+    getSlurEndX : function () {
+      return this.slurEndX;
     }
 
   });

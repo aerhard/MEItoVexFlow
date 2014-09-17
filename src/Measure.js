@@ -298,7 +298,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {Number} x The x coordinate of the the measure
        * @param {String[]} labels The labels of all staves
        */
-      format : function(x, labels) {
+      format : function(x, labels, slurStartX) {
         var me = this, width = me.w, i = me.staffs.length, staff, k;
         while (i--) {
           if (me.staffs[i]) {
@@ -324,11 +324,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
             staff.start_x = staff.x + me.maxNoteStartX;
             staff.setWidth(width);
-
             staff.end_x -= me.maxEndModifierW;
+
+            staff.setSlurStartX(slurStartX || staff.getTieStartX());
+
           }
         }
         me.voices.format(me.getFirstDefinedStaff());
+        return slurStartX || staff.getTieStartX();
       },
 
       /**

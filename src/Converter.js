@@ -806,6 +806,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       var me = this, staff;
       staff = new m2v.Stave();
       staff.init(0, y, 1000, me.cfg.staff);
+      staff.setSlurEndX(me.printSpace.right);
       staff.options.bottom_text_position = me.cfg.staff.bottom_text_position;
       return staff;
     },

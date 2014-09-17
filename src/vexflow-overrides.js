@@ -167,7 +167,7 @@ Vex.Flow.KeySignature = (function() {
           offset = 0.5;
           break;
         case "tenor":
-            offset = -0.5;
+          offset = -0.5;
           break;
 
         case 'french':
@@ -241,17 +241,17 @@ Vex.Flow.KeySignature = (function() {
  * @constructor
  */
 Vex.Flow.Hyphen = ( function() {
-    function Hyphen(config) {
-      if (arguments.length > 0)
-        this.init(config);
-    };
+  function Hyphen(config) {
+    if (arguments.length > 0)
+      this.init(config);
+  };
 
-    Hyphen.prototype = {
-      init : function(config) {
-        /**
-         * config is a struct that has:
-         *
-         *  {
+  Hyphen.prototype = {
+    init : function(config) {
+      /**
+       * config is a struct that has:
+       *
+       *  {
          *    first_annot: Annotation or any other object with an x (and optional
          * y) property,
          *    last_annot: Annotation or any other object with an x (and optional
@@ -261,69 +261,69 @@ Vex.Flow.Hyphen = ( function() {
          * hyphens
          *    (optional) hyphen_width: the width of the hyphen character to draw
          *  }
-         *
-         **/
+       *
+       **/
 
-        this.max_hyphen_distance = config.max_hyphen_distance || 75;
-        this.font = {
-          family : "Arial",
-          size : 10,
-          style : ""
-        };
+      this.max_hyphen_distance = config.max_hyphen_distance || 75;
+      this.font = {
+        family : "Arial",
+        size : 10,
+        style : ""
+      };
 
-        this.config = config;
-        this.context = null;
+      this.config = config;
+      this.context = null;
 
-      },
+    },
 
-      setContext : function(context) {
-        this.context = context;
-        return this;
-      },
+    setContext : function(context) {
+      this.context = context;
+      return this;
+    },
 
-      setFont : function(font) {
-        this.font = font;
-        return this;
-      },
+    setFont : function(font) {
+      this.font = font;
+      return this;
+    },
 
-      renderHyphen : function() {
-        var cfg = this.config;
-        var ctx = this.context;
-        var hyphen_width = cfg.hyphen_width || ctx.measureText('-').width;
+    renderHyphen : function() {
+      var cfg = this.config;
+      var ctx = this.context;
+      var hyphen_width = cfg.hyphen_width || ctx.measureText('-').width;
 
-        var first = cfg.first_annot;
-        var last = cfg.last_annot;
+      var first = cfg.first_annot;
+      var last = cfg.last_annot;
 
-        var start_x = (first.text) ? first.x + first.text_width : first.x;
-        var end_x = last.x;
+      var start_x = (first.text) ? first.x + first.text_width : first.x;
+      var end_x = last.x;
 
-        var distance = end_x - start_x;
+      var distance = end_x - start_x;
 
-        if (distance > hyphen_width) {
-          var y = (first.y && last.y) ? (first.y + last.y) / 2 : first.y || last.y;
-          var hyphen_count = Math.ceil(distance / this.max_hyphen_distance);
-          var single_width = distance / (hyphen_count + 1);
-          while (hyphen_count--) {
-            start_x += single_width;
-            ctx.fillText('-', start_x - hyphen_width / 2, y);
-          }
-        };
-      },
+      if (distance > hyphen_width) {
+        var y = (first.y && last.y) ? (first.y + last.y) / 2 : first.y || last.y;
+        var hyphen_count = Math.ceil(distance / this.max_hyphen_distance);
+        var single_width = distance / (hyphen_count + 1);
+        while (hyphen_count--) {
+          start_x += single_width;
+          ctx.fillText('-', start_x - hyphen_width / 2, y);
+        }
+      };
+    },
 
-      draw : function() {
-        if (!this.context)
-          throw new Vex.RERR("NoContext", "No context to render hyphens.");
-        var ctx = this.context;
-        ctx.save();
-        ctx.setFont(this.font.family, this.font.size, this.font.style);
-        this.renderHyphen();
-        ctx.restore();
-        return true;
-      }
-    };
+    draw : function() {
+      if (!this.context)
+        throw new Vex.RERR("NoContext", "No context to render hyphens.");
+      var ctx = this.context;
+      ctx.save();
+      ctx.setFont(this.font.family, this.font.size, this.font.style);
+      this.renderHyphen();
+      ctx.restore();
+      return true;
+    }
+  };
 
-    return Hyphen;
-  }());
+  return Hyphen;
+}());
 
 
 // use square breve glyph instead of VexFlow's ||O||
@@ -339,18 +339,18 @@ if (!Vex.Flow.durationToGlyph.duration_codes['1/4']) {
   Vex.Flow.durationToGlyph.duration_codes['1/4'] = {
     common: {
       head_width: 22,
-        stem: false,
-        stem_offset: 0,
-        flag: false,
-        stem_up_extension: -Vex.Flow.STEM_HEIGHT,
-        stem_down_extension: -Vex.Flow.STEM_HEIGHT,
-        gracenote_stem_up_extension: -Vex.Flow.STEM_HEIGHT,
-        gracenote_stem_down_extension: -Vex.Flow.STEM_HEIGHT,
-        tabnote_stem_up_extension: -Vex.Flow.STEM_HEIGHT,
-        tabnote_stem_down_extension: -Vex.Flow.STEM_HEIGHT,
-        dot_shiftY: 0,
-        line_above: 0,
-        line_below: 0
+      stem: false,
+      stem_offset: 0,
+      flag: false,
+      stem_up_extension: -Vex.Flow.STEM_HEIGHT,
+      stem_down_extension: -Vex.Flow.STEM_HEIGHT,
+      gracenote_stem_up_extension: -Vex.Flow.STEM_HEIGHT,
+      gracenote_stem_down_extension: -Vex.Flow.STEM_HEIGHT,
+      tabnote_stem_up_extension: -Vex.Flow.STEM_HEIGHT,
+      tabnote_stem_down_extension: -Vex.Flow.STEM_HEIGHT,
+      dot_shiftY: 0,
+      line_above: 0,
+      line_below: 0
     },
     type: {
       "n": { // Longa note
@@ -362,19 +362,19 @@ if (!Vex.Flow.durationToGlyph.duration_codes['1/4']) {
       },
       "m": { // Breve note muted -
         code_head: "vf",
-          stem_offset: 0
+        stem_offset: 0
       },
       "r": { // Breve rest
         code_head: "v31",
-          head_width: 24,
-          rest: true,
-          position: "B/5",
-          dot_shiftY: 0.5
+        head_width: 24,
+        rest: true,
+        position: "B/5",
+        dot_shiftY: 0.5
       },
       "s": { // Breve note slash -
         // Drawn with canvas primitives
         head_width: 15,
-          position: "B/4"
+        position: "B/4"
       }
     }
   };
@@ -424,16 +424,81 @@ Vex.Flow.Curve.prototype.renderCurve = function(params) {
       first_y + (cps[0].y * params.direction),
       last_x - cp_spacing + cps[1].x,
       last_y + (cps[1].y * params.direction),
-      last_x, last_y);
+    last_x, last_y);
   ctx.bezierCurveTo(last_x - cp_spacing + cps[1].x,
       last_y + ((cps[1].y + thickness) * params.direction),
       first_x + cp_spacing + cps[0].x,
       first_y + ((cps[0].y + thickness) * params.direction),
-      first_x, first_y);
+    first_x, first_y);
   ctx.stroke();
   ctx.closePath();
   ctx.fill();
 };
+
+
+Vex.Flow.Curve.prototype.draw = function() {
+  //#######start addition
+  var Curve = Vex.Flow.Curve;
+  //###########end addition
+
+
+  if (!this.context)
+    throw new Vex.RERR("NoContext", "No context to render tie.");
+  var first_note = this.from;
+  var last_note = this.to;
+  var first_x, last_x, first_y, last_y, stem_direction;
+
+  var metric = "baseY";
+  var end_metric = "baseY";
+  var position = this.render_options.position;
+  var position_end = this.render_options.position_end;
+
+  if (position === Curve.Position.NEAR_TOP) {
+    metric = "topY";
+    end_metric = "topY";
+  }
+
+  if (position_end == Curve.Position.NEAR_HEAD) {
+    end_metric = "baseY";
+  } else if (position_end == Curve.Position.NEAR_TOP) {
+    end_metric = "topY";
+  }
+
+  if (first_note) {
+    first_x = first_note.getTieRightX();
+    stem_direction = first_note.getStemDirection();
+    first_y = first_note.getStemExtents()[metric];
+  } else {
+    // ##### START MODIFICATION
+    first_x = last_note.getStave().getSlurStartX();
+    // ##### END MODIFICATION
+    first_y = last_note.getStemExtents()[metric];
+  }
+
+  if (last_note) {
+    last_x = last_note.getTieLeftX();
+    stem_direction = last_note.getStemDirection();
+    last_y = last_note.getStemExtents()[end_metric];
+  } else {
+    // ##### START MODIFICATION
+    last_x = first_note.getStave().getSlurEndX();
+    // ##### END MODIFICATION
+    last_y = first_note.getStemExtents()[end_metric];
+  }
+
+  this.renderCurve({
+    first_x: first_x,
+    last_x: last_x,
+    first_y: first_y,
+    last_y: last_y,
+    direction: stem_direction *
+               (this.render_options.invert === true ? -1 : 1)
+  });
+  return true;
+};
+
+
+
 
 /**
  * Syllable class, based on Vex.Flow.Annotation
@@ -447,9 +512,9 @@ Vex.Flow.Syllable = (function() {
   // To enable logging for this class. Set `Vex.Flow.Syllable.DEBUG` to `true`.
   function L() { if (Syllable.DEBUG) Vex.L("Vex.Flow.Syllable", arguments); }
 
-    // START ADDITION
-    Syllable.DEFAULT_FONT_SIZE = 10;
-    // END ADDITION
+  // START ADDITION
+  Syllable.DEFAULT_FONT_SIZE = 10;
+  // END ADDITION
 
   // Text annotations can be positioned and justified relative to the note.
   Syllable.Justify = {
@@ -504,27 +569,27 @@ Vex.Flow.Syllable = (function() {
       this.vert_justification = Syllable.VerticalJustify.TOP;
       this.font = {
         family: "Arial",
-          // START MODIFICATION
-          size : Syllable.DEFAULT_FONT_SIZE,
-          // END MODIFICATION
-          weight : ""
-        };
-
-        // START ADDITION
-        // Line spacing, relative to font size
-        this.line_spacing = 1.1;
-        // END ADDITiON
-
-        // The default width is calculated from the text.
-        this.setWidth(Vex.Flow.textWidth(text));
-      },
+        // START MODIFICATION
+        size : Syllable.DEFAULT_FONT_SIZE,
+        // END MODIFICATION
+        weight : ""
+      };
 
       // START ADDITION
-      setLineSpacing : function(spacing) {
-        this.line_spacing = spacing;
-        return this;
-      },
+      // Line spacing, relative to font size
+      this.line_spacing = 1.1;
       // END ADDITiON
+
+      // The default width is calculated from the text.
+      this.setWidth(Vex.Flow.textWidth(text));
+    },
+
+    // START ADDITION
+    setLineSpacing : function(spacing) {
+      this.line_spacing = spacing;
+      return this;
+    },
+    // END ADDITiON
 
     // Set the vertical position of the text relative to the stave.
     setTextLine: function(line) { this.text_line = line; return this; },
@@ -632,23 +697,23 @@ Vex.Flow.Syllable = (function() {
         x = this.note.getStemX() - text_width / 2;
       }
 
-        // START ADDITION
-        this.x = x;
+      // START ADDITION
+      this.x = x;
 
-        y = this.y;
+      y = this.y;
 
-        this.text_height = text_height;
-        this.text_width = text_width;
-        // END ADDITION
+      this.text_height = text_height;
+      this.text_width = text_width;
+      // END ADDITION
 
-        L("Rendering annotation: ", this.text, x, y);
-        this.context.fillText(this.text, x, y);
-        this.context.restore();
-      }
-    });
+      L("Rendering annotation: ", this.text, x, y);
+      this.context.fillText(this.text, x, y);
+      this.context.restore();
+    }
+  });
 
-    return Syllable;
-  }());
+  return Syllable;
+}());
 
 
 
@@ -672,199 +737,199 @@ Vex.Flow.Syllable = (function() {
  * @param {!Object} Options
  */
 Vex.Flow.StaveTie = ( function() {
-    function StaveTie(notes, text) {
-      if (arguments.length > 0)
-        this.init(notes, text);
-    }
+  function StaveTie(notes, text) {
+    if (arguments.length > 0)
+      this.init(notes, text);
+  }
 
 
-    StaveTie.prototype = {
-      init : function(notes, text) {
-        /**
-         * Notes is a struct that has:
-         *
-         *  {
+  StaveTie.prototype = {
+    init : function(notes, text) {
+      /**
+       * Notes is a struct that has:
+       *
+       *  {
          *    first_note: Note,
          *    last_note: Note,
          *    first_indices: [n1, n2, n3],
          *    last_indices: [n1, n2, n3]
          *  }
-         *
-         **/
-        this.notes = notes;
-        this.context = null;
-        this.text = text;
-
-        this.render_options = {
-          cp1 : 8, // Curve control point 1
-          cp2 : 12, // Curve control point 2
-          text_shift_x : 0,
-          first_x_shift : 0,
-          last_x_shift : 0,
-          y_shift : 7,
-          tie_spacing : 0,
-          font : {
-            family : "Arial",
-            size : 10,
-            style : ""
-          }
-        };
-
-        this.font = this.render_options.font;
-        this.setNotes(notes);
-      },
-
-      setContext : function(context) {
-        this.context = context;
-        return this;
-      },
-      setFont : function(font) {
-        this.font = font;
-        return this;
-      },
-
-      /**
-       * Set the notes to attach this tie to.
        *
-       * @param {!Object} notes The notes to tie up.
-       */
-      setNotes : function(notes) {
-        if (!notes.first_note && !notes.last_note)
-          throw new Vex.RuntimeError("BadArguments", "Tie needs to have either first_note or last_note set.");
+       **/
+      this.notes = notes;
+      this.context = null;
+      this.text = text;
 
-        if (!notes.first_indices)
-          notes.first_indices = [0];
-        if (!notes.last_indices)
-          notes.last_indices = [0];
+      this.render_options = {
+        cp1 : 8, // Curve control point 1
+        cp2 : 12, // Curve control point 2
+        text_shift_x : 0,
+        first_x_shift : 0,
+        last_x_shift : 0,
+        y_shift : 7,
+        tie_spacing : 0,
+        font : {
+          family : "Arial",
+          size : 10,
+          style : ""
+        }
+      };
 
-        if (notes.first_indices.length != notes.last_indices.length)
-          throw new Vex.RuntimeError("BadArguments", "Tied notes must have similar" + " index sizes");
+      this.font = this.render_options.font;
+      this.setNotes(notes);
+    },
 
-        // Success. Lets grab 'em notes.
-        this.first_note = notes.first_note;
-        this.first_indices = notes.first_indices;
-        this.last_note = notes.last_note;
-        this.last_indices = notes.last_indices;
-        return this;
-      },
+    setContext : function(context) {
+      this.context = context;
+      return this;
+    },
+    setFont : function(font) {
+      this.font = font;
+      return this;
+    },
 
-      /**
-       * @return {boolean} Returns true if this is a partial bar.
-       */
-      isPartial : function() {
-        return (!this.first_note || !this.last_note);
-      },
+    /**
+     * Set the notes to attach this tie to.
+     *
+     * @param {!Object} notes The notes to tie up.
+     */
+    setNotes : function(notes) {
+      if (!notes.first_note && !notes.last_note)
+        throw new Vex.RuntimeError("BadArguments", "Tie needs to have either first_note or last_note set.");
+
+      if (!notes.first_indices)
+        notes.first_indices = [0];
+      if (!notes.last_indices)
+        notes.last_indices = [0];
+
+      if (notes.first_indices.length != notes.last_indices.length)
+        throw new Vex.RuntimeError("BadArguments", "Tied notes must have similar" + " index sizes");
+
+      // Success. Lets grab 'em notes.
+      this.first_note = notes.first_note;
+      this.first_indices = notes.first_indices;
+      this.last_note = notes.last_note;
+      this.last_indices = notes.last_indices;
+      return this;
+    },
+
+    /**
+     * @return {boolean} Returns true if this is a partial bar.
+     */
+    isPartial : function() {
+      return (!this.first_note || !this.last_note);
+    },
+
+    // START ADDITION
+    setDir : function(dir) {
+      this.curvedir = dir;
+    },
+
+    getDir : function() {
+      return this.curvedir;
+    },
+    // END ADDITION
+
+    renderTie : function(params) {
+      if (params.first_ys.length === 0 || params.last_ys.length === 0)
+        throw new Vex.RERR("BadArguments", "No Y-values to render");
 
       // START ADDITION
-      setDir : function(dir) {
-        this.curvedir = dir;
-      },
-
-      getDir : function() {
-        return this.curvedir;
-      },
+      if (this.curvedir) {
+        params.direction = (this.curvedir === 'above') ? -1 : 1;
+      } else {
+        this.curvedir = params.direction;
+      }
       // END ADDITION
 
-      renderTie : function(params) {
-        if (params.first_ys.length === 0 || params.last_ys.length === 0)
-          throw new Vex.RERR("BadArguments", "No Y-values to render");
+      var ctx = this.context;
+      var cp1 = this.render_options.cp1;
+      var cp2 = this.render_options.cp2;
 
-        // START ADDITION
-        if (this.curvedir) {
-          params.direction = (this.curvedir === 'above') ? -1 : 1;
-        } else {
-          this.curvedir = params.direction;
-        }
-        // END ADDITION
-
-        var ctx = this.context;
-        var cp1 = this.render_options.cp1;
-        var cp2 = this.render_options.cp2;
-
-        if (Math.abs(params.last_x_px - params.first_x_px) < 10) {
-          cp1 = 2;
-          cp2 = 8;
-        }
-
-        var first_x_shift = this.render_options.first_x_shift;
-        var last_x_shift = this.render_options.last_x_shift;
-        var y_shift = this.render_options.y_shift * params.direction;
-
-        for (var i = 0; i < this.first_indices.length; ++i) {
-          var cp_x = ((params.last_x_px + last_x_shift) + (params.first_x_px + first_x_shift)) / 2;
-          var first_y_px = params.first_ys[this.first_indices[i]] + y_shift;
-          var last_y_px = params.last_ys[this.last_indices[i]] + y_shift;
-
-          if (isNaN(first_y_px) || isNaN(last_y_px))
-            throw new Vex.RERR("BadArguments", "Bad indices for tie rendering.");
-
-          var top_cp_y = ((first_y_px + last_y_px) / 2) + (cp1 * params.direction);
-          var bottom_cp_y = ((first_y_px + last_y_px) / 2) + (cp2 * params.direction);
-
-          ctx.beginPath();
-          ctx.moveTo(params.first_x_px + first_x_shift, first_y_px);
-          ctx.quadraticCurveTo(cp_x, top_cp_y, params.last_x_px + last_x_shift, last_y_px);
-          ctx.quadraticCurveTo(cp_x, bottom_cp_y, params.first_x_px + first_x_shift, first_y_px);
-
-          ctx.closePath();
-          ctx.fill();
-        }
-      },
-
-      renderText : function(first_x_px, last_x_px) {
-        if (!this.text)
-          return;
-        var center_x = (first_x_px + last_x_px) / 2;
-        center_x -= this.context.measureText(this.text).width / 2;
-
-        this.context.save();
-        this.context.setFont(this.font.family, this.font.size, this.font.style);
-        this.context.fillText(this.text, center_x + this.render_options.text_shift_x, (this.first_note || this.last_note).getStave().getYForTopText() - 1);
-        this.context.restore();
-      },
-
-      draw : function() {
-        if (!this.context)
-          throw new Vex.RERR("NoContext", "No context to render tie.");
-        var first_note = this.first_note;
-        var last_note = this.last_note;
-        var first_x_px, last_x_px, first_ys, last_ys, stem_direction;
-
-        if (first_note) {
-          first_x_px = first_note.getTieRightX() + this.render_options.tie_spacing;
-          stem_direction = first_note.getStemDirection();
-          first_ys = first_note.getYs();
-        } else {
-          first_x_px = last_note.getStave().getTieStartX();
-          first_ys = last_note.getYs();
-          this.first_indices = this.last_indices;
-        }
-
-        if (last_note) {
-          last_x_px = last_note.getTieLeftX() + this.render_options.tie_spacing;
-          stem_direction = last_note.getStemDirection();
-          last_ys = last_note.getYs();
-        } else {
-          last_x_px = first_note.getStave().getTieEndX();
-          last_ys = first_note.getYs();
-          this.last_indices = this.first_indices;
-        }
-
-        this.renderTie({
-          first_x_px : first_x_px,
-          last_x_px : last_x_px,
-          first_ys : first_ys,
-          last_ys : last_ys,
-          direction : stem_direction
-        });
-
-        this.renderText(first_x_px, last_x_px);
-        return true;
+      if (Math.abs(params.last_x_px - params.first_x_px) < 10) {
+        cp1 = 2;
+        cp2 = 8;
       }
-    };
 
-    return StaveTie;
-  }());
+      var first_x_shift = this.render_options.first_x_shift;
+      var last_x_shift = this.render_options.last_x_shift;
+      var y_shift = this.render_options.y_shift * params.direction;
+
+      for (var i = 0; i < this.first_indices.length; ++i) {
+        var cp_x = ((params.last_x_px + last_x_shift) + (params.first_x_px + first_x_shift)) / 2;
+        var first_y_px = params.first_ys[this.first_indices[i]] + y_shift;
+        var last_y_px = params.last_ys[this.last_indices[i]] + y_shift;
+
+        if (isNaN(first_y_px) || isNaN(last_y_px))
+          throw new Vex.RERR("BadArguments", "Bad indices for tie rendering.");
+
+        var top_cp_y = ((first_y_px + last_y_px) / 2) + (cp1 * params.direction);
+        var bottom_cp_y = ((first_y_px + last_y_px) / 2) + (cp2 * params.direction);
+
+        ctx.beginPath();
+        ctx.moveTo(params.first_x_px + first_x_shift, first_y_px);
+        ctx.quadraticCurveTo(cp_x, top_cp_y, params.last_x_px + last_x_shift, last_y_px);
+        ctx.quadraticCurveTo(cp_x, bottom_cp_y, params.first_x_px + first_x_shift, first_y_px);
+
+        ctx.closePath();
+        ctx.fill();
+      }
+    },
+
+    renderText : function(first_x_px, last_x_px) {
+      if (!this.text)
+        return;
+      var center_x = (first_x_px + last_x_px) / 2;
+      center_x -= this.context.measureText(this.text).width / 2;
+
+      this.context.save();
+      this.context.setFont(this.font.family, this.font.size, this.font.style);
+      this.context.fillText(this.text, center_x + this.render_options.text_shift_x, (this.first_note || this.last_note).getStave().getYForTopText() - 1);
+      this.context.restore();
+    },
+
+    draw : function() {
+      if (!this.context)
+        throw new Vex.RERR("NoContext", "No context to render tie.");
+      var first_note = this.first_note;
+      var last_note = this.last_note;
+      var first_x_px, last_x_px, first_ys, last_ys, stem_direction;
+
+      if (first_note) {
+        first_x_px = first_note.getTieRightX() + this.render_options.tie_spacing;
+        stem_direction = first_note.getStemDirection();
+        first_ys = first_note.getYs();
+      } else {
+        first_x_px = last_note.getStave().getTieStartX();
+        first_ys = last_note.getYs();
+        this.first_indices = this.last_indices;
+      }
+
+      if (last_note) {
+        last_x_px = last_note.getTieLeftX() + this.render_options.tie_spacing;
+        stem_direction = last_note.getStemDirection();
+        last_ys = last_note.getYs();
+      } else {
+        last_x_px = first_note.getStave().getTieEndX();
+        last_ys = first_note.getYs();
+        this.last_indices = this.first_indices;
+      }
+
+      this.renderTie({
+        first_x_px : first_x_px,
+        last_x_px : last_x_px,
+        first_ys : first_ys,
+        last_ys : last_ys,
+        direction : stem_direction
+      });
+
+      this.renderText(first_x_px, last_x_px);
+      return true;
+    }
+  };
+
+  return StaveTie;
+}());
 
 
 

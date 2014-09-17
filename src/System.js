@@ -186,7 +186,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @return {MEI2VF.System} this
        */
       format : function(ctx) {
-        var me = this, i, j, measures, offsetX, labels;
+        var me = this, i, j, measures, offsetX, labels, slurStartX;
         if ( typeof me.leftMar !== 'number') {
           me.calculateInitialIndent(ctx);
         }
@@ -197,7 +197,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         for ( i = 0, j = measures.length; i < j; i += 1) {
           if (measures[i]) {
             labels = (i === 0) ? me.labels : null;
-            measures[i].format(offsetX, labels);
+            slurStartX = measures[i].format(offsetX, labels, slurStartX);
             offsetX += measures[i].w;
           }
           measures[i].addRehearsalMarks();
