@@ -67,7 +67,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * create EventLink objects from  <b>tie</b>, <b>slur</b> or <b>hairpin</b>
      * elements
      */
-    createInfos : function(link_elements, measureElement, systemInfo) {
+    createInfos : function(link_elements, measureElement, measureIndex, systemInfo) {
       var me = this;
 
       var link_staffInfo = function(lnkelem) {
@@ -148,8 +148,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
               // need to save: measure.n, link.staff_n,
               // link.layer_n
               var staffinfo = link_staffInfo(this);
-              var target_measure_n = +$(measureElement).attr('n') + measures_ahead;
-              var refLocationIndex = target_measure_n.toString() + ':' + staffinfo.staff_n + ':' + staffinfo.layer_n;
+              var target_measure_n = measureIndex + measures_ahead;
+              var refLocationIndex = target_measure_n + ':' + staffinfo.staff_n + ':' + staffinfo.layer_n;
               if (!me.unresolvedTStamp2[refLocationIndex])
                 me.unresolvedTStamp2[refLocationIndex] = [];
               me.unresolvedTStamp2[refLocationIndex].push(eventLink);
