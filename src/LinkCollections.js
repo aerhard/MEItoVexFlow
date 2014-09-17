@@ -1,5 +1,5 @@
 /*
- * MEItoVexFlow, Util class
+ * MEItoVexFlow, LinkCollection class
  *
  * Author: Alexander Erhard
  * (based on meitovexflow.js)
@@ -291,7 +291,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
     },
 
     // NB called from tie/slur attributes elements
-    start_tieslur : function(startid, linkCond) {
+    startTie : function(startid, linkCond) {
       var eventLink = new m2v.EventLink(startid, null);
       eventLink.setParams({
         linkCond : linkCond
@@ -299,7 +299,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       this.allModels.push(eventLink);
     },
 
-    terminate_tie : function(endid, linkCond) {
+    terminateTie : function(endid, linkCond) {
       var cmpLinkCond, found, i, tie, allTies;
 
       allTies = this.getModels();
@@ -344,7 +344,104 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         this.addModel(new m2v.EventLink(null, endid));
     },
 
-    terminate_slur : function(endid, linkCond) {
+    createVexFromInfos : function(notes_by_id) {
+      var me = this, f_note, l_note;
+      $.each(me.allModels, function() {
+        var keysInChord;
+        f_note = notes_by_id[this.getFirstId()] || {};
+        l_note = notes_by_id[this.getLastId()] || {};
+
+
+        if (!f_note.vexNote && !l_note.vexNote) {
+          m2v.log('warn', 'Tie could not be rendered', 'Neither xml:id could be found: "' + this.getFirstId() + '" / "' + this.getLastId() + '"');
+          return true;
+        }
+
+        if (!this.params.curvedir) {
+          var layerDir = f_note.layerDir || l_note.layerDir;
+          if (layerDir) {
+            // calculate default curve direction based on the relative layer
+            this.params.curvedir = layerDir === -1 ? 'below' : layerDir === 1 ? 'above' : undefined;
+          } else {
+            // if the tie links to a note in a chord, let the outer ties of the
+            // chord point outwards
+            if (f_note.vexNote) {
+              keysInChord = f_note.vexNote.keys.length;
+              if (keysInChord > 1) {
+                this.params.curvedir = (+f_note.index === 0) ? 'below' : (+f_note.index === keysInChord - 1) ? 'above' : undefined;
+              }
+            } else if (l_note.vexNote) {
+              keysInChord = l_note.vexNote.keys.length;
+              if (keysInChord > 1) {
+                this.params.curvedir = +l_note.index === 0 ? 'below' : (+l_note.index === keysInChord - 1) ? 'above' : undefined;
+              }
+            }
+          }
+        }
+
+        if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
+          me.createSingleTie(f_note, {}, this.params);
+          if (!this.params.curvedir) {
+            this.params.curvedir = (f_note.vexNote.getStemDirection() === -1) ? 'above' : 'below';
+          }
+          me.createSingleTie({}, l_note, this.params);
+        } else {
+          me.createSingleTie(f_note, l_note, this.params);
+        }
+      });
+      return this;
+    },
+
+    createSingleTie : function(f_note, l_note, params) {
+      var me = this, vexTie;
+      vexTie = new VF.StaveTie({
+        first_note : f_note.vexNote,
+        last_note : l_note.vexNote,
+        first_indices : f_note.index,
+        last_indices : l_note.index
+      });
+      vexTie.setDir(params.curvedir);
+      if (f_note.vexNote instanceof VF.GraceNote) {
+        vexTie.render_options.first_x_shift = -5;
+      }
+      me.allVexObjects.push(vexTie);
+    }
+
+  });
+
+
+  /**
+   * @class MEI2VF.Slurs
+   * @extend MEI2VF.LinkCollection
+   * @private
+   *
+   * @constructor
+   */
+
+  m2v.Slurs = function(systemInfo, unresolvedTStamp2) {
+    this.init(systemInfo, unresolvedTStamp2);
+  };
+
+  Vex.Inherit(m2v.Slurs, m2v.LinkCollection, {
+
+    init : function(systemInfo, unresolvedTStamp2) {
+      m2v.Ties.superclass.init.call(this, systemInfo, unresolvedTStamp2);
+    },
+
+    validateAtts : function() {
+      return;
+    },
+
+    // NB called from slur attributes elements
+    startSlur : function(startid, linkCond) {
+      var eventLink = new m2v.EventLink(startid, null);
+      eventLink.setParams({
+        linkCond : linkCond
+      });
+      this.allModels.push(eventLink);
+    },
+
+    terminateSlur : function(endid, linkCond) {
       var me = this, cmpLinkCond, found, i, slur;
 
       var allModels = this.getModels();
@@ -375,7 +472,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
 
         if (!f_note.vexNote && !l_note.vexNote) {
-          m2v.log('warn', 'Tie/slur could not be rendered', 'Neither xml:id could be found: "' + this.getFirstId() + '" / "' + this.getLastId() + '"');
+          m2v.log('warn', 'Slur could not be rendered', 'Neither xml:id could be found: "' + this.getFirstId() + '" / "' + this.getLastId() + '"');
           return true;
         }
 
@@ -385,7 +482,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             // calculate default curve direction based on the relative layer
             this.params.curvedir = layerDir === -1 ? 'below' : layerDir === 1 ? 'above' : undefined;
           } else {
-            // if the tie / slur links to a note in a chord, let the outer ties / slurs of the
+            // if the slur links to a note in a chord, let the outer slurs of the
             // chord point outwards
             if (f_note.vexNote) {
               keysInChord = f_note.vexNote.keys.length;
@@ -402,41 +499,63 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         }
 
         if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
-          me.createSingleStaveTie(f_note, {}, this.params);
+          me.createSingleSlur(f_note, {}, this.params);
           if (!this.params.curvedir) {
             this.params.curvedir = (f_note.vexNote.getStemDirection() === -1) ? 'above' : 'below';
           }
-          me.createSingleStaveTie({}, l_note, this.params);
+          me.createSingleSlur({}, l_note, this.params);
         } else {
-          me.createSingleStaveTie(f_note, l_note, this.params);
+          me.createSingleSlur(f_note, l_note, this.params);
         }
       });
       return this;
     },
 
-    createSingleStaveTie : function(f_note, l_note, params) {
-      var me = this, vexTie, bezier, cps;
-      bezier = params.bezier;
-      if (bezier) {
-        cps = me.bezierStringToCps(bezier);
-        vexTie = new VF.Curve(f_note.vexNote, l_note.vexNote, {
-          cps : cps,
-          y_shift_start : +params.startvo,
-          y_shift_end : +params.endvo
-        });
-      } else {
-        vexTie = new VF.StaveTie({
-          first_note : f_note.vexNote,
-          last_note : l_note.vexNote,
-          first_indices : f_note.index,
-          last_indices : l_note.index
-        });
-        vexTie.setDir(params.curvedir);
-        if (f_note.vexNote instanceof VF.GraceNote) {
-          vexTie.render_options.first_x_shift = -5;
+    createSingleSlur : function(f_note, l_note, params) {
+      var me = this, vexSlur, bezier, cps;
+
+      var slurOptions = {
+        y_shift_start : +params.startvo || undefined,
+        y_shift_end : +params.endvo || undefined
+
+      };
+
+      console.log(f_note);
+
+      if (f_note.layerDir || l_note.layerDir) {
+        slurOptions.invert = true;
+
+        if (f_note.vexNote.hasStem() && l_note.vexNote.hasStem()) {
+          slurOptions.position = VF.Curve.Position.NEAR_TOP; // = 2 position at stem end
         }
       }
-      me.allVexObjects.push(vexTie);
+
+
+      bezier = params.bezier;
+      if (bezier) {
+        slurOptions.cps = me.bezierStringToCps(bezier);
+
+      } else {
+
+
+        //        vexSlur = new VF.Curve(f_note.vexNote, l_note.vexNote, {
+        //          position : 2
+        //        });
+        //        vexSlur = new VF.StaveTie({
+        //          first_note : f_note.vexNote,
+        //          last_note : l_note.vexNote,
+        //          first_indices : f_note.index,
+        //          last_indices : l_note.index
+        //        });
+        //        vexSlur.setDir(params.curvedir);
+        //        if (f_note.vexNote instanceof VF.GraceNote) {
+        //          vexSlur.render_options.first_x_shift = -5;
+        //        }
+      }
+
+      vexSlur = new VF.Curve(f_note.vexNote, l_note.vexNote, slurOptions);
+
+      me.allVexObjects.push(vexSlur);
     },
 
     bezierStringToCps : function(str) {
@@ -451,6 +570,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       return cps;
     }
   });
+
+
 
   return m2v;
 

@@ -287,11 +287,11 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
        */
       me.ties = new m2v.Ties(me.systemInfo, me.unresolvedTStamp2);
       /**
-       * an instance of MEI2VF.Ties dealing with and storing all slurs found in
+       * an instance of MEI2VF.Slurs dealing with and storing all slurs found in
        * the MEI document
-       * @property {MEI2VF.Ties} slurs
+       * @property {MEI2VF.Slurs} slurs
        */
-      me.slurs = new m2v.Ties(me.systemInfo, me.unresolvedTStamp2);
+      me.slurs = new m2v.Slurs(me.systemInfo, me.unresolvedTStamp2);
       /**
        * an instance of MEI2VF.Hairpins dealing with and storing all hairpins
        * found in the MEI document
@@ -1501,14 +1501,14 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       var me = this, i, j;
       for (i = 0, j = mei_tie.length; i < j; ++i) {
         if (mei_tie[i] === 't' || mei_tie[i] === 'm') {
-          me.ties.terminate_tie(xml_id, {
+          me.ties.terminateTie(xml_id, {
             pname : pname,
             oct : oct,
             staff_n : staff_n
           });
         }
         if (mei_tie[i] === 'i' || mei_tie[i] === 'm') {
-          me.ties.start_tieslur(xml_id, {
+          me.ties.startTie(xml_id, {
             pname : pname,
             oct : oct,
             staff_n : staff_n
@@ -1527,12 +1527,12 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
         tokens = me.parse_slur_attribute(mei_slur);
         $.each(tokens, function () {
           if (this.letter === 't') {
-            me.slurs.terminate_slur(xml_id, {
+            me.slurs.terminateSlur(xml_id, {
               nesting_level : this.nesting_level
             });
           }
           if (this.letter === 'i') {
-            me.slurs.start_tieslur(xml_id, {
+            me.slurs.startSlur(xml_id, {
               nesting_level : this.nesting_level
             });
           }

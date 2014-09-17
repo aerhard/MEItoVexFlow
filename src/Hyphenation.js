@@ -1,5 +1,5 @@
 /*
- * MEItoVexFlow, Util class
+ * MEItoVexFlow, Hyphenation class
  *
  * Author: Alexander Erhard
  *
