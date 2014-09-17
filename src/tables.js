@@ -39,7 +39,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         'n' : 'n',
         'f' : 'b',
         's' : '#',
-        'bb' : 'ff',
+        'ff' : 'bb',
         'ss' : '##'
       },
 

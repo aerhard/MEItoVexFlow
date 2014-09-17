@@ -279,7 +279,12 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
        * @property {MEI2VF.Fermatas} fermatas
        */
       me.fermatas = new m2v.Fermatas(me.systemInfo);
-
+      /**
+       * an instance of MEI2VF.Ornaments dealing with and storing all
+       * trill elements found in the MEI document
+       * @property {MEI2VF.Ornaments} trills
+       */
+      me.trills = new m2v.Ornaments(me.systemInfo);
       /**
        * an instance of MEI2VF.Ties dealing with and storing all ties found in
        * the MEI document
@@ -368,6 +373,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       me.directives.createVexFromInfos(me.notes_by_id);
       me.dynamics.createVexFromInfos(me.notes_by_id);
       me.fermatas.createVexFromInfos(me.notes_by_id);
+      me.trills.createVexFromInfos(me.notes_by_id);
       me.ties.createVexFromInfos(me.notes_by_id);
       me.slurs.createVexFromInfos(me.notes_by_id);
       me.hairpins.createVexFromInfos(me.notes_by_id);
@@ -612,7 +618,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       left_barline = element.getAttribute('left');
       right_barline = element.getAttribute('right');
 
-      var staffElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [], rehElements = [];
+      var staffElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [], trillElements = [], rehElements = [];
 
       $(element).find('*').each(function () {
         switch (this.localName) {
@@ -640,6 +646,9 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           case 'fermata':
             fermataElements.push(this);
             break;
+          case 'trill':
+            trillElements.push(this);
+            break;
           case 'reh':
             rehElements.push(this);
             break;
@@ -663,6 +672,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       me.directives.createInfos(dirElements, element);
       me.dynamics.createInfos(dynamElements, element);
       me.fermatas.createInfos(fermataElements, element);
+      me.trills.createInfos(trillElements, element);
       me.ties.createInfos(tieElements, element, me.systemInfo);
       me.slurs.createInfos(slurElements, element, me.systemInfo);
       me.hairpins.createInfos(hairpinElements, element, me.systemInfo);

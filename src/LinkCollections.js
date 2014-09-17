@@ -520,16 +520,13 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
       };
 
-      console.log(f_note);
-
       if (f_note.layerDir || l_note.layerDir) {
         slurOptions.invert = true;
 
-        if (f_note.vexNote.hasStem() && l_note.vexNote.hasStem()) {
+        if (f_note.vexNote && l_note.vexNote && f_note.vexNote.hasStem() && l_note.vexNote.hasStem()) {
           slurOptions.position = VF.Curve.Position.NEAR_TOP; // = 2 position at stem end
         }
       }
-
 
       bezier = params.bezier;
       if (bezier) {
