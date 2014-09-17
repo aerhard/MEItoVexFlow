@@ -511,6 +511,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       return this;
     },
 
+    // TODO auch noch unvollständige slurs testen
+
     createSingleSlur : function(f_note, l_note, params) {
       var me = this, vexSlur, bezier, cps;
 
@@ -520,11 +522,23 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
       };
 
+      // if one of the notes is in multi-voice staff ...
       if (f_note.layerDir || l_note.layerDir) {
+        // invert the slur so it points outwards
         slurOptions.invert = true;
 
         if (f_note.vexNote && l_note.vexNote && f_note.vexNote.hasStem() && l_note.vexNote.hasStem()) {
-          slurOptions.position = VF.Curve.Position.NEAR_TOP; // = 2 position at stem end
+          slurOptions.position = VF.Curve.Position.NEAR_TOP; // = 2 STEM END POSITION
+
+          if (f_note.vexNote.getStemDirection() !== l_note.vexNote.getStemDirection()) {
+            slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
+          }
+
+        }
+      } else {
+        if (f_note.vexNote && l_note.vexNote && f_note.vexNote.getStemDirection() !== l_note.vexNote.getStemDirection()) {
+          slurOptions.invert = true;
+          slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
         }
       }
 
