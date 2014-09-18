@@ -1601,15 +1601,21 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
      * adds an articulation to a note-like object
      * @method addArticulation
      * @param {Vex.Flow.StaveNote} note the note-like VexFlow object
-     * @param {XMLElement} ar the articulation element
+     * @param {XMLElement} element the articulation element
      */
-    addArticulation : function (note, ar) {
-      var vexArtic = new VF.Articulation(m2v.tables.articulations[ar.getAttribute('artic')]);
-      var place = ar.getAttribute('place');
-      if (place) {
-        vexArtic.setPosition(m2v.tables.positions[place]);
+    addArticulation : function (note, element) {
+      var articCode = m2v.tables.articulations[element.getAttribute('artic')];
+      if (articCode) {
+        var vexArtic = new VF.Articulation(articCode);
+        var place = element.getAttribute('place');
+        if (place) {
+          vexArtic.setPosition(m2v.tables.positions[place]);
+        }
+        note.addArticulation(0, vexArtic);
+      } else {
+          m2v.log('warn', 'unknown @artic', 'The @artic attribute in ' + m2v.Util.serializeElement(element) +
+                                         ' is unknown or undefined. Skipping element.');
       }
-      note.addArticulation(0, vexArtic);
     },
 
     /**
