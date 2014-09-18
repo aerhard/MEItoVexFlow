@@ -522,31 +522,34 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
       };
 
-      // if one of the notes is in multi-voice staff ...
-      if (f_note.layerDir || l_note.layerDir) {
-        // invert the slur so it points outwards
-        slurOptions.invert = true;
-
-        if (f_note.vexNote && l_note.vexNote && f_note.vexNote.hasStem() && l_note.vexNote.hasStem()) {
-          slurOptions.position = VF.Curve.Position.NEAR_TOP; // = 2 STEM END POSITION
-
-          if (f_note.vexNote.getStemDirection() !== l_note.vexNote.getStemDirection()) {
-            slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
-          }
-
-        }
-      } else {
-        if (f_note.vexNote && l_note.vexNote && f_note.vexNote.getStemDirection() !== l_note.vexNote.getStemDirection()) {
-          slurOptions.invert = true;
-          slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-        }
-      }
-
       bezier = params.bezier;
+
+      // ignore bezier for now!
+      //bezier = null;
+
       if (bezier) {
         slurOptions.cps = me.bezierStringToCps(bezier);
-
       } else {
+
+        // if one of the notes is in multi-voice staff ...
+        if (f_note.layerDir || l_note.layerDir) {
+          // invert the slur so it points outwards
+          slurOptions.invert = true;
+
+          if (f_note.vexNote && l_note.vexNote && f_note.vexNote.hasStem() && l_note.vexNote.hasStem()) {
+            slurOptions.position = VF.Curve.Position.NEAR_TOP; // = 2 STEM END POSITION
+
+            if (f_note.vexNote.getStemDirection() !== l_note.vexNote.getStemDirection()) {
+              slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
+            }
+
+          }
+        } else {
+          if (f_note.vexNote && l_note.vexNote && f_note.vexNote.getStemDirection() !== l_note.vexNote.getStemDirection()) {
+            slurOptions.invert = true;
+            slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+          }
+        }
 
 
         //        vexSlur = new VF.Curve(f_note.vexNote, l_note.vexNote, {
@@ -571,13 +574,22 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
     bezierStringToCps : function(str) {
       var cps = [], xy, bezierArray = str.split(' ');
-      while (bezierArray[0]) {
-        xy = bezierArray.splice(0, 2);
+
+      var regex = /(\-?\d+)\s+(\-?\d+)/g;
+      var matched = null;
+      console.log('matched:');
+      console.log(matched);
+      while (matched = regex.exec(str)) {
+        console.log(matched[1] + ' " ' + matched[2]);
         cps.push({
-          x : +xy[0],
-          y : +xy[1]
+          x : +matched[1],
+          y : +matched[2]
         });
       }
+
+      // TODO allow less and more than two set of cps in VexFlow
+      if (!cps[1]) cps[1] = cps[0];
+
       return cps;
     }
   });
