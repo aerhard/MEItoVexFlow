@@ -189,8 +189,12 @@ MeiLib.durationOf = function(evnt, meter, zeroGraceNotes) {
   }
   var durationOf_SimpleEvent = function(simple_evnt, meter) {
     var dur = $(simple_evnt).attr('dur');
-    if (!dur)
-      throw new MeiLib.RuntimeError('MeiLib.durationOf:E04', '@dur of <b>note</b>, <b>rest</b> or <b>space</b> must be specified.');
+    if (!dur) {
+      console.warn('@dur of <b>note</b>, <b>rest</b> or <b>space</b> must be specified. Proceeding with default @dur="4". Element:');
+      console.log(simple_evnt);
+      dur = "4";
+//      throw new MeiLib.RuntimeError('MeiLib.durationOf:E04', '@dur of <b>note</b>, <b>rest</b> or <b>space</b> must be specified.');
+    }
     //    console.log(MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter));
     return MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter);
   };
@@ -214,10 +218,14 @@ MeiLib.durationOf = function(evnt, meter, zeroGraceNotes) {
         }
       }
     });
-    if (dur)
-      return dotsMult * MeiLib.dur2beats(Number(dur), meter);
-    throw new MeiLib.RuntimeError('MeiLib.durationOf:E06', '@dur of chord must be specified either in <chord> or in at least one of its <note> elements.');
+    if (!dur) {
+      console.warn('@dur of chord must be specified either in <chord> or in at least one of its <note> elements. Proceeding with default @dur="4". Element:');
+      console.log(chord);
+      dur = "4";
+    }
+    return dotsMult * MeiLib.dur2beats(Number(dur), meter);
   }
+
   var durationOf_Beam = function(beam, meter) {
     var acc = 0;
     $(beam).children().each(function() {

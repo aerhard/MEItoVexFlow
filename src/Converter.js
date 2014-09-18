@@ -983,7 +983,8 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
      * @method processNote
      */
     processNote : function (element, staff, staff_n, layerDir) {
-      var me = this, dots, mei_accid, mei_ho, pname, oct, xml_id, mei_tie, mei_slur, mei_staff_n, i, atts, note_opts, note, clef;
+      var me = this, dots, mei_accid, mei_ho, pname, oct, xml_id, mei_tie, mei_slur, mei_staff_n, i, atts, note_opts, note, clef,
+        vexPitch;
 
       atts = m2v.Util.attsToObj(element);
 
@@ -1002,8 +1003,10 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
         clef = me.systemInfo.getClef(staff_n);
 
+        vexPitch = me.getVexPitch(element);
+
         note_opts = {
-          keys : [me.processAttsPitch(element)],
+          keys : [vexPitch],
           clef : clef.type,
           duration : me.processAttsDuration(element),
           octave_shift : clef.shift
@@ -1025,8 +1028,10 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           if (otherStaff) {
             note.setStave(otherStaff);
           } else {
-            throw new m2v.RUNTIME_ERROR('Error', 'Note has staff attribute "' + mei_staff_n +
-                                                 '", but the staff does not exist.');
+            m2v.log('warn', 'Staff not found', 'No staff could be found which corresponds to @staff="' + mei_staff_n +
+                                               '" specified in ' + m2v.Util.serializeElement(element) +
+                                               '". Proceeding by adding note to current staff.');
+            note.setStave(staff);
           }
         }
 
@@ -1037,8 +1042,8 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
             note.addDotToAll();
           }
         } catch (e) {
-          throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing the dots of ' +
-                                                      m2v.Util.serializeElement(element));
+          m2v.log('warn', 'Bad arguments', 'A problem occurred processing the dots of ' +
+                                           m2v.Util.serializeElement(element) + '. Proceeding by ignoring dots.');
         }
 
         if (mei_accid) {
@@ -1060,17 +1065,8 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           $(this).remove();
         });
 
-        // Build a note object that keeps the xml:id
-
-        if (!pname) {
-          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArguments', 'mei:note must have pname attribute');
-        }
-        if (!oct) {
-          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArguments', 'mei:note must have oct attribute');
-        }
-
         if (mei_tie) {
-          me.processAttrTie(mei_tie, xml_id, pname, oct, staff_n);
+          me.processAttrTie(mei_tie, xml_id, vexPitch, staff_n);
         }
         if (mei_slur) {
           me.processAttrSlur(mei_slur, xml_id);
@@ -1131,7 +1127,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
         }
 
         for (i = 0, j = children.length; i < j; i += 1) {
-          keys.push(me.processAttsPitch(children[i]));
+          keys.push(me.getVexPitch(children[i]));
           // dots.push(+children[i].getAttribute('dots'));
           if (children[i].getAttribute('dots') === '1') {
             hasDots = true;
@@ -1221,10 +1217,12 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
       atts = m2v.Util.attsToObj(element);
 
+      vexPitch = me.getVexPitch(element);
+
       xml_id = MeiLib.XMLID(element);
 
       if (atts.tie) {
-        me.processAttrTie(atts.tie, xml_id, atts.pname, atts.oct, staff_n);
+        me.processAttrTie(atts.tie, xml_id, vexPitch, staff_n);
       }
       if (atts.slur) {
         me.processAttrSlur(atts.slur, xml_id);
@@ -1468,6 +1466,12 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       };
       elements = $(element).children().map(process).get();
 
+      if (elements.length === 0) {
+        m2v.log('warn', 'Missing content', 'Not content found in ' +
+                                          m2v.Util.serializeElement(element) + '". Skipping tuplet creation.');
+        return;
+      }
+
       tuplet = new VF.Tuplet(elements, {
         num_notes : +element.getAttribute('num') || 3,
         beats_occupied : +element.getAttribute('numbase') || 2
@@ -1511,20 +1515,18 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
     /**
      * @method processAttrTie
      */
-    processAttrTie : function (mei_tie, xml_id, pname, oct, staff_n) {
+    processAttrTie : function (mei_tie, xml_id, vexPitch, staff_n) {
       var me = this, i, j;
       for (i = 0, j = mei_tie.length; i < j; ++i) {
         if (mei_tie[i] === 't' || mei_tie[i] === 'm') {
           me.ties.terminateTie(xml_id, {
-            pname : pname,
-            oct : oct,
+            vexPitch: vexPitch,
             staff_n : staff_n
           });
         }
         if (mei_tie[i] === 'i' || mei_tie[i] === 'm') {
           me.ties.startTie(xml_id, {
-            pname : pname,
-            oct : oct,
+            vexPitch: vexPitch,
             staff_n : staff_n
           });
         }
@@ -1586,11 +1588,11 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
     /**
      * converts the pitch of an MEI <b>note</b> element to a VexFlow pitch
      *
-     * @method processAttsPitch
+     * @method getVexPitch
      * @param {XMLElement} mei_note
      * @return {String} the VexFlow pitch
      */
-    processAttsPitch : function (mei_note) {
+    getVexPitch : function (mei_note) {
       var pname, oct;
       pname = $(mei_note).attr('pname');
       oct = $(mei_note).attr('oct');

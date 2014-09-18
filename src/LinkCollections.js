@@ -262,7 +262,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
         me.allVexObjects.push(hairpin);
       } else {
-        m2v.log('debug', 'Hairpins', 'Hairpin cannot be rendered:' + arguments.join(' '));
+        m2v.log('warn', 'Missing targets', 'Target elements of hairpin could not be found: ');
+        console.log(arguments);
       }
 
     }
@@ -304,16 +305,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
       allTies = this.getModels();
 
-      //      cmpLinkCond = function(lc1, lc2) {
-      //        return (lc1 && lc2 && lc1.pname === lc2.pname && lc1.oct === lc2.oct);
-      //      };
       cmpLinkCond = function(lc1, lc2) {
-        return (lc1 && lc2 && lc1.pname === lc2.pname && lc1.oct === lc2.oct
+        return (lc1 && lc2 && lc1.vexPitch === lc2.vexPitch
           && lc1.staff_n === lc2.staff_n);
       };
 
-      if (!linkCond.pname || !linkCond.oct)
-        throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArguments:TermTie01', 'no pitch or octave specified for the tie');
       found = false;
       for ( i = 0; !found && i < allTies.length; ++i) {
         tie = allTies[i];
@@ -525,7 +521,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       bezier = params.bezier;
 
       // ignore bezier for now!
-      //bezier = null;
+      bezier = null;
 
       if (bezier) {
         slurOptions.cps = me.bezierStringToCps(bezier);

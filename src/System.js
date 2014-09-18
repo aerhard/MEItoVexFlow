@@ -210,6 +210,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           me.slurEndX = me.getLastMeasure().getFirstDefinedStaff().getTieEndX();
         }
 
+        // TODO use slurStartX and slurEndX values with verses, too
+
         me.verses.format();
         return me;
       },
@@ -234,7 +236,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             me.measures[i].draw(ctx);
           }
         }
-        me.verses.drawHyphens(ctx, me.slurStartX - 10, me.slurEndX + 10);
+        me.verses.drawHyphens(ctx, me.leftMar, me.coords.x + me.coords.w);
       }
     };
 
