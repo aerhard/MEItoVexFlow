@@ -236,7 +236,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             me.measures[i].draw(ctx);
           }
         }
-        me.verses.drawHyphens(ctx, me.leftMar, me.coords.x + me.coords.w);
+        me.verses.drawHyphens(ctx, me.slurStartX, me.slurEndX);
       }
     };
 

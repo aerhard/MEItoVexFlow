@@ -40,14 +40,14 @@ var MeiLib = {};
 MeiLib.RuntimeError = function(errorcode, message) {
   this.errorcode = errorcode;
   this.message = message;
-}
+};
 /**
  * @method toString
  * @return {String} the string representation of the error
  */
 MeiLib.RuntimeError.prototype.toString = function() {
   return 'MeiLib.RuntimeError: ' + this.errorcode + ': ' + this.message ? this.message : "";
-}
+};
 /**
  * @class MeiLib
  * @singleton
@@ -58,7 +58,7 @@ MeiLib.RuntimeError.prototype.toString = function() {
  */
 MeiLib.createPseudoUUID = function() {
   return ("0000" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).substr(-4)
-}
+};
 /**
  * @class MeiLib.EventEnumerator
  * Enumerate over the children events of node (node is a layer, beam or tuplet).

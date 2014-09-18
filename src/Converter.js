@@ -723,7 +723,9 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       $.each(staffElements, function () {
         staff_n = +$(this).attr('n');
         if (!staff_n) {
-          throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArgument', 'Cannot render staff without attribute "n".');
+          m2v.log('warn', '@n expected', m2v.Util.serializeElement(this) +
+                                             ' does not contain an @n attribute. Proceeding in first staff.');
+          staff_n = 1;
         }
         staff = me.createVexStaff(system, staff_n);
         staffs[staff_n] = staff;
@@ -869,7 +871,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
     processStaffEvents : function (staffs, staff_element, measureIndex, currentStaveVoices) {
       var me = this, staff, staff_n, readEvents, layerElements, i, j, layer_events, layerDir, currentGraceNotes = [], GN = VF.GraceNote, staffInfo;
 
-      staff_n = +$(staff_element).attr('n');
+      staff_n = +$(staff_element).attr('n') || 1;
       staff = staffs[staff_n];
 
       staffInfo = me.systemInfo.getStaffInfo(staff_n);
@@ -890,6 +892,13 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
         currentStaveVoices.addVoice(me.createVexVoice(layer_events, meter), staff_n);
 
       }
+
+      // if there is a clef not yet attached to a note (i.e. the last clef), add it to the last voice
+      if (me.currentClefChangeProperty) {
+        staff.addEndClefFromInfo(me.currentClefChangeProperty);
+        me.currentClefChangeProperty= null;
+      }
+
       staffInfo.removeStartClefCopy();
     },
 
@@ -1079,6 +1088,11 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           layerDir : layerDir
         };
 
+        if (me.currentClefChangeProperty) {
+          me.insertClef(note, me.currentClefChangeProperty);
+          me.currentClefChangeProperty = null;
+        }
+
         if (atts.grace) {
           note.slash = atts['stem.mod'] === '1slash';
           me.currentGraceNotes.push(note);
@@ -1100,6 +1114,13 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
                                                     e1.toString());
       }
     },
+
+    insertClef: function(vexNote, prop) {
+      var clef = new VF.ClefNote(prop.type, 'small', prop.shift === -1 ? '8vb' : undefined);
+      vexNote.addModifier(0, new Vex.Flow.GraceNoteGroup([clef], false));
+      clef.setOffsetLeft(25);
+    },
+
 
     /**
      * @method processChord
@@ -1185,6 +1206,12 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           system : me.currentSystem_n,
           layerDir : layerDir
         };
+
+        if (me.currentClefChangeProperty) {
+          me.insertClef(chord, me.currentClefChangeProperty);
+          me.currentClefChangeProperty = null;
+        }
+
 
         if (atts.grace) {
           me.currentGraceNotes.push(chord);
@@ -1275,6 +1302,12 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
         if (atts.ho) {
           me.processAttrHo(atts.ho, rest, staff);
         }
+
+        if (me.currentClefChangeProperty) {
+          me.insertClef(rest, me.currentClefChangeProperty);
+          me.currentClefChangeProperty = null;
+        }
+
         rest.setStave(staff);
         if (atts.dots === '1') {
           rest.addDotToAll();
@@ -1395,13 +1428,8 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       //      };
       try {
         clefProp = staffInfo.clefChangeInMeasure(element);
-        clef = new VF.ClefNote(clefProp.type, 'small', clefProp.shift === -1 ? '8vb' : undefined);
-        clef.setStave(staff);
-        return {
-          vexNote : clef
-        };
+        me.currentClefChangeProperty = clefProp;
       } catch (e) {
-        throw e;
         throw new m2v.RUNTIME_ERROR('BadArguments', 'A problem occurred processing ' +
                                                     m2v.Util.serializeElement(element));
       }

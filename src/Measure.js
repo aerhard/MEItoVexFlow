@@ -51,7 +51,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
          * @cfg {Number} n The number of the current measure as specified in
          * the MEI document
          */
-        me.n = +config.element.getAttribute('n'), // set in Measure constructor
+        me.n = +config.element.getAttribute('n'); // set in Measure constructor
         /**
          * @cfg {Array} staffs an array of the staffs in the current
          * measure. Contains
