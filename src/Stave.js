@@ -18,7 +18,6 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
   m2v.Stave = function () {
     this.init();
-    this.objType = 'stave';
   };
 
   Vex.Inherit(m2v.Stave, VF.Stave, {
@@ -64,15 +63,16 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       return typeof this.meiTimeSpecElement !== 'undefined';
     },
 
+    setSystem : function (system) {
+      this.system = system;
+    },
+
     setSlurStartX : function (x) {
       this.slurStartX = x;
     },
 
     getSlurStartX : function () {
-      // Temporary
-//      return this.getTieStartX();
-
-      return this.slurStartX;
+      return this.system.getSlurStartX();
     },
 
     setSlurEndX : function (x) {
@@ -80,7 +80,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
     },
 
     getSlurEndX : function () {
-      return this.slurEndX;
+      return this.system.getSlurEndX();
     }
 
   });

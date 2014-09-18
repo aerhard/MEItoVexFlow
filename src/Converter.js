@@ -677,6 +677,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
       me.hairpins.createInfos(hairpinElements, element, measureIndex, me.systemInfo);
 
       system.addMeasure(new m2v.Measure({
+        system: system,
         element : element,
         staffs : staffs,
         voices : currentStaveVoices,
@@ -724,7 +725,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
         if (!staff_n) {
           throw new m2v.RUNTIME_ERROR('MEI2VF.RERR.BadArgument', 'Cannot render staff without attribute "n".');
         }
-        staff = me.createVexStaff(system.getStaffYs()[staff_n]);
+        staff = me.createVexStaff(system, staff_n);
         staffs[staff_n] = staff;
 
         staff.setBegBarType(left_barline ? m2v.tables.barlines[left_barline] : VF.Barline.type.NONE);
@@ -799,14 +800,18 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
      * have been added.
      *
      * @method createVexStaff
-     * @param {Number} y the y coordinate of the staff
+     * @param {MEI2VF.System} system the parent system of the staff
+     * @param {Number} staff_n the number of the staff
      * @return {Vex.Flow.Stave} The initialized stave object
      */
-    createVexStaff : function (y) {
-      var me = this, staff;
+    createVexStaff : function (system, staff_n) {
+      var me = this, staff, y;
+
+      y = system.getStaffYs()[staff_n];
+
       staff = new m2v.Stave();
       staff.init(0, y, 1000, me.cfg.staff);
-      staff.setSlurEndX(me.printSpace.right);
+      staff.setSystem(system);
       staff.options.bottom_text_position = me.cfg.staff.bottom_text_position;
       return staff;
     },

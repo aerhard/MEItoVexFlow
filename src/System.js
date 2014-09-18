@@ -186,7 +186,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @return {MEI2VF.System} this
        */
       format : function(ctx) {
-        var me = this, i, j, measures, offsetX, labels, slurStartX;
+        var me = this, i, j, measures, offsetX, labels;
         if ( typeof me.leftMar !== 'number') {
           me.calculateInitialIndent(ctx);
         }
@@ -194,17 +194,35 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         me.setFinalMeasureWidths();
         offsetX = me.coords.x + me.leftMar;
         measures = me.getMeasures();
-        for ( i = 0, j = measures.length; i < j; i += 1) {
+        j = measures.length;
+        for (i = 0; i < j; i += 1) {
           if (measures[i]) {
             labels = (i === 0) ? me.labels : null;
-            slurStartX = measures[i].format(offsetX, labels, slurStartX);
-            offsetX += measures[i].w;
+            measures[i].format(offsetX, labels);
+            offsetX += measures[i].getW();
           }
           measures[i].addRehearsalMarks();
           measures[i].addTempoToStaves();
         }
+
+        if (j > 0) {
+          me.slurStartX = measures[0].getFirstDefinedStaff().getTieStartX();
+          me.slurEndX = me.getLastMeasure().getFirstDefinedStaff().getTieEndX();
+        }
+
+        // TODO use slurStartX and slurEndX values with verses, too
+
         me.verses.format();
         return me;
+      },
+
+
+      getSlurStartX : function () {
+        return this.slurStartX;
+      },
+
+      getSlurEndX : function () {
+        return this.slurEndX;
       },
 
       /**

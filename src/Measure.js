@@ -40,6 +40,10 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       init : function(config) {
         var me = this;
         /**
+         * @cfg {MEI2VF.System} system the parent system
+         */
+        me.system = config.system;
+        /**
          * @cfg {XMLElement} element the MEI element of the current measure
          */
         me.element = config.element;
@@ -103,6 +107,10 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
          * null if NaN
          */
         me.meiW = me.readMEIW(me.element);
+      },
+
+      getSystem: function () {
+        return this.system;
       },
 
       /**
@@ -238,7 +246,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       },
 
       /**
-       * gets the minimum width of the current measure;
+       * gets the final width of the current measure
+       */
+      getW : function () {
+        return this.w;
+      },
+
+      /**
+       * gets the minimum width of the current measure
        */
       getMinWidth : function() {
         return this.minWidth;
@@ -298,7 +313,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {Number} x The x coordinate of the the measure
        * @param {String[]} labels The labels of all staves
        */
-      format : function(x, labels, slurStartX) {
+      format : function(x, labels) {
         var me = this, width = me.w, i = me.staffs.length, staff, k;
         while (i--) {
           if (me.staffs[i]) {
@@ -326,12 +341,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             staff.setWidth(width);
             staff.end_x -= me.maxEndModifierW;
 
-            staff.setSlurStartX(slurStartX || staff.getTieStartX());
-
           }
         }
         me.voices.format(me.getFirstDefinedStaff());
-        return slurStartX || staff.getTieStartX();
       },
 
       /**
