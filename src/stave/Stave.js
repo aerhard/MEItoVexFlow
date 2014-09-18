@@ -14,13 +14,15 @@
  * limitations under the License.
  *
  */
-var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
+define([
+  'vexflow',
+], function (VF, undefined) {
 
-  m2v.Stave = function () {
+  var Stave = function () {
     this.init();
   };
 
-  Vex.Inherit(m2v.Stave, VF.Stave, {
+  Vex.Inherit(Stave, VF.Stave, {
 
     // FIXME check if deviation of clef.shift between clef and end clef is OK
     addClefFromInfo : function (clef) {
@@ -85,8 +87,6 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
   });
 
+  return Stave;
 
-  return m2v;
-
-}(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
-
+});

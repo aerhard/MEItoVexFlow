@@ -3,7 +3,7 @@
  */
 
 /*
- * StaffInfo.js Author: Zoltan Komives (zolaemil@gmail.com) Created: 03.07.2013
+ * StaveInfo.js Author: Zoltan Komives (zolaemil@gmail.com) Created: 03.07.2013
  *
  * Copyright © 2012, 2013 Richard Lewis, Raffaele Viglianti, Zoltan Komives,
  * University of Maryland
@@ -21,10 +21,15 @@
  * the License.
  */
 
-var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
+define([
+  'vexflow',
+  'm2v/core/Logger',
+  'm2v/core/Util'
+], function (VF, Logger, Util, undefined) {
+
 
   /**
-   * @class MEI2VF.StaffInfo
+   * @class MEI2VF.StaveInfo
    * Contains the definition and the rendering information (i.e. what
    * clef modifiers are to be rendered) of a single staff
    * @private
@@ -36,7 +41,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
    * @param w_keysig
    * @param w_timesig
    */
-  m2v.StaffInfo = function (staffdef, scoredef, w_clef, w_keysig, w_timesig) {
+  var StaveInfo = function (staffdef, scoredef, w_clef, w_keysig, w_timesig) {
     var me = this;
     /**
      * the most current scoreDef element.
@@ -93,7 +98,7 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
     me.updateClef(me.staffDef);
   };
 
-  m2v.StaffInfo.prototype = {
+  StaveInfo.prototype = {
 
     /**
      * @private
@@ -170,7 +175,6 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
     /**
      * @private
-     * @returns {number|*|m2v.StaffInfo.spacing}
      */
     updateSpacing : function () {
       var me = this, spacing;
@@ -241,7 +245,6 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
     /**
      * @public
      * @param newClefDef
-     * @returns {*|m2v.StaffInfo.currentClef}
      */
     clefChangeInMeasure : function (clefElement) {
       var me = this;
@@ -286,9 +289,9 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
       clefShape = element.getAttribute(prefix + 'shape');
       if (!clefShape) {
-        m2v.log('warn', '@clef.shape expected', 'No clef shape attribute found in ' +
-                                                m2v.Util.serializeElement(element) +
-                                                '. Setting default clef.shape "G".');
+        Logger.log('warn', '@clef.shape expected', 'No clef shape attribute found in ' +
+                                                   Util.serializeElement(element) +
+                                                   '. Setting default clef.shape "G".');
         clefShape = 'G';
       }
       clefType = clefShape + (element.getAttribute(prefix + 'line') || '');
@@ -314,14 +317,13 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
           type : 'treble',
           meiElement : null
         };
-        m2v.log('warn', 'Not supported', 'Clef definition in ' + m2v.Util.serializeElement(element) +
-                                         ' is not supported. Setting default treble clef.');
+        Logger.log('warn', 'Not supported', 'Clef definition in ' + Util.serializeElement(element) +
+                                            ' is not supported. Setting default treble clef.');
       }
     },
 
     /**
      * @public
-     * @returns {*|m2v.StaffInfo.currentClef}
      */
     getClef : function () {
       return this.clef;
@@ -329,7 +331,6 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
 
     /**
      * @public
-     * @returns {*|m2v.StaffInfo.keySpec}
      */
     getKeySpec : function () {
       return this.keySpec;
@@ -353,9 +354,9 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
             keyname += 'b';
             break;
           default :
-            m2v.log('warn', 'Not supported', 'expected to find value "s" or "f" instead of "' + key_accid +
-                                             '" in @key.accid of ' + m2v.Util.serializeElement(element) +
-                                             '. Skipping processing of this attribute.');
+            Logger.log('warn', 'Not supported', 'expected to find value "s" or "f" instead of "' + key_accid +
+                                                '" in @key.accid of ' + Util.serializeElement(element) +
+                                                '. Skipping processing of this attribute.');
         }
       }
       key_mode = element.getAttribute('key.mode');
@@ -441,9 +442,8 @@ var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
         me.renderWith.timesig = true;
       }
     }
-
   };
 
-  return m2v;
+  return StaveInfo;
 
-}(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+});

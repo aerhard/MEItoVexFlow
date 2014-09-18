@@ -5,20 +5,17 @@ version="HTML+RDFa 1.0" xml:lang="en">
     <title>MEI-to-VexFlow UNIT TESTS</title>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <script type="text/JavaScript" src="../bower_components/jquery/dist/jquery.min.js"></script>
-    <script type="text/JavaScript" src="../bower_components/vexflow/build/vexflow/vexflow-min.js"></script>
-    
-    <script type="text/JavaScript" src="../src/meilib.js"></script>
-    <script type="text/JavaScript" src="../src/MEI2VF.js"></script>
-    <script type="text/JavaScript" src="../src/EventReference.js"></script>
-    <script type="text/JavaScript" src="../src/EventLink.js"></script>
-    <script type="text/JavaScript" src="../src/StaveVoices.js"></script>
-    <script type="text/JavaScript" src="../src/Util.js"></script>
-    <!-- <script type="text/JavaScript" src="../dist/meitovexflow.js"></script> -->
+    <script type="text/JavaScript" src="../bower_components/vexflow/build/vexflow/vexflow-debug.js"></script>
+
+    <script type="text/JavaScript" src="../bower_components/requirejs/require.js"></script>
 
     <script type="text/JavaScript" src="../bower_components/vexflow/tests/vexflow_test_helpers.js"></script>
     <script type="text/JavaScript" src="../bower_components/vexflow/tests/formatter_tests.js"></script>
     <script type="text/JavaScript">
     $(document).ready(function(){
+
+      var performTests = function(MeiLib, EventLink, EventReference, Util, Logger, RuntimeError, StaveVoices) {
+
         var dict;
         
         var note1 = { localName: 'note', attrs: { id:'n01', pname:'a' } };
@@ -29,38 +26,38 @@ version="HTML+RDFa 1.0" xml:lang="en">
 
         console.log('\n\n************ Unit test: EventReference *********');
         console.log('\n>>>>>Constructor - default');
-        var ref0 = new MEI2VF.EventReference();
+        var ref0 = new EventReference();
         try {
           console.log(ref0.getId());
         } catch (e) {
           console.log(e.toString());//undefined reference
         }
         console.log('\n>>>>>Constructor - set');
-        var ref1 = new MEI2VF.EventReference('n01');
+        var ref1 = new EventReference('n01');
         console.log(ref1.getId()); //n01
 
         console.log('\n>>>>>setId');
-        var ref2 = new MEI2VF.EventReference();
+        var ref2 = new EventReference();
         ref2.setId('n01');
         console.log(ref2.getId()); //n01
 
         console.log('\n>>>>>setTStamp() and tryResolveReference() - all undefined');
-        var ref3 = new MEI2VF.EventReference();
+        var ref3 = new EventReference();
         ref3.setTStamp();
         console.log('OK'); //OK
         console.log('>>>>>setTStamp() and tryResolveReference() - undefined xmlid');
-        var ref3 = new MEI2VF.EventReference();
+        var ref3 = new EventReference();
         ref3.setTStamp('1.5');
         console.log('OK'); //OK
         console.log('>>>>>setTStamp() and tryResolveReference() - undefined tstamp');
-        var ref4 = new MEI2VF.EventReference('n01');
+        var ref4 = new EventReference('n01');
         try {
           ref4.setTStamp();			
         } catch (e) {
-          console.log(e.toString()); //'MEI2VF.EventReference: tstamp must be set in order to resolve reference.'
+          console.log(e.toString()); //'EventReference: tstamp must be set in order to resolve reference.'
         }
         console.log('>>>>>setTStamp() and tryResolveReference() - all defined, but context');
-        var ref5 = new MEI2VF.EventReference('n01');
+        var ref5 = new EventReference('n01');
         try {
           ref5.setTStamp('2.5');
           console.log(ref5.getId()); //undefined
@@ -72,7 +69,7 @@ version="HTML+RDFa 1.0" xml:lang="en">
 
         console.log('\n\n************ Unit test: EventLink *********');
         console.log('\n>>>>>Constructor: default');
-        var link1 = new MEI2VF.EventLink();
+        var link1 = new EventLink();
         try {
           console.log(link1.getFirstId()); //null
           console.log(link1.getFirstId()); //null
@@ -81,7 +78,7 @@ version="HTML+RDFa 1.0" xml:lang="en">
         }
 
         console.log('>>>>>Constructor: set first');
-        var link2 = new MEI2VF.EventLink('n01');
+        var link2 = new EventLink('n01');
         try {
           console.log(link2.getFirstId()); //n01
           console.log(link2.getLastId());
@@ -90,28 +87,28 @@ version="HTML+RDFa 1.0" xml:lang="en">
         }
 
         console.log('>>>>>Constructor: set both');
-        var link3 = new MEI2VF.EventLink('n01', 'n02');
+        var link3 = new EventLink('n01', 'n02');
         console.log(link3.getFirstId()); // n01
         console.log(link3.getLastId()); // n02
 
         console.log('\n>>>>>Setting Refs:');
-        var link4 = new MEI2VF.EventLink('n01', 'n02');
-        var ref6 = new MEI2VF.EventReference('n03');
-        var ref7 = new MEI2VF.EventReference('n04');
+        var link4 = new EventLink('n01', 'n02');
+        var ref6 = new EventReference('n03');
+        var ref7 = new EventReference('n04');
         link4.setFirstRef(ref6);
         link4.setLastRef(ref7);
         console.log(link4.getFirstId()); //n03
         console.log(link4.getLastId()); //n04
 
         console.log('\n>>>>>Setting Ids:');
-        var link5 = new MEI2VF.EventLink();
+        var link5 = new EventLink();
         link5.setFirstId('n03');
         link5.setLastId('n04');
         console.log(link5.getFirstId()); //n03
         console.log(link5.getLastId()); //n04
         
         console.log('\n>>>>>Setting TStamps:');
-        var link6 = new MEI2VF.EventLink();
+        var link6 = new EventLink();
         link6.setFirstTStamp('1.5');
         link6.setLastTStamp('1m+1');
         try {
@@ -122,7 +119,7 @@ version="HTML+RDFa 1.0" xml:lang="en">
         }
 
         console.log('\n>>>>>Mixed reference:');
-        var link7 = new MEI2VF.EventLink();
+        var link7 = new EventLink();
         link7.setFirstId('n01');
         link7.setLastTStamp('1m+1');
         try {
@@ -135,7 +132,7 @@ version="HTML+RDFa 1.0" xml:lang="en">
         console.log('\n\n*********************************************');
         console.log('\n************ Unit test: StaveVoices *********');
 
-        var staveVoices = new MEI2VF.StaveVoices();
+        var staveVoices = new StaveVoices();
 
         var canvas = $('canvas')[0];
         // Vex.Flow.Test.resizeCanvas(canvas, 500, 300);
@@ -314,7 +311,28 @@ version="HTML+RDFa 1.0" xml:lang="en">
         //var beam32b = new Vex.Flow.Beam(notes32.slice(3, 6));
         //beam32a.setContext(ctx).draw();
         //beam32b.setContext(ctx).draw();
-      }) 
+
+        }
+
+
+        require.config({
+            baseUrl : "../src",
+            paths: {
+                'm2v' : '../src'
+            }
+        });
+
+        require([
+            'meilib/MeiLib',
+            'eventlink/EventLink',
+            'eventlink/EventReference',
+            'core/Util',
+            'core/Logger',
+            'core/RuntimeError',
+            'voice/StaveVoices'
+        ], performTests);
+
+      });
     </script>
   </head>
   <body>

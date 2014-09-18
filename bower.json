@@ -23,5 +23,8 @@
     "jquery": "~2.1.0",
     "vexflow": "*",
     "raphael": "~2.1.2"
+  },
+  "devDependencies": {
+    "requirejs": "~2.1.2"
   }
 }

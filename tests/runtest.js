@@ -1,5 +1,8 @@
 
-MEI2VF.RunTest = function(test_case, canvas, titleElem, backend){
+
+var Test = {};
+
+Test.RunTest = function(test_case, canvas, titleElem, backend){
 
   $(titleElem).html(test_case.title);
   var canvas_width = test_case.canvas_width || 1031;

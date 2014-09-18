@@ -18,7 +18,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+define([
+    'm2v/lyrics/verses'
+  ], function (Verses, undefined) {
 
     /**
      * A single instance of a staff system, containing and processing information
@@ -29,11 +31,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @constructor
      * @param {Object} config The configuration object
      */
-    m2v.System = function(config) {
+    var System = function (config) {
       this.init(config);
     };
 
-    m2v.System.prototype = {
+    System.prototype = {
 
       /**
        * @property {Number} LABEL_PADDING the padding (in pixels) between the voice
@@ -44,8 +46,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        * @param {Object} config The configuration object
        */
-      init : function(config) {
+      init : function (config) {
         var me = this;
+
         /**
          * @cfg {Number|null} leftMar the left system margin as specified in the
          * MEI file or null if there is no margin specified. In the latter case,
@@ -69,7 +72,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
          * found in the MEI document
          * @property {MEI2VF.Verses} verses
          */
-        me.verses = new m2v.Verses(config.versesCfg);
+        me.verses = new Verses(config.versesCfg);
         /**
          * @cfg {String[]} labels the labels of all staffs in the current system
          */
@@ -84,7 +87,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        * @return {Number[]} the value of {@link #staffYs}
        */
-      getStaffYs : function() {
+      getStaffYs : function () {
         return this.staffYs;
       },
 
@@ -92,7 +95,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * adds a measure to the end of the measure array
        * @param {MEI2VF.Measure} measure the measure to add
        */
-      addMeasure : function(measure) {
+      addMeasure : function (measure) {
         this.measures.push(measure);
       },
 
@@ -102,7 +105,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * system has the index 0)
        * @return {MEI2VF.Measure}
        */
-      getMeasure : function(i) {
+      getMeasure : function (i) {
         return this.measures[i];
       },
 
@@ -110,11 +113,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * gets all measures in the current system
        * @return {MEI2VF.Measure[]}
        */
-      getMeasures : function() {
+      getMeasures : function () {
         return this.measures;
       },
 
-      getLastMeasure : function() {
+      getLastMeasure : function () {
         return this.measures[this.measures.length - 1];
       },
 
@@ -123,12 +126,12 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * stave-connector labels
        * @param {Object} ctx the canvas context
        */
-      calculateInitialIndent : function(ctx) {
+      calculateInitialIndent : function (ctx) {
         var me = this, label, max = 0, w, connectors, i, text;
         ctx.setFont('Times', 16);
         for (label in me.labels) {
           text = me.labels[label];
-          if ( typeof text === 'string') {
+          if (typeof text === 'string') {
             w = ctx.measureText(me.labels[label]).width;
             if (max < w) {
               max = w;
@@ -139,7 +142,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         i = connectors.length;
         while (i--) {
           text = connectors[i].text;
-          if ( typeof text === 'string') {
+          if (typeof text === 'string') {
             w = ctx.measureText(me.labels[label]).width;
             if (max < w) {
               max = w;
@@ -152,7 +155,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       /**
        * Calculates the minimum width of each measure in the current system
        */
-      calculateMinMeasureWidths : function() {
+      calculateMinMeasureWidths : function () {
         var measures = this.measures, i = measures.length;
         while (i--) {
           measures[i].calculateMinWidth();
@@ -164,9 +167,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * specified width in the MEI code and writes them to their enclosing
        * measure object
        */
-      setFinalMeasureWidths : function() {
+      setFinalMeasureWidths : function () {
         var me = this, i, j, totalSpecifiedMeasureWidth = 0, singleAdditionalWidth, nonSpecified_n = 0;
-        for ( i = 0, j = me.measures.length; i < j; i += 1) {
+        for (i = 0, j = me.measures.length; i < j; i += 1) {
           if (me.measures[i].meiW === null) {
             nonSpecified_n += 1;
             totalSpecifiedMeasureWidth += me.measures[i].getMinWidth();
@@ -175,7 +178,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           }
         }
         singleAdditionalWidth = Math.floor((me.coords.w - me.leftMar - totalSpecifiedMeasureWidth) / nonSpecified_n);
-        for ( i = 0, j = me.measures.length; i < j; i += 1) {
+        for (i = 0, j = me.measures.length; i < j; i += 1) {
           me.measures[i].setFinalWidth(singleAdditionalWidth);
         }
       },
@@ -185,9 +188,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * @param {Object} ctx the canvas context
        * @return {MEI2VF.System} this
        */
-      format : function(ctx) {
+      format : function (ctx) {
         var me = this, i, j, measures, offsetX, labels;
-        if ( typeof me.leftMar !== 'number') {
+        if (typeof me.leftMar !== 'number') {
           me.calculateInitialIndent(ctx);
         }
         me.calculateMinMeasureWidths();
@@ -210,8 +213,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
           me.slurEndX = me.getLastMeasure().getFirstDefinedStaff().getTieEndX();
         }
 
-        // TODO use slurStartX and slurEndX values with verses, too
-
         me.verses.format();
         return me;
       },
@@ -229,7 +230,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
        * draws the current system to a canvas
        * @param {Object} ctx the canvas context
        */
-      draw : function(ctx) {
+      draw : function (ctx) {
         var me = this, i = me.measures.length;
         while (i--) {
           if (me.measures[i]) {
@@ -240,6 +241,6 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     };
 
-    return m2v;
+    return System;
 
-  }(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+  });

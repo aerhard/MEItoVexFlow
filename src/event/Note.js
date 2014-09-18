@@ -14,20 +14,21 @@
  * limitations under the License.
  *
  */
-var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
+define([
+  'vexflow',
+], function (VF, undefined) {
 
 
-  m2v.Rest = function (options) {
+  var Note = function (options) {
     VF.StaveNote.call(this, options);
     this.init(options);
   };
 
-  m2v.Rest.prototype = Object.create(VF.StaveNote.prototype);
+  Note.prototype = Object.create(VF.StaveNote.prototype);
 
-  m2v.Rest.prototype.beamable = true;
+  Note.prototype.beamable = true;
 
+  return Note;
 
-  return m2v;
-
-}(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+});
 

@@ -14,19 +14,16 @@
  * limitations under the License.
  *
  */
-var MEI2VF = ( function (m2v, MeiLib, VF, $, undefined) {
+define([
+  'vexflow',
+  'm2v/core/Logger'
+], function (VF, Logger, undefined) {
 
 
-  m2v._template = function () {
-    this.init();
+  var O = function () {
+
   };
 
-  Vex.Inherit(m2v._template, VF.StaveNote, {
+  return O;
 
-  });
-
-
-  return m2v;
-
-}(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
-
+});

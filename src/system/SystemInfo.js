@@ -20,7 +20,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+define([
+  'jquery',
+  'm2v/core/Logger',
+  'm2v/core/RuntimeError',
+  'm2v/stave/StaveInfo'
+], function ($, Logger, RuntimeError, StaveInfo, undefined) {
 
   /**
    * @class MEI2VF.SystemInfo
@@ -30,23 +35,23 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
    * @constructor
 
    */
-  m2v.SystemInfo = function() {
+  var SystemInfo = function () {
     return;
   };
 
-  m2v.SystemInfo.prototype = {
+  SystemInfo.prototype = {
 
     STAVE_HEIGHT : 40,
 
-    init : function(cfg, printSpace) {
+    init : function (cfg, printSpace) {
       var me = this;
       me.cfg = cfg;
       me.printSpace = printSpace;
 
       /**
-       * contains the current {@link MEI2VF.StaffInfo} objects
+       * contains the current {@link MEI2VF.StaveInfo} objects
        */
-      me.currentStaffInfos = [];
+      me.currentStaveInfos = [];
       /**
        * @property {Number} systemLeftMar the left margin of the
        * current system (additional to the left print space margin)
@@ -63,15 +68,15 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
 
     },
 
-    setLeftMar : function(width) {
+    setLeftMar : function (width) {
       this.systemLeftMar = width;
     },
 
-    getLeftMar : function() {
+    getLeftMar : function () {
       return this.systemLeftMar;
     },
 
-    setModelForStaveRange : function(target, obj, add) {
+    setModelForStaveRange : function (target, obj, add) {
       add = add || '';
       target[obj.top_staff_n + ':' + obj.bottom_staff_n + add] = obj;
     },
@@ -79,7 +84,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
     /**
      * @method
      */
-    setConnectorModels : function(staffGrp, range, isChild, ancestorSymbols) {
+    setConnectorModels : function (staffGrp, range, isChild, ancestorSymbols) {
       var me = this, symbol, barthru, first_n, last_n;
 
       first_n = range.first_n;
@@ -87,7 +92,9 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       symbol = $(staffGrp).attr('symbol');
       barthru = $(staffGrp).attr('barthru');
 
-      m2v.log('debug', 'Converter.setConnectorModels() {2}', 'symbol: ' + symbol, ' range.first_n: ' + first_n, ' range.last_n: ' + last_n);
+      Logger.log('debug', 'Converter.setConnectorModels() {2}', 'symbol: ' + symbol, ' range.first_n: ' +
+                                                                                     first_n, ' range.last_n: ' +
+                                                                                              last_n);
 
       // 1. left connectors specified in the MEI file:
       me.setModelForStaveRange(me.startConnectorInfos, {
@@ -119,76 +126,81 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
       }
     },
 
-    getStaffInfo : function(staff_n) {
-      return this.currentStaffInfos[staff_n];
+    getStaveInfo : function (staff_n) {
+      return this.currentStaveInfos[staff_n];
     },
 
-    getAllStaffInfos : function() {
-      return this.currentStaffInfos;
+    getAllStaveInfos : function () {
+      return this.currentStaveInfos;
     },
 
     /**
      * @method
      */
-    getClef : function(staff_n) {
+    getClef : function (staff_n) {
       var me = this, staff_info;
-      staff_info = me.currentStaffInfos[staff_n];
+      staff_info = me.currentStaveInfos[staff_n];
       if (!staff_info) {
-        throw new m2v.RUNTIME_ERROR('MEI2VF.getClefForStaffNr():E01', 'No staff definition for staff n=' + staff_n);
+        throw new RuntimeError('MEI2VF.getClefForStaffNr():E01', 'No staff definition for staff n=' + staff_n);
       }
       return staff_info.getClef();
     },
 
-    getCurrentLowestY : function() {
+    getCurrentLowestY : function () {
       return this.currentLowestY;
     },
 
-    setCurrentLowestY : function(y) {
+    setCurrentLowestY : function (y) {
       this.currentLowestY = y;
     },
 
-    getYs : function(currentSystemY) {
+    getYs : function (currentSystemY) {
       var me = this, currentStaffY, i, j, isFirstStaff = true, infoSpacing, lowestYCandidate, ys = [];
       currentStaffY = 0;
-      for ( i = 1, j = me.currentStaffInfos.length; i < j; i += 1) {
-        if (me.currentStaffInfos[i]) {
-          infoSpacing = me.currentStaffInfos[i].spacing;
-          currentStaffY += (isFirstStaff) ? 0 : (infoSpacing !== null) ? me.STAVE_HEIGHT + me.currentStaffInfos[i].spacing : me.STAVE_HEIGHT + me.cfg.staveSpacing;
+      for (i = 1, j = me.currentStaveInfos.length; i < j; i += 1) {
+        if (me.currentStaveInfos[i]) {
+          infoSpacing = me.currentStaveInfos[i].spacing;
+          currentStaffY += (isFirstStaff) ? 0 :
+                           (infoSpacing !== null) ? me.STAVE_HEIGHT + me.currentStaveInfos[i].spacing :
+                           me.STAVE_HEIGHT + me.cfg.staveSpacing;
           ys[i] = currentSystemY + currentStaffY;
           isFirstStaff = false;
         }
       }
       lowestYCandidate = currentSystemY + currentStaffY + me.STAVE_HEIGHT;
-      if (lowestYCandidate > me.currentLowestY)
+      if (lowestYCandidate > me.currentLowestY) {
         me.currentLowestY = lowestYCandidate;
+      }
       return ys;
     },
 
-    forceSectionStartInfos : function() {
-      var me = this, i = me.currentStaffInfos.length;
+    forceSectionStartInfos : function () {
+      var me = this, i = me.currentStaveInfos.length;
       while (i--) {
-        if (me.currentStaffInfos[i])
-          me.currentStaffInfos[i].forceSectionStartInfo();
+        if (me.currentStaveInfos[i]) {
+          me.currentStaveInfos[i].forceSectionStartInfo();
+        }
       }
     },
 
-    forceStaveStartInfos : function() {
-      var me = this, i = me.currentStaffInfos.length;
+    forceStaveStartInfos : function () {
+      var me = this, i = me.currentStaveInfos.length;
       while (i--) {
-        if (me.currentStaffInfos[i])
-          me.currentStaffInfos[i].forceStaveStartInfo();
+        if (me.currentStaveInfos[i]) {
+          me.currentStaveInfos[i].forceStaveStartInfo();
+        }
       }
     },
 
     /**
      *
      */
-    processScoreDef : function(scoredef) {
+    processScoreDef : function (scoredef) {
       var me = this, i, j, children, systemLeftmar;
       me.scoreDefElement = scoredef;
       me.scoreDef = $(scoredef);
       systemLeftmar = me.scoreDef.attr('system.leftmar');
-      if ( typeof systemLeftmar === 'string') {
+      if (typeof systemLeftmar === 'string') {
         me.setLeftMar(+systemLeftmar);
       }
       children = me.scoreDef.children();
@@ -197,7 +209,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         me.updateStaffDefs(scoredef);
       }
 
-      for ( i = 0, j = children.length; i < j; i += 1) {
+      for (i = 0, j = children.length; i < j; i += 1) {
         me.processScoreDef_child(children[i]);
       }
     },
@@ -206,11 +218,11 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * TODO CHANGE
      * @param scoredef
      */
-    updateStaffDefs : function(scoredef) {
-      var me = this, i = me.currentStaffInfos.length;
+    updateStaffDefs : function (scoredef) {
+      var me = this, i = me.currentStaveInfos.length;
       while (i--) {
-        if (me.currentStaffInfos[i]) {
-          me.currentStaffInfos[i].overrideWithScoreDef(scoredef);
+        if (me.currentStaveInfos[i]) {
+          me.currentStaveInfos[i].overrideWithScoreDef(scoredef);
         }
       }
     },
@@ -229,7 +241,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      *
      * @param {XMLElement} element the scoreDef element to process
      */
-    processScoreDef_child : function(element) {
+    processScoreDef_child : function (element) {
       var me = this;
       switch (element.localName) {
         case 'staffGrp' :
@@ -238,7 +250,8 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
         case 'pgHead' :
           break;
         default :
-          m2v.log('info', 'SystemInfo.processScoreDef_child()', 'Element <' + element.localName + '> is not supported in <scoreDef>. Skipping.');
+          Logger.log('info', 'SystemInfo.processScoreDef_child()', 'Element <' + element.localName +
+                                                                   '> is not supported in <scoreDef>. Skipping.');
       }
     },
 
@@ -252,12 +265,14 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @return {Object} the range of the current staff group. Properties:
      *         first_n, last_n
      */
-    processStaffGrp : function(staffGrp, isChild, ancestorSymbols) {
+    processStaffGrp : function (staffGrp, isChild, ancestorSymbols) {
       var me = this, range = {}, isFirst = true;
-      $(staffGrp).children().each(function(i, childElement) {
+      $(staffGrp).children().each(function (i, childElement) {
         var childRange = me.processStaffGrp_child(staffGrp, childElement, ancestorSymbols);
         if (childRange) {
-          m2v.log('debug', 'Converter.processStaffGrp() {1}.{a}', 'childRange.first_n: ' + childRange.first_n, ' childRange.last_n: ' + childRange.last_n);
+          Logger.log('debug', 'Converter.processStaffGrp() {1}.{a}', 'childRange.first_n: ' +
+                                                                     childRange.first_n, ' childRange.last_n: ' +
+                                                                                         childRange.last_n);
           if (isFirst) range.first_n = childRange.first_n;
           range.last_n = childRange.last_n;
           isFirst = false;
@@ -278,7 +293,7 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @param {XMLElement} element
      * @return {Object} the range of staffs. Properties: first_n, last_n
      */
-    processStaffGrp_child : function(parent, element, ancestorSymbols) {
+    processStaffGrp_child : function (parent, element, ancestorSymbols) {
       var me = this, staff_n, myAncestorSymbols;
       switch (element.localName) {
         case 'staffDef' :
@@ -288,32 +303,34 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
             last_n : staff_n
           };
         case 'staffGrp' :
-          myAncestorSymbols = (!ancestorSymbols) ? [parent.getAttribute('symbol')] : ancestorSymbols.concat(parent.getAttribute('symbol'));
+          myAncestorSymbols =
+          (!ancestorSymbols) ? [parent.getAttribute('symbol')] : ancestorSymbols.concat(parent.getAttribute('symbol'));
           return me.processStaffGrp(element, true, myAncestorSymbols);
         default :
-          m2v.log('info', 'SystemInfo.processScoreDef_child()', 'Element <' + element.localName + '> is not supported in <staffGrp>. Skipping.');
+          Logger.log('info', 'SystemInfo.processScoreDef_child()', 'Element <' + element.localName +
+                                                                   '> is not supported in <staffGrp>. Skipping.');
       }
     },
 
     /**
-     * reads a staffDef, writes it to currentStaffInfos
+     * reads a staffDef, writes it to currentStaveInfos
      *
      * @param {XMLElement} staffDef
      * @return {Number} the staff number of the staffDef
      */
-    processStaffDef : function(staffDef) {
+    processStaffDef : function (staffDef) {
       var me = this, staff_n, staff_info;
       staff_n = +$(staffDef).attr('n');
-      staff_info = me.currentStaffInfos[staff_n];
+      staff_info = me.currentStaveInfos[staff_n];
       if (staff_info) {
         staff_info.updateDef(staffDef, me.scoreDefElement);
       } else {
-        me.currentStaffInfos[staff_n] = new m2v.StaffInfo(staffDef, me.scoreDefElement, true, true, true);
+        me.currentStaveInfos[staff_n] = new StaveInfo(staffDef, me.scoreDefElement, true, true, true);
       }
       return staff_n;
     }
   };
 
-  return m2v;
+  return SystemInfo;
 
-}(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+});

@@ -22,20 +22,11 @@
  * the License.
  */
 
-var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
+define([
+  'vexflow',
+  'm2v/voice/StaveVoice'
+], function (VF, StaveVoice, undefined) {
 
-  /**
-   * @class MEI2VF.StaffVoice
-   * @private
-   *
-   * @constructor
-   * @param {Object} voice
-   * @param {Object} staff_n
-   */
-  m2v.StaffVoice = function(voice, staff_n) {
-    this.voice = voice;
-    this.staff_n = staff_n;
-  };
 
   /**
    * @class MEI2VF.StaveVoices
@@ -46,25 +37,25 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
    *
    * @constructor
    */
-  m2v.StaveVoices = function() {
+  var StaveVoices = function () {
     this.all_voices = [];
     this.formatter = new VF.Formatter();
   };
 
-  m2v.StaveVoices.prototype = {
-    addStaffVoice : function(staffVoice) {
+  StaveVoices.prototype = {
+    addStaffVoice : function (staffVoice) {
       this.all_voices.push(staffVoice);
     },
 
-    addVoice : function(voice, staff_n) {
-      this.addStaffVoice(new m2v.StaffVoice(voice, staff_n));
+    addVoice : function (voice, staff_n) {
+      this.addStaffVoice(new StaveVoice(voice, staff_n));
     },
 
-    reset : function() {
+    reset : function () {
       this.all_voices = [];
     },
 
-    preFormat : function() {
+    preFormat : function () {
       var me = this, all, staff_n, i;
       all = me.all_voices;
       me.vexVoices = [];
@@ -88,31 +79,32 @@ var MEI2VF = ( function(m2v, MeiLib, VF, $, undefined) {
      * @param {Object} staff a staff in the current measure used to set
      * the x dimensions of the voice
      */
-    format : function(staff) {
+    format : function (staff) {
 
       var me = this, i, f, alignRests;
       f = me.formatter;
       for (i in me.vexVoicesStaffWise) {
         alignRests = (me.vexVoicesStaffWise[i].length > 1);
 
-        f.joinVoices(me.vexVoicesStaffWise[i], {align_rests: alignRests});
+        f.joinVoices(me.vexVoicesStaffWise[i], {align_rests : alignRests});
       }
 
       // TODO make formatter handle simultaneous staves where rests are aligned and staves where
       // they aren't
       //f.formatToStave(me.vexVoices, staff, {align_rests: true});
-      f.formatToStave(me.vexVoices, staff, {align_rests: false});
+      f.formatToStave(me.vexVoices, staff, {align_rests : false});
     },
 
-    draw : function(context, staves) {
+    draw : function (context, staves) {
       var i, staffVoice, all_voices = this.all_voices;
-      for ( i = 0; i < all_voices.length; ++i) {
+      for (i = 0; i < all_voices.length; ++i) {
         staffVoice = all_voices[i];
         staffVoice.voice.draw(context, staves[staffVoice.staff_n]);
       }
     }
   };
 
-  return m2v;
 
-}(MEI2VF || {}, MeiLib, Vex.Flow, jQuery));
+  return StaveVoices;
+
+});
