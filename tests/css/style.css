@@ -1,0 +1,18 @@
+.test-page {
+    padding: 2em;
+    text-align: center
+}
+
+canvas, svg {
+    background: #fff;
+}
+
+body {
+    text-align: center;
+    background: #eee;
+}
+
+.jasmine_html-reporter {
+ margin-bottom: 2em;
+    text-align:left;
+}

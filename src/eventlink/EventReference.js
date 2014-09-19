@@ -48,6 +48,7 @@ define([
     setTStamp : function (tstamp) {
       this.tstamp = tstamp;
       if (this.xmlid) {
+        // aerhard: unnecessary parameter
         this.tryResolveReference(true);
       }
     },

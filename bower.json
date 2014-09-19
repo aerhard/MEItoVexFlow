@@ -25,6 +25,7 @@
     "raphael": "~2.1.2"
   },
   "devDependencies": {
-    "requirejs": "~2.1.2"
+    "requirejs": "~2.1.2",
+    "jasmine": "~2.0.4"
   }
 }
