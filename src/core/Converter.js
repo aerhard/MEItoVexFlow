@@ -60,13 +60,14 @@ define([
   'm2v/eventpointer/Fermatas',
   'm2v/eventpointer/Ornaments',
   'm2v/lyrics/Verses',
+  'm2v/lyrics/Syllable',
   'm2v/stave/Stave',
   'm2v/measure/Measure',
   'm2v/system/System',
   'm2v/system/SystemInfo',
   'm2v/core/Tables',
   'm2v/voice/StaveVoices'
-], function ($, VF, MeiLib, Logger, RuntimeError, Util, Note, Chord, Rest, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments, Verses, Stave, Measure, System, SystemInfo, Tables, StaveVoices, undefined) {
+], function ($, VF, MeiLib, Logger, RuntimeError, Util, Note, Chord, Rest, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments, Verses, Syllable, Stave, Measure, System, SystemInfo, Tables, StaveVoices, undefined) {
 
   /**
    * Converts an MEI XML document / document fragment to VexFlow objects and
@@ -1700,7 +1701,7 @@ define([
      * @method createAnnot
      */
     createSyllable : function (text, annotFont) {
-      return (new VF.Syllable(text)).setFont(annotFont.family, annotFont.size, annotFont.weight);
+      return (new Syllable(text)).setFont(annotFont.family, annotFont.size, annotFont.weight);
     },
 
     // Support for annotations
