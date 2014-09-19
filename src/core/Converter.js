@@ -1299,11 +1299,11 @@ define([
      * @method processRest
      */
     processRest : function (element, staff, staff_n) {
-      var me = this, dur, rest, xml_id, atts, clef;
+      var me = this, duration, rest, xml_id, atts, clef;
       try {
         atts = Util.attsToObj(element);
 
-        dur = me.processAttsDuration(element, true);
+        duration = me.processAttsDuration(element, true);
         // assign whole rests to the fourth line, all others to the
         // middle line:
 
@@ -1314,10 +1314,13 @@ define([
           clef : clef.type,
           octave_shift : clef.shift
         } : {
-                         keys : [(dur === 'w') ? 'd/5' : 'b/4']
+                         keys : [(duration === 'w') ? 'd/5' : 'b/4']
                        };
 
-        restOpts.duration = dur + 'r';
+        if (atts.dots) {
+          duration += 'd';
+        }
+        restOpts.duration = duration + 'r';
 
         rest = new Rest(restOpts);
 
