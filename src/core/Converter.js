@@ -49,6 +49,7 @@ define([
   'm2v/core/Logger',
   'm2v/core/RuntimeError',
   'm2v/core/Util',
+  'm2v/event/EventUtil',
   'm2v/event/Note',
   'm2v/event/Chord',
   'm2v/event/Rest',
@@ -67,7 +68,7 @@ define([
   'm2v/system/SystemInfo',
   'm2v/core/Tables',
   'm2v/voice/StaveVoices'
-], function ($, VF, MeiLib, Logger, RuntimeError, Util, Note, Chord, Rest, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments, Verses, Syllable, Stave, Measure, System, SystemInfo, Tables, StaveVoices, undefined) {
+], function ($, VF, MeiLib, Logger, RuntimeError, Util, EventUtil, Note, Chord, Rest, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments, Verses, Syllable, Stave, Measure, System, SystemInfo, Tables, StaveVoices, undefined) {
 
   /**
    * Converts an MEI XML document / document fragment to VexFlow objects and
@@ -1038,12 +1039,12 @@ define([
 
         clef = me.systemInfo.getClef(staff_n);
 
-        vexPitch = me.getVexPitch(element);
+        vexPitch = EventUtil.getVexPitch(element);
 
         note_opts = {
           keys : [vexPitch],
           clef : clef.type,
-          duration : me.processAttsDuration(element),
+          duration : EventUtil.processAttsDuration(element),
           octave_shift : clef.shift
         };
 
@@ -1082,10 +1083,10 @@ define([
         }
 
         if (mei_accid) {
-          me.processAttrAccid(mei_accid, note, 0);
+          EventUtil.processAttrAccid(mei_accid, note, 0);
         }
         if (mei_ho) {
-          me.processAttrHo(mei_ho, note, staff);
+          EventUtil.processAttrHo(mei_ho, note, staff);
         }
 
         $.each($(element).find('artic'), function () {
@@ -1164,16 +1165,16 @@ define([
 
       try {
         if (durAtt) {
-          duration = me.translateDuration(+durAtt);
+          duration = EventUtil.translateDuration(+durAtt);
         } else {
           for (i = 0, j = children.length; i < j; i += 1) {
             durations.push(+children[i].getAttribute('dur'));
           }
-          duration = me.translateDuration(Math.max.apply(Math, durations));
+          duration = EventUtil.translateDuration(Math.max.apply(Math, durations));
         }
 
         for (i = 0, j = children.length; i < j; i += 1) {
-          keys.push(me.getVexPitch(children[i]));
+          keys.push(EventUtil.getVexPitch(children[i]));
           // dots.push(+children[i].getAttribute('dots'));
           if (children[i].getAttribute('dots') === '1') {
             hasDots = true;
@@ -1215,7 +1216,7 @@ define([
           chord.addDotToAll();
         }
         if (atts.ho) {
-          me.processAttrHo(atts.ho, chord, staff);
+          EventUtil.processAttrHo(atts.ho, chord, staff);
         }
         $(element).find('artic').each(function () {
           me.addArticulation(chord, this);
@@ -1268,7 +1269,7 @@ define([
 
       atts = Util.attsToObj(element);
 
-      vexPitch = me.getVexPitch(element);
+      vexPitch = EventUtil.getVexPitch(element);
 
       xml_id = MeiLib.XMLID(element);
 
@@ -1288,7 +1289,7 @@ define([
       };
 
       if (atts.accid) {
-        me.processAttrAccid(atts.accid, chord, i);
+        EventUtil.processAttrAccid(atts.accid, chord, i);
       }
       if (atts.fermata) {
         me.fermatas.addFermataToNote(chord, atts.fermata, i);
@@ -1303,7 +1304,8 @@ define([
       try {
         atts = Util.attsToObj(element);
 
-        duration = me.processAttsDuration(element, true);
+        duration = EventUtil.processAttsDuration(element, true);
+
         // assign whole rests to the fourth line, all others to the
         // middle line:
 
@@ -1327,7 +1329,7 @@ define([
         xml_id = MeiLib.XMLID(element);
 
         if (atts.ho) {
-          me.processAttrHo(atts.ho, rest, staff);
+          EventUtil.processAttrHo(atts.ho, rest, staff);
         }
 
         if (me.currentClefChangeProperty) {
@@ -1397,7 +1399,7 @@ define([
         xml_id = MeiLib.XMLID(element);
 
         if (atts.ho) {
-          me.processAttrHo(atts.ho, mRest, staff);
+          EventUtil.processAttrHo(atts.ho, mRest, staff);
         }
         if (atts.fermata) {
           me.fermatas.addFermataToNote(mRest, atts.fermata);
@@ -1424,7 +1426,7 @@ define([
       var me = this, space, xml_id;
       try {
         space = new VF.GhostNote({
-          duration : me.processAttsDuration(element, true) + 'r'
+          duration : EventUtil.processAttsDuration(element, true) + 'r'
         });
         space.setStave(staff);
         return {
@@ -1544,26 +1546,6 @@ define([
     },
 
     /**
-     * @method processAttrAccid
-     */
-    processAttrAccid : function (mei_accid, vexObject, i) {
-      var val = Tables.accidentals[mei_accid];
-      if (val) {
-        vexObject.addAccidental(i, new VF.Accidental(val));
-      } else {
-        Logger.log('warn', 'Encoding error', 'Invalid accidental "' + mei_accid + '". Skipping.');
-      }
-    },
-
-    /**
-     * @method processAttrHo
-     */
-    processAttrHo : function (mei_ho, vexObject, staff) {
-      var me = this;
-      vexObject.setExtraLeftPx(+mei_ho * staff.getSpacingBetweenLines() / 2);
-    },
-
-    /**
      * @method processAttrTie
      */
     processAttrTie : function (mei_tie, xml_id, vexPitch, staff_n) {
@@ -1637,25 +1619,6 @@ define([
     },
 
     /**
-     * converts the pitch of an MEI <b>note</b> element to a VexFlow pitch
-     *
-     * @method getVexPitch
-     * @param {XMLElement} mei_note
-     * @return {String} the VexFlow pitch
-     */
-    getVexPitch : function (mei_note) {
-      var pname, oct;
-      pname = $(mei_note).attr('pname');
-      oct = $(mei_note).attr('oct');
-      if (!pname || !oct) {
-        Logger.log('warn', 'Encoding error', '@pname and @oct must be specified in ' + Util.serializeElement(mei_note) +
-                                             '". Setting default pitch C4.');
-        return 'C/4';
-      }
-      return pname + '/' + oct;
-    },
-
-    /**
      * adds an articulation to a note-like object
      * @method addArticulation
      * @param {Vex.Flow.StaveNote} note the note-like VexFlow object
@@ -1724,48 +1687,6 @@ define([
         throw new RuntimeError('MEI2VF.RERR.MissingAttribute', 'Attribute ' + attribute + ' is mandatory.');
       }
       return result;
-    },
-
-    /**
-     * @method translateDuration
-     */
-    translateDuration : function (mei_dur) {
-      var result = Tables.durations[mei_dur + ''], alias;
-      alias = {
-        'brevis' : 'breve',
-        'longa' : 'long'
-      };
-      if (result) {
-        return result;
-      }
-      if (alias[mei_dur]) {
-        Logger.log('info', 'Not supported', 'Duration "' + mei_dur + '" is not supported. Using "' + alias[mei_dur] +
-                                            '" instead.');
-        return Tables.durations[alias[mei_dur] + ''];
-      }
-
-      Logger.log('warn', 'Not supported', 'Duration "' + mei_dur +
-                                          '" is not supported. Using "4" instead. May lead to display errors.');
-      return Tables.durations['4'];
-    },
-
-    /**
-     * @method processAttsDuration
-     */
-    processAttsDuration : function (mei_note, noDots) {
-      var me = this, dur, dur_attr;
-
-      dur_attr = $(mei_note).attr('dur');
-      if (dur_attr === undefined) {
-        Logger.log('warn', '@dur expected', 'No duration attribute found in ' + Util.serializeElement(mei_note) +
-                                            '. Using "4" instead.');
-        dur_attr = '4';
-      }
-      dur = me.translateDuration(dur_attr);
-      if (!noDots && $(mei_note).attr('dots') === '1') {
-        dur += 'd';
-      }
-      return dur;
     },
 
     /**
