@@ -1,5 +1,21 @@
 define(['vexflow'], function (VF, undefined) {
 
+  Vex.Flow.Annotation.prototype.setMeiElement = function (element) {
+    this.meiElement = element;
+    return this;
+  };
+  Vex.Flow.Annotation.prototype.getMeiElement = function () {
+    return this.meiElement;
+  };
+  Vex.Flow.Articulation.prototype.setMeiElement = function (element) {
+    this.meiElement = element;
+    return this;
+  };
+  Vex.Flow.Articulation.prototype.getMeiElement = function () {
+    return this.meiElement;
+  };
+
+
   // Vex Flow Notation
   // Implements key signatures
   //

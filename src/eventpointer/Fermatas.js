@@ -32,7 +32,7 @@ define([
         model = me.allModels[i];
         note = notes_by_id[model.startid];
         if (note) {
-          me.addFermataToNote(note.vexNote, model.atts.place);
+          me.addFermataToNote(note.vexNote, model.element, model.atts.place);
         } else {
           console.log(model);
           Logger.log('warn', 'Input error', Util.serializeElement(model.element) +
@@ -47,12 +47,14 @@ define([
      * adds a fermata to a note-like object
      * @method addFermataToNote
      * @param {Vex.Flow.StaveNote} note the note-like VexFlow object
+     * @param {Element} element the element containing the fermata specifications
      * @param {'above'/'below'} place The place of the fermata
      * @param {Number} index The index of the note in a chord (optional)
      */
-    addFermataToNote : function (note, place, index) {
+    addFermataToNote : function (note, element, place, index) {
       var vexArtic = new VF.Articulation(Tables.fermata[place]);
       vexArtic.setPosition(Tables.positions[place]);
+      vexArtic.setMeiElement(element);
       note.addArticulation(index || 0, vexArtic);
     }
   });

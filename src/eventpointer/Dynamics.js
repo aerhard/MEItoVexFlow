@@ -33,7 +33,7 @@ define([
         note = notes_by_id[model.startid];
         if (note) {
           annot =
-          (new VF.Annotation($(model.element).text().trim())).setFont(me.font.family, me.font.size, me.font.weight);
+          (new VF.Annotation($(model.element).text().trim())).setFont(me.font.family, me.font.size, me.font.weight).setMeiElement(model.element);
 
           // TEMPORARY: set width of modifier to zero so voices with modifiers
           // don't get too much width; remove when the width calculation in

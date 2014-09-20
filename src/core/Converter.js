@@ -1093,7 +1093,7 @@ define([
           me.addArticulation(note, this);
         });
         if (atts.fermata) {
-          me.fermatas.addFermataToNote(note, atts.fermata);
+          me.fermatas.addFermataToNote(note, element, atts.fermata);
         }
 
         // FIXME For now, we'll remove any child nodes of <note>
@@ -1222,7 +1222,7 @@ define([
           me.addArticulation(chord, this);
         });
         if (atts.fermata) {
-          me.fermatas.addFermataToNote(chord, atts.fermata);
+          me.fermatas.addFermataToNote(chord, element, atts.fermata);
         }
 
         me.notes_by_id[xml_id] = {
@@ -1292,7 +1292,7 @@ define([
         EventUtil.processAttrAccid(atts.accid, chord, i);
       }
       if (atts.fermata) {
-        me.fermatas.addFermataToNote(chord, atts.fermata, i);
+        me.fermatas.addFermataToNote(chord, element, atts.fermata, i);
       }
     },
 
@@ -1342,7 +1342,7 @@ define([
           rest.addDotToAll();
         }
         if (atts.fermata) {
-          me.fermatas.addFermataToNote(rest, atts.fermata);
+          me.fermatas.addFermataToNote(rest, element, atts.fermata);
         }
         me.notes_by_id[xml_id] = {
           meiNote : element,
@@ -1402,7 +1402,7 @@ define([
           EventUtil.processAttrHo(atts.ho, mRest, staff);
         }
         if (atts.fermata) {
-          me.fermatas.addFermataToNote(mRest, atts.fermata);
+          me.fermatas.addFermataToNote(mRest, element, atts.fermata);
         }
         mRest.setStave(staff);
         me.notes_by_id[xml_id] = {
@@ -1627,7 +1627,7 @@ define([
     addArticulation : function (note, element) {
       var articCode = Tables.articulations[element.getAttribute('artic')];
       if (articCode) {
-        var vexArtic = new VF.Articulation(articCode);
+        var vexArtic = new VF.Articulation(articCode).setMeiElement(element);
         var place = element.getAttribute('place');
         if (place) {
           vexArtic.setPosition(Tables.positions[place]);
