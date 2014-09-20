@@ -34,6 +34,12 @@ define([
         if (note) {
           annot =
           (new VF.Annotation($(model.element).text().trim())).setFont(me.font.family, me.font.size, me.font.weight);
+
+          // TEMPORARY: set width of modifier to zero so voices with modifiers
+          // don't get too much width; remove when the width calculation in
+          // VexFlow does distinguish between different y values when
+          // calculating the width of tickables
+          annot.setWidth(0);
           if (model.atts.place === 'above') {
             note.vexNote.addAnnotation(0, annot);
           } else {

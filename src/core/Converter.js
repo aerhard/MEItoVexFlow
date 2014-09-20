@@ -1655,6 +1655,7 @@ define([
         if (syl) {
           vexSyllable =
           me.createSyllable(syl.text, me.cfg.lyricsFont).setVerticalJustification(me.BOTTOM).setLineSpacing(me.cfg.lyricsFont.spacing);
+          vexSyllable.setMeiElement(this);
           note.addAnnotation(0, vexSyllable);
 
           me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, syl.wordpos, syl.verse_n, staff_n);

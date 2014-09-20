@@ -79,20 +79,18 @@ define([
      * @param {Object} staff a staff in the current measure used to set
      * the x dimensions of the voice
      */
-    format : function (staff) {
-
+    format : function (stave) {
       var me = this, i, f, alignRests;
       f = me.formatter;
       for (i in me.vexVoicesStaffWise) {
         alignRests = (me.vexVoicesStaffWise[i].length > 1);
-
-        f.joinVoices(me.vexVoicesStaffWise[i], {align_rests : alignRests});
+        f.joinVoices(me.vexVoicesStaffWise[i]);
+        if (alignRests) f.alignRests(me.vexVoicesStaffWise[i],{align_rests : alignRests});
       }
 
-      // TODO make formatter handle simultaneous staves where rests are aligned and staves where
-      // they aren't
-      //f.formatToStave(me.vexVoices, staff, {align_rests: true});
-      f.formatToStave(me.vexVoices, staff, {align_rests : false});
+      var justifyWidth = stave.getNoteEndX() - stave.getNoteStartX() - 10;
+      f.createTickContexts(me.vexVoices);
+      f.preFormat(justifyWidth, stave.getContext(), me.vexVoices, null);
     },
 
     draw : function (context, staves) {

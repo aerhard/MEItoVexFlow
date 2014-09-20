@@ -19,19 +19,16 @@ define([
       it(title, function () {
 
         var render = function () {
-          var canvas; // undefined
-
+          var canvas;
 
           if (backend === Vex.Flow.Renderer.Backends.RAPHAEL) {
             testItemHtmlTemplate = "<h2><span class='test-title' property='dc:title'>Title of Test Comes Here</span></h2><div class='a'><svg id='svg"+i+"'></svg></div>";
             $(document.body).append(testItemHtmlTemplate);
-
             canvas = $("svg").last().get(0);
           } else {
-            $(document.body).append(testItemHtmlTemplate);
             testItemHtmlTemplate = "<h2><span class='test-title' property='dc:title'>Title of Test Comes Here</span></h2><div class='a'><canvas width='1031' height='450' style='border: none'></canvas></div>";
+            $(document.body).append(testItemHtmlTemplate);
             canvas = $("canvas").last().get(0);
-
           }
 
           var titleElem = $("span.test-title").last().get(0);
@@ -60,7 +57,7 @@ define([
           window.console.log('Rendering... ');
           MEI2VF.render_notation(MEI, canvas, score_width, score_height, backend, input.options);
           window.console.log('Done (' + input.title + ')');
-        }
+        };
 
         if (input.fail === true) {
           expect(function() {
@@ -68,8 +65,8 @@ define([
           } ).toThrow("stopped flow for debugging");
         } else {
           render();
+          expect(true).toBe(true);
         }
-        expect(true).toBe(true);
       });
     }
 

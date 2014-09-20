@@ -41,18 +41,29 @@ define([
 
   EventReference.prototype = {
 
+    /**
+     * @public
+     * @param xmlid
+     */
     setId : function (xmlid) {
       this.xmlid = xmlid;
     },
 
+    /**
+     * @public
+     * @param tstamp
+     */
     setTStamp : function (tstamp) {
       this.tstamp = tstamp;
       if (this.xmlid) {
-        // aerhard: unnecessary parameter
+        // parameter not used in callee:
         this.tryResolveReference(true);
       }
     },
 
+    /**
+     * @private
+     */
     tryResolveReference : function () {
       var tstamp, meicontext;
       tstamp = this.tstamp;
@@ -70,7 +81,7 @@ define([
 
     /**
      * @param params {
-       *            meicontext, strict }; both parameters are optional;
+     *            meicontext, strict }; both parameters are optional;
      *            meicontext is an obejct { layer, meter }; strict is
      *            boolean, false if not defined.
      *
@@ -85,12 +96,18 @@ define([
       if (this.tstamp && this.meicontext) {
         // look up the closest event to tstamp within
         // this.meicontext and return its ID
+
+        // parameter not used in callee:
         this.tryResolveReference(params && params.strict);
         return this.xmlid;
       }
       return null;
     },
 
+    /**
+     * @public
+     * @param meicontext
+     */
     setContext : function (meicontext) {
       this.meicontext = meicontext;
     }

@@ -65,7 +65,7 @@ define([
     },
 
     createVexFromInfos : function () {
-      throw new RuntimeError('MEI2VF.DEVELOPMENT_ERROR.createVexFromInfos', 'You have to provide a createVexFromInfos method when inheriting MEI2VF.EventPointerCollection.');
+      throw new RuntimeError('MEI2VF.MISSING_METHOD.createVexFromInfos', 'You have to provide a createVexFromInfos method when inheriting MEI2VF.EventPointerCollection.');
     },
 
     createInfos : function (elements, measureElement) {
