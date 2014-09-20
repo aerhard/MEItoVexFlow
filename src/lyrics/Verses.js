@@ -33,9 +33,8 @@ define([
    */
   var Verses = function (config) {
     var me = this;
-    me.hyphensByVerse = {};
-    me.syllablesByVerse = {};
-    me.verseYs = {};
+    me.systemVerses = {};
+    me.lowestYs = {};
     me.font = config.font;
     me.maxHyphenDistance = config.maxHyphenDistance;
   };
@@ -55,23 +54,42 @@ define([
       var wordpos = $(element).attr('wordpos');
       var verse_n = $(element).parents('verse').attr('n') || '1';
 
-      if (!me.syllablesByVerse[verse_n]) {
-        me.syllablesByVerse[verse_n] = [];
+      if (!me.systemVerses[staff_n]) {
+        me.systemVerses[staff_n] = {};
       }
-      me.syllablesByVerse[verse_n].push(annot);
+
+      if (!me.systemVerses[staff_n][verse_n]) {
+        me.systemVerses[staff_n][verse_n] = {
+          syllables: [],
+          hyphenation : me.newHyphenation()
+        };
+      }
+
+      me.systemVerses[staff_n][verse_n].syllables.push(annot);
+
       if (wordpos) {
-        if (!me.hyphensByVerse[verse_n]) {
-          me.hyphensByVerse[verse_n] = me.newHyphenation();
-        }
-        me.hyphensByVerse[verse_n].addSyllable(annot, wordpos, staff_n);
+        me.systemVerses[staff_n][verse_n].hyphenation.addSyllable(annot, wordpos);
       }
       return me;
     },
 
-    getLowestY : function () {
-      return this.lowestY;
+    /**
+     * @public
+     */
+    getLowestYs : function () {
+      return this.lowestYs;
     },
 
+    /**
+     * @public
+     */
+    getLowestY : function (staff_n) {
+      return this.lowestYs[staff_n];
+    },
+
+    /**
+     * @private
+     */
     newHyphenation : function () {
       return new Hyphenation(this.font, this.maxHyphenDistance);
     },
@@ -81,26 +99,31 @@ define([
      * @returns {MEI2VF.Verses}
      */
     format : function () {
-      var me = this, verse_n, text_line, verse, i, j, lowestY = -20;
+      var me = this, staff_n, verse_n, text_line, verse, i, j, lowestY, padding;
 
-      var padding = 20;
+      padding = 20;
 
-      text_line = 0;
-      for (verse_n in me.syllablesByVerse) {
-        verse = me.syllablesByVerse[verse_n];
-        lowestY += padding;
-        // first pass: get lowest y
-        for (i = 0, j = verse.length; i < j; i++) {
-          verse[i].setTextLine(text_line);
-          lowestY = Math.max(lowestY, verse[i].preProcess());
+      for (staff_n in me.systemVerses) {
+        text_line = 0;
+        lowestY = -20;
+
+        for (verse_n in me.systemVerses[staff_n]) {
+          verse = me.systemVerses[staff_n][verse_n].syllables;
+          lowestY += padding;
+          // first pass: get lowest y
+          for (i = 0, j = verse.length; i < j; i++) {
+            verse[i].setTextLine(text_line);
+            lowestY = Math.max(lowestY, verse[i].preProcess());
+          }
+          // second pass: set lowest y
+          for (i = 0; i < j; i++) {
+            verse[i].setY(lowestY);
+          }
+          text_line += 1;
         }
-        // second pass: set lowest y
-        for (i = 0; i < j; i++) {
-          verse[i].setY(lowestY);
-        }
-        text_line += 1;
+        me.lowestYs[staff_n] = lowestY;
+
       }
-      me.lowestY = lowestY;
       return me;
     },
 
@@ -112,9 +135,11 @@ define([
      * @returns {MEI2VF.Verses}
      */
     drawHyphens : function (ctx, leftX, rightX) {
-      var me = this, verse_n;
-      for (verse_n in me.hyphensByVerse) {
-        me.hyphensByVerse[verse_n].setContext(ctx).draw(leftX, rightX);
+      var me = this, staff_n, verse_n;
+      for (staff_n in me.systemVerses) {
+        for (verse_n in me.systemVerses[staff_n]) {
+          me.systemVerses[staff_n][verse_n].hyphenation.setContext(ctx).draw(leftX, rightX);
+        }
       }
       return me;
     }

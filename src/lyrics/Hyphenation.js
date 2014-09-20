@@ -22,7 +22,6 @@ define([
   'vexflow'
 ], function (VF, undefined) {
 
-
   /**
    * @class MEI2VF.Hyphenation
    * @private
@@ -44,14 +43,11 @@ define([
      */
     WORD_SEPARATOR : null,
 
-    addSyllable : function (annot, wordpos, staff_n) {
+    addSyllable : function (annot, wordpos) {
       var me = this;
-      if (!me.allSyllables[staff_n]) {
-        me.allSyllables[staff_n] = [];
-      }
-      if (wordpos === 'i') me.allSyllables[staff_n].push(me.WORD_SEPARATOR);
-      me.allSyllables[staff_n].push(annot);
-      if (wordpos === 't') me.allSyllables[staff_n].push(me.WORD_SEPARATOR);
+      if (wordpos === 'i') me.allSyllables.push(me.WORD_SEPARATOR);
+      me.allSyllables.push(annot);
+      if (wordpos === 't') me.allSyllables.push(me.WORD_SEPARATOR);
     },
 
     setContext : function (ctx) {
@@ -60,43 +56,37 @@ define([
     },
 
     draw : function (leftX, rightX) {
-      var me = this, i, k, first, second, hyphenWidth;
+      var me = this, i, first, second, hyphenWidth;
 
       me.ctx.setFont(me.font.family, me.font.size, me.font.weight);
 
       hyphenWidth = me.ctx.measureText('-').width;
 
-      i = me.allSyllables.length;
+      i = me.allSyllables.length + 1;
       while (i--) {
-        if (me.allSyllables[i]) {
+        first = me.allSyllables[i - 1];
+        second = me.allSyllables[i];
 
-          k = me.allSyllables[i].length + 1;
-          while (k--) {
-            first = me.allSyllables[i][k - 1];
-            second = me.allSyllables[i][k];
-
-            if (first !== me.WORD_SEPARATOR && second !== me.WORD_SEPARATOR) {
-              var opts = {
-                hyphen_width : hyphenWidth,
-                max_hyphen_distance : me.maxHyphenDistance
-              };
-              if (first === undefined) {
-                // we're at the start of a system
-                opts.first_annot = { x : leftX };
-              } else {
-                opts.first_annot = first;
-              }
-              if (second === undefined) {
-                // we're at the end of a system
-                opts.last_annot = { x : rightX };
-              } else {
-                opts.last_annot = second;
-              }
-              if (opts.first_annot.y || opts.last_annot.y) {
-                var h = new VF.Hyphen(opts);
-                h.setContext(me.ctx).renderHyphen();
-              }
-            }
+        if (first !== me.WORD_SEPARATOR && second !== me.WORD_SEPARATOR) {
+          var opts = {
+            hyphen_width : hyphenWidth,
+            max_hyphen_distance : me.maxHyphenDistance
+          };
+          if (first === undefined) {
+            // we're at the start of a system
+            opts.first_annot = { x : leftX };
+          } else {
+            opts.first_annot = first;
+          }
+          if (second === undefined) {
+            // we're at the end of a system
+            opts.last_annot = { x : rightX };
+          } else {
+            opts.last_annot = second;
+          }
+          if (opts.first_annot.y || opts.last_annot.y) {
+            var h = new VF.Hyphen(opts);
+            h.setContext(me.ctx).renderHyphen();
           }
         }
       }
