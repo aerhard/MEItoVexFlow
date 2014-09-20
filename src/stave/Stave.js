@@ -18,11 +18,64 @@ define([
   'vexflow',
 ], function (VF, undefined) {
 
-  var Stave = function () {
-    this.init();
+  /**
+   * Creates a new Stave object at the specified y coordinate. This
+   * method sets fixed x coordinates, which will later be substituted in
+   * {@link MEI2VF.System#format} - the Vex.Flow.Stave
+   * objects must be initialized with some x measurements, but the real
+   * values depend on values only available after modifiers, voices etc
+   * have been added.
+   *
+   * @constructor
+   * @param {Object} cfg
+   */
+  var Stave = function (cfg) {
+    var me = this;
+
+    me.init(0, cfg.y, 1000, {
+      vertical_bar_width : 20, // 10 // Width around vertical bar end-marker
+      top_text_position : 1.5, // 1 // in staff lines
+      fill_style : me.lineColor
+    });
+    me.options.bottom_text_position = 6.5;
+
+    me.setSystem(cfg.system);
+
+    var leftBarline = cfg.leftBarline;
+    var rightBarline = cfg.rightBarline;
+
+    me.setBegBarType(leftBarline ? me.barlines[leftBarline] : me.barlines['invis']);
+    if (rightBarline) {
+      me.setEndBarType(me.barlines[rightBarline]);
+    }
+
   };
 
   Vex.Inherit(Stave, VF.Stave, {
+
+    lineColor : '#999999',
+
+    barlines : {
+      'single' : VF.Barline.type.SINGLE,
+      'dbl' : VF.Barline.type.DOUBLE,
+      'end' : VF.Barline.type.END,
+      'rptstart' : VF.Barline.type.REPEAT_BEGIN,
+      'rptend' : VF.Barline.type.REPEAT_END,
+      'rptboth' : VF.Barline.type.REPEAT_BOTH,
+      'invis' : VF.Barline.type.NONE
+    },
+
+    addVoltaFromInfo : function (volta) {
+      if (volta.start) {
+        this.setVoltaType(VF.Volta.type.BEGIN, volta.start + '.', 30);
+      } else if (volta.end) {
+        //TODO: fix type.BEGIN and type.END interference in vexflow, then remove else!
+        //[think through in which cases we actually need type.END]
+        this.setVoltaType(VF.Volta.type.END, "", 30);
+      } else if (!volta.start && !volta.end) {
+        this.setVoltaType(VF.Volta.type.MID, "", 30);
+      }
+    },
 
     // FIXME check if deviation of clef.shift between clef and end clef is OK
     addClefFromInfo : function (clef) {
@@ -41,7 +94,7 @@ define([
 
     addKeySpecFromInfo : function (keySpec, padding) {
       var me = this;
-      me.addModifier(new Vex.Flow.KeySignature(keySpec.key, padding));
+      me.addModifier(new VF.KeySignature(keySpec.key, padding));
 
       me.meiKeySpecElement = keySpec.meiElement;
     },

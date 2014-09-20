@@ -107,8 +107,49 @@ define([
     processAttrHo : function (mei_ho, vexObject, staff) {
       var me = this;
       vexObject.setExtraLeftPx(+mei_ho * staff.getSpacingBetweenLines() / 2);
-    }
+    },
 
+    /**
+     * adds an articulation to a note-like object
+     * @method addArticulation
+     * @param {Vex.Flow.StaveNote} note the note-like VexFlow object
+     * @param {XMLElement} element the articulation element
+     */
+    addArticulation : function (note, element) {
+      var articCode = Tables.articulations[element.getAttribute('artic')];
+      if (articCode) {
+        var vexArtic = new VF.Articulation(articCode).setMeiElement(element);
+        var place = element.getAttribute('place');
+        if (place) {
+          vexArtic.setPosition(Tables.positions[place]);
+        }
+        note.addArticulation(0, vexArtic);
+      } else {
+        Logger.log('warn', 'unknown @artic', 'The @artic attribute in ' + Util.serializeElement(element) +
+                                             ' is unknown or undefined. Skipping element.');
+      }
+    },
+
+    /**
+     * adds a fermata to a note-like object
+     * @method addFermata
+     * @param {Vex.Flow.StaveNote} note the note-like VexFlow object
+     * @param {Element} element the element containing the fermata specifications
+     * @param {'above'/'below'} place The place of the fermata
+     * @param {Number} index The index of the note in a chord (optional)
+     */
+    addFermata : function (note, element, place, index) {
+      var vexArtic = new VF.Articulation(Tables.fermata[place]);
+      vexArtic.setPosition(Tables.positions[place]);
+      vexArtic.setMeiElement(element);
+      note.addArticulation(index || 0, vexArtic);
+    },
+
+    addClefModifier : function (vexNote, prop) {
+      var clef = new VF.ClefNote(prop.type, 'small', prop.shift === -1 ? '8vb' : undefined);
+      vexNote.addModifier(0, new VF.GraceNoteGroup([clef], false));
+      clef.setOffsetLeft(25);
+    }
 
 
   };

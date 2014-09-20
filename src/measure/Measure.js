@@ -189,7 +189,7 @@ define([
         staff_n = this.getAttribute('staff');
         vexStaff = me.staffs[staff_n];
         offsetX = (vexStaff.getModifierXShift() > 0) ? -40 : 0;
-        vexStaff.modifiers.push(new Vex.Flow.StaveSection($(this).text(), vexStaff.x + offsetX, 0));
+        vexStaff.modifiers.push(new VF.StaveSection($(this).text(), vexStaff.x + offsetX, 0));
       });
     },
 

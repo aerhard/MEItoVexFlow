@@ -11,8 +11,11 @@ define([
 ], function (VF, undefined) {
 
 
-  var Syllable = function (text) {
-    if (arguments.length > 0) this.init(text);
+  var Syllable = function (element, font) {
+    this.init($(element).text());
+    this.setFont(font.family, font.size, font.weight);
+    this.setMeiElement(element);
+    this.setLineSpacing(font.spacing);
   };
 
   Syllable.CATEGORY = "annotations";
@@ -76,7 +79,9 @@ define([
       this.text_line = 0;
       this.text = text;
       this.justification = Syllable.Justify.CENTER;
-      this.vert_justification = Syllable.VerticalJustify.TOP;
+      // START MODIFICATION
+      this.vert_justification = Syllable.VerticalJustify.BOTTOM;
+      // END MODIFICATION
       this.font = {
         family : "Arial",
         // START MODIFICATION

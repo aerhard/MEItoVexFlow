@@ -119,17 +119,8 @@ define([
     fermata : {
       'above' : 'a@a',
       'below' : 'a@u'
-    },
-
-    barlines : {
-      'single' : VF.Barline.type.SINGLE,
-      'dbl' : VF.Barline.type.DOUBLE,
-      'end' : VF.Barline.type.END,
-      'rptstart' : VF.Barline.type.REPEAT_BEGIN,
-      'rptend' : VF.Barline.type.REPEAT_END,
-      'rptboth' : VF.Barline.type.REPEAT_BOTH,
-      'invis' : VF.Barline.type.NONE
     }
+
   };
 
   return Tables;

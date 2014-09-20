@@ -45,14 +45,16 @@ define([
     /**
      * @public
      * @param annot
-     * @param wordpos
-     * @param verse_n
+     * @param element
      * @param staff_n
      * @returns {MEI2VF.Verses}
      */
-    addSyllable : function (annot, wordpos, verse_n, staff_n) {
+    addSyllable : function (annot, element, staff_n) {
       var me = this;
-      verse_n = verse_n || '1';
+
+      var wordpos = $(element).attr('wordpos');
+      var verse_n = $(element).parents('verse').attr('n') || '1';
+
       if (!me.syllablesByVerse[verse_n]) {
         me.syllablesByVerse[verse_n] = [];
       }
@@ -98,7 +100,6 @@ define([
         }
         text_line += 1;
       }
-      ;
       me.lowestY = lowestY;
       return me;
     },
@@ -115,7 +116,6 @@ define([
       for (verse_n in me.hyphensByVerse) {
         me.hyphensByVerse[verse_n].setContext(ctx).draw(leftX, rightX);
       }
-      ;
       return me;
     }
 

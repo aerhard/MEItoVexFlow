@@ -1,17 +1,17 @@
 define(['vexflow'], function (VF, undefined) {
 
-  Vex.Flow.Annotation.prototype.setMeiElement = function (element) {
+  VF.Annotation.prototype.setMeiElement = function (element) {
     this.meiElement = element;
     return this;
   };
-  Vex.Flow.Annotation.prototype.getMeiElement = function () {
+  VF.Annotation.prototype.getMeiElement = function () {
     return this.meiElement;
   };
-  Vex.Flow.Articulation.prototype.setMeiElement = function (element) {
+  VF.Articulation.prototype.setMeiElement = function (element) {
     this.meiElement = element;
     return this;
   };
-  Vex.Flow.Articulation.prototype.getMeiElement = function () {
+  VF.Articulation.prototype.getMeiElement = function () {
     return this.meiElement;
   };
 
@@ -21,26 +21,26 @@ define(['vexflow'], function (VF, undefined) {
   //
   // Requires vex.js.
 
-  Vex.Flow.StaveNote.prototype.getTieRightX = function () {
+  VF.StaveNote.prototype.getTieRightX = function () {
     var tieStartX = this.getAbsoluteX();
     tieStartX += this.glyph.head_width + this.x_shift + this.extraRightPx;
     //if (this.modifierContext) tieStartX += this.modifierContext.getExtraRightPx();
     return tieStartX;
   };
 
-  Vex.Flow.StaveNote.prototype.getYForBottomText = function (text_line) {
+  VF.StaveNote.prototype.getYForBottomText = function (text_line) {
     var extents = this.getStemExtents();
     return Vex.Max(this.stave.getYForBottomText(text_line), extents.baseY +
                                                             (this.render_options.annotation_spacing * (text_line + 1)));
   };
 
   //######## start addition
-  Vex.Flow.ClefNote.prototype.setOffsetLeft = function (offset) {
+  VF.ClefNote.prototype.setOffsetLeft = function (offset) {
     this.offsetLeft = offset;
   };
   //######### end addition
 
-  Vex.Flow.ClefNote.prototype.draw = function () {
+  VF.ClefNote.prototype.draw = function () {
     if (!this.stave) throw new Vex.RERR("NoStave", "Can't draw without a stave.");
 
     if (!this.glyph.getContext()) {
@@ -55,9 +55,9 @@ define(['vexflow'], function (VF, undefined) {
     this.glyph.renderToStave(abs_x);
     // ##########END MODIFICATION
 
-    // If the Vex.Flow.Clef has an annotation, such as 8va, draw it.
+    // If the VF.Clef has an annotation, such as 8va, draw it.
     if (this.clef_obj.annotation !== undefined) {
-      var attachment = new Vex.Flow.Glyph(this.clef_obj.annotation.code, this.clef_obj.annotation.point);
+      var attachment = new VF.Glyph(this.clef_obj.annotation.code, this.clef_obj.annotation.point);
       if (!attachment.getContext()) {
         attachment.setContext(this.context);
       }
@@ -77,7 +77,7 @@ define(['vexflow'], function (VF, undefined) {
   //
   // This file implements key signatures. A key signature sits on a stave
   // and indicates the notes with implicit accidentals.
-  Vex.Flow.KeySignature = (function () {
+  VF.KeySignature = (function () {
     // MODIFIED: ADDED PARAMETER
     function KeySignature(keySpec, customPadding) {
       // MODIFIED: ADDED PARAMETER
@@ -102,7 +102,7 @@ define(['vexflow'], function (VF, undefined) {
     };
 
     // ## Prototype Methods
-    Vex.Inherit(KeySignature, Vex.Flow.StaveModifier, {
+    Vex.Inherit(KeySignature, VF.StaveModifier, {
       // Create a new Key Signature based on a `key_spec`
       // MODIFIED: ADDED PARAMETER
       init : function (key_spec, customPadding) {
@@ -113,15 +113,15 @@ define(['vexflow'], function (VF, undefined) {
         this.setPadding(padding);
 
         this.glyphFontScale = 38; // TODO(0xFE): Should this match StaveNote?
-        this.accList = Vex.Flow.keySignature(key_spec);
+        this.accList = VF.keySignature(key_spec);
       },
 
       // Add an accidental glyph to the `stave`. `acc` is the data of the
       // accidental to add. If the `next` accidental is also provided, extra
       // width will be added to the initial accidental for optimal spacing.
       addAccToStave : function (stave, acc, next) {
-        var glyph_data = Vex.Flow.accidentalCodes(acc.type);
-        var glyph = new Vex.Flow.Glyph(glyph_data.code, this.glyphFontScale);
+        var glyph_data = VF.accidentalCodes(acc.type);
+        var glyph = new VF.Glyph(glyph_data.code, this.glyphFontScale);
 
         // Determine spacing between current accidental and the next accidental
         var extra_width = 0;
@@ -141,7 +141,7 @@ define(['vexflow'], function (VF, undefined) {
       // place appropriate natural accidentals before the key signature.
       cancelKey : function (spec) {
         // Get the accidental list for the cancelled key signature
-        var cancel_accList = Vex.Flow.keySignature(spec);
+        var cancel_accList = VF.keySignature(spec);
 
         // If the cancelled key has a different accidental type, ie: # vs b
         var different_types = this.accList.length > 0 && cancel_accList[0].type !== this.accList[0].type;
@@ -329,7 +329,7 @@ define(['vexflow'], function (VF, undefined) {
    *
    * @constructor
    */
-  Vex.Flow.Hyphen = ( function () {
+  VF.Hyphen = ( function () {
     function Hyphen(config) {
       if (arguments.length > 0) {
         this.init(config);
@@ -419,27 +419,27 @@ define(['vexflow'], function (VF, undefined) {
 
 
   // use square breve glyph instead of VexFlow's ||O||
-  Vex.Flow.durationToGlyph.duration_codes['1/2'].type.n = {code_head : "noteheadDoubleWholeSquare"};
+  VF.durationToGlyph.duration_codes['1/2'].type.n = {code_head : "noteheadDoubleWholeSquare"};
 
   //fallback: remove when the CMN long is implemented in VexFlow
-  if (!Vex.Flow.durationToTicks.durations['1/4']) {
-    Vex.Flow.durationToTicks.durations['1/4'] = Vex.Flow.RESOLUTION / 0.25;
+  if (!VF.durationToTicks.durations['1/4']) {
+    VF.durationToTicks.durations['1/4'] = VF.RESOLUTION / 0.25;
   }
 
   // fallback: remove when the CMN long is implemented in VexFlow
-  if (!Vex.Flow.durationToGlyph.duration_codes['1/4']) {
-    Vex.Flow.durationToGlyph.duration_codes['1/4'] = {
+  if (!VF.durationToGlyph.duration_codes['1/4']) {
+    VF.durationToGlyph.duration_codes['1/4'] = {
       common : {
         head_width : 22,
         stem : false,
         stem_offset : 0,
         flag : false,
-        stem_up_extension : -Vex.Flow.STEM_HEIGHT,
-        stem_down_extension : -Vex.Flow.STEM_HEIGHT,
-        gracenote_stem_up_extension : -Vex.Flow.STEM_HEIGHT,
-        gracenote_stem_down_extension : -Vex.Flow.STEM_HEIGHT,
-        tabnote_stem_up_extension : -Vex.Flow.STEM_HEIGHT,
-        tabnote_stem_down_extension : -Vex.Flow.STEM_HEIGHT,
+        stem_up_extension : -VF.STEM_HEIGHT,
+        stem_down_extension : -VF.STEM_HEIGHT,
+        gracenote_stem_up_extension : -VF.STEM_HEIGHT,
+        gracenote_stem_down_extension : -VF.STEM_HEIGHT,
+        tabnote_stem_up_extension : -VF.STEM_HEIGHT,
+        tabnote_stem_down_extension : -VF.STEM_HEIGHT,
         dot_shiftY : 0,
         line_above : 0,
         line_below : 0
@@ -472,14 +472,14 @@ define(['vexflow'], function (VF, undefined) {
     };
   }
 
-  Vex.Flow.Font.glyphs["noteheadDoubleWholeSquare"] = {
+  VF.Font.glyphs["noteheadDoubleWholeSquare"] = {
     "x_min" : 0,
     "x_max" : 746,
     "ha" : 746,
     "o" : "0 0 117 0 1 1 560 560 1 -1 0 -1120 m 724 350 b 746 328 736 350 746 340 l 746 -328 b 724 -350 746 -339 736 -350 b 701 -328 711 -350 701 -339 l 701 -270 b 659 -234 701 -253 683 -234 l 83 -234 b 45 -276 67 -234 45 -256 l 45 -328 b 22 -350 45 -339 35 -350 b 0 -328 10 -350 0 -339 l 0 328 b 22 350 0 340 10 350 b 45 328 35 350 45 340 l 45 260 b 77 218 45 260 64 218 l 659 218 b 701 265 679 218 701 232 l 701 328 b 724 350 701 340 711 350 m 45 18 l 45 -36 b 146 -94 45 -70 83 -94 l 606 -94 b 701 -36 664 -94 701 -77 l 701 28 b 606 78 701 57 664 78 l 139 78 b 45 18 71 78 45 59 "
   };
   // NOT PART OF BRAVURA:
-  Vex.Flow.Font.glyphs["noteheadCMNLonga"] = {
+  VF.Font.glyphs["noteheadCMNLonga"] = {
     "x_min" : 0,
     "x_max" : 746,
     "ha" : 746,
@@ -495,7 +495,7 @@ define(['vexflow'], function (VF, undefined) {
   };
 
 
-  Vex.Flow.Curve.prototype.renderCurve = function (params) {
+  VF.Curve.prototype.renderCurve = function (params) {
     var ctx = this.context;
     var cps = this.render_options.cps;
 
@@ -535,9 +535,9 @@ define(['vexflow'], function (VF, undefined) {
   };
 
 
-  Vex.Flow.Curve.prototype.draw = function () {
+  VF.Curve.prototype.draw = function () {
     //#######start addition
-    var Curve = Vex.Flow.Curve;
+    var Curve = VF.Curve;
     //###########end addition
 
 
@@ -601,13 +601,13 @@ define(['vexflow'], function (VF, undefined) {
 
 
 
-  Vex.Flow.Annotation.prototype.draw = function () {
+  VF.Annotation.prototype.draw = function () {
     if (!this.context) throw new Vex.RERR("NoContext", "Can't draw text annotation without a context.");
     if (!this.note) throw new Vex.RERR("NoNoteForAnnotation", "Can't draw text annotation without an attached note.");
 
     // START ADDITION
-    var Annotation = Vex.Flow.Annotation;
-    var Modifier = Vex.Flow.Modifier;
+    var Annotation = VF.Annotation;
+    var Modifier = VF.Modifier;
     var L = function () {
     };
     // END ADDITION
@@ -715,7 +715,7 @@ define(['vexflow'], function (VF, undefined) {
    * @param {!Object} notes The notes to tie up.
    * @param {!Object} Options
    */
-  Vex.Flow.StaveTie = ( function () {
+  VF.StaveTie = ( function () {
     function StaveTie(notes, text) {
       if (arguments.length > 0) {
         this.init(notes, text);
@@ -928,12 +928,12 @@ define(['vexflow'], function (VF, undefined) {
   // Copyright Mohit Cheppudira 2010
 
   /** @constructor */
-  Vex.Flow.Stave = (function () {
+  VF.Stave = (function () {
     function Stave(x, y, width, options) {
       if (arguments.length > 0) this.init(x, y, width, options);
     }
 
-    var THICKNESS = (Vex.Flow.STAVE_LINE_THICKNESS > 1 ? Vex.Flow.STAVE_LINE_THICKNESS : 0);
+    var THICKNESS = (VF.STAVE_LINE_THICKNESS > 1 ? VF.STAVE_LINE_THICKNESS : 0);
     Stave.prototype = {
       init : function (x, y, width, options) {
         this.x = x;
@@ -967,8 +967,8 @@ define(['vexflow'], function (VF, undefined) {
 
         this.resetLines();
 
-        this.modifiers.push(new Vex.Flow.Barline(Vex.Flow.Barline.type.SINGLE, this.x)); // beg bar
-        this.modifiers.push(new Vex.Flow.Barline(Vex.Flow.Barline.type.SINGLE, this.x + this.width)); // end bar
+        this.modifiers.push(new VF.Barline(VF.Barline.type.SINGLE, this.x)); // beg bar
+        this.modifiers.push(new VF.Barline(VF.Barline.type.SINGLE, this.x + this.width)); // end bar
       },
 
       getGlyphStartX : function () {
@@ -998,7 +998,7 @@ define(['vexflow'], function (VF, undefined) {
 
         // Add additional space if left barline is REPEAT_BEGIN and there are other
         // start modifiers than barlines
-        if (this.modifiers[0].barline == Vex.Flow.Barline.type.REPEAT_BEGIN && this.modifiers.length > 2) {
+        if (this.modifiers[0].barline == VF.Barline.type.REPEAT_BEGIN && this.modifiers.length > 2) {
           start_x += 20;
         }
         return start_x;
@@ -1071,17 +1071,17 @@ define(['vexflow'], function (VF, undefined) {
       // Bar Line functions
       setBegBarType : function (type) {
         // Only valid bar types at beginning of stave is none, single or begin repeat
-        if (type == Vex.Flow.Barline.type.SINGLE || type == Vex.Flow.Barline.type.REPEAT_BEGIN ||
-            type == Vex.Flow.Barline.type.NONE) {
-          this.modifiers[0] = new Vex.Flow.Barline(type, this.x);
+        if (type == VF.Barline.type.SINGLE || type == VF.Barline.type.REPEAT_BEGIN ||
+            type == VF.Barline.type.NONE) {
+          this.modifiers[0] = new VF.Barline(type, this.x);
         }
         return this;
       },
 
       setEndBarType : function (type) {
         // Repeat end not valid at end of stave
-        if (type != Vex.Flow.Barline.type.REPEAT_BEGIN) {
-          this.modifiers[1] = new Vex.Flow.Barline(type, this.x + this.width);
+        if (type != VF.Barline.type.REPEAT_BEGIN) {
+          this.modifiers[1] = new VF.Barline(type, this.x + this.width);
         }
         return this;
       },
@@ -1113,36 +1113,36 @@ define(['vexflow'], function (VF, undefined) {
 
       // Coda & Segno Symbol functions
       setRepetitionTypeLeft : function (type, y) {
-        this.modifiers.push(new Vex.Flow.Repetition(type, this.x, y));
+        this.modifiers.push(new VF.Repetition(type, this.x, y));
         return this;
       },
 
       setRepetitionTypeRight : function (type, y) {
-        this.modifiers.push(new Vex.Flow.Repetition(type, this.x, y));
+        this.modifiers.push(new VF.Repetition(type, this.x, y));
         return this;
       },
 
       // Volta functions
       setVoltaType : function (type, number_t, y) {
-        this.modifiers.push(new Vex.Flow.Volta(type, number_t, this.x, y));
+        this.modifiers.push(new VF.Volta(type, number_t, this.x, y));
         return this;
       },
 
       // Section functions
       setSection : function (section, y) {
-        this.modifiers.push(new Vex.Flow.StaveSection(section, this.x, y));
+        this.modifiers.push(new VF.StaveSection(section, this.x, y));
         return this;
       },
 
       // Tempo functions
       setTempo : function (tempo, y) {
-        this.modifiers.push(new Vex.Flow.StaveTempo(tempo, this.x, y));
+        this.modifiers.push(new VF.StaveTempo(tempo, this.x, y));
         return this;
       },
 
       // Text functions
       setText : function (text, position, options) {
-        this.modifiers.push(new Vex.Flow.StaveText(text, position, options));
+        this.modifiers.push(new VF.StaveText(text, position, options));
         return this;
       },
 
@@ -1155,7 +1155,7 @@ define(['vexflow'], function (VF, undefined) {
       },
 
       getBoundingBox : function () {
-        return new Vex.Flow.BoundingBox(this.x, this.y, this.width, this.getBottomY() - this.y);
+        return new VF.BoundingBox(this.x, this.y, this.width, this.getBottomY() - this.y);
         // body...
       },
 
@@ -1233,33 +1233,33 @@ define(['vexflow'], function (VF, undefined) {
       },
 
       addKeySignature : function (keySpec) {
-        this.addModifier(new Vex.Flow.KeySignature(keySpec));
+        this.addModifier(new VF.KeySignature(keySpec));
         return this;
       },
 
       addClef : function (clef, size, annotation) {
         this.clef = clef;
-        this.addModifier(new Vex.Flow.Clef(clef, size, annotation));
+        this.addModifier(new VF.Clef(clef, size, annotation));
         return this;
       },
 
       addEndClef : function (clef, size, annotation) {
-        this.addEndModifier(new Vex.Flow.Clef(clef, size, annotation));
+        this.addEndModifier(new VF.Clef(clef, size, annotation));
         return this;
       },
 
       addTimeSignature : function (timeSpec, customPadding) {
-        this.addModifier(new Vex.Flow.TimeSignature(timeSpec, customPadding));
+        this.addModifier(new VF.TimeSignature(timeSpec, customPadding));
         return this;
       },
 
       addEndTimeSignature : function (timeSpec, customPadding) {
-        this.addEndModifier(new Vex.Flow.TimeSignature(timeSpec, customPadding));
+        this.addEndModifier(new VF.TimeSignature(timeSpec, customPadding));
       },
 
       addTrebleGlyph : function () {
         this.clef = "treble";
-        this.addGlyph(new Vex.Flow.Glyph("v83", 40));
+        this.addGlyph(new VF.Glyph("v83", 40));
         return this;
       },
 
@@ -1283,7 +1283,7 @@ define(['vexflow'], function (VF, undefined) {
           this.context.setFillStyle(this.options.fill_style);
           this.context.setStrokeStyle(this.options.fill_style);
           if (this.options.line_config[line].visible) {
-            this.context.fillRect(x, y, width, Vex.Flow.STAVE_LINE_THICKNESS);
+            this.context.fillRect(x, y, width, VF.STAVE_LINE_THICKNESS);
           }
           this.context.restore();
         }

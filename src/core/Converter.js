@@ -199,15 +199,6 @@ define([
         family : "Times",
         size : 17,
         weight : "bold"
-      },
-      /**
-       * @cfg {Object} staff The staff config object passed to each
-       * MEI2VF.Stave
-       */
-      staff : {
-        vertical_bar_width : 20, // 10 // Width around vertical bar end-marker
-        top_text_position : 1.5, // 1 // in staff lines
-        bottom_text_position : 6.5
       }
     },
 
@@ -735,7 +726,7 @@ define([
      * @param {Boolean} atSystemStart indicates if the current measure is the system's start measure
      */
     initializeMeasureStaffs : function (system, staffElements, left_barline, right_barline, atSystemStart) {
-      var me = this, staff, staff_n, staffs, isFirst = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaffs, newClef, currentStaveInfo;
+      var me = this, staff, staff_n, staffs, isFirstVolta = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaffs, newClef, currentStaveInfo;
 
       staffs = [];
 
@@ -753,15 +744,18 @@ define([
                                             ' does not contain an @n attribute. Proceeding in first staff.');
           staff_n = 1;
         }
-        staff = me.createVexStaff(system, staff_n);
+
+        staff = new Stave({
+          system: system,
+          y : system.getStaffYs()[staff_n],
+          leftBarline : left_barline,
+          rightBarline: right_barline
+        });
         staffs[staff_n] = staff;
 
-        staff.setBegBarType(left_barline ? Tables.barlines[left_barline] : VF.Barline.type.NONE);
-        if (right_barline) {
-          staff.setEndBarType(Tables.barlines[right_barline]);
-        }
-        if (isFirst && me.currentVoltaType) {
-          me.addStaffVolta(staff);
+        var currentVoltaType = me.currentVoltaType;
+        if (isFirstVolta && currentVoltaType) {
+          staff.addVoltaFromInfo(currentVoltaType);
         }
         if (precedingMeasureStaffs && precedingMeasureStaffs[staff_n]) {
           currentStaveInfo = me.systemInfo.getStaveInfo(staff_n);
@@ -780,7 +774,7 @@ define([
           clefOffsets[staff_n] = staff.getModifierXShift();
           maxClefOffset = Math.max(maxClefOffset, clefOffsets[staff_n]);
         }
-        isFirst = false;
+        isFirstVolta = false;
       });
 
       // second run: add key signatures; if the clefOffset of a staff is less than
@@ -817,50 +811,6 @@ define([
       });
 
       return staffs;
-    },
-
-    /**
-     * Creates a new Vex.Flow.Stave object at the specified y coordinate. This
-     * method sets fixed x coordinates, which will later be substituted in
-     * {@link MEI2VF.System#format} - the Vex.Flow.Stave
-     * objects must be initialized with some x measurements, but the real
-     * values depend on values only available after modifiers, voices etc
-     * have been added.
-     *
-     * @method createVexStaff
-     * @param {MEI2VF.System} system the parent system of the staff
-     * @param {Number} staff_n the number of the staff
-     * @return {Vex.Flow.Stave} The initialized stave object
-     */
-    createVexStaff : function (system, staff_n) {
-      var me = this, staff, y;
-
-      y = system.getStaffYs()[staff_n];
-
-      staff = new Stave();
-      staff.init(0, y, 1000, me.cfg.staff);
-      staff.setSystem(system);
-      staff.options.bottom_text_position = me.cfg.staff.bottom_text_position;
-      return staff;
-    },
-
-    /**
-     * Adds a volta to a staff. Currently not working due to the reworking of
-     * the measure width calulation (27/4/2014)
-     * @method addStaffVolta
-     * @experimental
-     */
-    addStaffVolta : function (staff) {
-      var volta = this.currentVoltaType;
-      if (volta.start) {
-        staff.setVoltaType(Vex.Flow.Volta.type.BEGIN, volta.start + '.', 30);
-      } else if (volta.end) {
-        //TODO: fix type.BEGIN and type.END interference in vexflow, then remove else!
-        //[think through in which cases we actually need type.END]
-        staff.setVoltaType(Vex.Flow.Volta.type.END, "", 30);
-      } else if (!volta.start && !volta.end) {
-        staff.setVoltaType(Vex.Flow.Volta.type.MID, "", 30);
-      }
     },
 
     /**
@@ -1090,10 +1040,10 @@ define([
         }
 
         $.each($(element).find('artic'), function () {
-          me.addArticulation(note, this);
+          EventUtil.addArticulation(note, this);
         });
         if (atts.fermata) {
-          me.fermatas.addFermataToNote(note, element, atts.fermata);
+          EventUtil.addFermata(note, element, atts.fermata);
         }
 
         // FIXME For now, we'll remove any child nodes of <note>
@@ -1116,7 +1066,7 @@ define([
         };
 
         if (me.currentClefChangeProperty) {
-          me.insertClef(note, me.currentClefChangeProperty);
+          EventUtil.addClefModifier(note, me.currentClefChangeProperty);
           me.currentClefChangeProperty = null;
         }
 
@@ -1126,7 +1076,7 @@ define([
           return;
         } else {
           if (me.currentGraceNotes.length > 0) {
-            note.addModifier(0, new Vex.Flow.GraceNoteGroup(me.currentGraceNotes, false).beamNotes());
+            note.addModifier(0, new VF.GraceNoteGroup(me.currentGraceNotes, false).beamNotes());
             me.currentGraceNotes = [];
           }
         }
@@ -1140,13 +1090,6 @@ define([
                                                '\nORIGINAL ERROR MESSAGE: ' + e1.toString());
       }
     },
-
-    insertClef : function (vexNote, prop) {
-      var clef = new VF.ClefNote(prop.type, 'small', prop.shift === -1 ? '8vb' : undefined);
-      vexNote.addModifier(0, new Vex.Flow.GraceNoteGroup([clef], false));
-      clef.setOffsetLeft(25);
-    },
-
 
     /**
      * @method processChord
@@ -1219,10 +1162,10 @@ define([
           EventUtil.processAttrHo(atts.ho, chord, staff);
         }
         $(element).find('artic').each(function () {
-          me.addArticulation(chord, this);
+          EventUtil.addArticulation(chord, this);
         });
         if (atts.fermata) {
-          me.fermatas.addFermataToNote(chord, element, atts.fermata);
+          EventUtil.addFermata(chord, element, atts.fermata);
         }
 
         me.notes_by_id[xml_id] = {
@@ -1234,17 +1177,16 @@ define([
         };
 
         if (me.currentClefChangeProperty) {
-          me.insertClef(chord, me.currentClefChangeProperty);
+          EventUtil.addClefModifier(chord, me.currentClefChangeProperty);
           me.currentClefChangeProperty = null;
         }
-
 
         if (atts.grace) {
           me.currentGraceNotes.push(chord);
           return;
         } else {
           if (me.currentGraceNotes.length > 0) {
-            chord.addModifier(0, new Vex.Flow.GraceNoteGroup(me.currentGraceNotes, false).beamNotes());
+            chord.addModifier(0, new VF.GraceNoteGroup(me.currentGraceNotes, false).beamNotes());
             me.currentGraceNotes = [];
           }
         }
@@ -1292,7 +1234,7 @@ define([
         EventUtil.processAttrAccid(atts.accid, chord, i);
       }
       if (atts.fermata) {
-        me.fermatas.addFermataToNote(chord, element, atts.fermata, i);
+        EventUtil.addFermata(chord, element, atts.fermata, i);
       }
     },
 
@@ -1333,7 +1275,7 @@ define([
         }
 
         if (me.currentClefChangeProperty) {
-          me.insertClef(rest, me.currentClefChangeProperty);
+          EventUtil.addClefModifier(rest, me.currentClefChangeProperty);
           me.currentClefChangeProperty = null;
         }
 
@@ -1342,7 +1284,7 @@ define([
           rest.addDotToAll();
         }
         if (atts.fermata) {
-          me.fermatas.addFermataToNote(rest, element, atts.fermata);
+          EventUtil.addFermata(rest, element, atts.fermata);
         }
         me.notes_by_id[xml_id] = {
           meiNote : element,
@@ -1366,7 +1308,7 @@ define([
       var me = this, mRest, atts, xml_id, meter, duration;
 
       meter = me.systemInfo.getStaveInfo(staff_n).getTimeSpec();
-      duration = new Vex.Flow.Fraction(meter.count, meter.unit);
+      duration = new VF.Fraction(meter.count, meter.unit);
       var dur, keys;
       if (duration.value() == 2) {
         dur = Tables.durations['breve'];
@@ -1402,7 +1344,7 @@ define([
           EventUtil.processAttrHo(atts.ho, mRest, staff);
         }
         if (atts.fermata) {
-          me.fermatas.addFermataToNote(mRest, element, atts.fermata);
+          EventUtil.addFermata(mRest, element, atts.fermata);
         }
         mRest.setStave(staff);
         me.notes_by_id[xml_id] = {
@@ -1619,75 +1561,15 @@ define([
     },
 
     /**
-     * adds an articulation to a note-like object
-     * @method addArticulation
-     * @param {Vex.Flow.StaveNote} note the note-like VexFlow object
-     * @param {XMLElement} element the articulation element
-     */
-    addArticulation : function (note, element) {
-      var articCode = Tables.articulations[element.getAttribute('artic')];
-      if (articCode) {
-        var vexArtic = new VF.Articulation(articCode).setMeiElement(element);
-        var place = element.getAttribute('place');
-        if (place) {
-          vexArtic.setPosition(Tables.positions[place]);
-        }
-        note.addArticulation(0, vexArtic);
-      } else {
-        Logger.log('warn', 'unknown @artic', 'The @artic attribute in ' + Util.serializeElement(element) +
-                                             ' is unknown or undefined. Skipping element.');
-      }
-    },
-
-    /**
      * @method processSyllables
      */
     processSyllables : function (note, element, staff_n) {
-      var me = this, vexSyllable, syl, verse, text_line, verse_n, syls;
-      // syl = me.processSyllable(element);
-      syls = $(element).find('syl');
-      $.each(syls, function (i) {
-        syl = {
-          text : $(this).text(),
-          wordpos : $(this).attr('wordpos'),
-          verse_n : $(this).parents('verse').attr('n')
-        };
-        if (syl) {
-          vexSyllable =
-          me.createSyllable(syl.text, me.cfg.lyricsFont).setVerticalJustification(me.BOTTOM).setLineSpacing(me.cfg.lyricsFont.spacing);
-          vexSyllable.setMeiElement(this);
+      var me = this, vexSyllable;
+      $(element).find('syl').each(function() {
+          vexSyllable = new Syllable(this, me.cfg.lyricsFont);
           note.addAnnotation(0, vexSyllable);
-
-          me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, syl.wordpos, syl.verse_n, staff_n);
-        }
+          me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, this, staff_n);
       });
-    },
-
-    // Support for annotations
-    /**
-     * @method createAnnot
-     */
-    createSyllable : function (text, annotFont) {
-      return (new Syllable(text)).setFont(annotFont.family, annotFont.size, annotFont.weight);
-    },
-
-    // Support for annotations
-    /**
-     * @method createAnnot
-     */
-    createAnnot : function (text, annotFont) {
-      return (new VF.Annotation(text)).setFont(annotFont.family, annotFont.size, annotFont.weight);
-    },
-
-    /**
-     * @method getMandatoryAttr
-     */
-    getMandatoryAttr : function (element, attribute) {
-      var result = $(element).attr(attribute);
-      if (!result) {
-        throw new RuntimeError('MEI2VF.RERR.MissingAttribute', 'Attribute ' + attribute + ' is mandatory.');
-      }
-      return result;
     },
 
     /**
