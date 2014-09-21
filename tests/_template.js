@@ -1,5 +1,5 @@
 define([
-  'm2v/interface',
+  'm2v/Interface',
 ], function (x, undefined) {
 
   describe("x", function () {

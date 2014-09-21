@@ -30,10 +30,17 @@ define([
 
   window.MEI2VF = {
     /**
-     * @method setLogging
-     * @param {Boolean} value True if logging should be enabled, false if not. Defaults to false.
+     * @method setLogging sets logging behavior
+     * @param {String|Boolean} level If true is passed, all logging is enabled, if false, no logging will occur. The logger is off by default.
+     * The following string values set logging up to the specified level:
+     *
+     * - true|'debug' debug messages
+     * - 'info' info, e.g. unsupported elements
+     * - 'warn' warnings, e.g. wrong encodings
+     * - 'error' errors
+     * - false no logging
      */
-    setLogging : Logger.setLogging,
+    setLogging : Logger.setLevel,
     /**
      * The methods in Converter can be used to manually address distinct
      * processing steps and retrieve the created data. Can be used in

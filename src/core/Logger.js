@@ -14,52 +14,88 @@
  * limitations under the License.
  *
  */
-define(function (undefined) {
+define([
+  'm2v/core/RuntimeError'
+], function (RuntimeError, undefined) {
 
-  /**
-   * @property {Object} logLevels specifies the active log levels. Use {@link MEI2VF#setLogging setLogging()} to change
-   * the values.
-   * @private
-   */
-  var logLevels = {
-    error : true,
-    warn : true,
-    info : true
+  var emptyFn = function () {
   };
-
 
   var Logger = {
 
+    error : emptyFn,
+    info : emptyFn,
+    warn : emptyFn,
+    debug : emptyFn,
+
     /**
-     * @method setLogging sets the logging level. Values:
-     *
-     * - 'off': no logging
-     * - 'debug' status messages
-     * - 'info' unsupported elements
-     * - 'warn' wrong encodings
-     * - 'error' fatal errors
-     * @param {String} value
+     * An appender object to which the log messages are sent; has to provide the methods error, info, warn and debug;
+     * defaults to window.console
      */
-    setLogging : function (value) {
-      var i, j, levels;
-      levels = [
-        'error',
-        'warn',
-        'info',
-        'debug'
-      ];
-      logLevels = {};
-      if (value === 'off') return;
-      for (i = 0, j = levels.length; i < j; i += 1) {
-        logLevels[levels[i]] = true;
-        if (levels[i] === value) return;
+    appender : {
+      error : function () {
+        window.console.error('MEI2VF (' + arguments[0] + "): " + Array.prototype.slice.call(arguments, 1).join(' '));
+      },
+      info : function () {
+        window.console.info('MEI2VF (' + arguments[0] + "): " + Array.prototype.slice.call(arguments, 1).join(' '));
+      },
+      warn : function () {
+        window.console.warn('MEI2VF (' + arguments[0] + "): " + Array.prototype.slice.call(arguments, 1).join(' '));
+      },
+      debug : function () {
+        window.console.debug('MEI2VF (' + arguments[0] + "): " + Array.prototype.slice.call(arguments, 1).join(' '));
       }
     },
 
     /**
-     * @method L the MEI2VF logging function. Logs the arguments to the window
+     * Sets the object to which log messages are sent
+     * @param appender
+     * @returns {Logger}
+     */
+    setAppender : function (appender) {
+      if (typeof appender === 'object') {
+        if (typeof appender.error === 'function' && typeof appender.warn === 'function' &&
+            typeof appender.info === 'function' && typeof appender.debug === 'function') {
+          this.appender = appender;
+          return this;
+        }
+        throw new RuntimeError('Error', 'Parameter object does not contain the expected appender methods.');
+      }
+      throw new RuntimeError('Error', 'Parameter is not an object');
+    },
+
+    /**
+     * @method setLevel sets the logging level. Values:
+     *
+     * - 'debug'|true debug messages
+     * - 'info' info, e.g. unsupported elements
+     * - 'warn' warnings, e.g. wrong encodings
+     * - 'error' errors
+     * - false no logging
+     * @param {String} level
+     */
+    setLevel : function (level) {
+      var i, j, allLevels, activate = false;
+      allLevels = [
+        'debug',
+        'info',
+        'warn',
+        'error'
+      ];
+      if (level === true) activate = true;
+      for (i = 0, j = allLevels.length; i < j; i += 1) {
+        if (allLevels[i] === level) activate = true;
+        if (activate) {
+          this[allLevels[i]] = this.appender[allLevels[i]];
+        } else {
+          this[allLevels[i]] = emptyFn;
+        }
+      }
+    },
+
+    /**
+     * @method log the MEI2VF logging function. Logs the arguments to the window
      * console if they are listed in {@link logLevels}
-     * @private
      */
     log : function (level, caller) {
       if (logLevels[level] === true) {

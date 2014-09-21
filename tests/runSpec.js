@@ -34,29 +34,12 @@ var runSpec = function (m2vTests) {
 
   var allTests = [
     'spec/Rendering',
+    'spec/core/Logger',
     'spec/eventlink/EventLink',
     'spec/eventlink/EventReference',
     'spec/meilib/MeiLib',
     'spec/voice/StaveVoices'
   ];
-
-  var warn = window.console.warn;
-  var info = window.console.info;
-
-  window.console.info = function () {
-    info.apply(window, arguments);
-    throw 'stopped flow for debugging';
-  };
-
-  window.console.warn = function () {
-    warn.apply(window, arguments);
-    throw 'stopped flow for debugging';
-  };
-
-  window.console.error = function () {
-    error.apply(window, arguments);
-    throw 'stopped flow for debugging';
-  };
 
   require.config({
     baseUrl : '../src',
