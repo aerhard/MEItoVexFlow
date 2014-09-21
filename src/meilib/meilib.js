@@ -1,9 +1,4 @@
-/**
- * Contributor: Alexander Erhard
- */
-
 define(['jquery'], function ($, undefined) {
-
   /*
    * meilib.js
    *
@@ -24,7 +19,9 @@ define(['jquery'], function ($, undefined) {
    * License for the specific language governing permissions and limitations under
    * the License.
    */
-
+  /**
+   * Contributor: Alexander Erhard
+   */
   /**
    * @class MeiLib
    * MeiLib - General purpose JavaScript functions for processing MEI documents.
@@ -745,15 +742,15 @@ define(['jquery'], function ($, undefined) {
           first_sic = altitems[alt];
         }
       }
-      ;
       return first_sic;
-    }
+    };
     if (this.tagname === 'choice') {
       return findDefault(this.altitems, 'corr', 'sic');
     } else if (this.tagname === 'app') {
-      return findDefault(this.altitems, 'lem', 'rdg');
+//      return findDefault(this.altitems, 'lem', 'rdg');
+      return findDefault(this.altitems, 'lem');
     }
-  }
+  };
   /**
    * @class MeiLib.Variant
    * Represents a <b>lem</b>, <b>rdg</b>, <b>sic</b> or <b>corr</b> element.

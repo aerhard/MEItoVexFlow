@@ -1,8 +1,4 @@
 /*
- * Contributors and reworking: Alexander Erhard, @davethehat
- */
-
-/*
  * StaveInfo.js Author: Zoltan Komives (zolaemil@gmail.com) Created: 03.07.2013
  *
  * Copyright © 2012, 2013 Richard Lewis, Raffaele Viglianti, Zoltan Komives,
@@ -20,7 +16,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
+/*
+ * Contributors and reworking: Alexander Erhard, @davethehat
+ */
 define([
   'vexflow',
   'm2v/core/Logger',
@@ -289,7 +287,7 @@ define([
 
       clefShape = element.getAttribute(prefix + 'shape');
       if (!clefShape) {
-        Logger.log('warn', '@clef.shape expected', 'No clef shape attribute found in ' +
+        Logger.warn('@clef.shape expected', 'No clef shape attribute found in ' +
                                                    Util.serializeElement(element) +
                                                    '. Setting default clef.shape "G".');
         clefShape = 'G';
@@ -317,7 +315,7 @@ define([
           type : 'treble',
           meiElement : null
         };
-        Logger.log('warn', 'Not supported', 'Clef definition in ' + Util.serializeElement(element) +
+        Logger.warn('Not supported', 'Clef definition in ' + Util.serializeElement(element) +
                                             ' is not supported. Setting default treble clef.');
       }
     },
@@ -354,7 +352,7 @@ define([
             keyname += 'b';
             break;
           default :
-            Logger.log('warn', 'Not supported', 'expected to find value "s" or "f" instead of "' + key_accid +
+            Logger.warn('Not supported', 'expected to find value "s" or "f" instead of "' + key_accid +
                                                 '" in @key.accid of ' + Util.serializeElement(element) +
                                                 '. Skipping processing of this attribute.');
         }

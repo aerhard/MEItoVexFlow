@@ -92,7 +92,7 @@ define([
       symbol = $(staffGrp).attr('symbol');
       barthru = $(staffGrp).attr('barthru');
 
-      Logger.log('debug', 'Converter.setConnectorModels() {2}', 'symbol: ' + symbol, ' range.first_n: ' +
+      Logger.debug('Converter.setConnectorModels() {2}', 'symbol: ' + symbol, ' range.first_n: ' +
                                                                                      first_n, ' range.last_n: ' +
                                                                                               last_n);
 
@@ -250,7 +250,7 @@ define([
         case 'pgHead' :
           break;
         default :
-          Logger.log('info', 'SystemInfo.processScoreDef_child()', 'Element <' + element.localName +
+          Logger.info('SystemInfo.processScoreDef_child()', 'Element <' + element.localName +
                                                                    '> is not supported in <scoreDef>. Skipping.');
       }
     },
@@ -270,7 +270,7 @@ define([
       $(staffGrp).children().each(function (i, childElement) {
         var childRange = me.processStaffGrp_child(staffGrp, childElement, ancestorSymbols);
         if (childRange) {
-          Logger.log('debug', 'Converter.processStaffGrp() {1}.{a}', 'childRange.first_n: ' +
+          Logger.debug('Converter.processStaffGrp() {1}.{a}', 'childRange.first_n: ' +
                                                                      childRange.first_n, ' childRange.last_n: ' +
                                                                                          childRange.last_n);
           if (isFirst) range.first_n = childRange.first_n;
@@ -307,7 +307,7 @@ define([
           (!ancestorSymbols) ? [parent.getAttribute('symbol')] : ancestorSymbols.concat(parent.getAttribute('symbol'));
           return me.processStaffGrp(element, true, myAncestorSymbols);
         default :
-          Logger.log('info', 'SystemInfo.processScoreDef_child()', 'Element <' + element.localName +
+          Logger.info('SystemInfo.processScoreDef_child()', 'Element <' + element.localName +
                                                                    '> is not supported in <staffGrp>. Skipping.');
       }
     },

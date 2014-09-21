@@ -1,9 +1,9 @@
 define([
   'm2v/Interface',
-], function (Interface, jasmine, undefined) {
+  'tests/TestAppender'
+], function (Interface, TestAppender, undefined) {
 
   describe("Rendering", function () {
-    MEI2VF.setLogging('debug');
 
     var i;
     var test_cases = [];
@@ -17,6 +17,9 @@ define([
       var title = (i + 1) + '. Rendering "' + input.title + '"';
 
       it(title, function () {
+
+        MEI2VF.setLoggerAppender(TestAppender);
+        MEI2VF.setLogging('debug');
 
         var render = function () {
           var canvas;

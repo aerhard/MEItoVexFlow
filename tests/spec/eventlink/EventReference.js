@@ -5,8 +5,6 @@ define([
 
   describe("EventReference", function () {
 
-    console.log('\n\n************ Unit test: EventReference *********');
-
     var dict;
 
     var note1 = { localName : 'note', attrs : { id : 'n01', pname : 'a' } };
@@ -16,6 +14,7 @@ define([
     var notes = [];
 
     it('getId() returns null after object construction without parameters', function () {
+      console.log('\n\n************ Unit test: EventReference *********');
       var ref = new EventReference();
       expect(ref.getId()).toBeNull();
     });

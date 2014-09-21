@@ -1,5 +1,5 @@
 /*
- * MEItoVexFlow, LinkCollection class
+ * MEItoVexFlow, EventLinkCollection class
  *
  * Author: Alexander Erhard
  * (based on meitovexflow.js)

@@ -40,7 +40,7 @@ define([
       pname = $(element).attr('pname');
       oct = $(element).attr('oct');
       if (!pname || !oct) {
-        Logger.log('warn', 'Encoding error', '@pname and @oct must be specified in ' + Util.serializeElement(element) +
+        Logger.warn('Encoding error', '@pname and @oct must be specified in ' + Util.serializeElement(element) +
                                              '". Setting default pitch C4.');
         return 'C/4';
       }
@@ -60,12 +60,12 @@ define([
         return result;
       }
       if (alias[mei_dur]) {
-        Logger.log('info', 'Not supported', 'Duration "' + mei_dur + '" is not supported. Using "' + alias[mei_dur] +
+        Logger.info('Not supported', 'Duration "' + mei_dur + '" is not supported. Using "' + alias[mei_dur] +
                                             '" instead.');
         return Tables.durations[alias[mei_dur] + ''];
       }
 
-      Logger.log('warn', 'Not supported', 'Duration "' + mei_dur +
+      Logger.warn('Not supported', 'Duration "' + mei_dur +
                                           '" is not supported. Using "4" instead. May lead to display errors.');
       return Tables.durations['4'];
     },
@@ -78,7 +78,7 @@ define([
 
       dur_attr = $(mei_note).attr('dur');
       if (dur_attr === undefined) {
-        Logger.log('warn', '@dur expected', 'No duration attribute found in ' + Util.serializeElement(mei_note) +
+        Logger.warn('@dur expected', 'No duration attribute found in ' + Util.serializeElement(mei_note) +
                                             '. Using "4" instead.');
         dur_attr = '4';
       }
@@ -97,7 +97,7 @@ define([
       if (val) {
         vexObject.addAccidental(i, new VF.Accidental(val));
       } else {
-        Logger.log('warn', 'Encoding error', 'Invalid accidental "' + mei_accid + '". Skipping.');
+        Logger.warn('Encoding error', 'Invalid accidental "' + mei_accid + '". Skipping attribute.');
       }
     },
 
@@ -125,7 +125,7 @@ define([
         }
         note.addArticulation(0, vexArtic);
       } else {
-        Logger.log('warn', 'unknown @artic', 'The @artic attribute in ' + Util.serializeElement(element) +
+        Logger.warn('unknown @artic', 'The @artic attribute in ' + Util.serializeElement(element) +
                                              ' is unknown or undefined. Skipping element.');
       }
     },

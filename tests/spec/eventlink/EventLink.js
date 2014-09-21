@@ -5,9 +5,8 @@ define([
 
   describe("EventLink", function () {
 
-    console.log('\n\n************ Unit test: EventLink *********');
-
     it('getFirstId() and getLastId() return null after object construction without parameters', function () {
+      console.log('\n\n************ Unit test: EventLink *********');
       var  link = new EventLink();
       expect(link.getFirstId()).toBeNull();
       expect(link.getLastId()).toBeNull();

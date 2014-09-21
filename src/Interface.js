@@ -40,7 +40,16 @@ define([
      * - 'error' errors
      * - false no logging
      */
-    setLogging : Logger.setLevel,
+    setLogging : function() {
+      Logger.setLevel.apply(Logger, arguments);
+    },
+    /**
+     * @method setLoggerAppender sets the logger's appender
+     * @param appender an object implementing the methods error(), warn(), info() and debug(), for example window.console
+     */
+    setLoggerAppender : function() {
+      Logger.setAppender.apply(Logger, arguments);
+    },
     /**
      * The methods in Converter can be used to manually address distinct
      * processing steps and retrieve the created data. Can be used in

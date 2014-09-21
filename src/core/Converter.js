@@ -1,7 +1,7 @@
 /*
  * MEItoVexFlow, Converter class
  * (based on meitovexflow.js)
- * Author of reworkings: Alexander Erhard
+ * Reworkings: Alexander Erhard
  *
  * Copyright © 2014 Richard Lewis, Raffaele Viglianti, Zoltan Komives,
  * University of Maryland
@@ -494,7 +494,7 @@ define([
     createNewSystem : function () {
       var me = this, system, coords;
 
-      Logger.log('debug', 'Converter.createNewSystem()', '{enter}');
+      Logger.debug('Converter.createNewSystem()', '{enter}');
 
       me.pendingSystemBreak = false;
       me.currentSystem_n += 1;
@@ -595,7 +595,7 @@ define([
           me.processEnding(element);
           break;
         default :
-          Logger.log('info', 'Not supported', 'Element <' + element.localName +
+          Logger.info('Not supported', 'Element <' + element.localName +
                                               '> is not supported in <section>. Skipping element.');
       }
     },
@@ -629,7 +629,7 @@ define([
         atSystemStart = false;
       }
 
-      Logger.log('debug', 'Converter.processMeasure()', '{enter}');
+      Logger.debug('Converter.processMeasure()', '{enter}');
 
       left_barline = element.getAttribute('left');
       right_barline = element.getAttribute('right');
@@ -740,7 +740,7 @@ define([
       $.each(staffElements, function () {
         staff_n = +$(this).attr('n');
         if (!staff_n) {
-          Logger.log('warn', '@n expected', Util.serializeElement(this) +
+          Logger.warn('@n expected', Util.serializeElement(this) +
                                             ' does not contain an @n attribute. Proceeding in first staff.');
           staff_n = 1;
         }
@@ -958,7 +958,7 @@ define([
           me.processAnchoredText(element, staff, staff_n, layerDir, staffInfo);
           return;
         default :
-          Logger.log('info', 'Not supported', 'Element "' + element.localName +
+          Logger.info('Not supported', 'Element "' + element.localName +
                                               '" is not supported. Skipping element.');
       }
     },
@@ -1014,7 +1014,7 @@ define([
           if (otherStaff) {
             note.setStave(otherStaff);
           } else {
-            Logger.log('warn', 'Staff not found', 'No staff could be found which corresponds to @staff="' +
+            Logger.warn('Staff not found', 'No staff could be found which corresponds to @staff="' +
                                                   mei_staff_n + '" specified in ' + Util.serializeElement(element) +
                                                   '". Proceeding by adding note to current staff.');
             note.setStave(staff);
@@ -1028,7 +1028,7 @@ define([
             note.addDotToAll();
           }
         } catch (e) {
-          Logger.log('warn', 'Bad arguments', 'A problem occurred processing the dots of ' +
+          Logger.warn('Bad arguments', 'A problem occurred processing the dots of ' +
                                               Util.serializeElement(element) + '. Proceeding by ignoring dots.');
         }
 
@@ -1462,7 +1462,7 @@ define([
       elements = $(element).children().map(process).get();
 
       if (elements.length === 0) {
-        Logger.log('warn', 'Missing content', 'Not content found in ' + Util.serializeElement(element) +
+        Logger.warn('Missing content', 'Not content found in ' + Util.serializeElement(element) +
                                               '". Skipping tuplet creation.');
         return;
       }

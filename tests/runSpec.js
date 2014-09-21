@@ -44,6 +44,7 @@ var runSpec = function (m2vTests) {
   require.config({
     baseUrl : '../src',
     paths : {
+      'tests' : '../tests',
       'spec' : '../tests/spec',
       'm2v' : '../src',
       'meilib' : '../src/meilib'

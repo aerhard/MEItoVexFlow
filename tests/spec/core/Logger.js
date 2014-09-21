@@ -32,13 +32,6 @@ define([
       }
     });
 
-
-    it('has none of the log methods set to equal the appender methods', function () {
-      for (i=0;i<len;i++) {
-        expect(Logger[levels[i]]).not.toBe(Logger.appender[levels[i]]);
-      }
-    });
-
     describe('setAppender', function () {
       it('raises an error if the parameter is not an object', function () {
         expect(function () {

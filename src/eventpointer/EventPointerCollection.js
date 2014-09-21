@@ -1,5 +1,5 @@
 /*
- * MEItoVexFlow, Util class
+ * MEItoVexFlow, EventPointerCollection class
  * (based on meitovexflow.js)
 
  * Author: Alexander Erhard
@@ -116,7 +116,7 @@ define([
           if (tstamp) {
             startid = local_tstamp2id(tstamp, this, measureElement);
           } else {
-            Logger.log('warn', '@startid or @tstamp expected', Util.serializeElement(this) +
+            Logger.warn('@startid or @tstamp expected', Util.serializeElement(this) +
                                                                ' could not be processed because neither @startid nor @tstamp are specified.');
             return;
           }

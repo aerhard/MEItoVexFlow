@@ -15,8 +15,9 @@
  *
  */
 define([
-  'm2v/core/RuntimeError'
-], function (RuntimeError, undefined) {
+  'm2v/core/RuntimeError',
+  'm2v/core/DefaultAppender'
+], function (RuntimeError, DefaultAppender, undefined) {
 
   var emptyFn = function () {
   };
@@ -32,20 +33,7 @@ define([
      * An appender object to which the log messages are sent; has to provide the methods error, info, warn and debug;
      * defaults to window.console
      */
-    appender : {
-      error : function () {
-        window.console.error('MEI2VF (' + arguments[0] + "): " + Array.prototype.slice.call(arguments, 1).join(' '));
-      },
-      info : function () {
-        window.console.info('MEI2VF (' + arguments[0] + "): " + Array.prototype.slice.call(arguments, 1).join(' '));
-      },
-      warn : function () {
-        window.console.warn('MEI2VF (' + arguments[0] + "): " + Array.prototype.slice.call(arguments, 1).join(' '));
-      },
-      debug : function () {
-        window.console.debug('MEI2VF (' + arguments[0] + "): " + Array.prototype.slice.call(arguments, 1).join(' '));
-      }
-    },
+    appender : DefaultAppender,
 
     /**
      * Sets the object to which log messages are sent

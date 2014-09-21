@@ -1,13 +1,19 @@
 define([
   'meilib/MeiLib',
-  'm2v/Interface'
-], function (MeiLib, Interface, jasmine, undefined) {
+  'm2v/Interface',
+  'tests/TestAppender'
+], function (MeiLib, Interface, TestAppender, jasmine, undefined) {
 
   // TODO elaborate descriptions!
 
   describe('MeiLib', function () {
 
     beforeEach(function () {
+
+      MEI2VF.setLoggerAppender(TestAppender);
+      MEI2VF.setLogging('debug');
+
+
       window.jasmine.addMatchers({
 
         toEq : function (util, customEqualityTesters) {
@@ -18,7 +24,7 @@ define([
                 pass : false
               };
               if (equal === undefined) equal = true;
-              if(equal) {
+              if (equal) {
                 result.pass = util.equals(actual, expected, customEqualityTesters);
                 result.message = "Expected '" + actual + "' to equal '" + expected + "'";
               } else {
@@ -27,11 +33,12 @@ define([
               }
 
               if (!result.pass) {
-                var fail_info= 'Failed assertion ' + actual + (equal ? '===' : '!==') + expected;
+                var fail_info = 'Failed assertion ' + actual + (equal ? '===' : '!==') + expected;
 
                 console.log(fail_info);
                 if (test_output) {
-                  $(document.body).append('<div class="test-output">' + fail_info +':<br/>' + serialize_xml(test_output) + '</div>')
+                  $(document.body).append('<div class="test-output">' + fail_info + ':<br/>' +
+                                          serialize_xml(test_output) + '</div>')
                   console.log(test_output);
                 }
 
@@ -92,16 +99,13 @@ define([
     var score = xmlDoc.getElementsByTagNameNS("http://www.music-encoding.org/ns/mei", 'score');
     console.log('Start');
 
-    MEI2VF.setLogging(true);
-
     var meter = { count : 4, unit : 4};
 
 
     describe('IDtoTStamp', function () {
 
-      console.log('********* TEST: id2tstamp() **************************************');
-
       it('converts IDs to the expected time stamps', function () {
+        console.log('********* TEST: id2tstamp() **************************************');
 
         var tstamp;
 
@@ -176,10 +180,10 @@ define([
 
     describe('EventEnumerator and durationOf() 1', function () {
 
-      console.log('********* TEST: EventEnumerator and durationOf() 1: count grace notes  ****************');
-      var context = [];
 
       it('count grace notes', function () {
+        console.log('********* TEST: EventEnumerator and durationOf() 1: count grace notes  ****************');
+        var context = [];
 
         var duration_asserts = [
           [
@@ -258,10 +262,10 @@ define([
 
     describe('EventEnumerator and durationOf() 2', function () {
 
-      console.log('********* TEST: EventEnumerator and durationOf() 2: count grace notes ****************');
-      var context = [];
 
       it('count grace notes', function () {
+        console.log('********* TEST: EventEnumerator and durationOf() 2: count grace notes ****************');
+        var context = [];
 
 
         var duration_asserts = [
@@ -340,9 +344,9 @@ define([
 
     describe('additional durationOf TEST: tuplets', function () {
 
-      console.log('********* additional durationOf TEST: tuplets **************************************');
 
       it('tuplets', function () {
+        console.log('********* additional durationOf TEST: tuplets **************************************');
 
         var fragment = $.parseXML('<x><tuplet>' + '<note xml:id="n02a" pname="g" oct="4" dur="8"/>' +
                                   '<note pname="a" oct="4" dur="8"/>' +
@@ -376,9 +380,9 @@ define([
 
     describe('tstamp2id()', function () {
 
-      console.log('********* TEST: tstamp2id() **************************************');
 
       it('tstamp2id', function () {
+        console.log('********* TEST: tstamp2id() **************************************');
 
         var context = [];
         $(score).find('layer').each(function (i, layer) {
@@ -434,35 +438,35 @@ define([
     });
 
 
-        // console.log('********* getSlice() *******************');
-        //
-        // start_test('getSlice');
-        // var sliceXML = single_path_score.getSlice({start_n:2, end_n:4, noClef:true, noKey:true, noMeter:true} );
-        // // print_xml(sliceXML);
-        // //TO ASSERT:
-        // // 1. the result has three measures,
-        // // 2. the first measure is @n=2
-        // // 3. the last measure is @n=4
-        // // 4. in staffDef @clef.visible = false
-        // // 5. in staffDef @key.sig.show = false
-        // // 6. in staffDef @meter.rend = false
-        // measures = $(sliceXML).find('measure');
-        // staffDef = $(sliceXML).find('staffDef')[0];
-        // staves = $(measures[0]).find('staff');
-        // assert(measures.length, 3);
-        // assert($(measures[0]).attr('n'), "2");
-        // assert($(measures[2]).attr('n'), "4");
-        // assert($(staffDef).attr('clef.visible'), "false");
-        // assert($(staffDef).attr('key.sig.show'), "false");
-        // assert($(staffDef).attr('meter.rend'), "false");
-        // end_test();
+    // console.log('********* getSlice() *******************');
+    //
+    // start_test('getSlice');
+    // var sliceXML = single_path_score.getSlice({start_n:2, end_n:4, noClef:true, noKey:true, noMeter:true} );
+    // // print_xml(sliceXML);
+    // //TO ASSERT:
+    // // 1. the result has three measures,
+    // // 2. the first measure is @n=2
+    // // 3. the last measure is @n=4
+    // // 4. in staffDef @clef.visible = false
+    // // 5. in staffDef @key.sig.show = false
+    // // 6. in staffDef @meter.rend = false
+    // measures = $(sliceXML).find('measure');
+    // staffDef = $(sliceXML).find('staffDef')[0];
+    // staves = $(measures[0]).find('staff');
+    // assert(measures.length, 3);
+    // assert($(measures[0]).attr('n'), "2");
+    // assert($(measures[2]).attr('n'), "4");
+    // assert($(staffDef).attr('clef.visible'), "false");
+    // assert($(staffDef).attr('key.sig.show'), "false");
+    // assert($(staffDef).attr('meter.rend'), "false");
+    // end_test();
 
 
     describe('MeiLib.SliceMEI()', function () {
 
-      console.log('********* TEST: MeiLib.SliceMEI() ********************************');
 
       it('SliceMEI', function () {
+        console.log('********* TEST: MeiLib.SliceMEI() ********************************');
 
         start_test('SliceMEI');
         var xmlDoc_slice = loadXMLDoc('xml/TC.Slice.xml');
@@ -489,9 +493,9 @@ define([
         expect($(staffDef).attr('meter.rend')).toEq("false");
         var scoreDefChange = $(slice).find('scoreDef')[1];
         var staffDefChange = $(scoreDefChange).find('staffDef')[0];
-        expect($(staffDefChange).attr('clef.visible')).toEq("false",false);
-        expect($(staffDefChange).attr('key.sig.show')).toEq("false",false);
-        expect($(staffDefChange).attr('meter.rend')).toEq("false",false);
+        expect($(staffDefChange).attr('clef.visible')).toEq("false", false);
+        expect($(staffDefChange).attr('key.sig.show')).toEq("false", false);
+        expect($(staffDefChange).attr('meter.rend')).toEq("false", false);
         expect(staves.length).toEq(2);
         expect($(staves[0]).attr('n')).toEq("1");
         expect($(staves[1]).attr('n')).toEq("3");
@@ -567,210 +571,209 @@ define([
     //
     // end_test();
 
+    describe('MeiLib.MeiDoc', function () {
 
-    describe('MeiLib.MeiDoc - Simple', function () {
+      describe('MeiLib.MeiDoc - Simple', function () {
 
-      console.log('********* TEST: MeiLib.MeiDoc - Simple ***********');
 
-      it('MeiDoc-Simple', function () {
+        it('MeiDoc-Simple', function () {
+          console.log('********* TEST: MeiLib.MeiDoc - Simple ***********');
 
-        var xmlid_asserts = {
-          'app-recon' : {},
-          'choice01' : {},
-          'app-var' : {}
-        };
-        var xmlDoc_rich_mei = loadXMLDoc('xml/TC.CanonicalMEI.01.xml');
-        var meiDoc = new MeiLib.MeiDoc(xmlDoc_rich_mei);
+          var xmlid_asserts = {
+            'app-recon' : {},
+            'choice01' : {},
+            'app-var' : {}
+          };
+          var xmlDoc_rich_mei = loadXMLDoc('xml/TC.CanonicalMEI.01.xml');
+          var meiDoc = new MeiLib.MeiDoc(xmlDoc_rich_mei);
 
-        console.log(meiDoc.APPs);
-        for (var appID in meiDoc.ALTs) {
-          expect(xmlid_asserts.hasOwnProperty(appID)).toEq(true);
-        }
-        meiDoc.initSectionView();
-        // TO ASSERT:
-        //  1. It is a plain MEI, that is:
-        //    * there isn't any app or choice
-        //    * sectionplane is...
-        console.log(meiDoc.sectionplane);
-        var apps = $(meiDoc.sectionview_score).find('app');
-        var choices = $(meiDoc.sectionview_score).find('choice');
-        expect(apps.length).toEq(0);
-        expect(choices.length).toEq(0);
-        console.log(meiDoc.sectionview_score.innerHTML);
-        //TODO: Assert that default reading/choice is inserted:
-        // 1. Find processing Instruction <?MEI2VF rdgStart="choice01"?>
-        // 2. Get next sibling and
-        // 3. Assert it's a <note> with @dur="2"
-        expect(meiDoc.sectionplane["app-recon"][0]).toEq(undefined);
-        expect(meiDoc.sectionplane["choice01"].length).toEq(1);
-        expect(meiDoc.sectionplane["app-var"].length).toEq(1);
-        expect(meiDoc.sectionplane["choice01"][0].tagname).toEq("corr");
-        expect(meiDoc.sectionplane["app-var"][0].tagname).toEq("lem");
+          console.log(meiDoc.APPs);
+          for (var appID in meiDoc.ALTs) {
+            expect(xmlid_asserts.hasOwnProperty(appID)).toEq(true);
+          }
+          meiDoc.initSectionView();
+          // TO ASSERT:
+          //  1. It is a plain MEI, that is:
+          //    * there isn't any app or choice
+          //    * sectionplane is...
+          console.log(meiDoc.sectionplane);
+          var apps = $(meiDoc.sectionview_score).find('app');
+          var choices = $(meiDoc.sectionview_score).find('choice');
+          expect(apps.length).toEq(0);
+          expect(choices.length).toEq(0);
+          console.log(meiDoc.sectionview_score.innerHTML);
+          //TODO: Assert that default reading/choice is inserted:
+          // 1. Find processing Instruction <?MEI2VF rdgStart="choice01"?>
+          // 2. Get next sibling and
+          // 3. Assert it's a <note> with @dur="2"
+          expect(meiDoc.sectionplane["app-recon"][0]).toEq(undefined);
+          expect(meiDoc.sectionplane["choice01"].length).toEq(1);
+          expect(meiDoc.sectionplane["app-var"].length).toEq(1);
+          expect(meiDoc.sectionplane["choice01"][0].tagname).toEq("corr");
+          expect(meiDoc.sectionplane["app-var"][0].tagname).toEq("lem");
+        });
+      });
+
+      describe('MeiLib.MeiDoc - Altgroups', function () {
+
+
+        it('MeiDoc-Altgroups', function () {
+          console.log('********* TEST: MeiLib.MeiDoc - Altgroups ***********');
+          var xmlid_asserts = {
+            'app-recon-01' : {},
+            'app-recon-02' : {},
+            'choice01' : {},
+            'app-var-01' : {},
+            'app-var-02' : {}
+          };
+          var xmlDoc_rich_mei = loadXMLDoc('xml/TC.CanonicalMEI.02.xml');
+          var meiDoc = new MeiLib.MeiDoc(xmlDoc_rich_mei);
+
+          for (var appID in meiDoc.ALTs) {
+            expect(xmlid_asserts.hasOwnProperty(appID)).toEq(true);
+          }
+          meiDoc.initSectionView();
+          console.log(meiDoc.sectionplane);
+          console.log(meiDoc.altgroups);
+
+          var apps = $(meiDoc.sectionview_score).find('app');
+          var choices = $(meiDoc.sectionview_score).find('app');
+          expect(apps.length).toEq(0);
+          expect(choices.length).toEq(0);
+          expect(meiDoc.sectionplane["app-recon-01"].length).toEq(0);
+          expect(meiDoc.sectionplane["app-recon-02"].length).toEq(0);
+          expect(meiDoc.sectionplane["choice01"][0].tagname).toEq("corr");
+          expect(meiDoc.sectionplane["app-var-01"][0].tagname).toEq("lem");
+          expect(meiDoc.sectionplane["app-var-02"][0].tagname).toEq("lem");
+
+          expect(meiDoc.altgroups["app-recon-01"][0]).toEq("app-recon-01");
+          expect(meiDoc.altgroups["app-recon-01"][1]).toEq("app-recon-02");
+          expect(meiDoc.altgroups["app-recon-02"][0]).toEq("app-recon-01");
+          expect(meiDoc.altgroups["app-recon-02"][1]).toEq("app-recon-02");
+          expect(meiDoc.altgroups["app-var-01"][0]).toEq("app-var-01");
+          expect(meiDoc.altgroups["app-var-01"][1]).toEq("app-var-02");
+          expect(meiDoc.altgroups["app-var-02"][0]).toEq("app-var-01");
+          expect(meiDoc.altgroups["app-var-02"][1]).toEq("app-var-02");
+        });
+      });
+
+      describe('MeiLib.MeiDoc - Modify Section View', function () {
+
+
+        it('MeiDoc-SectionView', function () {
+          console.log('********* TEST: MeiLib.MeiDoc - Modify Section View ***********');
+          var xmlDoc_rich_mei = loadXMLDoc('xml/TC.CanonicalMEI.02.xml');
+          var meiDoc = new MeiLib.MeiDoc(xmlDoc_rich_mei);
+          meiDoc.initSectionView();
+
+          console.log('sectionplane after init: ');
+          console.log(meiDoc.sectionplane);
+          expect(meiDoc.sectionplane["app-recon-01"].length).toEq(0);
+          expect(meiDoc.sectionplane["app-recon-02"].length).toEq(0);
+          expect(meiDoc.sectionplane["choice01"][0].tagname).toEq("corr");
+          expect(meiDoc.sectionplane["app-var-01"][0].tagname).toEq("lem");
+          expect(meiDoc.sectionplane["app-var-02"][0].tagname).toEq("lem");
+
+          var sectionplaneUpdate = {};
+          // single replacements can be defined as a string instead of
+          // a one item long list (backward compatibility)
+          sectionplaneUpdate["app-recon-01"] = "rdgA.app-recon-01";
+          sectionplaneUpdate["choice01"] = "sic-choice01";
+          sectionplaneUpdate["app-var-01"] = "rdg.app-var-01";
+          meiDoc.updateSectionView(sectionplaneUpdate);
+
+          console.log('sectionplane after modifySectionview: ');
+          console.log(meiDoc.sectionplane);
+          // print_xml(meiDoc.sectionview_score);
+          expect(meiDoc.sectionplane["app-recon-01"][0].xmlID).toEq("rdgA.app-recon-01");
+          expect(meiDoc.sectionplane["app-recon-02"][0].xmlID).toEq("rdgA.app-recon-02");
+          expect(meiDoc.sectionplane["choice01"][0].xmlID).toEq("sic-choice01");
+          expect(meiDoc.sectionplane["app-var-01"][0].xmlID).toEq("rdg.app-var-01");
+          expect(meiDoc.sectionplane["app-var-02"][0].xmlID).toEq("rdg.app-var-02");
+
+
+          sectionplaneUpdate["choice01"] = []; // Replace with initial choice: corr
+          sectionplaneUpdate["app-var-01"] = []; // Replace with initial reading: lem
+          meiDoc.updateSectionView(sectionplaneUpdate);
+          expect(meiDoc.sectionplane["choice01"].length).toEq(1);
+          expect(meiDoc.sectionplane["app-var-01"].length).toEq(1);
+          expect(meiDoc.sectionplane["choice01"][0].tagname).toEq("corr");
+          expect(meiDoc.sectionplane["app-var-01"][0].tagname).toEq("lem");
+
+        });
+      });
+
+      describe('MeiLib.MeiDoc - Modify Section View (Multiple Choice)', function () {
+
+
+        it('MeiDoc-SectionView-MultipleChoice', function () {
+          console.log('********* TEST: MeiLib.MeiDoc - Modify Section View (Multiple Choice) ***********');
+
+          var xmlDoc_rich_mei = loadXMLDoc('xml/TC.CanonicalMEI.02.xml');
+          var meiDoc = new MeiLib.MeiDoc(xmlDoc_rich_mei);
+          meiDoc.initSectionView();
+
+          var sectionplaneUpdate = {};
+          sectionplaneUpdate["app-recon-01"] = [
+            "rdgA.app-recon-01",
+            "rdgB.app-recon-01"
+          ];
+          meiDoc.updateSectionView(sectionplaneUpdate);
+          console.log('sectionplane after modifySectionview: ');
+          console.log(meiDoc.sectionplane);
+          expect(meiDoc.sectionplane["app-recon-01"].length).toEq(2);
+          expect(meiDoc.sectionplane["app-recon-02"].length).toEq(2);
+          expect(meiDoc.sectionplane["app-recon-01"][0].xmlID).toEq("rdgA.app-recon-01");
+          expect(meiDoc.sectionplane["app-recon-01"][1].xmlID).toEq("rdgB.app-recon-01");
+          expect(meiDoc.sectionplane["app-recon-02"][0].xmlID).toEq("rdgA.app-recon-02");
+          expect(meiDoc.sectionplane["app-recon-02"][1].xmlID).toEq("rdgB.app-recon-02");
+          expect($(meiDoc.sectionview_score).find('staff[n="3"]').length).toEq(2);
+          expect($(meiDoc.sectionview_score).find('staff[n="4"]').length).toEq(2);
+
+
+          sectionplaneUpdate["app-recon-01"] = ["rdgB.app-recon-01"];
+          meiDoc.updateSectionView(sectionplaneUpdate);
+          expect(meiDoc.sectionplane["app-recon-01"].length).toEq(1);
+          expect(meiDoc.sectionplane["app-recon-02"].length).toEq(1);
+          expect(meiDoc.sectionplane["app-recon-01"][0].xmlID).toEq("rdgB.app-recon-01");
+          expect(meiDoc.sectionplane["app-recon-02"][0].xmlID).toEq("rdgB.app-recon-02");
+          expect($(meiDoc.sectionview_score).find('staff[n="3"]').length).toEq(0);
+          expect($(meiDoc.sectionview_score).find('staff[n="4"]').length).toEq(2);
+
+          sectionplaneUpdate["app-recon-01"] = ["rdgA.app-recon-01"];
+          meiDoc.updateSectionView(sectionplaneUpdate);
+          expect(meiDoc.sectionplane["app-recon-01"].length).toEq(1);
+          expect(meiDoc.sectionplane["app-recon-02"].length).toEq(1);
+          expect(meiDoc.sectionplane["app-recon-01"][0].xmlID).toEq("rdgA.app-recon-01");
+          expect(meiDoc.sectionplane["app-recon-02"][0].xmlID).toEq("rdgA.app-recon-02");
+          expect($(meiDoc.sectionview_score).find('staff[n="3"]').length).toEq(2);
+          expect($(meiDoc.sectionview_score).find('staff[n="4"]').length).toEq(0);
+
+          delete sectionplaneUpdate["app-recon-01"];
+          sectionplaneUpdate["app-recon-02"] = []; // Replace with initial reading: none
+          meiDoc.updateSectionView(sectionplaneUpdate);
+          expect(meiDoc.sectionplane["app-recon-01"].length).toEq(0);
+          expect(meiDoc.sectionplane["app-recon-02"].length).toEq(0);
+          expect($(meiDoc.sectionview_score).find('staff[n="3"]').length).toEq(0);
+          expect($(meiDoc.sectionview_score).find('staff[n="4"]').length).toEq(0);
+
+          sectionplaneUpdate["app-recon-02"] = [
+            "rdgA.app-recon-02",
+            "rdgB.app-recon-02"
+          ];
+          meiDoc.updateSectionView(sectionplaneUpdate);
+          expect(meiDoc.sectionplane["app-recon-01"].length).toEq(2);
+          expect(meiDoc.sectionplane["app-recon-02"].length).toEq(2);
+          expect(meiDoc.sectionplane["app-recon-01"][0].xmlID).toEq("rdgA.app-recon-01");
+          expect(meiDoc.sectionplane["app-recon-01"][1].xmlID).toEq("rdgB.app-recon-01");
+          expect(meiDoc.sectionplane["app-recon-02"][0].xmlID).toEq("rdgA.app-recon-02");
+          expect(meiDoc.sectionplane["app-recon-02"][1].xmlID).toEq("rdgB.app-recon-02");
+          expect($(meiDoc.sectionview_score).find('staff[n="3"]').length).toEq(2);
+          expect($(meiDoc.sectionview_score).find('staff[n="4"]').length).toEq(2);
+
+        });
       });
     });
-
-    describe('MeiLib.MeiDoc - Altgroups', function () {
-
-      console.log('********* TEST: MeiLib.MeiDoc - Altgroups ***********');
-
-      it('MeiDoc-Altgroups', function () {
-        var xmlid_asserts = {
-          'app-recon-01' : {},
-          'app-recon-02' : {},
-          'choice01' : {},
-          'app-var-01' : {},
-          'app-var-02' : {}
-        };
-        var xmlDoc_rich_mei = loadXMLDoc('xml/TC.CanonicalMEI.02.xml');
-        var meiDoc = new MeiLib.MeiDoc(xmlDoc_rich_mei);
-
-        for (var appID in meiDoc.ALTs) {
-          expect(xmlid_asserts.hasOwnProperty(appID)).toEq(true);
-        }
-        meiDoc.initSectionView();
-        console.log(meiDoc.sectionplane);
-        console.log(meiDoc.altgroups);
-
-        var apps = $(meiDoc.sectionview_score).find('app');
-        var choices = $(meiDoc.sectionview_score).find('app');
-        expect(apps.length).toEq(0);
-        expect(choices.length).toEq(0);
-        expect(meiDoc.sectionplane["app-recon-01"].length).toEq(0);
-        expect(meiDoc.sectionplane["app-recon-02"].length).toEq(0);
-        expect(meiDoc.sectionplane["choice01"][0].tagname).toEq("corr");
-        expect(meiDoc.sectionplane["app-var-01"][0].tagname).toEq("lem");
-        expect(meiDoc.sectionplane["app-var-02"][0].tagname).toEq("lem");
-
-        expect(meiDoc.altgroups["app-recon-01"][0]).toEq("app-recon-01");
-        expect(meiDoc.altgroups["app-recon-01"][1]).toEq("app-recon-02");
-        expect(meiDoc.altgroups["app-recon-02"][0]).toEq("app-recon-01");
-        expect(meiDoc.altgroups["app-recon-02"][1]).toEq("app-recon-02");
-        expect(meiDoc.altgroups["app-var-01"][0]).toEq("app-var-01");
-        expect(meiDoc.altgroups["app-var-01"][1]).toEq("app-var-02");
-        expect(meiDoc.altgroups["app-var-02"][0]).toEq("app-var-01");
-        expect(meiDoc.altgroups["app-var-02"][1]).toEq("app-var-02");
-      });
-    });
-
-    describe('MeiLib.MeiDoc - Modify Section View', function () {
-
-      console.log('********* TEST: MeiLib.MeiDoc - Modify Section View ***********');
-
-      it('MeiDoc-SectionView', function () {
-        var xmlDoc_rich_mei = loadXMLDoc('xml/TC.CanonicalMEI.02.xml');
-        var meiDoc = new MeiLib.MeiDoc(xmlDoc_rich_mei);
-        meiDoc.initSectionView();
-
-        console.log('sectionplane after init: ');
-        console.log(meiDoc.sectionplane);
-        expect(meiDoc.sectionplane["app-recon-01"].length).toEq(0);
-        expect(meiDoc.sectionplane["app-recon-02"].length).toEq(0);
-        expect(meiDoc.sectionplane["choice01"][0].tagname).toEq("corr");
-        expect(meiDoc.sectionplane["app-var-01"][0].tagname).toEq("lem");
-        expect(meiDoc.sectionplane["app-var-02"][0].tagname).toEq("lem");
-
-        var sectionplaneUpdate = {};
-        // single replacements can be defined as a string instead of
-        // a one item long list (backward compatibility)
-        sectionplaneUpdate["app-recon-01"] = "rdgA.app-recon-01";
-        sectionplaneUpdate["choice01"] = "sic-choice01";
-        sectionplaneUpdate["app-var-01"] = "rdg.app-var-01";
-        meiDoc.updateSectionView(sectionplaneUpdate);
-
-        console.log('sectionplane after modifySectionview: ');
-        console.log(meiDoc.sectionplane);
-        // print_xml(meiDoc.sectionview_score);
-        expect(meiDoc.sectionplane["app-recon-01"][0].xmlID).toEq("rdgA.app-recon-01");
-        expect(meiDoc.sectionplane["app-recon-02"][0].xmlID).toEq("rdgA.app-recon-02");
-        expect(meiDoc.sectionplane["choice01"][0].xmlID).toEq("sic-choice01");
-        expect(meiDoc.sectionplane["app-var-01"][0].xmlID).toEq("rdg.app-var-01");
-        expect(meiDoc.sectionplane["app-var-02"][0].xmlID).toEq("rdg.app-var-02");
-
-
-        sectionplaneUpdate["choice01"] = []; // Replace with initial choice: corr
-        sectionplaneUpdate["app-var-01"] = []; // Replace with initial reading: lem
-        meiDoc.updateSectionView(sectionplaneUpdate);
-        expect(meiDoc.sectionplane["choice01"].length).toEq(1);
-        expect(meiDoc.sectionplane["app-var-01"].length).toEq(1);
-        expect(meiDoc.sectionplane["choice01"][0].tagname).toEq("corr");
-        expect(meiDoc.sectionplane["app-var-01"][0].tagname).toEq("lem");
-
-      });
-    });
-
-    describe('MeiLib.MeiDoc - Modify Section View (Multiple Choice)', function () {
-
-      console.log('********* TEST: MeiLib.MeiDoc - Modify Section View (Multiple Choice) ***********');
-
-      it('MeiDoc-SectionView-MultipleChoice', function () {
-
-        var xmlDoc_rich_mei = loadXMLDoc('xml/TC.CanonicalMEI.02.xml');
-        var meiDoc = new MeiLib.MeiDoc(xmlDoc_rich_mei);
-        meiDoc.initSectionView();
-
-        var sectionplaneUpdate = {};
-        sectionplaneUpdate["app-recon-01"] = [
-          "rdgA.app-recon-01",
-          "rdgB.app-recon-01"
-        ];
-        meiDoc.updateSectionView(sectionplaneUpdate);
-        console.log('sectionplane after modifySectionview: ');
-        console.log(meiDoc.sectionplane);
-        expect(meiDoc.sectionplane["app-recon-01"].length).toEq(2);
-        expect(meiDoc.sectionplane["app-recon-02"].length).toEq(2);
-        expect(meiDoc.sectionplane["app-recon-01"][0].xmlID).toEq("rdgA.app-recon-01");
-        expect(meiDoc.sectionplane["app-recon-01"][1].xmlID).toEq("rdgB.app-recon-01");
-        expect(meiDoc.sectionplane["app-recon-02"][0].xmlID).toEq("rdgA.app-recon-02");
-        expect(meiDoc.sectionplane["app-recon-02"][1].xmlID).toEq("rdgB.app-recon-02");
-        expect($(meiDoc.sectionview_score).find('staff[n="3"]').length).toEq(2);
-        expect($(meiDoc.sectionview_score).find('staff[n="4"]').length).toEq(2);
-
-
-        sectionplaneUpdate["app-recon-01"] = ["rdgB.app-recon-01"];
-        meiDoc.updateSectionView(sectionplaneUpdate);
-        expect(meiDoc.sectionplane["app-recon-01"].length).toEq(1);
-        expect(meiDoc.sectionplane["app-recon-02"].length).toEq(1);
-        expect(meiDoc.sectionplane["app-recon-01"][0].xmlID).toEq("rdgB.app-recon-01");
-        expect(meiDoc.sectionplane["app-recon-02"][0].xmlID).toEq("rdgB.app-recon-02");
-        expect($(meiDoc.sectionview_score).find('staff[n="3"]').length).toEq(0);
-        expect($(meiDoc.sectionview_score).find('staff[n="4"]').length).toEq(2);
-
-        sectionplaneUpdate["app-recon-01"] = ["rdgA.app-recon-01"];
-        meiDoc.updateSectionView(sectionplaneUpdate);
-        expect(meiDoc.sectionplane["app-recon-01"].length).toEq(1);
-        expect(meiDoc.sectionplane["app-recon-02"].length).toEq(1);
-        expect(meiDoc.sectionplane["app-recon-01"][0].xmlID).toEq("rdgA.app-recon-01");
-        expect(meiDoc.sectionplane["app-recon-02"][0].xmlID).toEq("rdgA.app-recon-02");
-        expect($(meiDoc.sectionview_score).find('staff[n="3"]').length).toEq(2);
-        expect($(meiDoc.sectionview_score).find('staff[n="4"]').length).toEq(0);
-
-        delete sectionplaneUpdate["app-recon-01"];
-        sectionplaneUpdate["app-recon-02"] = []; // Replace with initial reading: none
-        meiDoc.updateSectionView(sectionplaneUpdate);
-        expect(meiDoc.sectionplane["app-recon-01"].length).toEq(0);
-        expect(meiDoc.sectionplane["app-recon-02"].length).toEq(0);
-        expect($(meiDoc.sectionview_score).find('staff[n="3"]').length).toEq(0);
-        expect($(meiDoc.sectionview_score).find('staff[n="4"]').length).toEq(0);
-
-        sectionplaneUpdate["app-recon-02"] = [
-          "rdgA.app-recon-02",
-          "rdgB.app-recon-02"
-        ];
-        meiDoc.updateSectionView(sectionplaneUpdate);
-        expect(meiDoc.sectionplane["app-recon-01"].length).toEq(2);
-        expect(meiDoc.sectionplane["app-recon-02"].length).toEq(2);
-        expect(meiDoc.sectionplane["app-recon-01"][0].xmlID).toEq("rdgA.app-recon-01");
-        expect(meiDoc.sectionplane["app-recon-01"][1].xmlID).toEq("rdgB.app-recon-01");
-        expect(meiDoc.sectionplane["app-recon-02"][0].xmlID).toEq("rdgA.app-recon-02");
-        expect(meiDoc.sectionplane["app-recon-02"][1].xmlID).toEq("rdgB.app-recon-02");
-        expect($(meiDoc.sectionview_score).find('staff[n="3"]').length).toEq(2);
-        expect($(meiDoc.sectionview_score).find('staff[n="4"]').length).toEq(2);
-
-      });
-    });
-
-    console.log('Done');
-
   });
 
 });

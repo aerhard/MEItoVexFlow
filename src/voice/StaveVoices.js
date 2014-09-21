@@ -1,8 +1,4 @@
 /*
- * Contributor: Alexander Erhard
- */
-
-/*
  * StaveVoices.js Author: Zoltan Komives (zolaemil@gmail.com) Created:
  * 25.07.2013
  *
@@ -21,7 +17,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
+/*
+ * Contributor: Alexander Erhard
+ */
 define([
   'vexflow',
   'm2v/voice/StaveVoice'

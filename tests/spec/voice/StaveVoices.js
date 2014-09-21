@@ -4,12 +4,11 @@ define([
 
   describe("StaveVoices", function () {
 
-    console.log('\n\n*********************************************');
-    console.log('\n************ Unit test: StaveVoices *********');
-
-    var Vex = window.Vex;
-
     it('should play well with VexFlow', function () {
+      console.log('\n\n*********************************************');
+      console.log('\n************ Unit test: StaveVoices *********');
+
+      var Vex = window.Vex;
 
     var staveVoices = new StaveVoices();
 
