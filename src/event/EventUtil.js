@@ -20,9 +20,9 @@
  */
 define([
   'vexflow',
-  'm2v/core/Logger',
-  'm2v/core/Util',
-  'm2v/core/Tables'
+  'mei2vf/core/Logger',
+  'mei2vf/core/Util',
+  'mei2vf/core/Tables'
 ], function (VF, Logger, Util, Tables, undefined) {
 
 
@@ -96,7 +96,7 @@ define([
       if (val) {
         vexObject.addAccidental(i, new VF.Accidental(val));
       } else {
-        Logger.warn('Encoding error', 'Invalid accidental "' + mei_accid + '". Skipping attribute.');
+        Logger.warn('Not supported', 'The value "' + mei_accid + '" is not supported in @accid. Ignoring attribute.');
       }
     },
 
@@ -104,7 +104,6 @@ define([
      * @method processAttrHo
      */
     processAttrHo : function (mei_ho, vexObject, staff) {
-      var me = this;
       vexObject.setExtraLeftPx(+mei_ho * staff.getSpacingBetweenLines() / 2);
     },
 
@@ -112,7 +111,7 @@ define([
      * adds an articulation to a note-like object
      * @method addArticulation
      * @param {Vex.Flow.StaveNote} note the note-like VexFlow object
-     * @param {XMLElement} element the articulation element
+     * @param {Element} element the articulation element
      */
     addArticulation : function (note, element) {
       var articCode = Tables.articulations[element.getAttribute('artic')];
@@ -125,7 +124,7 @@ define([
         note.addArticulation(0, vexArtic);
       } else {
         Logger.warn('unknown @artic', 'The @artic attribute in ' + Util.serializeElement(element) +
-                                      ' is unknown or undefined. Skipping element.');
+                                      ' is unknown or undefined. Ignoring element.');
       }
     },
 
@@ -152,7 +151,7 @@ define([
 
     /**
      * @method setStemDir
-     * @param element
+     * @param options
      * @param vexOptions
      * @return {Boolean} true if a stem direction has been specified in the MEI code
      */

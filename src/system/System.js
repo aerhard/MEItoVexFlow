@@ -19,8 +19,8 @@
  * the License.
  */
 define([
-    'm2v/lyrics/verses'
-  ], function (Verses, undefined) {
+    'mei2vf/lyrics/verses'
+  ], function (Verses) {
 
     /**
      * A single instance of a staff system, containing and processing information
@@ -186,7 +186,7 @@ define([
       /**
        * formats the measures in the current system
        * @param {Object} ctx the canvas context
-       * @return {MEI2VF.System} this
+       * @return {System} this
        */
       format : function (ctx) {
         var me = this, i, j, measures, offsetX, labels;

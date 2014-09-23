@@ -16,10 +16,10 @@
  */
 define([
   'vexflow',
-  'm2v/event/EventUtil',
-  'm2v/core/Util',
-  'm2v/core/Tables'
-], function (VF, EventUtil, Util, Tables, undefined) {
+  'mei2vf/event/EventUtil',
+  'mei2vf/core/Util',
+  'mei2vf/core/Tables'
+], function (VF, EventUtil, Util, Tables) {
 
 
   var MRest = function (options) {

@@ -20,11 +20,11 @@
  */
 define([
   'vexflow',
-  'm2v/vexflow-overrides',
+  'mei2vf/vexflow-overrides',
   'meilib/MeiLib',
-  'm2v/core/Logger',
-  'm2v/core/Converter',
-], function (VF, overrides, MeiLib, Logger, Converter, undefined) {
+  'mei2vf/core/Logger',
+  'mei2vf/core/Converter'
+], function (VF, overrides, MeiLib, Logger, Converter) {
   window.MeiLib = MeiLib;
 
 
@@ -40,15 +40,15 @@ define([
      * - 'error' errors
      * - false no logging
      */
-    setLogging : function() {
-      Logger.setLevel.apply(Logger, arguments);
+    setLogging : function(level) {
+      Logger.setLevel.call(Logger, level);
     },
     /**
      * @method setLoggerAppender sets the logger's appender
      * @param appender an object implementing the methods error(), warn(), info() and debug(), for example window.console
      */
-    setLoggerAppender : function() {
-      Logger.setAppender.apply(Logger, arguments);
+    setLoggerAppender : function(appender) {
+      Logger.setAppender.call(Logger, appender);
     },
     /**
      * The methods in Converter can be used to manually address distinct

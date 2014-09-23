@@ -16,7 +16,7 @@
  */
 define([
   'vexflow',
-  'm2v/core/Logger'
+  'mei2vf/core/Logger'
 ], function (VF, Logger, undefined) {
 
 

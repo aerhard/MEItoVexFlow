@@ -20,8 +20,8 @@
 
 define([
   'meilib/MeiLib',
-  'm2v/core/RuntimeError'
-], function (MeiLib, RuntimeError, undefined) {
+  'mei2vf/core/RuntimeError'
+], function (MeiLib, RuntimeError) {
 
   /**
    * @class MEI2VF.EventReverence
@@ -67,7 +67,6 @@ define([
     tryResolveReference : function () {
       var tstamp, meicontext;
       tstamp = this.tstamp;
-      meicontext = this.meicontext;
       if (!tstamp) {
         throw new RuntimeError('tstamp must be set in order to resolve reference.');
       }

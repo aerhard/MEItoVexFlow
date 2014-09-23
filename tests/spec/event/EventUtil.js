@@ -1,6 +1,6 @@
 define([
-  'm2v/event/EventUtil',
-  'm2v/core/Logger'
+  'mei2vf/event/EventUtil',
+  'mei2vf/core/Logger'
 ], function (EventUtil, Logger, undefined) {
 
   describe("EventUtil", function () {

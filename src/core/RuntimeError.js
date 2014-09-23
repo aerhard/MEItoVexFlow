@@ -1,4 +1,4 @@
-define(function (undefined) {
+define(function () {
 
   var RuntimeError = function (message) {
     this.name = 'MEI2VF Runtime Error';

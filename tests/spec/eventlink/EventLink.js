@@ -1,6 +1,6 @@
 define([
-  'm2v/eventlink/EventLink',
-  'm2v/eventlink/EventReference'
+  'mei2vf/eventlink/EventLink',
+  'mei2vf/eventlink/EventReference'
 ], function (EventLink, EventReference, undefined) {
 
   describe("EventLink", function () {

@@ -16,7 +16,8 @@
  */
 define([
   'vexflow',
-], function (VF, undefined) {
+  'vex'
+], function (VF, Vex, undefined) {
 
   /**
    * Creates a new Stave object at the specified y coordinate. This

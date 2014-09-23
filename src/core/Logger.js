@@ -15,9 +15,9 @@
  *
  */
 define([
-  'm2v/core/RuntimeError',
-  'm2v/core/DefaultAppender'
-], function (RuntimeError, DefaultAppender, undefined) {
+  'mei2vf/core/RuntimeError',
+  'mei2vf/core/DefaultAppender'
+], function (RuntimeError, DefaultAppender) {
 
   var emptyFn = function () {
   };

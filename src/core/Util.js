@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-define(function (undefined) {
+define(function () {
 
   /**
    * @class MEI2VF.Util

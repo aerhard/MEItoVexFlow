@@ -7,8 +7,9 @@
 
 // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
 define([
-  'vexflow'
-], function (VF, undefined) {
+  'vexflow',
+  'vex'
+], function (VF, Vex) {
 
 
   var Syllable = function (element, font) {

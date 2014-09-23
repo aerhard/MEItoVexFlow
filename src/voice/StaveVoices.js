@@ -22,8 +22,8 @@
  */
 define([
   'vexflow',
-  'm2v/voice/StaveVoice'
-], function (VF, StaveVoice, undefined) {
+  'mei2vf/voice/StaveVoice'
+], function (VF, StaveVoice) {
 
 
   /**
@@ -74,7 +74,7 @@ define([
 
     /**
      *
-     * @param {Object} staff a staff in the current measure used to set
+     * @param {Object} stave a staff in the current measure used to set
      * the x dimensions of the voice
      */
     format : function (stave) {

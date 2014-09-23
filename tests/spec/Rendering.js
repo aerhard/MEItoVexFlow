@@ -1,5 +1,5 @@
 define([
-  'm2v/Interface',
+  'mei2vf/Interface',
   'tests/TestAppender'
 ], function (Interface, TestAppender, undefined) {
 

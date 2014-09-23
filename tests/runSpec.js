@@ -42,17 +42,6 @@ var runSpec = function (m2vTests) {
     'spec/voice/StaveVoices'
   ];
 
-  require.config({
-    baseUrl : '../src',
-    paths : {
-      'tests' : '../tests',
-      'spec' : '../tests/spec',
-      'm2v' : '../src',
-      'meilib' : '../src/meilib'
-    }
-  });
-
-
   if (!m2vTests) {
     m2vTests = allTests;
   }

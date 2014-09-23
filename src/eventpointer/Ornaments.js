@@ -16,11 +16,12 @@
  */
 define([
   'vexflow',
-  'm2v/core/Logger',
-  'm2v/core/Util',
-  'm2v/core/Tables',
-  'm2v/eventpointer/EventPointerCollection'
-], function (VF, Logger, Util, Tables, EventPointerCollection, undefined) {
+  'vex',
+  'mei2vf/core/Logger',
+  'mei2vf/core/Util',
+  'mei2vf/core/Tables',
+  'mei2vf/eventpointer/EventPointerCollection'
+], function (VF, Vex, Logger, Util, Tables, EventPointerCollection) {
 
   /**
    * @class MEI2VF.Ornaments
@@ -40,7 +41,7 @@ define([
     },
 
     createVexFromInfos : function (notes_by_id) {
-      var me = this, i, model, note, annot;
+      var me = this, i, model, note;
       i = me.allModels.length;
       while (i--) {
         model = me.allModels[i];
@@ -49,7 +50,7 @@ define([
           me.addOrnamentToNote(note.vexNote, model);
         } else {
           console.log(model);
-          Logger.warn('Input error', Util.serializeElement(model.element) +
+          Logger.warn('Unknown reference', Util.serializeElement(model.element) +
                                             ' could not be rendered because the reference "' + model.startid +
                                             '" could not be resolved.');
         }
@@ -64,7 +65,7 @@ define([
      * @param {Number} index The index of the note in a chord (optional)
      */
     addOrnamentToNote : function (note, model, index) {
-      var atts = model.atts, accidLower, accidUpper;
+      var atts = model.atts;
       // TODO support @tstamp2 etc -> make Link instead of Pointer
 
       var vexOrnament = new VF.Ornament("tr");

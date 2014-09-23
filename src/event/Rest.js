@@ -16,9 +16,9 @@
  */
 define([
   'vexflow',
-  'm2v/event/EventUtil',
-  'm2v/core/Util'
-], function (VF, EventUtil, Util, undefined) {
+  'mei2vf/event/EventUtil',
+  'mei2vf/core/Util'
+], function (VF, EventUtil, Util) {
 
 
   var Rest = function (options) {

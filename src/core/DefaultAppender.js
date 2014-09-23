@@ -15,7 +15,7 @@
  *
  */
 define([
-], function (undefined) {
+], function () {
 
   var DefaultAppender = {
     error : function () {

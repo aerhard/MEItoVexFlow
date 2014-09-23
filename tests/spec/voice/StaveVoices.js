@@ -1,5 +1,5 @@
 define([
-  'm2v/voice/StaveVoices',
+  'mei2vf/voice/StaveVoices',
 ], function (StaveVoices, undefined) {
 
   describe("StaveVoices", function () {

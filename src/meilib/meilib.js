@@ -63,6 +63,7 @@ define(['jquery'], function ($, undefined) {
    * Enumerate over the children events of node (node is a layer, beam or tuplet).
    * @constructor
    * @param {Object} node an XML DOM object
+   * @param {} proportion
    */
   MeiLib.EventEnumerator = function (node, proportion) {
     this.init(node, proportion);
@@ -70,6 +71,7 @@ define(['jquery'], function ($, undefined) {
   /**
    * @method init
    * @param {} node
+   * @param {} proportion
    */
   MeiLib.EventEnumerator.prototype.init = function (node, proportion) {
     if (!node) {
@@ -208,7 +210,7 @@ define(['jquery'], function ($, undefined) {
         return dotsMult * MeiLib.dur2beats(Number(dur), meter);
       }
       $(chord).find('note').each(function () {
-        lyr_n = $(this).attr('layer');
+        var lyr_n = $(this).attr('layer');
         if (!lyr_n || lyr_n === layer_no) {
           var dur_note = $(this).attr('dur');
           var dotsMult_note = MeiLib.dotsMult(chord);
@@ -232,7 +234,6 @@ define(['jquery'], function ($, undefined) {
       var acc = 0;
       $(beam).children().each(function () {
         var dur_b;
-        var dur;
         var tagName = this.localName;
         if (IsZeroDurEvent(this, tagName)) {
           dur_b = 0;
@@ -304,7 +305,7 @@ define(['jquery'], function ($, undefined) {
     // total duration of events before current event
     var c_ts = function () {
       return ts_acc + 1;
-    }// tstamp of current event
+    };// tstamp of current event
     var distF = function () {
       return ts - c_ts();
     }// signed distance between tstamp and tstamp of current event;
@@ -364,7 +365,7 @@ define(['jquery'], function ($, undefined) {
    * @method XMLID
    * returns the xml:id attribute of an element; if there is none, the function
    * created a pseudo id, adds it to the element and returns that id.
-   * @param {XMLElement} elem the element to process
+   * @param {Element} elem the element to process
    * @return {String} the xml:id of the element
    */
   MeiLib.XMLID = function (elem) {
@@ -433,6 +434,7 @@ define(['jquery'], function ($, undefined) {
    * @param beats {Number} duration in beats @param meter time signature object {
  * count, unit } @return {Number} reciprocal value of absolute duration (e.g. 4
    * -> quarter note, 8 -> eighth note, etc.)
+   * @param {Object} meter
    */
   MeiLib.beats2dur = function (beats, meter) {
     return (meter.unit / beats);
@@ -454,7 +456,6 @@ define(['jquery'], function ($, undefined) {
     for (; dots > 0; --dots) {
       mult += (1 / Math.pow(2, dots))
     }
-    ;
     return mult;
   }
   /**
@@ -475,7 +476,7 @@ define(['jquery'], function ($, undefined) {
   MeiLib.sumUpUntil = function (eventid, layer, meter) {
 
     var sumUpUntil_inNode = function (node_elem) {
-      var beats, children, found, dur, dots, subtotal, chord_dur, i;
+      var beats, children, found = null, dur, dots, subtotal, chord_dur, i;
       var node = $(node_elem);
       var node_name = node.prop('localName');
       if (node_elem.hasAttribute('grace') || node_name === 'clef') {
@@ -506,7 +507,6 @@ define(['jquery'], function ($, undefined) {
         }
       } else if (node_name === 'mRest') {
         if (node.attr('xml:id') === eventid) {
-          found = true;
           return {
             beats : 0,
             found : true
@@ -569,16 +569,15 @@ define(['jquery'], function ($, undefined) {
             };
           }
         }
-        ;
       }
       return {
         beats : 0,
         found : false
       };
-    }
+    };
 
     return sumUpUntil_inNode(layer);
-  }
+  };
 
   /**
    * @method SliceMEI
@@ -597,6 +596,7 @@ define(['jquery'], function ($, undefined) {
    *
    * Note that <b>staff</b> elements without @n will be removed.
    *
+   * @param {Object} MEI
    * @param {Object} params like { start_n:NUMBER, end_n:NUMBER, noKey:BOOLEAN,
  *            noClef:BOOLEAN, noMeter:BOOLEAN, noConnectors, staves:[NUMBER] },
    *            where <code>noKey</code>, <code>noClef</code> and
@@ -636,12 +636,11 @@ define(['jquery'], function ($, undefined) {
     }
 
     var slice = MEI.cloneNode(true);
-    var scoreDefs;
     if (paramsStaves) {
       $(slice).find('staffDef').remove(':not(' + staffDefSelector + ')');
     }
     if (params.noClef || params.noKey || params.noMeter) {
-      scoreDef = $(slice).find('scoreDef')[0];
+      var scoreDef = $(slice).find('scoreDef')[0];
       var staffDefs = $(scoreDef).find('staffDef');
       setVisibles($(scoreDef), params);
       setVisibles(staffDefs, params);
@@ -716,10 +715,12 @@ define(['jquery'], function ($, undefined) {
    *
    * @class MeiLib.Alt
    * @constructor
+   * @param {Element} elem
    * @param {String} xmlID the xml:id attribute value of the <b>app</b> or
    * <b>choice</b> element.
    * @param {String} parentID the xml:id attribute value of the direct parent
    * element of the <b>app</b> or <b>choice</b> element.
+   * @param {String} tagname
    */
   MeiLib.Alt = function (elem, xmlID, parentID, tagname) {
     this.elem = elem;
@@ -733,8 +734,7 @@ define(['jquery'], function ($, undefined) {
 
     /* find the editors pick or the first alternative */
     var findDefault = function (altitems, editorspick_tagname, other_tagname) {
-      var i;
-      var first_sic;
+      var first_sic, alt;
       for (alt in altitems) {
         if (altitems[alt].tagname === editorspick_tagname) {
           return altitems[alt];
@@ -756,6 +756,7 @@ define(['jquery'], function ($, undefined) {
    * Represents a <b>lem</b>, <b>rdg</b>, <b>sic</b> or <b>corr</b> element.
    *
    * @constructor
+   * @param elem {Element}
    * @param xmlID {String} the xml:id attribute value of the element.
    * @param tagname {String} 'lem' for <b>lem</b> and 'rdg for <b>rdg</b> elements.
    * @param source {String} space-separated list of the source IDs what the given
@@ -916,9 +917,9 @@ define(['jquery'], function ($, undefined) {
    * @method initAltgroups
    */
   MeiLib.MeiDoc.prototype.initAltgroups = function () {
-    var i, j;
-    var ALTs = this.ALTs;
-    annots = $(this.rich_score).find('annot[type="appGrp"], annot[type="choiceGrp"]');
+    var i, j, altgroup, token_list;
+    //var ALTs = this.ALTs;
+    var annots = $(this.rich_score).find('annot[type="appGrp"], annot[type="choiceGrp"]');
     this.altgroups = {};
     for (i = 0; i < annots.length; i++) {
       altgroup = [];
@@ -930,8 +931,7 @@ define(['jquery'], function ($, undefined) {
         this.altgroups[altgroup[j]] = altgroup;
       }
     }
-    ;
-  }
+  };
   /**
    * @method initSectionView
    * The MeiLib.MeiDoc.initSectionView transforms the rich MEI (this.rich_score)
@@ -1022,7 +1022,6 @@ define(['jquery'], function ($, undefined) {
 
     var alts = $(this.sectionview_score).find('app, choice');
 
-    var alt_item2insert;
     var alt_item_xml_id;
     var this_sectionview_score = this.sectionview_score;
     var this_sectionplane = this.sectionplane;
@@ -1053,11 +1052,10 @@ define(['jquery'], function ($, undefined) {
       parent.insertBefore(PIStart, alt);
       if (alt_item2insert) {
         var childNodes = alt_item2insert.childNodes;
-        var i;
-        for (i = 0; i < childNodes.length; ++i) {
-          parent.insertBefore(childNodes.item(i).cloneNode(true), alt);
+        var j;
+        for (j = 0; j < childNodes.length; ++j) {
+          parent.insertBefore(childNodes.item(j).cloneNode(true), alt);
         }
-        ;
       }
       var PIEnd = xmlDoc.createProcessingInstruction('MEI2VF', 'rdgEnd="' + alt_xml_id + '"');
       parent.insertBefore(PIEnd, alt);
@@ -1067,7 +1065,7 @@ define(['jquery'], function ($, undefined) {
       if (this_ALTs[alt_xml_id].altitems[alt_item_xml_id]) {
         this_sectionplane[alt_xml_id].push(this_ALTs[alt_xml_id].altitems[alt_item_xml_id]);
       }
-    })
+    });
 
     return this.sectionview_score;
 
@@ -1096,6 +1094,8 @@ define(['jquery'], function ($, undefined) {
    */
   MeiLib.MeiDoc.prototype.updateSectionView = function (sectionplaneUpdate) {
 
+    var altID, altID__;
+
     var corresponding_alt_item = function (altitems, altitem) {
       var vars_match = function (v1, v2) {
         var res = 0;
@@ -1108,7 +1108,7 @@ define(['jquery'], function ($, undefined) {
         return res;
       }
       var max = 0;
-      var corresponding_item;
+      var corresponding_item, M;
       for (var alt_item_id in altitems) {
         M = vars_match(altitems[alt_item_id], altitem);
         if (max < M) {
@@ -1117,7 +1117,8 @@ define(['jquery'], function ($, undefined) {
         }
       }
       return corresponding_item;
-    }
+    };
+
     for (altID in sectionplaneUpdate) {
       var this_ALTs = this.ALTs;
       var altitems2insert = [];
@@ -1135,7 +1136,7 @@ define(['jquery'], function ($, undefined) {
           altitems2insert.push(defaultAltItem);
         }
       }
-      altgroup = this.altgroups[altID];
+      var altgroup = this.altgroups[altID];
       if (altgroup) {
         // if altID is present in altgroups, then replace all corresponding alts
         // with the
@@ -1161,7 +1162,7 @@ define(['jquery'], function ($, undefined) {
         });
       }
     }
-  }
+  };
   /**
    * @method replaceAltInstance
    * Replace an alternative instance in the sectionview score and in the
@@ -1179,7 +1180,7 @@ define(['jquery'], function ($, undefined) {
         res.push(nodeList.item(i));
       }
       return res;
-    }
+    };
     var app_xml_id = alt_inst_update.appXmlID;
     var parent = $(this.sectionview_score).find('[xml\\:id=' + this.ALTs[app_xml_id].parentID + ']')[0];
     if (typeof parent === 'undefined') {
@@ -1199,7 +1200,6 @@ define(['jquery'], function ($, undefined) {
                                                     '"]')[0];
         nodes2insert = extendWithNodeList(nodes2insert, var_inst_elem.childNodes);
       }
-      ;
     }
     //  console.log(nodes2insert)
 
@@ -1272,7 +1272,7 @@ define(['jquery'], function ($, undefined) {
    * @param params
    *            {Obejct} contains the parameters for slicing. For more info see at
    *            documentation of MeiLib.SliceMEI
-   * @return a MeiDoc object
+   * @return {MeiLib.MeiDoc} a MeiDoc object
    */
   MeiLib.MeiDoc.prototype.getRichSlice = function (params) {
     var slice = new MeiLib.MeiDoc();

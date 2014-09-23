@@ -18,8 +18,8 @@
  */
 
 define([
-  'm2v/eventlink/EventReference'
-], function (EventReference, undefined) {
+  'mei2vf/eventlink/EventReference'
+], function (EventReference) {
 
 
   /**

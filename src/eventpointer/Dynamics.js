@@ -20,11 +20,12 @@
  */
 define([
   'vexflow',
-  'm2v/core/Logger',
-  'm2v/core/Util',
-  'm2v/core/Tables',
-  'm2v/eventpointer/EventPointerCollection'
-], function (VF, Logger, Util, Tables, EventPointerCollection, undefined) {
+  'vex',
+  'mei2vf/core/Logger',
+  'mei2vf/core/Util',
+  'mei2vf/core/Tables',
+  'mei2vf/eventpointer/EventPointerCollection'
+], function (VF, Vex, Logger, Util, Tables, EventPointerCollection) {
 
   /**
    * @class MEI2VF.Dynamics
@@ -65,7 +66,7 @@ define([
             note.vexNote.addAnnotation(0, annot.setVerticalJustification(me.BOTTOM));
           }
         } else {
-          Logger.warn('Input error', Util.serializeElement(model.element) +
+          Logger.warn('Unknown reference', Util.serializeElement(model.element) +
                                             ' could not be rendered because the reference "' + model.startid +
                                             '" could not be resolved.');
         }

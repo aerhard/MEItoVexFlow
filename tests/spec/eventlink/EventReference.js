@@ -1,6 +1,6 @@
 define([
-  'm2v/eventlink/eventReference',
-  'm2v/core/RuntimeError'
+  'mei2vf/eventlink/eventReference',
+  'mei2vf/core/RuntimeError'
 ], function (EventReference, RuntimeError, undefined) {
 
   describe("EventReference", function () {

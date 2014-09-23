@@ -22,9 +22,9 @@
  */
 define([
   'jquery',
-  'm2v/core/Logger',
-  'm2v/core/RuntimeError',
-  'm2v/stave/StaveInfo'
+  'mei2vf/core/Logger',
+  'mei2vf/core/RuntimeError',
+  'mei2vf/stave/StaveInfo'
 ], function ($, Logger, RuntimeError, StaveInfo, undefined) {
 
   /**
@@ -239,7 +239,7 @@ define([
      *
      * Supported elements: <b>staffGrp</b>
      *
-     * @param {XMLElement} element the scoreDef element to process
+     * @param {Element} element the scoreDef element to process
      */
     processScoreDef_child : function (element) {
       var me = this;
@@ -250,18 +250,19 @@ define([
         case 'pgHead' :
           break;
         default :
-          Logger.info('SystemInfo.processScoreDef_child()', 'Element <' + element.localName +
-                                                                   '> is not supported in <scoreDef>. Skipping.');
+          Logger.info('Not supported', 'Element <' + element.localName +
+                                                                   '> is not supported in <scoreDef>. Ignoring element.');
       }
     },
 
 
     /**
      *
-     * @param {XMLElement} staffGrp
+     * @param {Element} staffGrp
      * @param {Boolean} isChild specifies if the staffGrp is a child of another
      *            staffGrp (auto staff connectors only get attached
      *            to the outermost staffGrp elements)
+     * @param {Object} ancestorSymbols
      * @return {Object} the range of the current staff group. Properties:
      *         first_n, last_n
      */
@@ -289,8 +290,9 @@ define([
      *
      * Supported elements: <b>staffGrp</b> <b>staffDef</b>
      *
-     * @param {XMLElement} parent
-     * @param {XMLElement} element
+     * @param {Element} parent
+     * @param {Element} element
+     * @param {Object} ancestorSymbols
      * @return {Object} the range of staffs. Properties: first_n, last_n
      */
     processStaffGrp_child : function (parent, element, ancestorSymbols) {
@@ -307,15 +309,15 @@ define([
           (!ancestorSymbols) ? [parent.getAttribute('symbol')] : ancestorSymbols.concat(parent.getAttribute('symbol'));
           return me.processStaffGrp(element, true, myAncestorSymbols);
         default :
-          Logger.info('SystemInfo.processScoreDef_child()', 'Element <' + element.localName +
-                                                                   '> is not supported in <staffGrp>. Skipping.');
+          Logger.info('Not supported', 'Element <' + element.localName +
+                                                                   '> is not supported in <staffGrp>. Ignoring element.');
       }
     },
 
     /**
      * reads a staffDef, writes it to currentStaveInfos
      *
-     * @param {XMLElement} staffDef
+     * @param {Element} staffDef
      * @return {Number} the staff number of the staffDef
      */
     processStaffDef : function (staffDef) {

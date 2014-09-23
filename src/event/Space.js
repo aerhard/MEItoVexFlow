@@ -16,13 +16,13 @@
  */
 define([
   'vexflow',
-  'm2v/event/EventUtil',
-  'm2v/core/Util'
-], function (VF, EventUtil, Util, undefined) {
+  'mei2vf/event/EventUtil',
+  'mei2vf/core/Util'
+], function (VF, EventUtil, Util) {
 
 
   var Space = function (options) {
-    var dots, i, vexOptions, atts;
+    var vexOptions, atts;
 
     atts = Util.attsToObj(options.element);
 

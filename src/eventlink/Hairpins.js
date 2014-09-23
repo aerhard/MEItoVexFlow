@@ -21,11 +21,12 @@
 define([
   'jquery',
   'vexflow',
-  'm2v/core/Logger',
-  'm2v/core/RuntimeError',
-  'm2v/core/Tables',
-  'm2v/eventlink/EventLinkCollection'
-], function ($, VF, Logger, RuntimeError, Tables, EventLinkCollection, undefined) {
+  'vex',
+  'mei2vf/core/Logger',
+  'mei2vf/core/RuntimeError',
+  'mei2vf/core/Tables',
+  'mei2vf/eventlink/EventLinkCollection'
+], function ($, VF, Vex, Logger, RuntimeError, Tables, EventLinkCollection, undefined) {
 
   /**
    * @class MEI2VF.Hairpins

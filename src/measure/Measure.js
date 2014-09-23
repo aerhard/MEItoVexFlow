@@ -21,10 +21,10 @@
 define([
   'jquery',
   'vexflow',
-  'm2v/core/RuntimeError',
-  'm2v/core/Util',
-  'm2v/measure/StaveConnectors'
-], function ($, VF, RuntimeError, Util, StaveConnectors, undefined) {
+  'mei2vf/core/RuntimeError',
+  'mei2vf/core/Util',
+  'mei2vf/measure/StaveConnectors'
+], function ($, VF, RuntimeError, Util, StaveConnectors) {
 
   /**
    * @class MEI2VF.Measure
@@ -50,7 +50,7 @@ define([
        */
       me.system = config.system;
       /**
-       * @cfg {XMLElement} element the MEI element of the current measure
+       * @cfg {Element} element the MEI element of the current measure
        */
       me.element = config.element;
       /**
@@ -84,7 +84,7 @@ define([
       me.slurElements = config.slurElements;
       me.hairpinElements = config.hairpinElements;
       /**
-       * @cfg {XMLElement[]} tempoElements the MEI tempo elements in the
+       * @cfg {Element[]} tempoElements the MEI tempo elements in the
        * current measure
        */
       me.tempoElements = config.tempoElements;
@@ -94,7 +94,7 @@ define([
        */
       me.tempoFont = config.tempoFont;
       /**
-       * @cfg {XMLElement[]} rehElements the MEI rehearsal mark elements in the
+       * @cfg {Element[]} rehElements the MEI rehearsal mark elements in the
        * current measure
        */
       me.rehElements = config.rehElements;
@@ -122,7 +122,7 @@ define([
     /**
      *  reads the width attribute of the specified element and converts it to a
      * number
-     * @param {XMLElement} element the element to process
+     * @param {Element} element the element to process
      * @return {Number} the number of the attribute or null if NaN
      */
     readMEIW : function (element) {
@@ -207,7 +207,7 @@ define([
         atts = Util.attsToObj(this);
         vexStaff = me.staffs[atts.staff];
         halfLineDistance = vexStaff.getSpacingBetweenLines() / 2;
-        vexTempo = new Vex.Flow.StaveTempo({
+        vexTempo = new VF.StaveTempo({
           name : $(this).text(),
           duration : atts['mm.unit'],
           dots : +atts['mm.dots'],
@@ -306,12 +306,12 @@ define([
       var me = this;
       var staff = me.getFirstDefinedStaff();
       /**
-       * @property {0|20} repeatPadding additional padding (20px) if the staff
+       * @property {Number} repeatPadding additional padding (20px) if the staff
        * does have a left REPEAT_BEGIN barline located to the right of other
        * staff modifiers; 0px in all other cases.
        */
       me.repeatPadding =
-      (staff.modifiers[0].barline == Vex.Flow.Barline.type.REPEAT_BEGIN && staff.modifiers.length > 2) ? 20 : 0;
+      (staff.modifiers[0].barline == VF.Barline.type.REPEAT_BEGIN && staff.modifiers.length > 2) ? 20 : 0;
     },
 
     /**

@@ -1,4 +1,7 @@
-define(['vexflow'], function (VF, undefined) {
+define([
+  'vexflow',
+  'vex'
+], function (VF, Vex, undefined) {
 
   VF.Annotation.prototype.setMeiElement = function (element) {
     this.meiElement = element;
@@ -407,7 +410,6 @@ define(['vexflow'], function (VF, undefined) {
             ctx.fillText('-', start_x - hyphen_width / 2, y);
           }
         }
-        ;
       },
 
       draw : function () {

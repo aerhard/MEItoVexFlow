@@ -1,6 +1,6 @@
 define([
   'meilib/MeiLib',
-  'm2v/Interface',
+  'mei2vf/Interface',
   'tests/TestAppender'
 ], function (MeiLib, Interface, TestAppender, jasmine, undefined) {
 
@@ -91,13 +91,16 @@ define([
       document.write(serialize_xml(xml));
     };
 
-    var mei_xml = 'xml/TC.tstamp2id.xml';
-    //load the xml file...
-    var xmlDoc = loadXMLDoc(mei_xml);
-    console.log('MEI-XML loaded.');
+    var score, mei_xml, xmlDoc;
 
-    var score = xmlDoc.getElementsByTagNameNS("http://www.music-encoding.org/ns/mei", 'score');
-    console.log('Start');
+    var loadTstampXML = function() {
+      mei_xml = 'xml/TC.tstamp2id.xml';
+      //load the xml file...
+      xmlDoc = loadXMLDoc(mei_xml);
+      console.log('MEI-XML loaded.');
+      score = xmlDoc.getElementsByTagNameNS("http://www.music-encoding.org/ns/mei", 'score');
+      console.log('Start');
+    };
 
     var meter = { count : 4, unit : 4};
 
@@ -180,9 +183,9 @@ define([
 
     describe('EventEnumerator and durationOf() 1', function () {
 
-
       it('count grace notes', function () {
         console.log('********* TEST: EventEnumerator and durationOf() 1: count grace notes  ****************');
+        loadTstampXML();
         var context = [];
 
         var duration_asserts = [
@@ -264,6 +267,7 @@ define([
 
 
       it('count grace notes', function () {
+        loadTstampXML();
         console.log('********* TEST: EventEnumerator and durationOf() 2: count grace notes ****************');
         var context = [];
 
@@ -382,6 +386,7 @@ define([
 
 
       it('tstamp2id', function () {
+        loadTstampXML();
         console.log('********* TEST: tstamp2id() **************************************');
 
         var context = [];

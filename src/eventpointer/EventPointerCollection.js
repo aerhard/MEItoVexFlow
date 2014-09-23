@@ -23,10 +23,10 @@ define([
   'jquery',
   'vexflow',
   'meilib/MeiLib',
-  'm2v/core/Logger',
-  'm2v/core/RuntimeError',
-  'm2v/core/Util'
-], function ($, VF, MeiLib, Logger, RuntimeError, Util, undefined) {
+  'mei2vf/core/Logger',
+  'mei2vf/core/RuntimeError',
+  'mei2vf/core/Util'
+], function ($, VF, MeiLib, Logger, RuntimeError, Util) {
 
   /**
    * @class MEI2VF.EventPointerCollection

@@ -21,10 +21,11 @@
 define([
   'jquery',
   'vexflow',
-  'm2v/core/Logger',
-  'm2v/eventlink/EventLinkCollection',
-  'm2v/eventlink/EventLink'
-], function ($, VF, Logger, EventLinkCollection, EventLink, undefined) {
+  'vex',
+  'mei2vf/core/Logger',
+  'mei2vf/eventlink/EventLinkCollection',
+  'mei2vf/eventlink/EventLink'
+], function ($, VF, Vex, Logger, EventLinkCollection, EventLink, undefined) {
 
 
   /**
@@ -135,7 +136,7 @@ define([
     // TODO auch noch unvollständige slurs testen
 
     createSingleSlur : function (f_note, l_note, params) {
-      var me = this, vexSlur, bezier, cps;
+      var me = this, vexSlur, bezier;
 
       var slurOptions = {
         y_shift_start : +params.startvo || undefined,
@@ -143,8 +144,7 @@ define([
 
       };
 
-      bezier = params.bezier;
-
+      //bezier = params.bezier;
       // ignore bezier for now!
       bezier = null;
 
@@ -195,10 +195,8 @@ define([
     },
 
     bezierStringToCps : function (str) {
-      var cps = [], xy, bezierArray = str.split(' ');
-
-      var regex = /(\-?\d+)\s+(\-?\d+)/g;
-      var matched = null;
+      var cps = [], regex, matched;
+      regex = /(\-?\d+)\s+(\-?\d+)/g;
       while (matched = regex.exec(str)) {
         cps.push({
           x : +matched[1],

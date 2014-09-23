@@ -21,9 +21,9 @@
 define([
   'jquery',
   'vexflow',
-  'm2v/core/Logger',
-  'm2v/eventlink/EventLinkCollection',
-  'm2v/eventlink/EventLink'
+  'mei2vf/core/Logger',
+  'mei2vf/eventlink/EventLinkCollection',
+  'mei2vf/eventlink/EventLink'
 ], function ($, VF, Logger, EventLinkCollection, EventLink, undefined) {
 
 

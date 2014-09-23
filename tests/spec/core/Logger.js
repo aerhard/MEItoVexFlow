@@ -1,6 +1,6 @@
 define([
-  'm2v/core/Logger',
-  'm2v/core/RuntimeError'
+  'mei2vf/core/Logger',
+  'mei2vf/core/RuntimeError'
 ], function (Logger, RuntimeError, undefined) {
 
   describe("Logger", function () {

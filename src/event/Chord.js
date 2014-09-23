@@ -16,8 +16,8 @@
  */
 define([
     'vexflow',
-    'm2v/event/EventUtil'
-  ], function (VF, EventUtil, undefined) {
+    'mei2vf/event/EventUtil'
+  ], function (VF, EventUtil) {
 
 
     var Chord = function (options) {
@@ -27,7 +27,6 @@ define([
 
           children = options.children;
 
-          hasDots = element.hasAttribute('dots');
           durAtt = atts.dur;
 
           if (durAtt) {

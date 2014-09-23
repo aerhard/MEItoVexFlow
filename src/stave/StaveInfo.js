@@ -21,9 +21,9 @@
  */
 define([
   'vexflow',
-  'm2v/core/Logger',
-  'm2v/core/Util'
-], function (VF, Logger, Util, undefined) {
+  'mei2vf/core/Logger',
+  'mei2vf/core/Util'
+], function (VF, Logger, Util) {
 
 
   /**
@@ -242,7 +242,7 @@ define([
 
     /**
      * @public
-     * @param newClefDef
+     * @param clefElement
      */
     clefChangeInMeasure : function (clefElement) {
       var me = this;
@@ -340,7 +340,7 @@ define([
      * @returns {*}
      */
     convertKeySpec : function (element) {
-      var me = this, keyname, key_accid, key_mode;
+      var keyname, key_accid, key_mode;
       keyname = element.getAttribute('key.pname').toUpperCase();
       key_accid = element.getAttribute('key.accid');
       if (key_accid !== null) {
@@ -354,7 +354,7 @@ define([
           default :
             Logger.warn('Not supported', 'expected to find value "s" or "f" instead of "' + key_accid +
                                                 '" in @key.accid of ' + Util.serializeElement(element) +
-                                                '. Skipping processing of this attribute.');
+                                                '. Ignoring processing of this attribute.');
         }
       }
       key_mode = element.getAttribute('key.mode');

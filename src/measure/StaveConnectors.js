@@ -23,7 +23,7 @@
 define([
   'jquery',
   'vexflow'
-], function ($, VF, undefined) {
+], function ($, VF) {
 
   /**
    * @class MEI2VF.Connectors

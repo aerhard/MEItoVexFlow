@@ -16,8 +16,8 @@
  */
 define([
   'vexflow',
-  'm2v/event/EventUtil'
-], function (VF, EventUtil, undefined) {
+  'mei2vf/event/EventUtil'
+], function (VF, EventUtil) {
 
 
   var Note = function (options) {

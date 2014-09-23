@@ -22,10 +22,10 @@
 define([
   'jquery',
   'meilib/MeiLib',
-  'm2v/core/RuntimeError',
-  'm2v/core/Util',
-  'm2v/eventlink/EventLink'
-], function ($, MeiLib, RuntimeError, Util, EventLink, undefined) {
+  'mei2vf/core/RuntimeError',
+  'mei2vf/core/Util',
+  'mei2vf/eventlink/EventLink'
+], function ($, MeiLib, RuntimeError, Util, EventLink) {
 
   /**
    * @class MEI2VF.EventLinkCollection

@@ -28,7 +28,7 @@
  */
 define([
   'vexflow'
-], function (VF, undefined) {
+], function (VF) {
 
 
   /**

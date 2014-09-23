@@ -21,8 +21,8 @@
  */
 define([
   'vexflow',
-  'm2v/lyrics/Hyphenation',
-], function (VF, Hyphenation, undefined) {
+  'mei2vf/lyrics/Hyphenation'
+], function (VF, Hyphenation) {
 
   /**
    * @class MEI2VF.Verses

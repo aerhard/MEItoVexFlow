@@ -16,12 +16,13 @@
  */
 define([
   'vexflow',
-  'm2v/core/Logger',
-  'm2v/core/Util',
-  'm2v/core/Tables',
-  'm2v/eventpointer/EventPointerCollection',
-  'm2v/event/EventUtil'
-], function (VF, Logger, Util, Tables, EventPointerCollection, EventUtil, undefined) {
+  'vex',
+  'mei2vf/core/Logger',
+  'mei2vf/core/Util',
+  'mei2vf/core/Tables',
+  'mei2vf/eventpointer/EventPointerCollection',
+  'mei2vf/event/EventUtil'
+], function (VF, Vex, Logger, Util, Tables, EventPointerCollection, EventUtil) {
 
 
   /**
@@ -42,7 +43,7 @@ define([
     },
 
     createVexFromInfos : function (notes_by_id) {
-      var me = this, i, model, note, annot;
+      var me = this, i, model, note;
       i = me.allModels.length;
       while (i--) {
         model = me.allModels[i];
@@ -51,7 +52,7 @@ define([
           EventUtil.addFermata(note.vexNote, model.element, model.atts.place);
         } else {
           console.log(model);
-          Logger.warn('Input error', Util.serializeElement(model.element) +
+          Logger.warn('Unknown reference', Util.serializeElement(model.element) +
                                             ' could not be rendered because the reference "' + model.startid +
                                             '" could not be resolved.');
         }

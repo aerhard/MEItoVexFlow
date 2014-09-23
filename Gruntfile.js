@@ -14,23 +14,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-//    uglify: {
-//      dist: {
-//        options: {
-//          mangle: true,
-//          banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-//        },
-//        files: { 'dist/<%= pkg.name %>.min.js': [ 'dist/<%= pkg.name %>.js' ] }
-//      }
-//    },
-
     requirejs: {
       compile: {
         options: {
           name: 'Interface',
           baseUrl: "src",
           paths: {
-            'm2v' : '../src'
+            'mei2vf' : '../src'
           },
 //          mainConfigFile: "src/config.js",
           out: 'dist/<%= pkg.name %>.js',
@@ -42,7 +32,8 @@ module.exports = function(grunt) {
 
           exclude: [
             'jquery',
-            'vexflow'
+            'vexflow',
+            'vex'
           ],
 
           optimize: "none",
@@ -106,52 +97,10 @@ module.exports = function(grunt) {
         },
         options: {
           "compilation_level": "SIMPLE_OPTIMIZATIONS",
-          "max_processes": 5,
-          "banner": "/* hello world! */"
+          "max_processes": 5
         }
       }
     },
-
-//    concat: {
-//      bower_js: {
-//        options: {
-//          separator: ';'
-//        },
-//        src: ['src/vexflow-overrides.js',
-//          'src/meilib/MeiLib.js',
-//          'src/core/Logger.js',
-//          'src/core/RuntimeError.js',
-//          'src/core/tables.js',
-//          'src/core/Util.js',
-//          'src/event/Chord.js',
-//          'src/event/Note.js',
-//          'src/event/Rest.js',
-//          'src/eventlink/EventLink.js',
-//          'src/eventlink/EventLinkCollection.js',
-//          'src/eventlink/EventReference.js',
-//          'src/eventlink/Hairpins.js',
-//          'src/eventlink/Slurs.js',
-//          'src/eventlink/Ties.js',
-//          'src/eventpointer/EventPointerCollection.js',
-//          'src/eventpointer/Directives.js',
-//          'src/eventpointer/Dynamics.js',
-//          'src/eventpointer/Fermatas.js',
-//          'src/eventpointer/Ornaments.js',
-//          'src/lyrics/Hyphenation.js',
-//          'src/lyrics/Verses.js',
-//          'src/measure/Measure.js',
-//          'src/measure/StaveConnectors.js',
-//          'src/stave/Stave.js',
-//          'src/stave/StaveInfo.js',
-//          'src/system/System.js',
-//          'src/system/SystemInfo.js',
-//          'src/voice/StaveVoice.js',
-//          'src/voice/StaveVoices.js',
-//          'src/core/Converter.js',
-//          'src/Interface.js'],
-//        dest: 'dist/meitovexflow.js'
-//      }
-//    },
 
     connect: {
       server: {
