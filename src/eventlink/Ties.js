@@ -159,7 +159,7 @@ define([
         last_indices : l_note.index
       });
       vexTie.setDir(params.curvedir);
-      if (f_note.vexNote instanceof VF.GraceNote) {
+      if (f_note.vexNote && f_note.vexNote.label === 'gracenote') {
         vexTie.render_options.first_x_shift = -5;
       }
       me.allVexObjects.push(vexTie);

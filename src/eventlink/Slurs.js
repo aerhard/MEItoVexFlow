@@ -185,7 +185,7 @@ define([
         //          last_indices : l_note.index
         //        });
         //        vexSlur.setDir(params.curvedir);
-        //        if (f_note.vexNote instanceof VF.GraceNote) {
+        //        if (f_note.vexNote && f_note.vexNote.label === 'gracenote') {
         //          vexSlur.render_options.first_x_shift = -5;
         //        }
       }

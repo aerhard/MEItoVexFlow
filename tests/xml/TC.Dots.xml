@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../odd/mei2vexflow.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../odd/mei2vexflow.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<mei meiversion="2013" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns="http://www.music-encoding.org/ns/mei" xmlns:mei="http://www.music-encoding.org/ns/mei">
+	<meiHead>
+		<fileDesc>
+			<titleStmt>
+				<title>MEItoVexFlow Dots Test Case</title>
+			</titleStmt>
+			<pubStmt>
+				<respStmt>
+					<resp>Prepared by</resp>
+					<persName>Alexander Erhard</persName>
+				</respStmt>
+			</pubStmt>
+		</fileDesc>
+	</meiHead>
+	<music>
+		<body>
+			<mdiv>
+				<score>
+					<scoreDef>
+						<staffGrp>
+							<staffDef n="1" lines="5" clef.line="2" clef.shape="G" meter.count="4" meter.unit="4" meter.rend="invis" key.pname="c" key.mode="major" label="Note"/>
+                            <staffDef n="2" lines="5" clef.line="2" clef.shape="G" meter.count="4" meter.unit="4" meter.rend="invis" key.pname="c" key.mode="major" label="Chord I"/>
+                            <staffDef n="3" lines="5" clef.line="2" clef.shape="G" meter.count="4" meter.unit="4" meter.rend="invis" key.pname="c" key.mode="major" label="Chord II"/>
+                            <staffDef n="4" lines="5" clef.line="2" clef.shape="G" meter.count="4" meter.unit="4" meter.rend="invis" key.pname="c" key.mode="major" label="Rest"/>
+                            <staffDef n="5" lines="5" clef.line="2" clef.shape="G" meter.count="4" meter.unit="4" meter.rend="invis" key.pname="c" key.mode="major" label="Space"/>
+                            <staffDef n="6" lines="5" clef.line="2" clef.shape="G" meter.count="4" meter.unit="4" meter.rend="invis" key.pname="c" key.mode="major" label="Ref."/>
+						</staffGrp>
+					</scoreDef>
+					<section>
+						<measure n="1">
+							<staff n="1">
+								<layer>
+                                    <note pname="c" oct="4" dur="4" dots="1"/>
+                                    <note pname="c" oct="4" dur="8"/>
+                                    <note pname="c" oct="4" dur="4" dots="2"/>
+                                    <note pname="c" oct="4" dur="16"/>
+								</layer>
+							</staff>
+                            <staff n="2">
+                                <layer>
+                                    <chord dur="4" dots="1">
+                                        <note pname="c" oct="5"/>
+                                        <note pname="c" oct="4"/>
+                                    </chord>
+                                    <note pname="c" oct="4" dur="8"/>
+                                    <chord dur="4" dots="2">
+                                        <note pname="c" oct="5"/>
+                                        <note pname="c" oct="4"/>
+                                    </chord>
+                                    <note pname="c" oct="4" dur="16"/>
+                                </layer>
+                            </staff>
+                            <staff n="3">
+                                <layer>
+                                    <chord>
+                                        <note pname="c" oct="5" dur="4" dots="1"/>
+                                        <note pname="c" oct="4" dur="4" dots="1"/>
+                                    </chord>
+                                    <note pname="c" oct="4" dur="8"/>
+                                    <chord>
+                                        <note pname="c" oct="5" dur="4" dots="2"/>
+                                        <note pname="c" oct="4" dur="4" dots="2"/>
+                                    </chord>
+                                    <note pname="c" oct="4" dur="16"/>
+                                </layer>
+                            </staff>
+                            <staff n="4">
+                                <layer>
+                                    <rest dur="4" dots="1"/>
+                                    <note pname="c" oct="4" dur="8"/>
+                                    <rest dur="4" dots="2"/>
+                                    <note pname="c" oct="4" dur="16"/>
+                                </layer>
+                            </staff>
+                            <staff n="5">
+                                <layer>
+                                    <space dur="4" dots="1"/>
+                                    <note pname="c" oct="4" dur="8"/>
+                                    <space dur="4" dots="2"/>
+                                    <note pname="c" oct="4" dur="16"/>
+                                </layer>
+                            </staff>
+                            <staff n="6">
+                                <layer>
+                                    <note pname="c" oct="4" dur="8"/>
+                                    <note pname="c" oct="4" dur="8"/>
+                                    <note pname="c" oct="4" dur="8"/>
+                                    <note pname="c" oct="4" dur="8"/>
+                                    <note pname="c" oct="4" dur="8"/>
+                                    <note pname="c" oct="4" dur="8"/>
+                                    <note pname="c" oct="4" dur="8"/>
+                                    <note pname="c" oct="4" dur="8"/>
+                                </layer>
+                            </staff>
+						</measure>
+					</section>
+				</score>
+			</mdiv>
+		</body>
+	</music>
+</mei>

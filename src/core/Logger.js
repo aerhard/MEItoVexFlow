@@ -74,7 +74,7 @@ define([
       for (i = 0, j = allLevels.length; i < j; i += 1) {
         if (allLevels[i] === level) activate = true;
         if (activate) {
-          this[allLevels[i]] = this.appender[allLevels[i]];
+          this[allLevels[i]] = this.appender[allLevels[i]].bind(this.appender);
         } else {
           this[allLevels[i]] = emptyFn;
         }

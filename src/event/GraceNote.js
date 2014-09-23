@@ -20,12 +20,12 @@ define([
 ], function (VF, EventUtil, undefined) {
 
 
-  var Note = function (options) {
+  var GraceNote = function (options) {
     var me = this, dots, i, element = options.element, atts = options.atts;
 
     var vexOptions = {
       keys : [options.vexPitch],
-      duration : EventUtil.processAttsDuration(element, atts),
+      duration : EventUtil.processAttsDuration(element, options.atts),
       clef : options.clef.type,
       octave_shift : options.clef.shift
     };
@@ -33,16 +33,17 @@ define([
     this.hasMeiStemDir = EventUtil.setStemDir(options, vexOptions);
 
 
-    VF.StaveNote.call(this, vexOptions);
+    VF.GraceNote.call(this, vexOptions);
 
 
-    dots = +atts.dots || 0;
+    dots = +options.atts.dots || 0;
     for (i = 0; i < dots; i += 1) {
       this.addDotToAll();
     }
 
-    this.setStave(options.stave);
+    this.slash = options.atts['stem.mod'] === '1slash';
 
+    this.setStave(options.stave);
 
     if (atts.accid) {
       EventUtil.processAttrAccid(atts.accid, this, 0);
@@ -61,11 +62,12 @@ define([
 
   };
 
-  Note.prototype = Object.create(VF.StaveNote.prototype);
+  GraceNote.prototype = Object.create(VF.GraceNote.prototype);
 
-  Note.prototype.beamable = true;
+  GraceNote.prototype.label = 'gracenote';
+  //GraceNote.prototype.beamable = false;
 
-  return Note;
+  return GraceNote;
 
 });
 

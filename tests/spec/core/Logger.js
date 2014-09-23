@@ -13,6 +13,7 @@ define([
 
     for (i=0;i<len;i++) {
       newAppender[levels[i]] = function () {
+        return 'new';
       };
     }
 
@@ -65,13 +66,13 @@ define([
         Logger.setLevel(true);
 
         for (i=0;i<len;i++) {
-          expect(Logger[levels[i]]).toBe(Logger.appender[levels[i]]);
+          expect(Logger[levels[i]]()).toEqual(Logger.appender[levels[i]]());
         }
         Logger.setAppender(newAppender);
         Logger.setLevel('debug');
 
         for (i=0;i<len;i++) {
-          expect(Logger[levels[i]]).toBe(Logger.appender[levels[i]]);
+          expect(Logger[levels[i]]()).toEqual(Logger.appender[levels[i]]());
         }
       });
 
@@ -79,10 +80,10 @@ define([
         Logger.setAppender(newAppender);
         Logger.setLevel('info');
 
-        expect(Logger['error']).toBe(Logger.appender['error']);
-        expect(Logger['warn']).toBe(Logger.appender['warn']);
-        expect(Logger['info']).toBe(Logger.appender['info']);
-        expect(Logger['debug']).not.toBe(Logger.appender['debug']);
+        expect(Logger['error']()).toEqual(Logger.appender['error']());
+        expect(Logger['warn']()).toEqual(Logger.appender['warn']());
+        expect(Logger['info']()).toEqual(Logger.appender['info']());
+        expect(Logger['debug']()).not.toEqual(Logger.appender['debug']());
       });
 
 
@@ -91,7 +92,7 @@ define([
         Logger.setLevel(false);
 
         for (i=0;i<len;i++) {
-          expect(Logger[levels[i]]).not.toBe(Logger.appender[levels[i]]);
+          expect(Logger[levels[i]]()).not.toEqual(Logger.appender[levels[i]]());
         }
       });
 

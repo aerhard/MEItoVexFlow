@@ -24,7 +24,7 @@ define(function (undefined) {
   var Util = {
 
     /**
-     *
+     * returns the attributes of an element or an empty object if the element doesn't have attributes
      */
     attsToObj : function (element) {
       var i, obj = {};

@@ -15,20 +15,75 @@
  *
  */
 define([
-  'vexflow',
-], function (VF, undefined) {
+    'vexflow',
+    'm2v/event/EventUtil'
+  ], function (VF, EventUtil, undefined) {
 
 
-  var Chord = function (options) {
-    VF.StaveNote.call(this, options);
-    this.init(options);
-  };
+    var Chord = function (options) {
 
-  Chord.prototype = Object.create(VF.StaveNote.prototype);
+          var me = this, atts = options.atts, element = options.element;
+          var hasDots, durAtt, durations = [], duration, keys = [], i, j, children, dots;
 
-  Chord.prototype.beamable = true;
+          children = options.children;
 
-  return Chord;
+          hasDots = element.hasAttribute('dots');
+          durAtt = atts.dur;
 
-});
+          if (durAtt) {
+            duration = EventUtil.processAttsDuration(element, atts);
+            dots = +atts.dots || 0;
+            for (i = 0, j = children.length; i < j; i += 1) {
+              keys.push(EventUtil.getVexPitch(children[i]));
+            }
+          } else {
+            for (i = 0, j = children.length; i < j; i += 1) {
+              durations.push(+children[i].getAttribute('dur'));
+              dots =+children[i].getAttribute('dots') || 0;
+              keys.push(EventUtil.getVexPitch(children[i]));
+            }
+            duration = EventUtil.translateDuration(element, Math.max.apply(Math, durations));
+            for (i = 0; i < dots; i += 1) {
+              duration += 'd';
+            }
+          }
+
+
+          var vexOptions = {
+            keys : keys,
+            duration : duration,
+            clef : options.clef.type,
+            octave_shift : options.clef.shift
+          };
+
+          this.hasMeiStemDir = EventUtil.setStemDir(options, vexOptions);
+
+
+          VF.StaveNote.call(this, vexOptions);
+
+          for (i = 0; i < dots; i += 1) {
+            this.addDotToAll();
+          }
+
+          this.setStave(options.stave);
+
+          if (atts.ho) {
+            EventUtil.processAttrHo(atts.ho, me, options.stave);
+          }
+          $(element).find('artic').each(function () {
+            EventUtil.addArticulation(me, this);
+          });
+          if (atts.fermata) {
+            EventUtil.addFermata(me, element, atts.fermata);
+          }
+
+        };
+
+    Chord.prototype = Object.create(VF.StaveNote.prototype);
+
+    Chord.prototype.beamable = true;
+
+    return Chord;
+
+  });
 

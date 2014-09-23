@@ -35,6 +35,7 @@ var runSpec = function (m2vTests) {
   var allTests = [
     'spec/Rendering',
     'spec/core/Logger',
+    'spec/event/EventUtil',
     'spec/eventlink/EventLink',
     'spec/eventlink/EventReference',
     'spec/meilib/MeiLib',

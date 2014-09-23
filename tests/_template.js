@@ -1,6 +1,7 @@
 define([
   'm2v/Interface',
-], function (x, undefined) {
+  'm2v/core/Logger'
+], function (x, Logger, undefined) {
 
   describe("x", function () {
 

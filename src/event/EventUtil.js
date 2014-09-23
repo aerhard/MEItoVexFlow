@@ -28,8 +28,13 @@ define([
 
   var EventUtil = {
 
+    DIR : {
+      down : VF.StaveNote.STEM_DOWN,
+      up : VF.StaveNote.STEM_UP
+    },
+
     /**
-     * converts the pitch of an MEI <b>note</b> element to a VexFlow pitch
+     * converts the pitch of an MEI element to a VexFlow pitch
      *
      * @method getVexPitch
      * @param {Element} element the MEI element from which the pitch should be read
@@ -37,12 +42,12 @@ define([
      */
     getVexPitch : function (element) {
       var pname, oct;
-      pname = $(element).attr('pname');
-      oct = $(element).attr('oct');
+      pname = element.getAttribute('pname');
+      oct = element.getAttribute('oct');
       if (!pname || !oct) {
-        Logger.warn('Encoding error', '@pname and @oct must be specified in ' + Util.serializeElement(element) +
-                                             '". Setting default pitch C4.');
-        return 'C/4';
+        Logger.warn('Missing attributes', '@pname and @oct must be specified in ' + Util.serializeElement(element) +
+                                          '". Setting default pitch c4.');
+        return 'c/4';
       }
       return pname + '/' + oct;
     },
@@ -50,43 +55,37 @@ define([
     /**
      * @method translateDuration
      */
-    translateDuration : function (mei_dur) {
+    translateDuration : function (element, mei_dur) {
       var result = Tables.durations[mei_dur + ''], alias;
-      alias = {
-        'brevis' : 'breve',
-        'longa' : 'long'
-      };
-      if (result) {
-        return result;
+      if (!result) {
+        alias = {
+          'brevis' : 'breve',
+          'longa' : 'long'
+        };
+        if (alias[mei_dur]) {
+          Logger.info('Not supported', 'Duration "' + mei_dur + '" in ' + Util.serializeElement(element) +
+                                       ' is not supported. Using "' + alias[mei_dur] + '" instead.');
+          return Tables.durations[alias[mei_dur] + ''];
+        }
+        if (mei_dur === undefined) {
+          Logger.warn('@dur expected', 'No duration attribute found in ' + Util.serializeElement(element) +
+                                       '. Using "4" instead.');
+        } else {
+          Logger.warn('Not supported', 'Duration "' + mei_dur + ' in "' + Util.serializeElement(element) +
+                                       '" is not supported. Using "4" instead.');
+        }
+        result = Tables.durations['4'];
       }
-      if (alias[mei_dur]) {
-        Logger.info('Not supported', 'Duration "' + mei_dur + '" is not supported. Using "' + alias[mei_dur] +
-                                            '" instead.');
-        return Tables.durations[alias[mei_dur] + ''];
-      }
-
-      Logger.warn('Not supported', 'Duration "' + mei_dur +
-                                          '" is not supported. Using "4" instead. May lead to display errors.');
-      return Tables.durations['4'];
+      return result;
     },
 
     /**
      * @method processAttsDuration
      */
-    processAttsDuration : function (mei_note, noDots) {
-      var me = this, dur, dur_attr;
-
-      dur_attr = $(mei_note).attr('dur');
-      if (dur_attr === undefined) {
-        Logger.warn('@dur expected', 'No duration attribute found in ' + Util.serializeElement(mei_note) +
-                                            '. Using "4" instead.');
-        dur_attr = '4';
-      }
-      dur = me.translateDuration(dur_attr);
-      if (!noDots && $(mei_note).attr('dots') === '1') {
-        dur += 'd';
-      }
-      return dur;
+    processAttsDuration : function (element, atts) {
+      var me = this, dur;
+      dur = me.translateDuration(element, atts.dur);
+      return (atts.dots === '1') ? dur + 'd' : (atts.dots === '2') ? dur + 'dd' : dur;
     },
 
     /**
@@ -126,7 +125,7 @@ define([
         note.addArticulation(0, vexArtic);
       } else {
         Logger.warn('unknown @artic', 'The @artic attribute in ' + Util.serializeElement(element) +
-                                             ' is unknown or undefined. Skipping element.');
+                                      ' is unknown or undefined. Skipping element.');
       }
     },
 
@@ -149,6 +148,26 @@ define([
       var clef = new VF.ClefNote(prop.type, 'small', prop.shift === -1 ? '8vb' : undefined);
       vexNote.addModifier(0, new VF.GraceNoteGroup([clef], false));
       clef.setOffsetLeft(25);
+    },
+
+    /**
+     * @method setStemDir
+     * @param element
+     * @param vexOptions
+     * @return {Boolean} true if a stem direction has been specified in the MEI code
+     */
+    setStemDir : function (options, vexOptions) {
+      var specified_dir = this.DIR[options.atts['stem.dir']];
+      if (specified_dir) {
+        vexOptions.stem_direction = specified_dir;
+        return true;
+      } else if (options.layerDir) {
+        vexOptions.stem_direction = options.layerDir;
+        return false;
+      } else {
+        vexOptions.auto_stem = true;
+        return false;
+      }
     }
 
 

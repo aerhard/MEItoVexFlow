@@ -59,6 +59,7 @@ define([
           // VexFlow does distinguish between different y values when
           // calculating the width of tickables
           annot.setWidth(0);
+          annot.setJustification(1); // left by default
           if (model.atts.place === 'below') {
             note.vexNote.addAnnotation(0, annot.setVerticalJustification(me.BOTTOM));
           } else {

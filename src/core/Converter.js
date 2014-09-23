@@ -51,8 +51,12 @@ define([
   'm2v/core/Util',
   'm2v/event/EventUtil',
   'm2v/event/Note',
+  'm2v/event/GraceNote',
   'm2v/event/Chord',
+  'm2v/event/GraceChord',
   'm2v/event/Rest',
+  'm2v/event/MRest',
+  'm2v/event/Space',
   'm2v/eventlink/Hairpins',
   'm2v/eventlink/Ties',
   'm2v/eventlink/Slurs',
@@ -68,7 +72,7 @@ define([
   'm2v/system/SystemInfo',
   'm2v/core/Tables',
   'm2v/voice/StaveVoices'
-], function ($, VF, MeiLib, Logger, RuntimeError, Util, EventUtil, Note, Chord, Rest, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments, Verses, Syllable, Stave, Measure, System, SystemInfo, Tables, StaveVoices, undefined) {
+], function ($, VF, MeiLib, Logger, RuntimeError, Util, EventUtil, Note, GraceNote, Chord, GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments, Verses, Syllable, Stave, Measure, System, SystemInfo, Tables, StaveVoices, undefined) {
 
   /**
    * Converts an MEI XML document / document fragment to VexFlow objects and
@@ -334,9 +338,9 @@ define([
        */
       me.inBeamNo = 0;
       /**
-       * @property {Boolean} stemDirInBeam specifies if a stem.dir has been specified in the current beam
+       * @property {Boolean} hasStemDirInBeam specifies if a stem.dir has been specified in the current beam
        */
-      me.stemDirInBeam = false;
+      me.hasStemDirInBeam = false;
       /**
        * Grace note or grace chord objects to be added to the next non-grace note or chord
        * @property {Vex.Flow.StaveNote[]} currentGraceNotes
@@ -595,8 +599,8 @@ define([
           me.processEnding(element);
           break;
         default :
-          Logger.info('Not supported', 'Element <' + element.localName +
-                                              '> is not supported in <section>. Skipping element.');
+          Logger.info('Not supported', 'Element ' + Util.serializeElement(element) +
+                                       ' is not supported in <section>. Skipping element.');
       }
     },
 
@@ -741,15 +745,15 @@ define([
         staff_n = +$(this).attr('n');
         if (!staff_n) {
           Logger.warn('@n expected', Util.serializeElement(this) +
-                                            ' does not contain an @n attribute. Proceeding in first staff.');
+                                     ' does not contain an @n attribute. Proceeding in first staff.');
           staff_n = 1;
         }
 
         staff = new Stave({
-          system: system,
+          system : system,
           y : system.getStaffYs()[staff_n],
           leftBarline : left_barline,
-          rightBarline: right_barline
+          rightBarline : right_barline
         });
         staffs[staff_n] = staff;
 
@@ -768,6 +772,12 @@ define([
           maxClefOffset = 0;
         } else {
           currentStaveInfo = me.systemInfo.getStaveInfo(staff_n);
+          if (!currentStaveInfo) {
+            throw new RuntimeError('Reference error', Util.serializeElement(this) +
+                                                               ' refers to staff "' + staff_n +
+                                                  '", but no corresponding staff definition could be found in the document.');
+            return;
+          }
           if (currentStaveInfo.showClefCheck()) {
             staff.addClefFromInfo(currentStaveInfo.getClef());
           }
@@ -845,7 +855,7 @@ define([
      * object
      */
     processStaffEvents : function (staffs, staff_element, measureIndex, currentStaveVoices) {
-      var me = this, staff, staff_n, readEvents, layerElements, i, j, layer_events, layerDir, currentGraceNotes = [], GN = VF.GraceNote, staffInfo;
+      var me = this, staff, staff_n, readEvents, layerElements, i, j, layer_events, layerDir, currentGraceNotes = [], staffInfo;
 
       staff_n = +$(staff_element).attr('n') || 1;
       staff = staffs[staff_n];
@@ -958,8 +968,7 @@ define([
           me.processAnchoredText(element, staff, staff_n, layerDir, staffInfo);
           return;
         default :
-          Logger.info('Not supported', 'Element "' + element.localName +
-                                              '" is not supported. Skipping element.');
+          Logger.info('Not supported', 'Element "' + element.localName + '" is not supported. Skipping element.');
       }
     },
 
@@ -970,15 +979,10 @@ define([
      * @method processNote
      */
     processNote : function (element, staff, staff_n, layerDir) {
-      var me = this, dots, mei_accid, mei_ho, pname, oct, xml_id, mei_tie, mei_slur, mei_staff_n, i, atts, note_opts, note, clef, vexPitch;
+      var me = this, xml_id, mei_tie, mei_slur, mei_staff_n, i, atts, note_opts, note, clef, vexPitch;
 
       atts = Util.attsToObj(element);
 
-      dots = +atts.dots;
-      mei_accid = atts.accid;
-      mei_ho = atts.ho;
-      pname = atts.pname;
-      oct = atts.oct;
       mei_tie = atts.tie;
       mei_slur = atts.slur;
       mei_staff_n = +atts.staff || staff_n;
@@ -987,64 +991,36 @@ define([
 
       try {
 
-        clef = me.systemInfo.getClef(staff_n);
-
         vexPitch = EventUtil.getVexPitch(element);
 
-        note_opts = {
-          keys : [vexPitch],
-          clef : clef.type,
-          duration : EventUtil.processAttsDuration(element),
-          octave_shift : clef.shift
-        };
-
-        me.setStemDir(element, note_opts, layerDir);
-
-        if (atts.grace) {
-          note = new VF.GraceNote(note_opts);
-          note.slash = atts['stem.mod'] === '1slash';
-        } else {
-          note = new Note(note_opts);
-        }
-
-        if (mei_staff_n === staff_n) {
-          note.setStave(staff);
-        } else {
+        if (mei_staff_n !== staff_n) {
           var otherStaff = me.allVexMeasureStaffs[me.allVexMeasureStaffs.length - 1][mei_staff_n];
           if (otherStaff) {
-            note.setStave(otherStaff);
+            staff = otherStaff;
           } else {
-            Logger.warn('Staff not found', 'No staff could be found which corresponds to @staff="' +
-                                                  mei_staff_n + '" specified in ' + Util.serializeElement(element) +
-                                                  '". Proceeding by adding note to current staff.');
-            note.setStave(staff);
+            Logger.warn('Staff not found', 'No staff could be found which corresponds to @staff="' + mei_staff_n +
+                                           '" specified in ' + Util.serializeElement(element) +
+                                           '". Proceeding by adding note to current staff.');
           }
+        }
+
+        note_opts = {
+          vexPitch : vexPitch,
+          clef : me.systemInfo.getClef(staff_n),
+          element : element,
+          atts : atts,
+          stave : staff,
+          layerDir : layerDir
+        };
+
+        note = (atts.grace) ? new GraceNote(note_opts) : new Note(note_opts);
+
+        if (note.hasMeiStemDir && me.inBeamNo > 0) {
+          me.hasStemDirInBeam = true;
         }
 
         me.processSyllables(note, element, staff_n);
 
-        try {
-          for (i = 0; i < dots; i += 1) {
-            note.addDotToAll();
-          }
-        } catch (e) {
-          Logger.warn('Bad arguments', 'A problem occurred processing the dots of ' +
-                                              Util.serializeElement(element) + '. Proceeding by ignoring dots.');
-        }
-
-        if (mei_accid) {
-          EventUtil.processAttrAccid(mei_accid, note, 0);
-        }
-        if (mei_ho) {
-          EventUtil.processAttrHo(mei_ho, note, staff);
-        }
-
-        $.each($(element).find('artic'), function () {
-          EventUtil.addArticulation(note, this);
-        });
-        if (atts.fermata) {
-          EventUtil.addFermata(note, element, atts.fermata);
-        }
 
         // FIXME For now, we'll remove any child nodes of <note>
         $(element).children().each(function () {
@@ -1071,7 +1047,6 @@ define([
         }
 
         if (atts.grace) {
-          note.slash = atts['stem.mod'] === '1slash';
           me.currentGraceNotes.push(note);
           return;
         } else {
@@ -1085,9 +1060,9 @@ define([
           id : xml_id
         };
 
-      } catch (e1) {
+      } catch (e) {
         throw new RuntimeError('BadArguments', 'A problem occurred processing ' + Util.serializeElement(element) +
-                                               '\nORIGINAL ERROR MESSAGE: ' + e1.toString());
+                                               '\nORIGINAL ERROR MESSAGE: ' + e.toString());
       }
     },
 
@@ -1095,58 +1070,30 @@ define([
      * @method processChord
      */
     processChord : function (element, staff, staff_n, layerDir, staffInfo) {
-      var me = this, i, j, hasDots, children, keys = [], duration, durations = [], durAtt, xml_id, chord, chord_opts, atts, clef;
+      var me = this, children, xml_id, chord, chord_opts, atts;
 
       children = $(element).children('note');
 
       atts = Util.attsToObj(element);
-      durAtt = atts.dur;
 
       xml_id = MeiLib.XMLID(element);
 
-      hasDots = !!$(element).attr('dots');
-
       try {
-        if (durAtt) {
-          duration = EventUtil.translateDuration(+durAtt);
-        } else {
-          for (i = 0, j = children.length; i < j; i += 1) {
-            durations.push(+children[i].getAttribute('dur'));
-          }
-          duration = EventUtil.translateDuration(Math.max.apply(Math, durations));
-        }
-
-        for (i = 0, j = children.length; i < j; i += 1) {
-          keys.push(EventUtil.getVexPitch(children[i]));
-          // dots.push(+children[i].getAttribute('dots'));
-          if (children[i].getAttribute('dots') === '1') {
-            hasDots = true;
-          }
-        }
-
-        if (hasDots) {
-          duration += 'd';
-        }
-
-        clef = me.systemInfo.getClef(staff_n);
 
         chord_opts = {
-          keys : keys,
-          clef : clef.type,
-          duration : duration,
-          octave_shift : clef.shift
+          children : children,
+          clef : me.systemInfo.getClef(staff_n),
+          stave : staff,
+          element : element,
+          atts : atts,
+          layerDir : layerDir
         };
 
-        me.setStemDir(element, chord_opts, layerDir);
+        chord = (atts.grace) ? new GraceChord(chord_opts) : new Chord(chord_opts);
 
-        if (atts.grace) {
-          chord = new VF.GraceNote(chord_opts);
-          chord.slash = atts['stem.mod'] === '1slash';
-        } else {
-          chord = new Chord(chord_opts);
+        if (chord.hasMeiStemDir && me.inBeamNo > 0) {
+          me.hasStemDirInBeam = true;
         }
-
-        chord.setStave(staff);
 
         var allNoteIndices = [];
 
@@ -1154,19 +1101,6 @@ define([
           me.processNoteInChord(i, this, element, chord, staff_n, layerDir);
           allNoteIndices.push(i);
         });
-
-        if (hasDots) {
-          chord.addDotToAll();
-        }
-        if (atts.ho) {
-          EventUtil.processAttrHo(atts.ho, chord, staff);
-        }
-        $(element).find('artic').each(function () {
-          EventUtil.addArticulation(chord, this);
-        });
-        if (atts.fermata) {
-          EventUtil.addFermata(chord, element, atts.fermata);
-        }
 
         me.notes_by_id[xml_id] = {
           meiNote : element,
@@ -1211,7 +1145,7 @@ define([
 
       atts = Util.attsToObj(element);
 
-      vexPitch = EventUtil.getVexPitch(element);
+      var vexPitch = EventUtil.getVexPitch(element);
 
       xml_id = MeiLib.XMLID(element);
 
@@ -1242,50 +1176,22 @@ define([
      * @method processRest
      */
     processRest : function (element, staff, staff_n) {
-      var me = this, duration, rest, xml_id, atts, clef;
+      var me = this, rest, xml_id, clef;
       try {
-        atts = Util.attsToObj(element);
 
-        duration = EventUtil.processAttsDuration(element, true);
-
-        // assign whole rests to the fourth line, all others to the
-        // middle line:
-
-        clef = me.systemInfo.getClef(staff_n);
-
-        var restOpts = (atts.ploc && atts.oloc) ? {
-          keys : [atts.ploc + '/' + atts.oloc],
-          clef : clef.type,
-          octave_shift : clef.shift
-        } : {
-                         keys : [(duration === 'w') ? 'd/5' : 'b/4']
-                       };
-
-        if (atts.dots) {
-          duration += 'd';
-        }
-        restOpts.duration = duration + 'r';
-
-        rest = new Rest(restOpts);
+        rest = new Rest({
+          element : element,
+          stave : staff,
+          clef : (element.hasAttribute('ploc') && element.hasAttribute('oloc')) ? me.systemInfo.getClef(staff_n) : null
+        });
 
         xml_id = MeiLib.XMLID(element);
-
-        if (atts.ho) {
-          EventUtil.processAttrHo(atts.ho, rest, staff);
-        }
 
         if (me.currentClefChangeProperty) {
           EventUtil.addClefModifier(rest, me.currentClefChangeProperty);
           me.currentClefChangeProperty = null;
         }
 
-        rest.setStave(staff);
-        if (atts.dots === '1') {
-          rest.addDotToAll();
-        }
-        if (atts.fermata) {
-          EventUtil.addFermata(rest, element, atts.fermata);
-        }
         me.notes_by_id[xml_id] = {
           meiNote : element,
           vexNote : rest,
@@ -1307,46 +1213,18 @@ define([
     processmRest : function (element, staff, staff_n, layerDir, staffInfo) {
       var me = this, mRest, atts, xml_id, meter, duration;
 
-      meter = me.systemInfo.getStaveInfo(staff_n).getTimeSpec();
-      duration = new VF.Fraction(meter.count, meter.unit);
-      var dur, keys;
-      if (duration.value() == 2) {
-        dur = Tables.durations['breve'];
-        keys = ['b/4'];
-      } else if (duration.value() == 4) {
-        dur = Tables.durations['long'];
-        keys = ['b/4']
-      } else {
-        dur = 'w';
-        keys = ['d/5'];
-      }
       try {
-        atts = Util.attsToObj(element);
-
         var mRestOpts = {
-          duration : dur + 'r',
-          duration_override : duration,
-          align_center : true
+          meter : me.systemInfo.getStaveInfo(staff_n).getTimeSpec(),
+          element : element,
+          stave : staff,
+          clef : (element.hasAttribute('ploc') && element.hasAttribute('oloc')) ? me.systemInfo.getClef(staff_n) : null
         };
 
-        if (atts.ploc && atts.oloc) {
-          mRestOpts.keys = [atts.ploc + '/' + atts.oloc];
-          mRestOpts.clef = me.systemInfo.getClef(staff_n);
-        } else {
-          mRestOpts.keys = keys;
-        }
-
-        mRest = new VF.StaveNote(mRestOpts);
+        mRest = new MRest(mRestOpts);
 
         xml_id = MeiLib.XMLID(element);
 
-        if (atts.ho) {
-          EventUtil.processAttrHo(atts.ho, mRest, staff);
-        }
-        if (atts.fermata) {
-          EventUtil.addFermata(mRest, element, atts.fermata);
-        }
-        mRest.setStave(staff);
         me.notes_by_id[xml_id] = {
           meiNote : element,
           vexNote : mRest,
@@ -1356,7 +1234,7 @@ define([
           vexNote : mRest,
           id : xml_id
         };
-      } catch (x) {
+      } catch (e) {
         throw new RuntimeError('BadArguments', 'A problem occurred processing ' + Util.serializeElement(element));
       }
     },
@@ -1365,14 +1243,9 @@ define([
      * @method processSpace
      */
     processSpace : function (element, staff) {
-      var me = this, space, xml_id;
       try {
-        space = new VF.GhostNote({
-          duration : EventUtil.processAttsDuration(element, true) + 'r'
-        });
-        space.setStave(staff);
         return {
-          vexNote : space
+          vexNote : new Space({ element : element, stave : staff })
         };
       } catch (e) {
         throw new RuntimeError('BadArguments', 'A problem occurred processing ' + Util.serializeElement(element));
@@ -1386,20 +1259,7 @@ define([
      * @param {Number} the number of the containing staff
      */
     processClef : function (element, staff, staff_n, layerDir, staffInfo) {
-      var me = this, clef, xml_id, atts, clefDef, clefProp;
-      atts = Util.attsToObj(element);
-      //      clefDef = {
-      //        "clef.line" : atts.line,
-      //        "clef.shape" : atts.shape,
-      //        "clef.dis" : atts.dis,
-      //        "clef.dis.place" : atts['dis.place']
-      //      };
-      try {
-        clefProp = staffInfo.clefChangeInMeasure(element);
-        me.currentClefChangeProperty = clefProp;
-      } catch (e) {
-        throw new RuntimeError('BadArguments', 'A problem occurred processing ' + Util.serializeElement(element));
-      }
+      this.currentClefChangeProperty = staffInfo.clefChangeInMeasure(element);
     },
 
     /**
@@ -1426,11 +1286,11 @@ define([
       });
 
       // set autostem parameter of VF.Beam to true if neither layerDir nor any stem direction in the beam is specified
-      if (elements.length > 0) me.allBeams.push(new VF.Beam(filteredElements, !layerDir && !me.stemDirInBeam));
+      if (elements.length > 0) me.allBeams.push(new VF.Beam(filteredElements, !layerDir && !me.hasStemDirInBeam));
 
       me.inBeamNo -= 1;
       if (me.inBeamNo === 0) {
-        me.stemDirInBeam = false;
+        me.hasStemDirInBeam = false;
       }
       return elements;
     },
@@ -1463,7 +1323,7 @@ define([
 
       if (elements.length === 0) {
         Logger.warn('Missing content', 'Not content found in ' + Util.serializeElement(element) +
-                                              '". Skipping tuplet creation.');
+                                       '". Skipping tuplet creation.');
         return;
       }
 
@@ -1515,7 +1375,7 @@ define([
       var me = this, tokens;
       if (mei_slur) {
         // create a list of { letter, num }
-        tokens = me.parse_slur_attribute(mei_slur);
+        tokens = me.parseSlurAttribute(mei_slur);
         $.each(tokens, function () {
           if (this.letter === 't') {
             me.slurs.terminateSlur(xml_id, {
@@ -1532,9 +1392,9 @@ define([
     },
 
     /**
-     * @method parse_slur_attribute
+     * @method parseSlurAttribute
      */
-    parse_slur_attribute : function (slur_str) {
+    parseSlurAttribute : function (slur_str) {
       var result = [], numbered_tokens, numbered_token, i, j, num;
       numbered_tokens = slur_str.split(' ');
       for (i = 0, j = numbered_tokens.length; i < j; i += 1) {
@@ -1565,35 +1425,11 @@ define([
      */
     processSyllables : function (note, element, staff_n) {
       var me = this, vexSyllable;
-      $(element).find('syl').each(function() {
-          vexSyllable = new Syllable(this, me.cfg.lyricsFont);
-          note.addAnnotation(0, vexSyllable);
-          me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, this, staff_n);
+      $(element).find('syl').each(function () {
+        vexSyllable = new Syllable(this, me.cfg.lyricsFont);
+        note.addAnnotation(0, vexSyllable);
+        me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, this, staff_n);
       });
-    },
-
-    /**
-     * @method setStemDir
-     * @param element
-     * @param optionsObj
-     * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
-     * layer
-     */
-    setStemDir : function (element, optionsObj, layerDir) {
-      var me = this, specified_dir = {
-        down : VF.StaveNote.STEM_DOWN,
-        up : VF.StaveNote.STEM_UP
-      }[$(element).attr('stem.dir')];
-      if (specified_dir) {
-        if (me.inBeamNo > 0) {
-          me.stemDirInBeam = true;
-        }
-        optionsObj.stem_direction = specified_dir;
-      } else if (layerDir) {
-        optionsObj.stem_direction = layerDir;
-      } else {
-        optionsObj.auto_stem = true;
-      }
     },
 
     /**

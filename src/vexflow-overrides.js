@@ -205,39 +205,48 @@ define(['vexflow'], function (VF, undefined) {
         var offset = 0.0; // if clef === "treble"
 
         var sharps;
-        var isTenorSharps = ((clef === "tenor" || clef === 'subbass') && (type === "#")) ? true : false;
-        var isSopranoSharps = ((clef === 'soprano') && (type === "#")) ? true : false;
-        var isBaritoneSharps = ((clef === 'baritone-f' || clef === 'baritone-c') && (type === "#")) ? true : false;
+        var isTenorSharps = !!((clef === "tenor" || clef === 'subbass') && (type === "#"));
+        var isSopranoSharps = !!((clef === 'soprano') && (type === "#"));
+        var isBaritoneSharps = !!((clef === 'baritone-f' || clef === 'baritone-c') && (type === "#"));
 
-        var isSopranoFlats = ((clef === 'soprano' || clef === 'baritone-c' || clef === 'baritone-f') &&
-                              (type === "b")) ? true : false;
-        var isMezzoSopranoFlats = ((clef === 'mezzo-soprano') && (type === "b")) ? true : false;
+
+        var isSopranoFlats = !!((clef === 'soprano' || clef === 'baritone-c' || clef === 'baritone-f') &&
+                                (type === "b"));
+        var isMezzoSopranoFlats = !!((clef === 'mezzo-soprano') && (type === "b"));
+
+        // no shift: treble
+        // only shift: bass, french, alto
+        // sequence flats:  (baritone-c, baritone-f, soprano), (mezzo-soprano)
+        // sequence sharps: (baritone-c, baritone-f), (soprano), (tenor, subbass)
+        // # tenor
+
 
         switch (clef) {
           case "bass":
             offset = 1;
             break;
+          case 'french':
+            offset = 1;
+            break;
           case "alto":
             offset = 0.5;
             break;
+
           case "tenor":
             offset = -0.5;
             break;
 
-          case 'french':
-            offset = 1.0;
-            break;
-          case 'treble':
-            offset = 1.0;
-            break;
-          case 'baritone-f':
-            offset = -1.5;
-            break;
-          case 'soprano':
-            offset = -1.0;
-            break;
+
           case 'mezzo-soprano':
             offset = 1.5;
+            break;
+
+          case 'soprano':
+            offset = -1;
+            break;
+
+          case 'baritone-f':
+            offset = -1.5;
             break;
           case 'baritone-c':
             offset = -1.5;

@@ -17,32 +17,57 @@
 define([
   'vexflow',
   'm2v/event/EventUtil',
-  'm2v/core/Util'
-], function (VF, EventUtil, Util, undefined) {
+  'm2v/core/Util',
+  'm2v/core/Tables'
+], function (VF, EventUtil, Util, Tables, undefined) {
 
 
-  var Rest = function (options) {
+  var MRest = function (options) {
     var dots, i, vexOptions, atts;
 
     atts = Util.attsToObj(options.element);
 
+    var duration = new VF.Fraction(options.meter.count, options.meter.unit);
+    var dur, keys;
+    if (duration.value() == 2) {
+      dur = Tables.durations['breve'];
+      keys = ['b/4'];
+    } else if (duration.value() == 4) {
+      dur = Tables.durations['long'];
+      keys = ['b/4']
+    } else {
+      dur = 'w';
+      keys = ['d/5'];
+    }
 
-    var duration = EventUtil.processAttsDuration(options.element, atts) + 'r';
+
+//    if (options.clef) {
+//      vexOptions.keys = [atts.ploc + '/' + atts.oloc];
+//      vexOptions.clef = me.systemInfo.getClef(staff_n);
+//    } else {
+//      vexOptions.keys = keys;
+//    }
 
     if (options.clef) {
       vexOptions = {
-        duration: duration,
+        align_center : true,
+        duration : dur + 'r',
+        duration_override : duration,
+
         keys : [atts.ploc + '/' + atts.oloc],
         clef : options.clef.type,
         octave_shift : options.clef.shift
-      }
+      };
     } else {
       vexOptions = {
-        duration: duration,
-        keys : [(atts.dur === '1') ? 'd/5' : 'b/4']
-      }
-    }
+        align_center : true,
+        duration : dur + 'r',
+        duration_override : duration,
 
+        keys : keys
+      };
+    }
+  console.log(vexOptions);
 
     VF.StaveNote.call(this, vexOptions);
 
@@ -63,12 +88,12 @@ define([
 
   };
 
-  Rest.prototype = Object.create(VF.StaveNote.prototype);
+  MRest.prototype = Object.create(VF.StaveNote.prototype);
 
-  Rest.prototype.beamable = true;
+  MRest.prototype.beamable = true;
 
 
-  return Rest;
+  return MRest;
 
 });
 

@@ -21,54 +21,28 @@ define([
 ], function (VF, EventUtil, Util, undefined) {
 
 
-  var Rest = function (options) {
+  var Space = function (options) {
     var dots, i, vexOptions, atts;
 
     atts = Util.attsToObj(options.element);
 
 
-    var duration = EventUtil.processAttsDuration(options.element, atts) + 'r';
+    vexOptions = {
+      duration: EventUtil.processAttsDuration(options.element, atts) + 'r'
+    };
 
-    if (options.clef) {
-      vexOptions = {
-        duration: duration,
-        keys : [atts.ploc + '/' + atts.oloc],
-        clef : options.clef.type,
-        octave_shift : options.clef.shift
-      }
-    } else {
-      vexOptions = {
-        duration: duration,
-        keys : [(atts.dur === '1') ? 'd/5' : 'b/4']
-      }
-    }
-
-
-    VF.StaveNote.call(this, vexOptions);
-
-    dots = +atts.dots || 0;
-    for (i = 0; i < dots; i += 1) {
-      this.addDotToAll();
-    }
+    VF.GhostNote.call(this, vexOptions);
 
     this.setStave(options.stave);
 
-    if (atts.ho) {
-      EventUtil.processAttrHo(atts.ho, this, options.stave);
-    }
-
-    if (atts.fermata) {
-      EventUtil.addFermata(this, options.element, atts.fermata);
-    }
-
   };
 
-  Rest.prototype = Object.create(VF.StaveNote.prototype);
+  Space.prototype = Object.create(VF.GhostNote.prototype);
 
-  Rest.prototype.beamable = true;
+  Space.prototype.beamable = true;
 
 
-  return Rest;
+  return Space;
 
 });
 
