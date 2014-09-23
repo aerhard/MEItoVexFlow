@@ -45,30 +45,30 @@ define([
      * @public
      * @param annot
      * @param element
-     * @param staff_n
+     * @param stave_n
      * @returns {MEI2VF.Verses}
      */
-    addSyllable : function (annot, element, staff_n) {
+    addSyllable : function (annot, element, stave_n) {
       var me = this;
 
       var wordpos = $(element).attr('wordpos');
       var verse_n = $(element).parents('verse').attr('n') || '1';
 
-      if (!me.systemVerses[staff_n]) {
-        me.systemVerses[staff_n] = {};
+      if (!me.systemVerses[stave_n]) {
+        me.systemVerses[stave_n] = {};
       }
 
-      if (!me.systemVerses[staff_n][verse_n]) {
-        me.systemVerses[staff_n][verse_n] = {
+      if (!me.systemVerses[stave_n][verse_n]) {
+        me.systemVerses[stave_n][verse_n] = {
           syllables: [],
           hyphenation : me.newHyphenation()
         };
       }
 
-      me.systemVerses[staff_n][verse_n].syllables.push(annot);
+      me.systemVerses[stave_n][verse_n].syllables.push(annot);
 
       if (wordpos) {
-        me.systemVerses[staff_n][verse_n].hyphenation.addSyllable(annot, wordpos);
+        me.systemVerses[stave_n][verse_n].hyphenation.addSyllable(annot, wordpos);
       }
       return me;
     },
@@ -83,8 +83,8 @@ define([
     /**
      * @public
      */
-    getLowestY : function (staff_n) {
-      return this.lowestYs[staff_n];
+    getLowestY : function (stave_n) {
+      return this.lowestYs[stave_n];
     },
 
     /**
@@ -99,16 +99,16 @@ define([
      * @returns {MEI2VF.Verses}
      */
     format : function () {
-      var me = this, staff_n, verse_n, text_line, verse, i, j, lowestY, padding;
+      var me = this, stave_n, verse_n, text_line, verse, i, j, lowestY, padding;
 
       padding = 20;
 
-      for (staff_n in me.systemVerses) {
+      for (stave_n in me.systemVerses) {
         text_line = 0;
         lowestY = -20;
 
-        for (verse_n in me.systemVerses[staff_n]) {
-          verse = me.systemVerses[staff_n][verse_n].syllables;
+        for (verse_n in me.systemVerses[stave_n]) {
+          verse = me.systemVerses[stave_n][verse_n].syllables;
           lowestY += padding;
           // first pass: get lowest y
           for (i = 0, j = verse.length; i < j; i++) {
@@ -121,7 +121,7 @@ define([
           }
           text_line += 1;
         }
-        me.lowestYs[staff_n] = lowestY;
+        me.lowestYs[stave_n] = lowestY;
 
       }
       return me;
@@ -135,10 +135,10 @@ define([
      * @returns {MEI2VF.Verses}
      */
     drawHyphens : function (ctx, leftX, rightX) {
-      var me = this, staff_n, verse_n;
-      for (staff_n in me.systemVerses) {
-        for (verse_n in me.systemVerses[staff_n]) {
-          me.systemVerses[staff_n][verse_n].hyphenation.setContext(ctx).draw(leftX, rightX);
+      var me = this, stave_n, verse_n;
+      for (stave_n in me.systemVerses) {
+        for (verse_n in me.systemVerses[stave_n]) {
+          me.systemVerses[stave_n][verse_n].hyphenation.setContext(ctx).draw(leftX, rightX);
         }
       }
       return me;

@@ -152,7 +152,7 @@ define([
         slurOptions.cps = me.bezierStringToCps(bezier);
       } else {
 
-        // if one of the notes is in multi-voice staff ...
+        // if one of the notes is in multi-voice stave ...
         if (f_note.layerDir || l_note.layerDir) {
           // invert the slur so it points outwards
           slurOptions.invert = true;

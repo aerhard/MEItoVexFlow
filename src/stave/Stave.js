@@ -35,7 +35,7 @@ define([
 
     me.init(0, cfg.y, 1000, {
       vertical_bar_width : 20, // 10 // Width around vertical bar end-marker
-      top_text_position : 1.5, // 1 // in staff lines
+      top_text_position : 1.5, // 1 // in stave lines
       fill_style : me.lineColor
     });
     me.options.bottom_text_position = 6.5;

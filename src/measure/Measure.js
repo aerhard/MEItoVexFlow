@@ -59,12 +59,12 @@ define([
        */
       me.n = +config.element.getAttribute('n'); // set in Measure constructor
       /**
-       * @cfg {Array} staffs an array of the staffs in the current
+       * @cfg {Array} staves an array of the staves in the current
        * measure. Contains
        */
-      me.staffs = config.staffs;
+      me.staves = config.staves;
       /**
-       * @cfg {MEI2VF.StaveVoices} voices The voices of all staffs in the
+       * @cfg {MEI2VF.StaveVoices} voices The voices of all staves in the
        * current measure
        */
       me.voices = config.voices;
@@ -130,11 +130,11 @@ define([
     },
 
     /**
-     * gets the staffs array of the current measure
+     * gets the staves array of the current measure
      * @return {Array}
      */
-    getStaffs : function () {
-      return this.staffs;
+    getStaves : function () {
+      return this.staves;
     },
 
     /**
@@ -154,7 +154,7 @@ define([
      * @return {Number}
      */
     getX : function () {
-      return this.getFirstDefinedStaff().x;
+      return this.getFirstDefinedStave().x;
     },
 
     /**
@@ -169,11 +169,11 @@ define([
      * gets the first defined staff in the current measure
      * @return {Vex.Flow.Stave}
      */
-    getFirstDefinedStaff : function () {
+    getFirstDefinedStave : function () {
       var me = this, i, j;
-      for (i = 0, j = me.staffs.length; i < j; i += 1) {
-        if (me.staffs[i]) {
-          return me.staffs[i];
+      for (i = 0, j = me.staves.length; i < j; i += 1) {
+        if (me.staves[i]) {
+          return me.staves[i];
         }
       }
       throw new RuntimeError('No staff found in the current measure.');
@@ -184,12 +184,12 @@ define([
      * the corresponding Vex.Flow.Stave object
      */
     addRehearsalMarks : function () {
-      var me = this, staff_n, vexStaff, offsetX;
+      var me = this, stave_n, vexStave, offsetX;
       $.each(me.rehElements, function () {
-        staff_n = this.getAttribute('staff');
-        vexStaff = me.staffs[staff_n];
-        offsetX = (vexStaff.getModifierXShift() > 0) ? -40 : 0;
-        vexStaff.modifiers.push(new VF.StaveSection($(this).text(), vexStaff.x + offsetX, 0));
+        stave_n = this.getAttribute('staff');
+        vexStave = me.staves[stave_n];
+        offsetX = (vexStave.getModifierXShift() > 0) ? -40 : 0;
+        vexStave.modifiers.push(new VF.StaveSection($(this).text(), vexStave.x + offsetX, 0));
       });
     },
 
@@ -202,25 +202,25 @@ define([
      * corresponding Vex.Flow.Stave object
      */
     addTempoToStaves : function () {
-      var me = this, offsetX, vexStaff, vexTempo, atts, halfLineDistance;
+      var me = this, offsetX, vexStave, vexTempo, atts, halfLineDistance;
       $.each(me.tempoElements, function () {
         atts = Util.attsToObj(this);
-        vexStaff = me.staffs[atts.staff];
-        halfLineDistance = vexStaff.getSpacingBetweenLines() / 2;
+        vexStave = me.staves[atts.staff];
+        halfLineDistance = vexStave.getSpacingBetweenLines() / 2;
         vexTempo = new VF.StaveTempo({
           name : $(this).text(),
           duration : atts['mm.unit'],
           dots : +atts['mm.dots'],
           bpm : +atts.mm
-        }, vexStaff.x, 5);
+        }, vexStave.x, 5);
         if (atts.vo) {
           vexTempo.setShiftY(+atts.vo * halfLineDistance);
         }
-        offsetX = (vexStaff.getModifierXShift() > 0) ? -14 : 14;
+        offsetX = (vexStave.getModifierXShift() > 0) ? -14 : 14;
 
         // if a staff has a time signature, set the tempo on top of the time
         // signature instead of the first note
-        if (vexStaff.hasTimeSig()) {
+        if (vexStave.hasTimeSig()) {
           offsetX -= 24;
         }
         if (atts.ho) {
@@ -228,7 +228,7 @@ define([
         }
         vexTempo.setShiftX(offsetX);
         vexTempo.font = me.tempoFont;
-        vexStaff.modifiers.push(vexTempo);
+        vexStave.modifiers.push(vexTempo);
       });
     },
 
@@ -275,25 +275,25 @@ define([
      * current measure
      */
     calculateMaxNoteStartX : function () {
-      var me = this, i, staffs, staff;
-      staffs = me.staffs;
-      i = staffs.length;
+      var me = this, i, staves, stave;
+      staves = me.staves;
+      i = staves.length;
       while (i--) {
-        staff = staffs[i];
-        if (staff) {
-          me.maxNoteStartX = Math.max(me.maxNoteStartX, staff.getNoteStartX());
+        stave = staves[i];
+        if (stave) {
+          me.maxNoteStartX = Math.max(me.maxNoteStartX, stave.getNoteStartX());
         }
       }
     },
 
     calculateMaxEndModifierWidth : function () {
-      var me = this, i, staffs, staff;
-      staffs = me.staffs;
-      i = staffs.length;
+      var me = this, i, staves, stave;
+      staves = me.staves;
+      i = staves.length;
       while (i--) {
-        staff = staffs[i];
-        if (staff) {
-          me.maxEndModifierW = Math.max(me.maxEndModifierW, staff.getGlyphEndX() - staff.end_x);
+        stave = staves[i];
+        if (stave) {
+          me.maxEndModifierW = Math.max(me.maxEndModifierW, stave.getGlyphEndX() - stave.end_x);
         }
       }
     },
@@ -304,71 +304,71 @@ define([
      */
     calculateRepeatPadding : function () {
       var me = this;
-      var staff = me.getFirstDefinedStaff();
+      var stave = me.getFirstDefinedStave();
       /**
        * @property {Number} repeatPadding additional padding (20px) if the staff
        * does have a left REPEAT_BEGIN barline located to the right of other
        * staff modifiers; 0px in all other cases.
        */
       me.repeatPadding =
-      (staff.modifiers[0].barline == VF.Barline.type.REPEAT_BEGIN && staff.modifiers.length > 2) ? 20 : 0;
+      (stave.modifiers[0].barline == VF.Barline.type.REPEAT_BEGIN && stave.modifiers.length > 2) ? 20 : 0;
     },
 
     /**
-     * Formats the staffs in the current measure: sets x coordinates and adds
+     * Formats the staves in the current measure: sets x coordinates and adds
      * staff labels
      * @param {Number} x The x coordinate of the the measure
      * @param {String[]} labels The labels of all staves
      */
     format : function (x, labels) {
-      var me = this, width = me.w, i = me.staffs.length, staff, k;
+      var me = this, width = me.w, i = me.staves.length, stave, k;
       while (i--) {
-        if (me.staffs[i]) {
-          staff = me.staffs[i];
+        if (me.staves[i]) {
+          stave = me.staves[i];
           if (labels && typeof labels[i] === 'string') {
-            staff.setText(labels[i], VF.Modifier.Position.LEFT, {
+            stave.setText(labels[i], VF.Modifier.Position.LEFT, {
               shift_y : -3
             });
           }
 
-          if (typeof staff.setX == "function") {
-            staff.setX(x);
+          if (typeof stave.setX == "function") {
+            stave.setX(x);
           } else {
             /* Fallback if VexFlow doesn't have setter */
             //TODO: remove when setX() is merged to standard VexFlow
-            staff.x = x;
-            staff.glyph_start_x = x + 5;
-            staff.bounds.x = x;
-            for (k = 0; k < staff.modifiers.length; k++) {
-              staff.modifiers[k].x = x;
+            stave.x = x;
+            stave.glyph_start_x = x + 5;
+            stave.bounds.x = x;
+            for (k = 0; k < stave.modifiers.length; k++) {
+              stave.modifiers[k].x = x;
             }
           }
 
-          staff.start_x = staff.x + me.maxNoteStartX;
-          staff.setWidth(width);
-          staff.end_x -= me.maxEndModifierW;
+          stave.start_x = stave.x + me.maxNoteStartX;
+          stave.setWidth(width);
+          stave.end_x -= me.maxEndModifierW;
 
         }
       }
-      me.voices.format(me.getFirstDefinedStaff());
+      me.voices.format(me.getFirstDefinedStave());
     },
 
     /**
-     * Draws the staffs, voices and connectors in the current measure to a
+     * Draws the staves, voices and connectors in the current measure to a
      * canvas
      * @param {Object} ctx the canvas context
      */
     draw : function (ctx) {
-      var me = this, i, staffs, staff;
-      staffs = me.staffs;
-      i = staffs.length;
+      var me = this, i, staves, staff;
+      staves = me.staves;
+      i = staves.length;
       while (i--) {
-        staff = staffs[i];
+        staff = staves[i];
         if (staff) {
           staff.setContext(ctx).draw();
         }
       }
-      me.voices.draw(ctx, staffs);
+      me.voices.draw(ctx, staves);
       me.startConnectors.setContext(ctx).draw();
       me.inlineConnectors.setContext(ctx).draw();
     }

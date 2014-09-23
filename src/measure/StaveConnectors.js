@@ -68,9 +68,9 @@ define([
     },
 
     init : function (config) {
-      var me = this, vexType, top_staff, bottom_staff, vexConnector, label, labelMode;
+      var me = this, vexType, topStave, bottomStave, vexConnector, label, labelMode;
       var models = config.models;
-      var staffs = config.staffs;
+      var staves = config.staves;
       var barline_l = config.barline_l;
       var barline_r = config.barline_r;
       var system_n = config.system_n;
@@ -79,11 +79,11 @@ define([
       $.each(models, function () {
 
         vexType = (barline_r) ? me.vexTypesBarlineRight[barline_r] : me.vexTypes[this.symbol];
-        top_staff = staffs[this.top_staff_n];
-        bottom_staff = staffs[this.bottom_staff_n];
+        topStave = staves[this.top_stave_n];
+        bottomStave = staves[this.bottom_stave_n];
 
-        if (typeof vexType === 'number' && top_staff && bottom_staff) {
-          vexConnector = new VF.StaveConnector(top_staff, bottom_staff);
+        if (typeof vexType === 'number' && topStave && bottomStave) {
+          vexConnector = new VF.StaveConnector(topStave, bottomStave);
           vexConnector.setType(vexType);
 
           // TODO implement offset in VexFlow
@@ -106,8 +106,8 @@ define([
 
         if (barline_l) {
           vexType = me.vexTypesBarlineLeft[barline_l];
-          if (typeof vexType === 'number' && top_staff && bottom_staff) {
-            vexConnector = new VF.StaveConnector(top_staff, bottom_staff);
+          if (typeof vexType === 'number' && topStave && bottomStave) {
+            vexConnector = new VF.StaveConnector(topStave, bottomStave);
             vexConnector.setType(vexType);
             if (vexType === VF.StaveConnector.type.BOLD_DOUBLE_LEFT) {
               vexConnector.checkShift = true;

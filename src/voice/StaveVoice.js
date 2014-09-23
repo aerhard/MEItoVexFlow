@@ -26,11 +26,11 @@ define(function () {
    *
    * @constructor
    * @param {Object} voice
-   * @param {Object} staff_n
+   * @param {Object} stave_n
    */
-  var StaveVoice = function (voice, staff_n) {
+  var StaveVoice = function (voice, stave_n) {
     this.voice = voice;
-    this.staff_n = staff_n;
+    this.stave_n = stave_n;
   };
 
   return StaveVoice;

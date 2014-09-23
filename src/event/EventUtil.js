@@ -103,8 +103,8 @@ define([
     /**
      * @method processAttrHo
      */
-    processAttrHo : function (mei_ho, vexObject, staff) {
-      vexObject.setExtraLeftPx(+mei_ho * staff.getSpacingBetweenLines() / 2);
+    processAttrHo : function (mei_ho, vexObject, stave) {
+      vexObject.setExtraLeftPx(+mei_ho * stave.getSpacingBetweenLines() / 2);
     },
 
     /**

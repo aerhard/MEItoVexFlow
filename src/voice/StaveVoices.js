@@ -41,12 +41,12 @@ define([
   };
 
   StaveVoices.prototype = {
-    addStaffVoice : function (staffVoice) {
-      this.all_voices.push(staffVoice);
+    addStaffVoice : function (staveVoice) {
+      this.all_voices.push(staveVoice);
     },
 
-    addVoice : function (voice, staff_n) {
-      this.addStaffVoice(new StaveVoice(voice, staff_n));
+    addVoice : function (voice, stave_n) {
+      this.addStaffVoice(new StaveVoice(voice, stave_n));
     },
 
     reset : function () {
@@ -54,18 +54,18 @@ define([
     },
 
     preFormat : function () {
-      var me = this, all, staff_n, i;
+      var me = this, all, stave_n, i;
       all = me.all_voices;
       me.vexVoices = [];
       me.vexVoicesStaffWise = {};
       i = all.length;
       while (i--) {
         me.vexVoices.push(all[i].voice);
-        staff_n = all[i].staff_n;
-        if (me.vexVoicesStaffWise[staff_n]) {
-          me.vexVoicesStaffWise[staff_n].push(all[i].voice);
+        stave_n = all[i].stave_n;
+        if (me.vexVoicesStaffWise[stave_n]) {
+          me.vexVoicesStaffWise[stave_n].push(all[i].voice);
         } else {
-          me.vexVoicesStaffWise[staff_n] = [all[i].voice];
+          me.vexVoicesStaffWise[stave_n] = [all[i].voice];
         }
       }
       me.formatter.preCalculateMinTotalWidth(me.vexVoices);
@@ -92,10 +92,10 @@ define([
     },
 
     draw : function (context, staves) {
-      var i, staffVoice, all_voices = this.all_voices;
+      var i, staveVoice, all_voices = this.all_voices;
       for (i = 0; i < all_voices.length; ++i) {
-        staffVoice = all_voices[i];
-        staffVoice.voice.draw(context, staves[staffVoice.staff_n]);
+        staveVoice = all_voices[i];
+        staveVoice.voice.draw(context, staves[staveVoice.stave_n]);
       }
     }
   };

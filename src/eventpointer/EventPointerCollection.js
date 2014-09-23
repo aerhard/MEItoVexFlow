@@ -71,20 +71,20 @@ define([
     createInfos : function (elements, measureElement) {
       var me = this;
 
-      var link_staffInfo = function (lnkelem) {
+      var link_staveInfo = function (lnkelem) {
         return {
-          staff_n : $(lnkelem).attr('staff') || '1',
+          stave_n : $(lnkelem).attr('staff') || '1',
           layer_n : $(lnkelem).attr('layer') || '1'
         };
       };
 
       // convert tstamp into startid in current measure
       var local_tstamp2id = function (tstamp, lnkelem, measureElement) {
-        var stffinf = link_staffInfo(lnkelem);
-        var staff = $(measureElement).find('staff[n="' + stffinf.staff_n + '"]');
-        var layer = $(staff).find('layer[n="' + stffinf.layer_n + '"]').get(0);
+        var stffinf = link_staveInfo(lnkelem);
+        var stave = $(measureElement).find('staff[n="' + stffinf.stave_n + '"]');
+        var layer = $(stave).find('layer[n="' + stffinf.layer_n + '"]').get(0);
         if (!layer) {
-          var layer_candid = $(staff).find('layer');
+          var layer_candid = $(stave).find('layer');
           if (layer_candid && !layer_candid.attr('n')) {
             layer = layer_candid;
           }
@@ -92,11 +92,11 @@ define([
             throw new RuntimeError('Cannot find layer');
           }
         }
-        var staffdef = me.systemInfo.getStaveInfo(stffinf.staff_n);
-        if (!staffdef) {
+        var staveInfo = me.systemInfo.getStaveInfo(stffinf.stave_n);
+        if (!staveInfo) {
           throw new RuntimeError('Cannot determine staff definition.');
         }
-        var meter = staffdef.getTimeSpec();
+        var meter = staveInfo.getTimeSpec();
         if (!meter.count || !meter.unit) {
           throw new RuntimeError('Cannot determine meter; missing or incorrect @meter.count or @meter.unit.');
         }

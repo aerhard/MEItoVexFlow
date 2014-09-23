@@ -76,20 +76,20 @@ define([
     createInfos : function (link_elements, measureElement, measureIndex, systemInfo) {
       var me = this;
 
-      var link_staffInfo = function (lnkelem) {
+      var link_staveInfo = function (lnkelem) {
         return {
-          staff_n : $(lnkelem).attr('staff') || '1',
+          stave_n : $(lnkelem).attr('staff') || '1',
           layer_n : $(lnkelem).attr('layer') || '1'
         };
       };
 
       // convert tstamp into startid in current measure
       var local_tstamp2id = function (tstamp, lnkelem, measureElement) {
-        var stffinf = link_staffInfo(lnkelem);
-        var staff = $(measureElement).find('staff[n="' + stffinf.staff_n + '"]');
-        var layer = $(staff).find('layer[n="' + stffinf.layer_n + '"]').get(0);
+        var stffinf = link_staveInfo(lnkelem);
+        var stave = $(measureElement).find('staff[n="' + stffinf.stave_n + '"]');
+        var layer = $(stave).find('layer[n="' + stffinf.layer_n + '"]').get(0);
         if (!layer) {
-          var layer_candid = $(staff).find('layer');
+          var layer_candid = $(stave).find('layer');
           if (layer_candid && !layer_candid.attr('n')) {
             layer = layer_candid;
           }
@@ -97,11 +97,11 @@ define([
             throw new RuntimeError('Cannot find layer');
           }
         }
-        var staffdef = systemInfo.getStaveInfo(stffinf.staff_n);
-        if (!staffdef) {
+        var staveInfo = systemInfo.getStaveInfo(stffinf.stave_n);
+        if (!staveInfo) {
           throw new RuntimeError('Cannot determine staff definition.');
         }
-        var meter = staffdef.getTimeSpec();
+        var meter = staveInfo.getTimeSpec();
         if (!meter.count || !meter.unit) {
           throw new RuntimeError('Cannot determine meter; missing or incorrect @meter.count or @meter.unit.');
         }
@@ -155,11 +155,11 @@ define([
             if (measures_ahead > 0) {
               eventLink.setLastTStamp(beat_partOf(tstamp2));
               // register that eventLink needs context;
-              // need to save: measure.n, link.staff_n,
+              // need to save: measure.n, link.stave_n,
               // link.layer_n
-              var staffinfo = link_staffInfo(this);
+              var staveInfo = link_staveInfo(this);
               var target_measure_n = measureIndex + measures_ahead;
-              var refLocationIndex = target_measure_n + ':' + staffinfo.staff_n + ':' + staffinfo.layer_n;
+              var refLocationIndex = target_measure_n + ':' + staveInfo.stave_n + ':' + staveInfo.layer_n;
               if (!me.unresolvedTStamp2[refLocationIndex]) {
                 me.unresolvedTStamp2[refLocationIndex] = [];
               }

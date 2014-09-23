@@ -59,7 +59,7 @@ define([
       me.systemLeftMar = undefined;
       /**
        * @property {Number} currentLowestY the lowest Y coordinate of the
-       * previously processed staffs
+       * previously processed staves
        */
       me.currentLowestY = 0;
 
@@ -78,7 +78,7 @@ define([
 
     setModelForStaveRange : function (target, obj, add) {
       add = add || '';
-      target[obj.top_staff_n + ':' + obj.bottom_staff_n + add] = obj;
+      target[obj.top_stave_n + ':' + obj.bottom_stave_n + add] = obj;
     },
 
     /**
@@ -98,8 +98,8 @@ define([
 
       // 1. left connectors specified in the MEI file:
       me.setModelForStaveRange(me.startConnectorInfos, {
-        top_staff_n : first_n,
-        bottom_staff_n : last_n,
+        top_stave_n : first_n,
+        bottom_stave_n : last_n,
         symbol : symbol || 'line',
         label : $(staffGrp).attr('label'),
         labelAbbr : $(staffGrp).attr('label.abbr'),
@@ -110,8 +110,8 @@ define([
       // //staffGrp[not(ancestor::staffGrp)]
       if (!isChild && me.cfg.autoStaveConnectorLine) {
         me.setModelForStaveRange(me.startConnectorInfos, {
-          top_staff_n : first_n,
-          bottom_staff_n : last_n,
+          top_stave_n : first_n,
+          bottom_stave_n : last_n,
           symbol : (symbol === 'none') ? 'none' : 'line'
         }, 'autoline');
       }
@@ -119,15 +119,15 @@ define([
       // 3. inline connectors
       if (barthru === 'true') {
         me.setModelForStaveRange(me.inlineConnectorInfos, {
-          top_staff_n : first_n,
-          bottom_staff_n : last_n,
+          top_stave_n : first_n,
+          bottom_stave_n : last_n,
           symbol : 'singleright' // default
         });
       }
     },
 
-    getStaveInfo : function (staff_n) {
-      return this.currentStaveInfos[staff_n];
+    getStaveInfo : function (stave_n) {
+      return this.currentStaveInfos[stave_n];
     },
 
     getAllStaveInfos : function () {
@@ -137,13 +137,13 @@ define([
     /**
      * @method
      */
-    getClef : function (staff_n) {
-      var me = this, staff_info;
-      staff_info = me.currentStaveInfos[staff_n];
-      if (!staff_info) {
-        throw new RuntimeError('No staff definition for staff n=' + staff_n);
+    getClef : function (stave_n) {
+      var me = this, staveInfo;
+      staveInfo = me.currentStaveInfos[stave_n];
+      if (!staveInfo) {
+        throw new RuntimeError('No staff definition for staff n=' + stave_n);
       }
-      return staff_info.getClef();
+      return staveInfo.getClef();
     },
 
     getCurrentLowestY : function () {
@@ -155,19 +155,19 @@ define([
     },
 
     getYs : function (currentSystemY) {
-      var me = this, currentStaffY, i, j, isFirstStaff = true, infoSpacing, lowestYCandidate, ys = [];
-      currentStaffY = 0;
+      var me = this, currentStaveY, i, j, isFirstStave = true, infoSpacing, lowestYCandidate, ys = [];
+      currentStaveY = 0;
       for (i = 1, j = me.currentStaveInfos.length; i < j; i += 1) {
         if (me.currentStaveInfos[i]) {
           infoSpacing = me.currentStaveInfos[i].spacing;
-          currentStaffY += (isFirstStaff) ? 0 :
+          currentStaveY += (isFirstStave) ? 0 :
                            (infoSpacing !== null) ? me.STAVE_HEIGHT + me.currentStaveInfos[i].spacing :
                            me.STAVE_HEIGHT + me.cfg.staveSpacing;
-          ys[i] = currentSystemY + currentStaffY;
-          isFirstStaff = false;
+          ys[i] = currentSystemY + currentStaveY;
+          isFirstStave = false;
         }
       }
-      lowestYCandidate = currentSystemY + currentStaffY + me.STAVE_HEIGHT;
+      lowestYCandidate = currentSystemY + currentStaveY + me.STAVE_HEIGHT;
       if (lowestYCandidate > me.currentLowestY) {
         me.currentLowestY = lowestYCandidate;
       }
@@ -293,16 +293,16 @@ define([
      * @param {Element} parent
      * @param {Element} element
      * @param {Object} ancestorSymbols
-     * @return {Object} the range of staffs. Properties: first_n, last_n
+     * @return {Object} the range of staves. Properties: first_n, last_n
      */
     processStaffGrp_child : function (parent, element, ancestorSymbols) {
-      var me = this, staff_n, myAncestorSymbols;
+      var me = this, stave_n, myAncestorSymbols;
       switch (element.localName) {
         case 'staffDef' :
-          staff_n = me.processStaffDef(element);
+          stave_n = me.processStaffDef(element);
           return {
-            first_n : staff_n,
-            last_n : staff_n
+            first_n : stave_n,
+            last_n : stave_n
           };
         case 'staffGrp' :
           myAncestorSymbols =
@@ -321,15 +321,15 @@ define([
      * @return {Number} the staff number of the staffDef
      */
     processStaffDef : function (staffDef) {
-      var me = this, staff_n, staff_info;
-      staff_n = +$(staffDef).attr('n');
-      staff_info = me.currentStaveInfos[staff_n];
-      if (staff_info) {
-        staff_info.updateDef(staffDef, me.scoreDefElement);
+      var me = this, stave_n, staveInfo;
+      stave_n = +$(staffDef).attr('n');
+      staveInfo = me.currentStaveInfos[stave_n];
+      if (staveInfo) {
+        staveInfo.updateDef(staffDef, me.scoreDefElement);
       } else {
-        me.currentStaveInfos[staff_n] = new StaveInfo(staffDef, me.scoreDefElement, true, true, true);
+        me.currentStaveInfos[stave_n] = new StaveInfo(staffDef, me.scoreDefElement, true, true, true);
       }
-      return staff_n;
+      return stave_n;
     }
   };
 

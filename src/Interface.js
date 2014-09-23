@@ -86,12 +86,12 @@ define([
       },
       /**
        * returns a 2d array of all Vex.Flow.Stave objects, arranged by
-       * [measure_n][staff_n]
+       * [measure_n][stave_n]
        * @method getAllVexMeasureStaffs
-       * @return {Vex.Flow.Stave[][]} see {@link MEI2VF.Converter#allVexMeasureStaffs}
+       * @return {Vex.Flow.Stave[][]} see {@link MEI2VF.Converter#allVexMeasureStaves}
        */
       getAllVexMeasureStaffs : function () {
-        Converter.prototype.getAllVexMeasureStaffs();
+        Converter.prototype.getAllVexMeasureStaves();
       },
       /**
        * Returns the width and the height of the area that contains all drawn
@@ -102,12 +102,12 @@ define([
        * Properties: width, height
        */
       getStaffArea : function () {
-        return Converter.prototype.getStaffArea();
+        return Converter.prototype.getStaveArea();
       }
     },
     /**
      * Contains all Vex.Flow.Stave objects created when calling {@link #render_notation}.
-     * Addressing scheme: [measure_n][staff_n]
+     * Addressing scheme: [measure_n][stave_n]
      * @property {Vex.Flow.Stave[][]} rendered_measures
      */
     rendered_measures : null,

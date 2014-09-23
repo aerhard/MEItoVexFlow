@@ -33,24 +33,24 @@ define([
    * @private
    *
    * @constructor
-   * @param staffdef
-   * @param scoredef
+   * @param staffDef
+   * @param scoreDef
    * @param w_clef
    * @param w_keysig
    * @param w_timesig
    */
-  var StaveInfo = function (staffdef, scoredef, w_clef, w_keysig, w_timesig) {
+  var StaveInfo = function (staffDef, scoreDef, w_clef, w_keysig, w_timesig) {
     var me = this;
     /**
      * the most current scoreDef element.
      * @private
      */
-    me.scoreDef = scoredef;
+    me.scoreDef = scoreDef;
     /**
      * the most current staffDef element
      * @private
      */
-    me.staffDef = staffdef;
+    me.staffDef = staffDef;
     /**
      * @private
      */

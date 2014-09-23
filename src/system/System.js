@@ -63,10 +63,10 @@ define([
          */
         me.coords = config.coords;
         /**
-         * @cfg {Number[]} staffYs the y coordinates of all staffs in the current
+         * @cfg {Number[]} staveYs the y coordinates of all staves in the current
          * system
          */
-        me.staffYs = config.staffYs;
+        me.staveYs = config.staveYs;
         /**
          * an instance of MEI2VF.Verses dealing with and storing all verse lines
          * found in the MEI document
@@ -74,7 +74,7 @@ define([
          */
         me.verses = new Verses(config.versesCfg);
         /**
-         * @cfg {String[]} labels the labels of all staffs in the current system
+         * @cfg {String[]} labels the labels of all staves in the current system
          */
         me.labels = config.labels;
         /**
@@ -85,10 +85,10 @@ define([
       },
 
       /**
-       * @return {Number[]} the value of {@link #staffYs}
+       * @return {Number[]} the value of {@link #staveYs}
        */
-      getStaffYs : function () {
-        return this.staffYs;
+      getStaveYs : function () {
+        return this.staveYs;
       },
 
       /**
@@ -209,8 +209,8 @@ define([
         }
 
         if (j > 0) {
-          me.slurStartX = measures[0].getFirstDefinedStaff().getTieStartX();
-          me.slurEndX = me.getLastMeasure().getFirstDefinedStaff().getTieEndX();
+          me.slurStartX = measures[0].getFirstDefinedStave().getTieStartX();
+          me.slurEndX = me.getLastMeasure().getFirstDefinedStave().getTieEndX();
         }
 
         me.verses.format();

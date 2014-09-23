@@ -43,7 +43,7 @@ define([
 
 //    if (options.clef) {
 //      vexOptions.keys = [atts.ploc + '/' + atts.oloc];
-//      vexOptions.clef = me.systemInfo.getClef(staff_n);
+//      vexOptions.clef = me.systemInfo.getClef(stave_n);
 //    } else {
 //      vexOptions.keys = keys;
 //    }

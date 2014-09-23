@@ -64,7 +64,7 @@ define([
       allTies = this.getModels();
 
       cmpLinkCond = function (lc1, lc2) {
-        return (lc1 && lc2 && lc1.vexPitch === lc2.vexPitch && lc1.staff_n === lc2.staff_n);
+        return (lc1 && lc2 && lc1.vexPitch === lc2.vexPitch && lc1.stave_n === lc2.stave_n);
       };
 
       found = false;
