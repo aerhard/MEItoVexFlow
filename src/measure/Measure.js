@@ -176,7 +176,7 @@ define([
           return me.staffs[i];
         }
       }
-      throw new RuntimeError('ERROR', 'getFirstDefinedStaff(): no staff found in the current measure.');
+      throw new RuntimeError('No staff found in the current measure.');
     },
 
     /**

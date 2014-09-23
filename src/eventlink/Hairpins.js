@@ -46,7 +46,7 @@ define([
 
     validateAtts : function (atts) {
       if (!atts.form) {
-        throw new RuntimeError('MEI2VF.RERR.BadArguments:createInfos', '@form is mandatory in <hairpin> - make sure the xml is valid.');
+        throw new RuntimeError('@form is mandatory in <hairpin> - make sure the xml is valid.');
       }
     },
 

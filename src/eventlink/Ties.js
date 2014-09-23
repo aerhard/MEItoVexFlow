@@ -22,10 +22,9 @@ define([
   'jquery',
   'vexflow',
   'm2v/core/Logger',
-  'm2v/core/RuntimeError',
   'm2v/eventlink/EventLinkCollection',
   'm2v/eventlink/EventLink'
-], function ($, VF, Logger, RuntimeError, EventLinkCollection, EventLink, undefined) {
+], function ($, VF, Logger, EventLinkCollection, EventLink, undefined) {
 
 
   /**

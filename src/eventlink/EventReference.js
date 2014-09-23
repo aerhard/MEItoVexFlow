@@ -69,7 +69,7 @@ define([
       tstamp = this.tstamp;
       meicontext = this.meicontext;
       if (!tstamp) {
-        throw new RuntimeError('MEI2VF:RERR:BADARG:EventRef001', 'EventReference: tstamp must be set in order to resolve reference.');
+        throw new RuntimeError('tstamp must be set in order to resolve reference.');
       }
       if (this.meicontext) {
         // look up event corresponding to the given tstamp (strictly or losely)

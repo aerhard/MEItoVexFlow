@@ -773,7 +773,7 @@ define([
         } else {
           currentStaveInfo = me.systemInfo.getStaveInfo(staff_n);
           if (!currentStaveInfo) {
-            throw new RuntimeError('Reference error', Util.serializeElement(this) +
+            throw new RuntimeError(Util.serializeElement(this) +
                                                                ' refers to staff "' + staff_n +
                                                   '", but no corresponding staff definition could be found in the document.');
             return;
@@ -899,7 +899,7 @@ define([
     createVexVoice : function (voice_contents, meter) {
       var me = this, voice;
       if (!$.isArray(voice_contents)) {
-        throw new RuntimeError('BadArguments', 'me.createVexVoice() voice_contents argument must be an array.');
+        throw new RuntimeError('me.createVexVoice() voice_contents argument must be an array.');
       }
       voice = new VF.Voice({
         num_beats : meter.count,
@@ -1061,7 +1061,7 @@ define([
         };
 
       } catch (e) {
-        throw new RuntimeError('BadArguments', 'A problem occurred processing ' + Util.serializeElement(element) +
+        throw new RuntimeError('A problem occurred processing ' + Util.serializeElement(element) +
                                                '\nORIGINAL ERROR MESSAGE: ' + e.toString());
       }
     },
@@ -1132,7 +1132,7 @@ define([
         var childStrings = $(element).children().map(function () {
           return '\n    ' + Util.serializeElement(this);
         }).get().join('');
-        throw new RuntimeError('BadArguments', 'A problem occurred processing \n' + Util.serializeElement(element) +
+        throw new RuntimeError('A problem occurred processing \n' + Util.serializeElement(element) +
                                                childStrings + '\n</chord>\nORIGINAL ERROR MESSAGE: ' + e.toString());
       }
     },
@@ -1203,7 +1203,7 @@ define([
         };
       } catch (e) {
         console.log(e);
-        throw new RuntimeError('BadArguments', 'A problem occurred processing ' + Util.serializeElement(element));
+        throw new RuntimeError('A problem occurred processing ' + Util.serializeElement(element));
       }
     },
 
@@ -1235,7 +1235,7 @@ define([
           id : xml_id
         };
       } catch (e) {
-        throw new RuntimeError('BadArguments', 'A problem occurred processing ' + Util.serializeElement(element));
+        throw new RuntimeError('A problem occurred processing ' + Util.serializeElement(element));
       }
     },
 
@@ -1248,7 +1248,7 @@ define([
           vexNote : new Space({ element : element, stave : staff })
         };
       } catch (e) {
-        throw new RuntimeError('BadArguments', 'A problem occurred processing ' + Util.serializeElement(element));
+        throw new RuntimeError('A problem occurred processing ' + Util.serializeElement(element));
       }
     },
 
@@ -1286,7 +1286,15 @@ define([
       });
 
       // set autostem parameter of VF.Beam to true if neither layerDir nor any stem direction in the beam is specified
-      if (elements.length > 0) me.allBeams.push(new VF.Beam(filteredElements, !layerDir && !me.hasStemDirInBeam));
+
+      if (elements.length > 0) {
+        try {
+          me.allBeams.push(new VF.Beam(filteredElements, !layerDir && !me.hasStemDirInBeam));
+        } catch (e) {
+          Logger.error('VexFlow Error', 'An error occurred processing ' + Util.serializeElement(element) +
+                                         ': "'+ e.toString() + '". Skipping beam creation.');
+        }
+      }
 
       me.inBeamNo -= 1;
       if (me.inBeamNo === 0) {
@@ -1407,14 +1415,14 @@ define([
         } else if (numbered_token.length === 2) {
           num = +numbered_token[1];
           if (!num) {
-            throw new RuntimeError('MEI2VF.RERR.BadArguments:ParseSlur01', "badly formed slur attribute");
+            throw new RuntimeError('badly formed slur attribute');
           }
           result.push({
             letter : numbered_token[0],
             nesting_level : num
           });
         } else {
-          throw new RuntimeError('MEI2VF.RERR.BadArguments:ParseSlur01', "badly formed slur attribute");
+          throw new RuntimeError('badly formed slur attribute');
         }
       }
       return result;

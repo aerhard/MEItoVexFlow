@@ -141,7 +141,7 @@ define([
       var me = this, staff_info;
       staff_info = me.currentStaveInfos[staff_n];
       if (!staff_info) {
-        throw new RuntimeError('MEI2VF.getClefForStaffNr():E01', 'No staff definition for staff n=' + staff_n);
+        throw new RuntimeError('No staff definition for staff n=' + staff_n);
       }
       return staff_info.getClef();
     },

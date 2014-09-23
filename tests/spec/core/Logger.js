@@ -37,20 +37,20 @@ define([
       it('raises an error if the parameter is not an object', function () {
         expect(function () {
           Logger.setAppender();
-        }).toThrow(new RuntimeError('Error', 'Parameter is not an object'));
+        }).toThrow(new RuntimeError('Parameter is not an object'));
       });
       it('raises an error if not all four appender methods are implemented in the parameter object', function () {
         expect(function () {
           Logger.setAppender({warn : function () {
           }});
-        }).toThrow(new RuntimeError('Error', 'Parameter object does not contain the expected appender methods.'));
+        }).toThrow(new RuntimeError('Parameter object does not contain the expected appender methods.'));
         expect(function () {
           Logger.setAppender({
             warn : 'notafunction',
             error : 'notafunction',
             info : 'notafunction'
           });
-        }).toThrow(new RuntimeError('Error', 'Parameter object does not contain the expected appender methods.'));
+        }).toThrow(new RuntimeError('Parameter object does not contain the expected appender methods.'));
       });
 
       it('sets "appender" to the parameter object if a valid object is passed', function () {

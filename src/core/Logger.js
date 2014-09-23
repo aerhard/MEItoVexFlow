@@ -47,9 +47,9 @@ define([
           this.appender = appender;
           return this;
         }
-        throw new RuntimeError('Error', 'Parameter object does not contain the expected appender methods.');
+        throw new RuntimeError('Parameter object does not contain the expected appender methods.');
       }
-      throw new RuntimeError('Error', 'Parameter is not an object');
+      throw new RuntimeError('Parameter is not an object');
     },
 
     /**

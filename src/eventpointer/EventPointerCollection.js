@@ -65,7 +65,7 @@ define([
     },
 
     createVexFromInfos : function () {
-      throw new RuntimeError('MEI2VF.MISSING_METHOD.createVexFromInfos', 'You have to provide a createVexFromInfos method when inheriting MEI2VF.EventPointerCollection.');
+      throw new RuntimeError('You have to provide a createVexFromInfos method when inheriting MEI2VF.EventPointerCollection.');
     },
 
     createInfos : function (elements, measureElement) {
@@ -89,16 +89,16 @@ define([
             layer = layer_candid;
           }
           if (!layer) {
-            throw new RuntimeError('MEI2VF.RERR.createInfos:E01', 'Cannot find layer');
+            throw new RuntimeError('Cannot find layer');
           }
         }
         var staffdef = me.systemInfo.getStaveInfo(stffinf.staff_n);
         if (!staffdef) {
-          throw new RuntimeError('MEI2VF.RERR.createInfos:E02', 'Cannot determine staff definition.');
+          throw new RuntimeError('Cannot determine staff definition.');
         }
         var meter = staffdef.getTimeSpec();
         if (!meter.count || !meter.unit) {
-          throw new RuntimeError('MEI2VF.RERR.createInfos:E03', "Cannot determine meter; missing or incorrect @meter.count or @meter.unit.");
+          throw new RuntimeError('Cannot determine meter; missing or incorrect @meter.count or @meter.unit.');
         }
         return MeiLib.tstamp2id(tstamp, layer, meter);
       };

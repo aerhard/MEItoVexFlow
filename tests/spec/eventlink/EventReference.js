@@ -46,7 +46,7 @@ define([
       var ref = new EventReference('n01');
       expect(function() {
         ref.setTStamp();
-      }).toThrow(new RuntimeError('MEI2VF:RERR:BADARG:EventRef001', 'EventReference: tstamp must be set in order to resolve reference.'));
+      }).toThrow(new RuntimeError('tstamp must be set in order to resolve reference.'));
     });
 
     it('getId() returns null when xml:id and tstamp are set, but no meicontext', function () {

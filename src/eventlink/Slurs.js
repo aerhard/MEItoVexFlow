@@ -22,10 +22,9 @@ define([
   'jquery',
   'vexflow',
   'm2v/core/Logger',
-  'm2v/core/RuntimeError',
   'm2v/eventlink/EventLinkCollection',
   'm2v/eventlink/EventLink'
-], function ($, VF, Logger, RuntimeError, EventLinkCollection, EventLink, undefined) {
+], function ($, VF, Logger, EventLinkCollection, EventLink, undefined) {
 
 
   /**
@@ -200,10 +199,7 @@ define([
 
       var regex = /(\-?\d+)\s+(\-?\d+)/g;
       var matched = null;
-      console.log('matched:');
-      console.log(matched);
       while (matched = regex.exec(str)) {
-        console.log(matched[1] + ' " ' + matched[2]);
         cps.push({
           x : +matched[1],
           y : +matched[2]

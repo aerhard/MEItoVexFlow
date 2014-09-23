@@ -67,7 +67,6 @@ define([
         keys : keys
       };
     }
-  console.log(vexOptions);
 
     VF.StaveNote.call(this, vexOptions);
 

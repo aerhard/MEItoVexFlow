@@ -18,11 +18,10 @@ define([
   'vexflow',
   'm2v/core/Logger',
   'm2v/core/Util',
-  'm2v/core/RuntimeError',
   'm2v/core/Tables',
   'm2v/eventpointer/EventPointerCollection',
   'm2v/event/EventUtil'
-], function (VF, Logger, Util, RuntimeError, Tables, EventPointerCollection, EventUtil, undefined) {
+], function (VF, Logger, Util, Tables, EventPointerCollection, EventUtil, undefined) {
 
 
   /**
