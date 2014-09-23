@@ -56,7 +56,7 @@ define([
       EventUtil.addArticulation(me, this);
     });
     if (atts.fermata) {
-      EventUtil.addFermata(this, element, atts.fermata);
+      EventUtil.addFermataAtt(this, element, atts.fermata);
     }
 
 

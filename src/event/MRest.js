@@ -82,7 +82,7 @@ define([
     }
 
     if (atts.fermata) {
-      EventUtil.addFermata(this, options.element, atts.fermata);
+      EventUtil.addFermataAtt(this, options.element, atts.fermata);
     }
 
   };

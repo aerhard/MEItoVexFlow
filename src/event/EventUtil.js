@@ -128,9 +128,11 @@ define([
       }
     },
 
+    addFermataAtt : function() {},
+
     /**
      * adds a fermata to a note-like object
-     * @method addFermata
+     * @method addFermataAtt
      * @param {Vex.Flow.StaveNote} note the note-like VexFlow object
      * @param {Element} element the element containing the fermata specifications
      * @param {'above'/'below'} place The place of the fermata
