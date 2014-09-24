@@ -19,10 +19,10 @@ module.exports = function(grunt) {
         options: {
           name: 'Interface',
           baseUrl: "src",
-          paths: {
-            'mei2vf' : '../src'
-          },
-//          mainConfigFile: "src/config.js",
+//          paths: {
+//            'mei2vf' : '../src'
+//          },
+          mainConfigFile: "src/config.js",
           out: 'dist/<%= pkg.name %>.js',
 
           wrap: {
