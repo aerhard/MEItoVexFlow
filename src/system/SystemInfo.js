@@ -21,11 +21,11 @@
  * the License.
  */
 define([
-  'jquery',
+  'mei2vf/core/Util',
   'mei2vf/core/Logger',
   'mei2vf/core/RuntimeError',
   'mei2vf/stave/StaveInfo'
-], function ($, Logger, RuntimeError, StaveInfo, undefined) {
+], function (Util, Logger, RuntimeError, StaveInfo, undefined) {
 
   /**
    * @class MEI2VF.SystemInfo
@@ -56,7 +56,7 @@ define([
        * @property {Number} systemLeftMar the left margin of the
        * current system (additional to the left print space margin)
        */
-      me.systemLeftMar = undefined;
+      me.systemLeftMar = null;
       /**
        * @property {Number} currentLowestY the lowest Y coordinate of the
        * previously processed staves
@@ -76,40 +76,38 @@ define([
       return this.systemLeftMar;
     },
 
-    setModelForStaveRange : function (target, obj, add) {
-      add = add || '';
-      target[obj.top_stave_n + ':' + obj.bottom_stave_n + add] = obj;
-    },
-
     /**
      * @method
      */
     setConnectorModels : function (staffGrp, range, isChild, ancestorSymbols) {
       var me = this, symbol, barthru, first_n, last_n;
 
+      var setModelForStaveRange = function (target, obj, add) {
+        add = add || '';
+        target[obj.top_stave_n + ':' + obj.bottom_stave_n + add] = obj;
+      };
+
       first_n = range.first_n;
       last_n = range.last_n;
-      symbol = $(staffGrp).attr('symbol');
-      barthru = $(staffGrp).attr('barthru');
+      symbol = staffGrp.getAttribute('symbol');
 
       Logger.debug('Converter.setConnectorModels() {2}', 'symbol: ' + symbol, ' range.first_n: ' +
-                                                                                     first_n, ' range.last_n: ' +
-                                                                                              last_n);
+                                                                              first_n, ' range.last_n: ' + last_n);
 
       // 1. left connectors specified in the MEI file:
-      me.setModelForStaveRange(me.startConnectorInfos, {
+      setModelForStaveRange(me.startConnectorInfos, {
         top_stave_n : first_n,
         bottom_stave_n : last_n,
         symbol : symbol || 'line',
-        label : $(staffGrp).attr('label'),
-        labelAbbr : $(staffGrp).attr('label.abbr'),
+        label : staffGrp.getAttribute('label'),
+        labelAbbr : staffGrp.getAttribute('label.abbr'),
         ancestorSymbols : ancestorSymbols
       });
 
       // 2. left auto line, only (if at all) attached to
       // //staffGrp[not(ancestor::staffGrp)]
       if (!isChild && me.cfg.autoStaveConnectorLine) {
-        me.setModelForStaveRange(me.startConnectorInfos, {
+        setModelForStaveRange(me.startConnectorInfos, {
           top_stave_n : first_n,
           bottom_stave_n : last_n,
           symbol : (symbol === 'none') ? 'none' : 'line'
@@ -117,8 +115,8 @@ define([
       }
 
       // 3. inline connectors
-      if (barthru === 'true') {
-        me.setModelForStaveRange(me.inlineConnectorInfos, {
+      if (staffGrp.getAttribute('barthru') === 'true') {
+        setModelForStaveRange(me.inlineConnectorInfos, {
           top_stave_n : first_n,
           bottom_stave_n : last_n,
           symbol : 'singleright' // default
@@ -141,7 +139,7 @@ define([
       var me = this, staveInfo;
       staveInfo = me.currentStaveInfos[stave_n];
       if (!staveInfo) {
-        throw new RuntimeError('No staff definition for staff n=' + stave_n);
+        throw new RuntimeError('No staff definition for staff n="' + stave_n + '"');
       }
       return staveInfo.getClef();
     },
@@ -198,18 +196,18 @@ define([
     processScoreDef : function (scoredef) {
       var me = this, i, j, children, systemLeftmar;
       me.scoreDefElement = scoredef;
-      me.scoreDef = $(scoredef);
-      systemLeftmar = me.scoreDef.attr('system.leftmar');
-      if (typeof systemLeftmar === 'string') {
+      systemLeftmar = me.scoreDefElement.getAttribute('system.leftmar');
+      if (systemLeftmar !== null) {
         me.setLeftMar(+systemLeftmar);
       }
-      children = me.scoreDef.children();
+      children = me.scoreDefElement.children;
+      j = children.length;
 
-      if (children.length === 0) {
+      if (j === 0) {
         me.updateStaffDefs(scoredef);
       }
 
-      for (i = 0, j = children.length; i < j; i += 1) {
+      for (i = 0; i < j; i += 1) {
         me.processScoreDef_child(children[i]);
       }
     },
@@ -251,7 +249,7 @@ define([
           break;
         default :
           Logger.info('Not supported', 'Element <' + element.localName +
-                                                                   '> is not supported in <scoreDef>. Ignoring element.');
+                                       '> is not supported in <scoreDef>. Ignoring element.');
       }
     },
 
@@ -267,18 +265,20 @@ define([
      *         first_n, last_n
      */
     processStaffGrp : function (staffGrp, isChild, ancestorSymbols) {
-      var me = this, range = {}, isFirst = true;
-      $(staffGrp).children().each(function (i, childElement) {
-        var childRange = me.processStaffGrp_child(staffGrp, childElement, ancestorSymbols);
+      var me = this, range = {}, isFirst = true, children, i, j, childRange;
+      children = staffGrp.children;
+      j = children.length;
+      for (i = 0; i < j; i++) {
+        childRange = me.processStaffGrp_child(staffGrp, children[i], ancestorSymbols);
         if (childRange) {
           Logger.debug('Converter.processStaffGrp() {1}.{a}', 'childRange.first_n: ' +
-                                                                     childRange.first_n, ' childRange.last_n: ' +
-                                                                                         childRange.last_n);
+                                                              childRange.first_n, ' childRange.last_n: ' +
+                                                                                  childRange.last_n);
           if (isFirst) range.first_n = childRange.first_n;
           range.last_n = childRange.last_n;
           isFirst = false;
         }
-      });
+      }
       me.setConnectorModels(staffGrp, range, isChild, ancestorSymbols);
       return range;
     },
@@ -310,26 +310,30 @@ define([
           return me.processStaffGrp(element, true, myAncestorSymbols);
         default :
           Logger.info('Not supported', 'Element <' + element.localName +
-                                                                   '> is not supported in <staffGrp>. Ignoring element.');
+                                       '> is not supported in <staffGrp>. Ignoring element.');
       }
     },
 
     /**
      * reads a staffDef, writes it to currentStaveInfos
      *
-     * @param {Element} staffDef
+     * @param {Element} element
      * @return {Number} the staff number of the staffDef
      */
-    processStaffDef : function (staffDef) {
+    processStaffDef : function (element) {
       var me = this, stave_n, staveInfo;
-      stave_n = +$(staffDef).attr('n');
-      staveInfo = me.currentStaveInfos[stave_n];
-      if (staveInfo) {
-        staveInfo.updateDef(staffDef, me.scoreDefElement);
+      stave_n = parseInt(element.getAttribute('n'), 10);
+      if (!isNaN(stave_n)) {
+        staveInfo = me.currentStaveInfos[stave_n];
+        if (staveInfo) {
+          staveInfo.updateDef(element, me.scoreDefElement);
+        } else {
+          me.currentStaveInfos[stave_n] = new StaveInfo(element, me.scoreDefElement, true, true, true);
+        }
+        return stave_n;
       } else {
-        me.currentStaveInfos[stave_n] = new StaveInfo(staffDef, me.scoreDefElement, true, true, true);
+        throw new RuntimeError(Util.serializeElement(element) + ' must have an @n attribute of type integer.');
       }
-      return stave_n;
     }
   };
 

@@ -39,6 +39,7 @@ var runSpec = function (m2vTests) {
     'spec/eventlink/EventLink',
     'spec/eventlink/EventReference',
     'spec/meilib/MeiLib',
+    'spec/system/SystemInfo',
     'spec/voice/StaveVoices'
   ];
 
