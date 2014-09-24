@@ -81,7 +81,7 @@ define([
 
   };
 
-  GraceChord.prototype = Object.create(VF.StaveNote.prototype);
+  GraceChord.prototype = Object.create(VF.GraceNote.prototype);
 
   GraceChord.prototype.beamable = true;
 
