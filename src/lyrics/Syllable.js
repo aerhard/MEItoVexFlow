@@ -8,12 +8,13 @@
 // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
 define([
   'vexflow',
-  'vex'
-], function (VF, Vex) {
+  'vex',
+  'mei2vf/core/Util'
+], function (VF, Vex, Util) {
 
 
   var Syllable = function (element, font) {
-    this.init($(element).text());
+    this.init(Util.getText(element));
     this.setFont(font.family, font.size, font.weight);
     this.setMeiElement(element);
     this.setLineSpacing(font.spacing);

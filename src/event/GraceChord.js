@@ -22,23 +22,23 @@ define([
 
   var GraceChord = function (options) {
     var me = this, atts = options.atts, element = options.element;
-    var hasDots, durAtt, durations = [], duration, keys = [], i, j, children, dots;
+    var hasDots, durAtt, durations = [], duration, keys = [], i, j, noteElements, dots;
 
-    children = options.children;
+    noteElements = options.noteElements;
 
     durAtt = atts.dur;
 
     if (durAtt) {
       duration = EventUtil.processAttsDuration(element, atts);
       dots = +atts.dots || 0;
-      for (i = 0, j = children.length; i < j; i += 1) {
-        keys.push(EventUtil.getVexPitch(children[i]));
+      for (i = 0, j = noteElements.length; i < j; i += 1) {
+        keys.push(EventUtil.getVexPitch(noteElements[i]));
       }
     } else {
-      for (i = 0, j = children.length; i < j; i += 1) {
-        durations.push(+children[i].getAttribute('dur'));
-        dots =+children[i].getAttribute('dots') || 0;
-        keys.push(EventUtil.getVexPitch(children[i]));
+      for (i = 0, j = noteElements.length; i < j; i += 1) {
+        durations.push(+noteElements[i].getAttribute('dur'));
+        dots =+noteElements[i].getAttribute('dots') || 0;
+        keys.push(EventUtil.getVexPitch(noteElements[i]));
       }
       duration = EventUtil.translateDuration(element, Math.max.apply(Math, durations));
       for (i = 0; i < dots; i += 1) {
@@ -72,9 +72,13 @@ define([
     if (atts.ho) {
       EventUtil.processAttrHo(atts.ho, me, options.stave);
     }
-    $(element).find('artic').each(function () {
-      EventUtil.addArticulation(me, this);
-    });
+
+    var articElements = element.getElementsByTagName('artic');
+    for (i=0,j=articElements.length;i<j;i++) {
+      EventUtil.addArticulation(me, articElements[i]);
+    }
+
+
     if (atts.fermata) {
       EventUtil.addFermataAtt(me, element, atts.fermata);
     }

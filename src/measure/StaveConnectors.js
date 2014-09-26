@@ -21,9 +21,8 @@
  * Contributor: Alexander Erhard
  */
 define([
-  'jquery',
   'vexflow'
-], function ($, VF) {
+], function (VF) {
 
   /**
    * @class MEI2VF.Connectors
@@ -68,7 +67,7 @@ define([
     },
 
     init : function (config) {
-      var me = this, vexType, topStave, bottomStave, vexConnector, label, labelMode;
+      var me = this, vexType, topStave, bottomStave, vexConnector, label, labelMode, i, model;
       var models = config.models;
       var staves = config.staves;
       var barline_l = config.barline_l;
@@ -76,11 +75,12 @@ define([
       var system_n = config.system_n;
       labelMode = config.labelMode;
 
-      $.each(models, function () {
+      for (i in models) {
+        model = models[i];
 
-        vexType = (barline_r) ? me.vexTypesBarlineRight[barline_r] : me.vexTypes[this.symbol];
-        topStave = staves[this.top_stave_n];
-        bottomStave = staves[this.bottom_stave_n];
+        vexType = (barline_r) ? me.vexTypesBarlineRight[barline_r] : me.vexTypes[model.symbol];
+        topStave = staves[model.top_stave_n];
+        bottomStave = staves[model.bottom_stave_n];
 
         if (typeof vexType === 'number' && topStave && bottomStave) {
           vexConnector = new VF.StaveConnector(topStave, bottomStave);
@@ -88,16 +88,16 @@ define([
 
           // TODO implement offset in VexFlow
           // offset nested connectors
-          //if (this.ancestorSymbols) {
-          //console.log(this.ancestorSymbols);
+          //if (model.ancestorSymbols) {
+          //console.log(model.ancestorSymbols);
           //vexConnector.x_shift = -30;
           //}
 
           me.allVexConnectors.push(vexConnector);
           if (labelMode === 'full') {
-            label = (system_n === 1) ? this.label : this.labelAbbr;
+            label = (system_n === 1) ? model.label : model.labelAbbr;
           } else if (labelMode === 'abbr') {
-            label = this.labelAbbr;
+            label = model.labelAbbr;
           }
           if (label) {
             vexConnector.setText(label);
@@ -116,7 +116,7 @@ define([
           }
         }
 
-      });
+      }
     },
 
     getAll : function () {

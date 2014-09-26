@@ -46,13 +46,19 @@ define([
      * @param annot
      * @param element
      * @param stave_n
-     * @returns {MEI2VF.Verses}
+     * @returns {Verses}
      */
     addSyllable : function (annot, element, stave_n) {
-      var me = this;
+      var me = this, verse_n;
 
-      var wordpos = $(element).attr('wordpos');
-      var verse_n = $(element).parents('verse').attr('n') || '1';
+      var wordpos = element.getAttribute('wordpos');
+
+      var parentNode = element.parentNode;
+      if (parentNode.localName === 'verse' && parentNode.hasAttribute('n')) {
+        verse_n = parentNode.getAttribute('n');
+      } else {
+        verse_n = '1';
+      }
 
       if (!me.systemVerses[stave_n]) {
         me.systemVerses[stave_n] = {};
@@ -96,7 +102,7 @@ define([
 
     /**
      * @public
-     * @returns {MEI2VF.Verses}
+     * @returns {Verses}
      */
     format : function () {
       var me = this, stave_n, verse_n, text_line, verse, i, j, lowestY, padding;
@@ -132,7 +138,7 @@ define([
      * @param ctx
      * @param leftX
      * @param rightX
-     * @returns {MEI2VF.Verses}
+     * @returns {Verses}
      */
     drawHyphens : function (ctx, leftX, rightX) {
       var me = this, stave_n, verse_n;

@@ -43,7 +43,6 @@
  */
 
 define([
-  'jquery',
   'vexflow',
   'meilib/MeiLib',
   'mei2vf/core/Logger',
@@ -72,7 +71,7 @@ define([
   'mei2vf/system/SystemInfo',
   'mei2vf/core/Tables',
   'mei2vf/voice/StaveVoices'
-], function ($, VF, MeiLib, Logger, RuntimeError, Util, EventUtil, Note, GraceNote, Chord, GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments, Verses, Syllable, Stave, Measure, System, SystemInfo, Tables, StaveVoices) {
+], function (VF, MeiLib, Logger, RuntimeError, Util, EventUtil, Note, GraceNote, Chord, GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments, Verses, Syllable, Stave, Measure, System, SystemInfo, Tables, StaveVoices) {
 
   /**
    * Converts an MEI XML document / document fragment to VexFlow objects and
@@ -121,7 +120,7 @@ define([
        */
       pageRightMar : 20,
       /**
-       * @cfg {Number} systemSpacing The spacing between two staff
+       * @cfg {Number} systemSpacing The spacing between two stave
        * systems
        */
       systemSpacing : 90,
@@ -219,9 +218,9 @@ define([
      */
     initConfig : function (config) {
       var me = this;
-      me.cfg = $.extend(true, {}, me.defaults, config);
+      me.cfg = Util.extend({}, me.defaults, config);
       /**
-       * an instance of MEI2VF.SystemInfo dealing with the system and staff
+       * an instance of MEI2VF.SystemInfo dealing with the system and stave
        * info derived from the MEI data
        * @property {MEI2VF.SystemInfo} systemInfo
        */
@@ -258,6 +257,7 @@ define([
      */
     reset : function () {
       var me = this;
+      console.debug('Converter.reset()');
       me.systemInfo.init(me.cfg, me.printSpace);
       /**
        * @property {MEI2VF.EventLink[][]} unresolvedTStamp2
@@ -369,7 +369,7 @@ define([
        */
       me.pendingSectionBreak = true;
       /**
-       * Contains information about the volta type of the current staff. Properties:
+       * Contains information about the volta type of the current stave. Properties:
        *
        * -  `start` {String} indicates the number to render to the volta. When
        * falsy, it is assumed that the volta does not start in the current
@@ -396,7 +396,7 @@ define([
     process : function (xmlDoc) {
       var me = this;
       me.reset();
-      me.systemInfo.processScoreDef($(xmlDoc).find('scoreDef')[0]);
+      me.systemInfo.processScoreDef(xmlDoc.getElementsByTagName('scoreDef')[0]);
       me.processSections(xmlDoc);
       me.directives.createVexFromInfos(me.notes_by_id);
       me.dynamics.createVexFromInfos(me.notes_by_id);
@@ -417,9 +417,9 @@ define([
      */
     draw : function (ctx) {
       var me = this;
-      me.drawSystems(ctx);
-      me.drawVexBeams(me.allBeams, ctx);
-      me.drawVexTuplets(me.allTuplets, ctx);
+      me.checkSetContextAndDraw(me.systems, ctx);
+      me.setContextAndDraw(me.allBeams, ctx);
+      me.setContextAndDraw(me.allTuplets, ctx);
       me.ties.setContext(ctx).draw();
       me.slurs.setContext(ctx).draw();
       me.hairpins.setContext(ctx).draw();
@@ -498,7 +498,7 @@ define([
     },
 
     /**
-     * creates in initializes a new {@link MEI2VF.System} and updates the staff
+     * creates in initializes a new {@link MEI2VF.System} and updates the stave
      * modifier infos
      * @method createNewSystem
      */
@@ -542,36 +542,41 @@ define([
      * @method processSections
      */
     processSections : function (xmlDoc) {
-      var me = this;
-      $(xmlDoc).find('section').each(function () {
-        me.processSection(this);
-      });
+      var me = this, i, j, sections;
+      sections = xmlDoc.getElementsByTagName('section');
+      for (i = 0, j = sections.length; i < j; i++) {
+        me.processSection(sections[i]);
+      }
     },
 
     /**
      *@method processSection
      */
     processSection : function (element) {
-      var me = this, i, j, sectionChildren = $(element).children();
-      for (i = 0, j = sectionChildren.length; i < j; i += 1) {
-        me.processSectionChild(sectionChildren[i]);
-      }
+      var me = this, i, j, sectionChildren = element.childNodes;
+        for (i = 0, j = sectionChildren.length; i < j; i += 1) {
+          if (sectionChildren[i].nodeType === 1) {
+            me.processSectionChild(sectionChildren[i]);
+          }
+        }
     },
 
     /**
      * @method processEnding
      */
     processEnding : function (element) {
-      var me = this, i, j, sectionChildren = $(element).children();
+      var me = this, i, j, sectionChildren = element.childNodes;
       for (i = 0, j = sectionChildren.length; i < j; i += 1) {
-        me.currentVoltaType = {};
-        if (i === 0) {
-          me.currentVoltaType.start = $(element).attr('n');
+        if (sectionChildren[i].nodeType === 1) {
+          me.currentVoltaType = {};
+          if (i === 0) {
+            me.currentVoltaType.start = element.getAttribute('n');
+          }
+          if (i === j - 1) {
+            me.currentVoltaType.end = true;
+          }
+          me.processSectionChild(sectionChildren[i]);
         }
-        if (i === j - 1) {
-          me.currentVoltaType.end = true;
-        }
-        me.processSectionChild(sectionChildren[i]);
       }
       me.currentVoltaType = null;
     },
@@ -628,7 +633,7 @@ define([
      * @param {Element} element the MEI measure element
      */
     processMeasure : function (element) {
-      var me = this, atSystemStart, left_barline, right_barline, system, system_n;
+      var me = this, atSystemStart, left_barline, right_barline, system, system_n, allDescendants;
 
       if (me.pendingSectionBreak || me.pendingSystemBreak) {
         system_n = me.systems.length;
@@ -645,46 +650,47 @@ define([
       left_barline = element.getAttribute('left');
       right_barline = element.getAttribute('right');
 
-      var staveElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [], trillElements = [], rehElements = [];
+      var staveElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [], trillElements = [], rehElements = [], i, j;
 
-      $(element).find('*').each(function () {
-        switch (this.localName) {
+      allDescendants = element.querySelectorAll('*');
+      for (i = 0, j = allDescendants.length; i < j; i++) {
+        switch (allDescendants[i].localName) {
           case 'staff':
-            staveElements.push(this);
+            staveElements.push(allDescendants[i]);
             break;
           case 'dir':
-            dirElements.push(this);
+            dirElements.push(allDescendants[i]);
             break;
           case 'tie':
-            tieElements.push(this);
+            tieElements.push(allDescendants[i]);
             break;
           case 'slur':
-            slurElements.push(this);
+            slurElements.push(allDescendants[i]);
             break;
           case 'hairpin':
-            hairpinElements.push(this);
+            hairpinElements.push(allDescendants[i]);
             break;
           case 'tempo':
-            tempoElements.push(this);
+            tempoElements.push(allDescendants[i]);
             break;
           case 'dynam':
-            dynamElements.push(this);
+            dynamElements.push(allDescendants[i]);
             break;
           case 'fermata':
-            fermataElements.push(this);
+            fermataElements.push(allDescendants[i]);
             break;
           case 'trill':
-            trillElements.push(this);
+            trillElements.push(allDescendants[i]);
             break;
           case 'reh':
-            rehElements.push(this);
+            rehElements.push(allDescendants[i]);
             break;
           default:
             break;
         }
-      });
+      }
 
-      // the staff objects will be stored in two places:
+      // the stave objects will be stored in two places:
       // 1) in each MEI2VF.Measure
       // 2) in MEI2VF.Converter.allVexMeasureStaves
       var staves = me.initializeStavesInMeasure(system, staveElements, left_barline, right_barline, atSystemStart);
@@ -692,9 +698,9 @@ define([
 
       var currentStaveVoices = new StaveVoices();
 
-      $.each(staveElements, function () {
-        me.processStaveEvents(staves, this, measureIndex, currentStaveVoices);
-      });
+      for (i = 0, j = staveElements.length; i < j; i++) {
+        me.processStaveEvents(staves, staveElements[i], measureIndex, currentStaveVoices);
+      }
 
       me.directives.createInfos(dirElements, element);
       me.dynamics.createInfos(dynamElements, element);
@@ -730,14 +736,14 @@ define([
     /**
      * @method initializeStavesInMeasure
      * @param {MEI2VF.System} system the current system
-     * @param {Element[]} staveElements all staff elements in the current
+     * @param {Element[]} staveElements all stave elements in the current
      * measure
      * @param {String} left_barline the left barline
      * @param {String} right_barline the right barline
      * @param {Boolean} atSystemStart indicates if the current measure is the system's start measure
      */
     initializeStavesInMeasure : function (system, staveElements, left_barline, right_barline, atSystemStart) {
-      var me = this, stave, stave_n, staves, isFirstVolta = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaves, newClef, currentStaveInfo;
+      var me = this, i, j, stave, stave_n, staves, isFirstVolta = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaves, newClef, currentStaveInfo, element, padding;
 
       staves = [];
 
@@ -746,14 +752,12 @@ define([
       }
 
       // first run: create MEI2VF.Stave objects, store them in the staves
-      // array. Set staff barlines and staff volta. Add clef. Get each staff's
+      // array. Set stave barlines and stave volta. Add clef. Get each stave's
       // clefOffset and calculate the maxClefOffset.
-      $.each(staveElements, function () {
-        stave_n = +$(this).attr('n');
-        if (!stave_n) {
-          Logger.warn('@n expected', Util.serializeElement(this) +
-                                     ' does not contain an @n attribute. Proceeding in first staff.');
-          stave_n = 1;
+      for (i = 0, j = staveElements.length; i < j; i++) {
+        stave_n = parseInt(staveElements[i].getAttribute('n'), 10);
+        if (isNaN(stave_n)) {
+          throw new RuntimeError(Util.serializeElement(element) + ' must have an @n attribute of type integer.');
         }
 
         stave = new Stave({
@@ -780,9 +784,8 @@ define([
         } else {
           currentStaveInfo = me.systemInfo.getStaveInfo(stave_n);
           if (!currentStaveInfo) {
-            throw new RuntimeError(Util.serializeElement(this) +
-                                                               ' refers to staff "' + stave_n +
-                                                  '", but no corresponding staff definition could be found in the document.');
+            throw new RuntimeError(Util.serializeElement(staveElements[i]) + ' refers to stave "' + stave_n +
+                                   '", but no corresponding stave definition could be found in the document.');
           }
           if (currentStaveInfo.showClefCheck()) {
             stave.addClefFromInfo(currentStaveInfo.getClef());
@@ -791,40 +794,45 @@ define([
           maxClefOffset = Math.max(maxClefOffset, clefOffsets[stave_n]);
         }
         isFirstVolta = false;
-      });
+      }
 
-      // second run: add key signatures; if the clefOffset of a staff is less than
+      // second run: add key signatures; if the clefOffset of a stave is less than
       // maxClefOffset, add padding to the left of the key signature. Get each
-      // staff's keySigOffset and calculate the maxKeySigOffset.
-      $.each(staves, function (i, staff) {
-        var padding;
-        if (staff) {
+      // stave's keySigOffset and calculate the maxKeySigOffset.
+      j = staves.length;
+      for (i = 0; i < j; i++) {
+        stave = staves[i];
+        if (stave) {
           if (clefOffsets[i] !== maxClefOffset) {
             padding = maxClefOffset - clefOffsets[i] + 10;
+          } else {
+            padding = null;
           }
           currentStaveInfo = me.systemInfo.getStaveInfo(i);
           if (currentStaveInfo.showKeysigCheck()) {
-            staff.addKeySpecFromInfo(currentStaveInfo.getKeySpec(), padding);
+            stave.addKeySpecFromInfo(currentStaveInfo.getKeySpec(), padding);
           }
-          keySigOffsets[i] = staff.getModifierXShift();
+          keySigOffsets[i] = stave.getModifierXShift();
           maxKeySigOffset = Math.max(maxKeySigOffset, keySigOffsets[i]);
         }
-      });
+      }
 
-      // third run: add time signatures; if the keySigOffset of a staff is
+      // third run: add time signatures; if the keySigOffset of a stave is
       // less than maxKeySigOffset, add padding to the left of the time signature.
-      $.each(staves, function (i, stave) {
-        var padding;
+      for (i = 0; i < j; i++) {
+        stave = staves[i];
         if (stave) {
           if (keySigOffsets[i] !== maxKeySigOffset) {
             padding = maxKeySigOffset - keySigOffsets[i] + 15;
+          } else {
+            padding = null;
           }
           currentStaveInfo = me.systemInfo.getStaveInfo(i);
           if (currentStaveInfo.showTimesigCheck()) {
             stave.addTimeSpecFromInfo(currentStaveInfo.getTimeSpec(), padding);
           }
         }
-      });
+      }
 
       return staves;
     },
@@ -853,7 +861,7 @@ define([
      * Processes a single stave in a measure
      *
      * @method processStaveEvents
-     * @param {Vex.Flow.Stave[]} staves the staff objects in the current
+     * @param {Vex.Flow.Stave[]} staves the stave objects in the current
      * measure
      * @param {Element} staveElement the MEI staff element
      * @param {Number} measureIndex the index of the current measure
@@ -861,28 +869,23 @@ define([
      * object
      */
     processStaveEvents : function (staves, staveElement, measureIndex, currentStaveVoices) {
-      var me = this, stave, stave_n, readEvents, layerElements, i, j, layer_events, layerDir, staveInfo;
+      var me = this, stave, stave_n, readEvents, layerElements, i, j, k, l, childElements, vexNotes, layerDir, staveInfo, event;
 
-      stave_n = +$(staveElement).attr('n') || 1;
+      stave_n = parseInt(staveElement.getAttribute('n'), 10) || 1;
       stave = staves[stave_n];
 
       staveInfo = me.systemInfo.getStaveInfo(stave_n);
       var meter = staveInfo.getTimeSpec();
 
-      readEvents = function () {
-        var event = me.processNoteLikeElement(this, stave, stave_n, layerDir, staveInfo);
-        return event ? (event.vexNote || event) : null;
-      };
-
-      layerElements = $(staveElement).find('layer');
+      layerElements = staveElement.getElementsByTagName('layer');
 
       for (i = 0, j = layerElements.length; i < j; i++) {
         layerDir = (j > 1) ? (i === 0 ? VF.StaveNote.STEM_UP : i === j - 1 ? VF.StaveNote.STEM_DOWN : null) : null;
         me.resolveUnresolvedTimestamps(layerElements[i], stave_n, measureIndex, meter);
         staveInfo.checkInitialClef();
-        layer_events = $(layerElements[i]).children().map(readEvents).get();
-        currentStaveVoices.addVoice(me.createVexVoice(layer_events, meter), stave_n);
 
+        vexNotes = me.processNoteLikeChildren(layerElements[i], stave, stave_n, layerDir, staveInfo);
+        currentStaveVoices.addVoice(me.createVexVoice(vexNotes, meter), stave_n);
       }
 
       // if there is a clef not yet attached to a note (i.e. the last clef), add it to the last voice
@@ -904,7 +907,7 @@ define([
      */
     createVexVoice : function (voice_contents, meter) {
       var me = this, voice;
-      if (!$.isArray(voice_contents)) {
+      if (!Array.isArray(voice_contents)) {
         throw new RuntimeError('me.createVexVoice() voice_contents argument must be an array.');
       }
       voice = new VF.Voice({
@@ -921,23 +924,42 @@ define([
      * @method resolveUnresolvedTimestamps
      */
     resolveUnresolvedTimestamps : function (layer, stave_n, measureIndex, meter) {
-      var me = this, refLocationIndex;
+      var me = this, refLocationIndex, i, j, unresolvedTStamp2;
       // check if there's an unresolved TStamp2 reference to this location
       // (measure, staff, layer):
       stave_n = stave_n || 1;
-      refLocationIndex = measureIndex + ':' + stave_n + ':' + ($(layer).attr('n') || '1');
-      if (me.unresolvedTStamp2[refLocationIndex]) {
-        $(me.unresolvedTStamp2[refLocationIndex]).each(function (i) {
-          this.setContext({
+      refLocationIndex = measureIndex + ':' + stave_n + ':' + (parseInt(layer.getAttribute('n'), 10) || '1');
+      unresolvedTStamp2 = me.unresolvedTStamp2[refLocationIndex];
+      if (unresolvedTStamp2) {
+        for (i = 0, j = unresolvedTStamp2.length; i < j; i++) {
+          unresolvedTStamp2[i].setContext({
             layer : layer,
             meter : meter
           });
           // TODO: remove eventLink from the list
-          me.unresolvedTStamp2[refLocationIndex][i] = null;
-        });
+          unresolvedTStamp2[i] = null;
+        }
         // at this point all references should be supplied with context.
         me.unresolvedTStamp2[refLocationIndex] = null;
       }
+    },
+
+    processNoteLikeChildren : function (element, stave, stave_n, layerDir, staveInfo) {
+      var me = this, vexNotes = [], k, l, processingResults;
+      var childElements = element.childNodes;
+      for (k = 0, l = childElements.length; k < l; k++) {
+        if (childElements[k].nodeType === 1) {
+          processingResults = me.processNoteLikeElement(childElements[k], stave, stave_n, layerDir, staveInfo);
+          if (processingResults) {
+            if (Array.isArray(processingResults)) {
+              vexNotes = vexNotes.concat(processingResults);
+            } else {
+              vexNotes.push(processingResults);
+            }
+          }
+        }
+      }
+      return vexNotes;
     },
 
     /**
@@ -946,8 +968,8 @@ define([
      *
      * @method processNoteLikeElement
      * @param {Element} element the element to process
-     * @param {MEI2VF.Stave} stave the containing staff
-     * @param {Number} stave_n the number of the containing staff
+     * @param {MEI2VF.Stave} stave the containing stave
+     * @param {Number} stave_n the number of the containing stave
      * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
      * layer
      * @param {MEI2VF.StaveInfo} staveInfo the stave info object
@@ -979,7 +1001,7 @@ define([
       }
     },
 
-    processAnchoredText : function (element, stave, stave_n, layerDir, staffInfo) {
+    processAnchoredText : function (element, stave, stave_n, layerDir, staveInfo) {
     },
 
     /**
@@ -1006,9 +1028,9 @@ define([
             stave = otherStave;
             clef = me.systemInfo.getClef(stave_n);
           } else {
-            Logger.warn('Staff not found', 'No staff could be found which corresponds to @staff="' + mei_stave_n +
+            Logger.warn('Staff not found', 'No stave could be found which corresponds to @staff="' + mei_stave_n +
                                            '" specified in ' + Util.serializeElement(element) +
-                                           '". Adding note to current staff.');
+                                           '". Adding note to current stave.');
           }
         }
 
@@ -1035,15 +1057,15 @@ define([
 
 
         // FIXME For now, we'll remove any child nodes of <note>
-        $(element).children().each(function () {
-          $(this).remove();
-        });
+        while (element.firstChild) {
+          element.removeChild(element.firstChild);
+        }
 
         if (mei_tie) {
           me.processAttrTie(mei_tie, xml_id, vexPitch, stave_n);
         }
         if (mei_slur) {
-          me.processAttrSlur(mei_slur, xml_id);
+          me.processSlurAttribute(mei_slur, xml_id);
         }
 
         me.notes_by_id[xml_id] = {
@@ -1067,14 +1089,11 @@ define([
             me.currentGraceNotes = [];
           }
         }
-        return {
-          vexNote : note,
-          id : xml_id
-        };
+        return note;
 
       } catch (e) {
         throw new RuntimeError('A problem occurred processing ' + Util.serializeElement(element) +
-                                               '\nORIGINAL ERROR MESSAGE: ' + e.toString());
+                               '\nORIGINAL ERROR MESSAGE: ' + e.toString());
       }
     },
 
@@ -1082,9 +1101,9 @@ define([
      * @method processChord
      */
     processChord : function (element, stave, stave_n, layerDir, staveInfo) {
-      var me = this, children, xml_id, chord, chord_opts, atts;
+      var me = this, noteElements, xml_id, chord, chord_opts, atts, i, j;
 
-      children = $(element).children('note');
+      noteElements = element.getElementsByTagName('note');
 
       atts = Util.attsToObj(element);
 
@@ -1093,7 +1112,7 @@ define([
       try {
 
         chord_opts = {
-          children : children,
+          noteElements : noteElements,
           clef : staveInfo.getClef(),
           stave : stave,
           element : element,
@@ -1109,10 +1128,10 @@ define([
 
         var allNoteIndices = [];
 
-        children.each(function (i) {
-          me.processNoteInChord(i, this, element, chord, stave_n, layerDir);
+        for (i = 0, j = noteElements.length; i < j; i++) {
+          me.processNoteInChord(i, noteElements[i], element, chord, stave_n, layerDir);
           allNoteIndices.push(i);
-        });
+        }
 
         me.notes_by_id[xml_id] = {
           meiNote : element,
@@ -1136,16 +1155,13 @@ define([
             me.currentGraceNotes = [];
           }
         }
-        return {
-          vexNote : chord,
-          id : xml_id
-        };
+        return chord;
       } catch (e) {
-        var childStrings = $(element).children().map(function () {
-          return '\n    ' + Util.serializeElement(this);
-        }).get().join('');
-        throw new RuntimeError('A problem occurred processing \n' + Util.serializeElement(element) +
-                                               childStrings + '\n</chord>\nORIGINAL ERROR MESSAGE: ' + e.toString());
+        var xmlString = Util.serializeElement(element), i;
+        for (i = 0, j = noteElements.length; i < j; i++) {
+          xmlString += '\n    ' + Util.serializeElement(noteElements[i]);
+        }
+        throw new RuntimeError('A problem occurred processing \n' + xmlString + '\n</chord>\n: ' + e.toString());
       }
     },
 
@@ -1165,7 +1181,7 @@ define([
         me.processAttrTie(atts.tie, xml_id, vexPitch, stave_n);
       }
       if (atts.slur) {
-        me.processAttrSlur(atts.slur, xml_id);
+        me.processSlurAttribute(atts.slur, xml_id);
       }
 
       me.notes_by_id[xml_id] = {
@@ -1209,10 +1225,7 @@ define([
           vexNote : rest,
           system : me.currentSystem_n
         };
-        return {
-          vexNote : rest,
-          id : xml_id
-        };
+        return rest;
       } catch (e) {
         console.log(e);
         throw new RuntimeError('A problem occurred processing ' + Util.serializeElement(element));
@@ -1242,10 +1255,7 @@ define([
           vexNote : mRest,
           system : me.currentSystem_n
         };
-        return {
-          vexNote : mRest,
-          id : xml_id
-        };
+        return mRest;
       } catch (e) {
         throw new RuntimeError('A problem occurred processing ' + Util.serializeElement(element));
       }
@@ -1258,15 +1268,13 @@ define([
       var space = null;
       if (element.hasAttribute('dur')) {
         try {
-          space = {
-            vexNote : new Space({ element : element, stave : stave })
-          };
+          space = new Space({ element : element, stave : stave });
         } catch (e) {
           throw new RuntimeError('A problem occurred processing ' + Util.serializeElement(element));
         }
       } else {
         Logger.info('@dur expected', 'No duration attribute in ' + Util.serializeElement(element) +
-                                       '". Ignoring element.');
+                                     '". Ignoring element.');
       }
       return space;
     },
@@ -1274,8 +1282,8 @@ define([
     /**
      * @method processClef
      * @param {Element} element the MEI clef element
-     * @param {MEI2VF.Stave} stave the containing staff
-     * @param {Number} stave_n the number of the containing staff
+     * @param {MEI2VF.Stave} stave the containing stave
+     * @param {Number} stave_n the number of the containing stave
      * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
      * layer
      * @param {MEI2VF.StaveInfo} staveInfo the stave info object
@@ -1287,34 +1295,30 @@ define([
     /**
      * @method processBeam
      * @param {Element} element the MEI beam element
-     * @param {MEI2VF.Stave} stave the containing staff
-     * @param {Number} stave_n the number of the containing staff
+     * @param {MEI2VF.Stave} stave the containing stave
+     * @param {Number} stave_n the number of the containing stave
      * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current layer
      * @param {MEI2VF.StaveInfo} staveInfo
      */
     processBeam : function (element, stave, stave_n, layerDir, staveInfo) {
-      var me = this, elements;
+      var me = this, vexNotes, childElements, k, l;
       me.inBeamNo += 1;
-      var process = function () {
-        // make sure to get vexNote out of wrapped note objects
-        var proc_element = me.processNoteLikeElement(this, stave, stave_n, layerDir, staveInfo);
-        return proc_element ? (proc_element.vexNote || proc_element) : null;
-      };
-      elements = $(element).children().map(process).get();
+
+      vexNotes = me.processNoteLikeChildren(element, stave, stave_n, layerDir, staveInfo);
 
       // TODO remove filter later and modify beam object to skip objects other than note and clef
-      var filteredElements = elements.filter(function (element) {
+      var filteredElements = vexNotes.filter(function (element) {
         return element.beamable === true;
       });
 
       // set autostem parameter of VF.Beam to true if neither layerDir nor any stem direction in the beam is specified
 
-      if (elements.length > 0) {
+      if (vexNotes.length > 0) {
         try {
           me.allBeams.push(new VF.Beam(filteredElements, !layerDir && !me.hasStemDirInBeam));
         } catch (e) {
-          Logger.error('VexFlow Error', 'An error occurred processing ' + Util.serializeElement(element) +
-                                         ': "'+ e.toString() + '". Ignoring beam creation.');
+          Logger.error('VexFlow Error', 'An error occurred processing ' + Util.serializeElement(element) + ': "' +
+                                        e.toString() + '". Ignoring beam.');
         }
       }
 
@@ -1322,7 +1326,7 @@ define([
       if (me.inBeamNo === 0) {
         me.hasStemDirInBeam = false;
       }
-      return elements;
+      return vexNotes;
     },
 
     /**
@@ -1337,30 +1341,26 @@ define([
      *
      * @method processTuplet
      * @param {Element} element the MEI tuplet element
-     * @param {MEI2VF.Stave} stave the containing staff
-     * @param {Number} stave_n the number of the containing staff
+     * @param {MEI2VF.Stave} stave the containing stave
+     * @param {Number} stave_n the number of the containing stave
      * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
      * layer
      * @param {MEI2VF.StaveInfo} staveInfo the stave info object
      */
     processTuplet : function (element, stave, stave_n, layerDir, staveInfo) {
-      var me = this, elements, tuplet, bracketPlace;
-      var process = function () {
-        // make sure to get vexNote out of wrapped note objects
-        var proc_element = me.processNoteLikeElement(this, stave, stave_n, layerDir, staveInfo);
-        return proc_element ? (proc_element.vexNote || proc_element) : null;
-      };
-      elements = $(element).children().map(process).get();
+      var me = this, vexNotes, tuplet, bracketPlace;
 
-      if (elements.length === 0) {
+      vexNotes = me.processNoteLikeChildren(element, stave, stave_n, layerDir, staveInfo);
+
+      if (vexNotes.length === 0) {
         Logger.warn('Missing content', 'Not content found in ' + Util.serializeElement(element) +
-                                       '". Ignoring tuplet creation.');
+                                       '". Ignoring tuplet.');
         return;
       }
 
-      tuplet = new VF.Tuplet(elements, {
-        num_notes : +element.getAttribute('num') || 3,
-        beats_occupied : +element.getAttribute('numbase') || 2
+      tuplet = new VF.Tuplet(vexNotes, {
+        num_notes : parseInt(element.getAttribute('num'), 10) || 3,
+        beats_occupied : parseInt(element.getAttribute('numbase'), 10) || 2
       });
 
       if (element.getAttribute('num.format') === 'ratio') {
@@ -1375,7 +1375,7 @@ define([
       }
 
       me.allTuplets.push(tuplet);
-      return elements;
+      return vexNotes;
     },
 
     /**
@@ -1400,25 +1400,26 @@ define([
     },
 
     /**
-     * @method processAttrSlur
+     * @method processSlurAttribute
      */
-    processAttrSlur : function (mei_slur, xml_id) {
-      var me = this, tokens;
+    processSlurAttribute : function (mei_slur, xml_id) {
+      var me = this, tokens, token, i, j;
       if (mei_slur) {
         // create a list of { letter, num }
         tokens = me.parseSlurAttribute(mei_slur);
-        $.each(tokens, function () {
-          if (this.letter === 't') {
+        for (i = 0, j = tokens.length; i < j; i++) {
+          token = tokens[i];
+          if (token.letter === 't') {
             me.slurs.terminateSlur(xml_id, {
-              nesting_level : this.nesting_level
+              nesting_level : token.nesting_level
             });
           }
-          if (this.letter === 'i') {
+          if (token.letter === 'i') {
             me.slurs.startSlur(xml_id, {
-              nesting_level : this.nesting_level
+              nesting_level : token.nesting_level
             });
           }
-        });
+        }
       }
     },
 
@@ -1455,42 +1456,31 @@ define([
      * @method processSyllables
      */
     processSyllables : function (note, element, stave_n) {
-      var me = this, vexSyllable;
-      $(element).find('syl').each(function () {
-        vexSyllable = new Syllable(this, me.cfg.lyricsFont);
+      var me = this, i, j, syllables, vexSyllable;
+      syllables = element.getElementsByTagName('syl');
+      for (i = 0, j = syllables.length; i < j; i++) {
+        vexSyllable = new Syllable(syllables[i], me.cfg.lyricsFont);
         note.addAnnotation(0, vexSyllable);
-        me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, this, stave_n);
-      });
-    },
-
-    /**
-     * @method drawSystems
-     */
-    drawSystems : function (ctx) {
-      var me = this, i = me.systems.length;
-      while (i--) {
-        if (me.systems[i]) {
-          me.systems[i].format(ctx).draw(ctx);
-        }
+        me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, syllables[i], stave_n);
       }
     },
 
-    /**
-     * @method drawVexBeams
-     */
-    drawVexBeams : function (beams, ctx) {
-      $.each(beams, function () {
-        this.setContext(ctx).draw();
-      });
+    setContextAndDraw : function (items, ctx) {
+      var i, j;
+      for (i = 0, j = items.length; i < j; i++) {
+        items[i].setContext(ctx).draw();
+      }
     },
-    /**
-     * @method drawVexBeams
-     */
-    drawVexTuplets : function (tuplets, ctx) {
-      $.each(tuplets, function () {
-        this.setContext(ctx).draw();
-      });
+
+    checkSetContextAndDraw : function (items, ctx) {
+      var i, j;
+      for (i = 0, j = items.length; i < j; i++) {
+        if (items[i]) {
+          items[i].format(ctx).draw(ctx);
+        }
+      }
     }
+
   };
 
   return Converter;

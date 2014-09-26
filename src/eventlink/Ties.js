@@ -19,12 +19,11 @@
  * the License.
  */
 define([
-  'jquery',
   'vexflow',
   'mei2vf/core/Logger',
   'mei2vf/eventlink/EventLinkCollection',
   'mei2vf/eventlink/EventLink'
-], function ($, VF, Logger, EventLinkCollection, EventLink, undefined) {
+], function (VF, Logger, EventLinkCollection, EventLink, undefined) {
 
 
   /**
@@ -99,37 +98,40 @@ define([
     },
 
     createVexFromInfos : function (notes_by_id) {
-      var me = this, f_note, l_note;
-      $.each(me.allModels, function () {
+      var me = this, f_note, l_note, i, j,model;
+
+      for (i=0,j=me.allModels.length;i<j;i++) {
+        model = me.allModels[i];
+
         var keysInChord;
-        f_note = notes_by_id[this.getFirstId()] || {};
-        l_note = notes_by_id[this.getLastId()] || {};
+        f_note = notes_by_id[model.getFirstId()] || {};
+        l_note = notes_by_id[model.getLastId()] || {};
 
 
         if (!f_note.vexNote && !l_note.vexNote) {
-          Logger.warn('Tie could not be rendered', 'Neither xml:id could be found: "' + this.getFirstId() +
-                                                          '" / "' + this.getLastId() + '"');
+          Logger.warn('Tie could not be rendered', 'Neither xml:id could be found: "' + model.getFirstId() +
+                                                          '" / "' + model.getLastId() + '"');
           return true;
         }
 
-        if (!this.params.curvedir) {
+        if (!model.params.curvedir) {
           var layerDir = f_note.layerDir || l_note.layerDir;
           if (layerDir) {
             // calculate default curve direction based on the relative layer
-            this.params.curvedir = layerDir === -1 ? 'below' : layerDir === 1 ? 'above' : undefined;
+            model.params.curvedir = layerDir === -1 ? 'below' : layerDir === 1 ? 'above' : undefined;
           } else {
             // if the tie links to a note in a chord, let the outer ties of the
             // chord point outwards
             if (f_note.vexNote) {
               keysInChord = f_note.vexNote.keys.length;
               if (keysInChord > 1) {
-                this.params.curvedir =
+                model.params.curvedir =
                 (+f_note.index === 0) ? 'below' : (+f_note.index === keysInChord - 1) ? 'above' : undefined;
               }
             } else if (l_note.vexNote) {
               keysInChord = l_note.vexNote.keys.length;
               if (keysInChord > 1) {
-                this.params.curvedir =
+                model.params.curvedir =
                 +l_note.index === 0 ? 'below' : (+l_note.index === keysInChord - 1) ? 'above' : undefined;
               }
             }
@@ -137,15 +139,15 @@ define([
         }
 
         if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
-          me.createSingleTie(f_note, {}, this.params);
-          if (!this.params.curvedir) {
-            this.params.curvedir = (f_note.vexNote.getStemDirection() === -1) ? 'above' : 'below';
+          me.createSingleTie(f_note, {}, model.params);
+          if (!model.params.curvedir) {
+            model.params.curvedir = (f_note.vexNote.getStemDirection() === -1) ? 'above' : 'below';
           }
-          me.createSingleTie({}, l_note, this.params);
+          me.createSingleTie({}, l_note, model.params);
         } else {
-          me.createSingleTie(f_note, l_note, this.params);
+          me.createSingleTie(f_note, l_note, model.params);
         }
-      });
+      }
       return this;
     },
 

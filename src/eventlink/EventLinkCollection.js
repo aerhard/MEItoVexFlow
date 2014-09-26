@@ -20,12 +20,11 @@
  * the License.
  */
 define([
-  'jquery',
   'meilib/MeiLib',
   'mei2vf/core/RuntimeError',
   'mei2vf/core/Util',
   'mei2vf/eventlink/EventLink'
-], function ($, MeiLib, RuntimeError, Util, EventLink) {
+], function (MeiLib, RuntimeError, Util, EventLink) {
 
   /**
    * @class MEI2VF.EventLinkCollection
@@ -78,23 +77,26 @@ define([
 
       var link_staveInfo = function (lnkelem) {
         return {
-          stave_n : $(lnkelem).attr('staff') || '1',
-          layer_n : $(lnkelem).attr('layer') || '1'
+          stave_n : lnkelem.getAttribute('staff') || '1',
+          layer_n : lnkelem.getAttribute('layer') || '1'
         };
       };
 
       // convert tstamp into startid in current measure
       var local_tstamp2id = function (tstamp, lnkelem, measureElement) {
+        var i, j, element, eventLink, atts, startid, tstamp, endid, tstamp2, measures_ahead;
+
         var stffinf = link_staveInfo(lnkelem);
-        var stave = $(measureElement).find('staff[n="' + stffinf.stave_n + '"]');
-        var layer = $(stave).find('layer[n="' + stffinf.layer_n + '"]').get(0);
+        var stave = measureElement.querySelector('staff[n="' + stffinf.stave_n + '"]');
+        var layer = stave.querySelector('layer[n="' + stffinf.layer_n + '"]');
         if (!layer) {
-          var layer_candid = $(stave).find('layer');
-          if (layer_candid && !layer_candid.attr('n')) {
+          var layer_candid = stave.getElementsByTagName('layer')[0];
+          if (layer_candid && !layer_candid.hasAttribute('n')) {
             layer = layer_candid;
           }
           if (!layer) {
-            throw new RuntimeError('Cannot find layer');
+            throw new RuntimeError('Cannot find layer @n="' + stffinf.layer_n + '" in ' +
+                                   Util.serializeElement(measureElement));
           }
         }
         var staveInfo = systemInfo.getStaveInfo(stffinf.stave_n);
@@ -116,12 +118,12 @@ define([
         return tstamp2.substring(tstamp2.indexOf('+') + 1);
       };
 
-      $.each(link_elements, function () {
-        var eventLink, atts, startid, tstamp, endid, tstamp2, measures_ahead;
+      for (i = 0, j = link_elements.length; i < j; i++) {
+        element = link_elements[i];
 
         eventLink = new EventLink(null, null);
 
-        atts = Util.attsToObj(this);
+        atts = Util.attsToObj(element);
 
         me.validateAtts(atts);
 
@@ -135,7 +137,7 @@ define([
         } else {
           tstamp = atts.tstamp;
           if (tstamp) {
-            startid = local_tstamp2id(tstamp, this, measureElement);
+            startid = local_tstamp2id(tstamp, element, measureElement);
             eventLink.setFirstId(startid);
           }
           // else {
@@ -157,7 +159,7 @@ define([
               // register that eventLink needs context;
               // need to save: measure.n, link.stave_n,
               // link.layer_n
-              var staveInfo = link_staveInfo(this);
+              var staveInfo = link_staveInfo(element);
               var target_measure_n = measureIndex + measures_ahead;
               var refLocationIndex = target_measure_n + ':' + staveInfo.stave_n + ':' + staveInfo.layer_n;
               if (!me.unresolvedTStamp2[refLocationIndex]) {
@@ -165,7 +167,7 @@ define([
               }
               me.unresolvedTStamp2[refLocationIndex].push(eventLink);
             } else {
-              endid = local_tstamp2id(beat_partOf(tstamp2), this, measureElement);
+              endid = local_tstamp2id(beat_partOf(tstamp2), element, measureElement);
               eventLink.setLastId(endid);
             }
           }
@@ -174,7 +176,7 @@ define([
           // }
         }
         me.addModel(eventLink);
-      });
+      }
     },
 
     /**
@@ -206,10 +208,10 @@ define([
      * draws the link collection to the canvas set by {@link #setContext}
      */
     draw : function () {
-      var ctx = this.ctx;
-      $.each(this.allVexObjects, function () {
-        this.setContext(ctx).draw();
-      });
+      var ctx = this.ctx, i, j, allVexObjects = this.allVexObjects;
+      for (i = 0, j = allVexObjects.length; i < j; i++) {
+        allVexObjects[i].setContext(ctx).draw();
+      }
     }
   };
 

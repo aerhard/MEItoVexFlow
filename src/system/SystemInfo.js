@@ -194,22 +194,25 @@ define([
      *
      */
     processScoreDef : function (scoredef) {
-      var me = this, i, j, children, systemLeftmar;
+      var me = this, i, j, children, systemLeftmar, hasChild = false;
       me.scoreDefElement = scoredef;
-      systemLeftmar = me.scoreDefElement.getAttribute('system.leftmar');
-      if (systemLeftmar !== null) {
-        me.setLeftMar(+systemLeftmar);
+      systemLeftmar = parseFloat(me.scoreDefElement.getAttribute('system.leftmar'));
+      if (!isNaN(systemLeftmar)) {
+        me.setLeftMar(systemLeftmar);
       }
-      children = me.scoreDefElement.children;
-      j = children.length;
+      children = me.scoreDefElement.childNodes;
 
-      if (j === 0) {
+      for (i = 0, j = children.length; i < j; i += 1) {
+        if (children[i].nodeType === 1) {
+          me.processScoreDef_child(children[i]);
+          hasChild = true;
+        }
+      }
+
+      if (!hasChild) {
         me.updateStaffDefs(scoredef);
       }
 
-      for (i = 0; i < j; i += 1) {
-        me.processScoreDef_child(children[i]);
-      }
     },
 
     /**
@@ -266,18 +269,20 @@ define([
      */
     processStaffGrp : function (staffGrp, isChild, ancestorSymbols) {
       var me = this, range = {}, isFirst = true, children, i, j, childRange;
-      children = staffGrp.children;
-      j = children.length;
-      for (i = 0; i < j; i++) {
-        childRange = me.processStaffGrp_child(staffGrp, children[i], ancestorSymbols);
-        if (childRange) {
-          Logger.debug('Converter.processStaffGrp() {1}.{a}', 'childRange.first_n: ' +
-                                                              childRange.first_n, ' childRange.last_n: ' +
-                                                                                  childRange.last_n);
-          if (isFirst) range.first_n = childRange.first_n;
-          range.last_n = childRange.last_n;
-          isFirst = false;
+      children = staffGrp.childNodes;
+      for (i = 0, j = children.length; i < j; i++) {
+        if (children[i].nodeType === 1) {
+          childRange = me.processStaffGrp_child(staffGrp, children[i], ancestorSymbols);
+          if (childRange) {
+            Logger.debug('Converter.processStaffGrp() {1}.{a}', 'childRange.first_n: ' +
+                                                                childRange.first_n, ' childRange.last_n: ' +
+                                                                                    childRange.last_n);
+            if (isFirst) range.first_n = childRange.first_n;
+            range.last_n = childRange.last_n;
+            isFirst = false;
+          }
         }
+
       }
       me.setConnectorModels(staffGrp, range, isChild, ancestorSymbols);
       return range;

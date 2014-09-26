@@ -21,7 +21,7 @@ define([
 
 
   var Note = function (options) {
-    var me = this, dots, i, element = options.element, atts = options.atts;
+    var me = this, dots, i, j, element = options.element, atts = options.atts;
 
     var vexOptions = {
       keys : [options.vexPitch],
@@ -51,9 +51,11 @@ define([
       EventUtil.processAttrHo(atts.ho, this, options.stave);
     }
 
-    $.each($(element).find('artic'), function () {
-      EventUtil.addArticulation(me, this);
-    });
+    var articElements = element.getElementsByTagName('artic');
+    for (i=0,j=articElements.length;i<j;i++) {
+      EventUtil.addArticulation(me, articElements[i]);
+    }
+
     if (atts.fermata) {
       EventUtil.addFermataAtt(this, element, atts.fermata);
     }

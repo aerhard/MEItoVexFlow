@@ -19,12 +19,11 @@
  * the License.
  */
 define([
-  'jquery',
   'vexflow',
   'mei2vf/core/RuntimeError',
   'mei2vf/core/Util',
   'mei2vf/measure/StaveConnectors'
-], function ($, VF, RuntimeError, Util, StaveConnectors) {
+], function (VF, RuntimeError, Util, StaveConnectors) {
 
   /**
    * @class MEI2VF.Measure
@@ -184,13 +183,14 @@ define([
      * the corresponding Vex.Flow.Stave object
      */
     addRehearsalMarks : function () {
-      var me = this, stave_n, vexStave, offsetX;
-      $.each(me.rehElements, function () {
-        stave_n = this.getAttribute('staff');
+      var me = this, stave_n, vexStave, offsetX, i, j, rehElement;
+      for (i=0,j=me.rehElements.length;i<j;i++) {
+        rehElement = me.rehElements[i];
+        stave_n = rehElement.getAttribute('staff');
         vexStave = me.staves[stave_n];
         offsetX = (vexStave.getModifierXShift() > 0) ? -40 : 0;
-        vexStave.modifiers.push(new VF.StaveSection($(this).text(), vexStave.x + offsetX, 0));
-      });
+        vexStave.modifiers.push(new VF.StaveSection(Util.getText(rehElement), vexStave.x + offsetX, 0));
+      }
     },
 
     // TODO handle timestamps! (is it necessary to handle tempo element
@@ -202,13 +202,15 @@ define([
      * corresponding Vex.Flow.Stave object
      */
     addTempoToStaves : function () {
-      var me = this, offsetX, vexStave, vexTempo, atts, halfLineDistance;
-      $.each(me.tempoElements, function () {
-        atts = Util.attsToObj(this);
+      var me = this, offsetX, vexStave, vexTempo, atts, halfLineDistance, i, j, tempoElement;
+      for (i=0,j=me.tempoElements.length;i<j;i++) {
+        tempoElement = me.tempoElements[i];
+
+        atts = Util.attsToObj(tempoElement);
         vexStave = me.staves[atts.staff];
         halfLineDistance = vexStave.getSpacingBetweenLines() / 2;
         vexTempo = new VF.StaveTempo({
-          name : $(this).text(),
+          name : Util.getText(tempoElement),
           duration : atts['mm.unit'],
           dots : +atts['mm.dots'],
           bpm : +atts.mm
@@ -229,7 +231,7 @@ define([
         vexTempo.setShiftX(offsetX);
         vexTempo.font = me.tempoFont;
         vexStave.modifiers.push(vexTempo);
-      });
+      }
     },
 
     /**

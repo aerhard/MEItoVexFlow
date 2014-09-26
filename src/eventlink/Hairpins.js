@@ -19,14 +19,13 @@
  * the License.
  */
 define([
-  'jquery',
   'vexflow',
   'vex',
   'mei2vf/core/Logger',
   'mei2vf/core/RuntimeError',
   'mei2vf/core/Tables',
   'mei2vf/eventlink/EventLinkCollection'
-], function ($, VF, Vex, Logger, RuntimeError, Tables, EventLinkCollection, undefined) {
+], function (VF, Vex, Logger, RuntimeError, Tables, EventLinkCollection, undefined) {
 
   /**
    * @class MEI2VF.Hairpins
@@ -52,23 +51,23 @@ define([
     },
 
     createVexFromInfos : function (notes_by_id) {
-      var me = this, f_note, l_note, vex_options;
+      var me = this, f_note, l_note, vex_options, i, j, model;
       vex_options = {
         height : 10,
         y_shift : 0,
         left_shift_px : 0,
         r_shift_px : 0
       };
-      $.each(me.allModels, function () {
-        f_note = notes_by_id[this.getFirstId()] || {};
-        l_note = notes_by_id[this.getLastId()] || {};
+      for (i=0,j=me.allModels.length;i<j;i++) {
+        model = me.allModels[i];
+        f_note = notes_by_id[model.getFirstId()] || {};
+        l_note = notes_by_id[model.getLastId()] || {};
 
         if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
         } else {
-          me.createSingleHairpin(f_note, l_note, this.params, vex_options);
+          me.createSingleHairpin(f_note, l_note, model.params, vex_options);
         }
-
-      });
+      }
       return this;
     },
 

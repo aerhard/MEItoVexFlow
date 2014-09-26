@@ -657,9 +657,7 @@ define([
     if (has_stem) {
       stem_ext = this.note.getStem().getExtents();
 
-      // ADDED FACTOR
-      spacing = stave.getSpacingBetweenLines() * 1.6;
-      // END ADDED FACTOR
+      spacing = stave.getSpacingBetweenLines();
     }
 
     // START ADDITION
