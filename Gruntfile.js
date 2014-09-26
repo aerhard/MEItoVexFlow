@@ -17,7 +17,7 @@ module.exports = function(grunt) {
     requirejs: {
       compile: {
         options: {
-          name: 'Interface',
+          name: 'mei2vf/Interface',
           baseUrl: "src",
           mainConfigFile: "src/config.js",
           out: 'dist/<%= pkg.name %>.js',

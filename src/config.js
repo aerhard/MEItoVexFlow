@@ -1,12 +1,13 @@
 require.config({
   baseUrl : '../src',
   paths : {
-    'jquery' : 'vendor/jquery',
-    'vexflow' : 'vendor/vexflow',
-    'vex' : 'vendor/vex',
+    'jquery' : '../src/vendor/jquery',
+    'vexflow' : '../src/vendor/vexflow',
+    'vex' : '../src/vendor/vex',
     'tests' : '../tests',
     'spec' : '../tests/spec',
-    'mei2vf' : '../src',
+    'common' : '../src/common',
+    'mei2vf' : '../src/mei2vf',
     'meilib' : '../src/meilib'
   }
 });

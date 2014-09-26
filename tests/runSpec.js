@@ -33,14 +33,14 @@
 var runSpec = function (m2vTests) {
 
   var allTests = [
-    'spec/Rendering',
-    'spec/core/Logger',
-    'spec/event/EventUtil',
-    'spec/eventlink/EventLink',
-    'spec/eventlink/EventReference',
+    'spec/mei2vf/Rendering',
+    'spec/common/Logger',
+    'spec/mei2vf/event/EventUtil',
+    'spec/mei2vf/eventlink/EventLink',
+    'spec/mei2vf/eventlink/EventReference',
     'spec/meilib/MeiLib',
-    'spec/system/SystemInfo',
-    'spec/voice/StaveVoices'
+    'spec/mei2vf/system/SystemInfo',
+    'spec/mei2vf/voice/StaveVoices'
   ];
 
   if (!m2vTests) {

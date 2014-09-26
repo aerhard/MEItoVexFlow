@@ -16,14 +16,33 @@
  */
 define([
   'vexflow',
-  'common/Logger'
-], function (VF, Logger, undefined) {
+  'mei2vf/event/EventUtil',
+  'common/Util'
+], function (VF, EventUtil, Util) {
 
 
-  var O = function () {
+  var Space = function (options) {
+    var vexOptions, atts;
+
+    atts = Util.attsToObj(options.element);
+
+
+    vexOptions = {
+      duration: EventUtil.processAttsDuration(options.element, atts) + 'r'
+    };
+
+    VF.GhostNote.call(this, vexOptions);
+
+    this.setStave(options.stave);
 
   };
 
-  return O;
+  Space.prototype = Object.create(VF.GhostNote.prototype);
+
+  Space.prototype.beamable = true;
+
+
+  return Space;
 
 });
+
