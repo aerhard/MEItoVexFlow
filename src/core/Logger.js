@@ -79,18 +79,8 @@ define([
           this[allLevels[i]] = emptyFn;
         }
       }
-    },
-
-    /**
-     * @method log the MEI2VF logging function. Logs the arguments to the window
-     * console if they are listed in {@link logLevels}
-     */
-    log : function (level, caller) {
-      if (logLevels[level] === true) {
-        var line = Array.prototype.slice.call(arguments, 2).join(' ');
-        window.console[level]('MEI2VF (' + caller + "): " + line);
-      }
     }
+    
   };
 
   return Logger;
