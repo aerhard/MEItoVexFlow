@@ -19,7 +19,7 @@ define([
   'vex',
   'common/Logger',
   'common/Util',
-  'mei2vf/core/Tables',
+  'mei2vf/Tables',
   'mei2vf/eventpointer/EventPointerCollection',
   'mei2vf/event/EventUtil'
 ], function (VF, Vex, Logger, Util, Tables, EventPointerCollection, EventUtil) {

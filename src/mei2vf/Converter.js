@@ -69,7 +69,7 @@ define([
   'mei2vf/measure/Measure',
   'mei2vf/system/System',
   'mei2vf/system/SystemInfo',
-  'mei2vf/core/Tables',
+  'mei2vf/Tables',
   'mei2vf/voice/StaveVoices'
 ], function (VF, MeiLib, Logger, RuntimeError, Util, EventUtil, Note, GraceNote, Chord, GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments, Verses, Syllable, Stave, Measure, System, SystemInfo, Tables, StaveVoices) {
 
@@ -257,7 +257,6 @@ define([
      */
     reset : function () {
       var me = this;
-      console.debug('Converter.reset()');
       me.systemInfo.init(me.cfg, me.printSpace);
       /**
        * @property {MEI2VF.EventLink[][]} unresolvedTStamp2
@@ -1056,10 +1055,10 @@ define([
         me.processSyllables(note, element, stave_n);
 
 
-        // FIXME For now, we'll remove any child nodes of <note>
-        while (element.firstChild) {
-          element.removeChild(element.firstChild);
-        }
+//        // FIXME For now, we'll remove any child nodes of <note>
+//        while (element.firstChild) {
+//          element.removeChild(element.firstChild);
+//        }
 
         if (mei_tie) {
           me.processAttrTie(mei_tie, xml_id, vexPitch, stave_n);
@@ -1168,8 +1167,8 @@ define([
     /**
      * @method processNoteInChord
      */
-    processNoteInChord : function (i, element, chordElement, chord, stave_n, layerDir) {
-      var me = this, atts, xml_id;
+    processNoteInChord : function (chordIndex, element, chordElement, chord, stave_n, layerDir) {
+      var me = this, i, j, atts, xml_id;
 
       atts = Util.attsToObj(element);
 
@@ -1187,16 +1186,30 @@ define([
       me.notes_by_id[xml_id] = {
         meiNote : chordElement,
         vexNote : chord,
-        index : [i],
+        index : [chordIndex],
         system : me.currentSystem_n,
         layerDir : layerDir
       };
 
+      var childNodes = element.childNodes;
+      for (i = 0, j = childNodes.length; i < j; i++) {
+        switch (childNodes[i].localName) {
+          case 'accid':
+            atts.accid = childNodes[i].getAttribute('accid');
+            break;
+          case 'artic':
+            EventUtil.addArticulation(chord, childNodes[i]);
+            break;
+          default:
+            break;
+        }
+      }
+
       if (atts.accid) {
-        EventUtil.processAttrAccid(atts.accid, chord, i);
+        EventUtil.processAttrAccid(atts.accid, chord, chordIndex);
       }
       if (atts.fermata) {
-        EventUtil.addFermata(chord, element, atts.fermata, i);
+        EventUtil.addFermata(chord, element, atts.fermata, chordIndex);
       }
     },
 

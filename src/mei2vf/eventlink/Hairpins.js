@@ -23,7 +23,7 @@ define([
   'vex',
   'common/Logger',
   'common/RuntimeError',
-  'mei2vf/core/Tables',
+  'mei2vf/Tables',
   'mei2vf/eventlink/EventLinkCollection'
 ], function (VF, Vex, Logger, RuntimeError, Tables, EventLinkCollection, undefined) {
 

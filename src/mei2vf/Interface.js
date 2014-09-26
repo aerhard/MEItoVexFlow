@@ -23,7 +23,7 @@ define([
   'mei2vf/vexflow-overrides',
   'meilib/MeiLib',
   'common/Logger',
-  'mei2vf/core/Converter'
+  'mei2vf/Converter'
 ], function (VF, overrides, MeiLib, Logger, Converter) {
   window.MeiLib = MeiLib;
 

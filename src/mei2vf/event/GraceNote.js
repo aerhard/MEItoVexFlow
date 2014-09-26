@@ -45,18 +45,26 @@ define([
 
     this.setStave(options.stave);
 
+    var childNodes = element.childNodes;
+    for (i = 0, j = childNodes.length; i < j; i++) {
+      switch (childNodes[i].localName) {
+        case 'accid':
+          atts.accid = childNodes[i].getAttribute('accid');
+          break;
+        case 'artic':
+          EventUtil.addArticulation(me, childNodes[i]);
+          break;
+        default:
+          break;
+      }
+    }
+
     if (atts.accid) {
       EventUtil.processAttrAccid(atts.accid, this, 0);
     }
     if (atts.ho) {
       EventUtil.processAttrHo(atts.ho, this, options.stave);
     }
-
-    var articElements = element.getElementsByTagName('artic');
-    for (i=0,j=articElements.length;i<j;i++) {
-      EventUtil.addArticulation(me, articElements[i]);
-    }
-
     if (atts.fermata) {
       EventUtil.addFermataAtt(this, element, atts.fermata);
     }

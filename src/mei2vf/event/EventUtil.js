@@ -22,7 +22,7 @@ define([
   'vexflow',
   'common/Logger',
   'common/Util',
-  'mei2vf/core/Tables'
+  'mei2vf/Tables'
 ], function (VF, Logger, Util, Tables, undefined) {
 
 

@@ -18,7 +18,7 @@ define([
   'vexflow',
   'mei2vf/event/EventUtil',
   'common/Util',
-  'mei2vf/core/Tables'
+  'mei2vf/Tables'
 ], function (VF, EventUtil, Util, Tables) {
 
 
