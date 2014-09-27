@@ -152,6 +152,8 @@ define([
        * - null or undefined: renders no labels
        */
       labelMode : null, // 'full',
+      processSb : 'sb', // sb / ignore
+      processPb : 'sb', // pb / sb / ignore
       /**
        * @cfg {Number} maxHyphenDistance The maximum distance (in pixels)
        * between two hyphens in the lyrics lines
@@ -245,8 +247,31 @@ define([
       if (me.cfg.renderFermataAttributes === true) {
         EventUtil.addFermataAtt = EventUtil.addFermata;
       }
+      switch (me.cfg.processSb) {
+        case 'pb' :
+          me.onSb = me.setPendingPageBreak;
+          break;
+        case 'sb' :
+          me.onSb = me.setPendingSystemBreak;
+          break;
+        default :
+          me.onSb = me.emptyFn;
+      }
+      switch (me.cfg.processPb) {
+        case 'pb' :
+          me.onPb = me.setPendingPageBreak;
+          break;
+        case 'sb' :
+          me.onPb = me.setPendingSystemBreak;
+          break;
+        default :
+          me.onPb = me.emptyFn;
+      }
       return me;
 
+    },
+
+    emptyFn : function () {
     },
 
     /**
@@ -395,8 +420,11 @@ define([
     process : function (xmlDoc) {
       var me = this;
       me.reset();
-      me.systemInfo.processScoreDef(xmlDoc.getElementsByTagName('scoreDef')[0]);
-      me.processSections(xmlDoc);
+
+      me.processScoreChildren(xmlDoc);
+
+      //      me.systemInfo.processScoreDef(xmlDoc.getElementsByTagName('scoreDef')[0]);
+      //      me.processSections(xmlDoc);
       me.directives.createVexFromInfos(me.notes_by_id);
       me.dynamics.createVexFromInfos(me.notes_by_id);
       me.fermatas.createVexFromInfos(me.notes_by_id);
@@ -537,45 +565,98 @@ define([
       return system;
     },
 
-    /**
-     * @method processSections
-     */
-    processSections : function (xmlDoc) {
-      var me = this, i, j, sections;
-      sections = xmlDoc.getElementsByTagName('section');
-      for (i = 0, j = sections.length; i < j; i++) {
-        me.processSection(sections[i]);
+    processScoreChildren : function (score) {
+      var me = this, i, j, childNodes;
+      if (score) {
+        childNodes = score.childNodes;
+        for (i = 0, j = childNodes.length; i < j; i++) {
+          if (childNodes[i].nodeType === 1) {
+            me.processScoreChild(childNodes[i]);
+          }
+        }
+      } else {
+        throw new RuntimeError('No score element found in the document.')
       }
     },
+
+    processScoreChild : function (element) {
+      var me = this;
+      switch (element.localName) {
+        case 'scoreDef' :
+          me.systemInfo.processScoreDef(element);
+          break;
+        case 'staffDef' :
+          me.systemInfo.processStaffDef(element);
+          break;
+        case 'pb' :
+          me.onPb(element);
+          break;
+        case 'ending' :
+          me.processEnding(element);
+          break;
+        case 'section' :
+          me.processSection(element);
+          break;
+        default :
+          Logger.info('Not supported', 'Element ' + Util.serializeElement(element) +
+                                       ' is not supported in <score>. Ignoring element.');
+      }
+    },
+
+    //    /**
+    //     * @method processSections
+    //     */
+    //    processSections : function (xmlDoc) {
+    //      var me = this, i, j, sections;
+    //      sections = xmlDoc.getElementsByTagName('section');
+    //      for (i = 0, j = sections.length; i < j; i++) {
+    //        me.processSection(sections[i]);
+    //      }
+    //    },
 
     /**
      *@method processSection
      */
     processSection : function (element) {
       var me = this, i, j, sectionChildren = element.childNodes;
-        for (i = 0, j = sectionChildren.length; i < j; i += 1) {
-          if (sectionChildren[i].nodeType === 1) {
-            me.processSectionChild(sectionChildren[i]);
-          }
+      for (i = 0, j = sectionChildren.length; i < j; i += 1) {
+        if (sectionChildren[i].nodeType === 1) {
+          me.processSectionChild(sectionChildren[i]);
         }
+      }
     },
 
     /**
      * @method processEnding
      */
     processEnding : function (element) {
-      var me = this, i, j, sectionChildren = element.childNodes;
-      for (i = 0, j = sectionChildren.length; i < j; i += 1) {
-        if (sectionChildren[i].nodeType === 1) {
-          me.currentVoltaType = {};
-          if (i === 0) {
-            me.currentVoltaType.start = element.getAttribute('n');
-          }
-          if (i === j - 1) {
-            me.currentVoltaType.end = true;
-          }
-          me.processSectionChild(sectionChildren[i]);
+      var me = this, isFirst = true, next, childNode;
+
+      var getNext = function (node) {
+        var nextSibling = node.nextSibling;
+        while (nextSibling && nextSibling.nodeType !== 1) {
+          nextSibling = nextSibling.nextSibling;
         }
+        return nextSibling;
+      };
+
+      childNode = element.firstChild;
+      if (childNode.nodeType !== 1) {
+        childNode = getNext(childNode);
+      }
+
+      while (childNode) {
+        next = getNext(childNode);
+        if (isFirst) {
+          me.currentVoltaType = {start : element.getAttribute('n')};
+          isFirst = false;
+        }
+        if (!next) {
+          me.currentVoltaType.end = true;
+        }
+        me.processSectionChild(childNode);
+
+        childNode=next;
       }
       me.currentVoltaType = null;
     },
@@ -587,7 +668,7 @@ define([
      * annot ending expansion pb sb scoreDef section staff staffDef
      * MEI.text: div MEI.usersymbols: anchoredText curve line symbol
      *
-     * Supported elements: <b>measure</b> <b>scoreDef</b> <b>staffDef</b>
+     * Supported elements: <b>ending</b> <b>measure</b> <b>scoreDef</b> <b>section</b> <b>staffDef</b>
      * <b>sb</b>
      * @method processSectionChild
      */
@@ -603,16 +684,26 @@ define([
         case 'staffDef' :
           me.systemInfo.processStaffDef(element);
           break;
+        case 'pb' :
+          me.onPb(element);
+          break;
         case 'sb' :
-          me.setPendingSystemBreak(element);
+          me.onSb(element);
           break;
         case 'ending' :
           me.processEnding(element);
+          break;
+        case 'section' :
+          me.processSection(element);
           break;
         default :
           Logger.info('Not supported', 'Element ' + Util.serializeElement(element) +
                                        ' is not supported in <section>. Ignoring element.');
       }
+    },
+
+    setPendingPageBreak : function () {
+      Logger.info('setPendingPageBreak() not implemented.')
     },
 
     /**
@@ -756,7 +847,8 @@ define([
       for (i = 0, j = staveElements.length; i < j; i++) {
         stave_n = parseInt(staveElements[i].getAttribute('n'), 10);
         if (isNaN(stave_n)) {
-          throw new RuntimeError(Util.serializeElement(element) + ' must have an @n attribute of type integer.');
+          throw new RuntimeError(Util.serializeElement(staveElements[i]) +
+                                 ' must have an @n attribute of type integer.');
         }
 
         stave = new Stave({
@@ -979,7 +1071,7 @@ define([
         case 'rest' :
           return me.processRest(element, stave, stave_n, layerDir, staveInfo);
         case 'mRest' :
-          return me.processmRest(element, stave, stave_n, layerDir, staveInfo);
+          return me.processMRest(element, stave, stave_n, layerDir, staveInfo);
         case 'space' :
           return me.processSpace(element, stave);
         case 'note' :
@@ -992,6 +1084,8 @@ define([
           return me.processChord(element, stave, stave_n, layerDir, staveInfo);
         case 'clef' :
           return me.processClef(element, stave, stave_n, layerDir, staveInfo);
+        case 'bTrem' :
+          return me.processBTrem(element, stave, stave_n, layerDir, staveInfo);
         case 'anchoredText' :
           me.processAnchoredText(element, stave, stave_n, layerDir, staveInfo);
           return;
@@ -1055,10 +1149,10 @@ define([
         me.processSyllables(note, element, stave_n);
 
 
-//        // FIXME For now, we'll remove any child nodes of <note>
-//        while (element.firstChild) {
-//          element.removeChild(element.firstChild);
-//        }
+        //        // FIXME For now, we'll remove any child nodes of <note>
+        //        while (element.firstChild) {
+        //          element.removeChild(element.firstChild);
+        //        }
 
         if (mei_tie) {
           me.processAttrTie(mei_tie, xml_id, vexPitch, stave_n);
@@ -1246,9 +1340,9 @@ define([
     },
 
     /**
-     * @method processmRest
+     * @method processMRest
      */
-    processmRest : function (element, stave, stave_n, layerDir, staveInfo) {
+    processMRest : function (element, stave, stave_n, layerDir, staveInfo) {
       var me = this, mRest, xml_id;
 
       try {
@@ -1303,6 +1397,23 @@ define([
      */
     processClef : function (element, stave, stave_n, layerDir, staveInfo) {
       this.currentClefChangeProperty = staveInfo.clefChangeInMeasure(element);
+    },
+
+    /**
+     * @method processBTrem
+     * @param {Element} element the element
+     * @param {MEI2VF.Stave} stave the containing stave
+     * @param {Number} stave_n the number of the containing stave
+     * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current layer
+     * @param {MEI2VF.StaveInfo} staveInfo
+     */
+    processBTrem : function (element, stave, stave_n, layerDir, staveInfo) {
+      var me = this;
+
+      Logger.info('Not implemented', 'Element <bTrem> not implemented. Processing child nodes.');
+
+      return me.processNoteLikeChildren(element, stave, stave_n, layerDir, staveInfo);
+
     },
 
     /**

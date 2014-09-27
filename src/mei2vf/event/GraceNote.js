@@ -74,7 +74,7 @@ define([
 
   GraceNote.prototype = Object.create(VF.GraceNote.prototype);
 
-  GraceNote.prototype.label = 'gracenote';
+  GraceNote.prototype.grace = true;
   //GraceNote.prototype.beamable = false;
 
   return GraceNote;

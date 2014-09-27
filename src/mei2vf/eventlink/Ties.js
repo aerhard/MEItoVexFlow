@@ -109,7 +109,7 @@ define([
 
 
         if (!f_note.vexNote && !l_note.vexNote) {
-          Logger.warn('Tie could not be rendered', 'Neither xml:id could be found: "' + model.getFirstId() +
+          Logger.warn('Tie could not be processed', 'Neither xml:id could be found: "' + model.getFirstId() +
                                                           '" / "' + model.getLastId() + '"');
           return true;
         }
@@ -160,7 +160,7 @@ define([
         last_indices : l_note.index
       });
       vexTie.setDir(params.curvedir);
-      if (f_note.vexNote && f_note.vexNote.label === 'gracenote') {
+      if (f_note.vexNote && f_note.vexNote.grace === true) {
         vexTie.render_options.first_x_shift = -5;
       }
       me.allVexObjects.push(vexTie);

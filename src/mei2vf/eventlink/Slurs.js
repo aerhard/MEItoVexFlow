@@ -92,8 +92,8 @@ define([
 
 
         if (!f_note.vexNote && !l_note.vexNote) {
-          Logger.warn('Slur could not be rendered', 'Neither xml:id could be found: "' + model.getFirstId() +
-                                                           '" / "' + model.getLastId() + '"');
+          Logger.warn('Slur could not be processed', 'Neither xml:id could be found: "' + model.getFirstId() +
+                                                     '" / "' + model.getLastId() + '"');
           return true;
         }
 
@@ -166,11 +166,21 @@ define([
             }
 
           }
+
         } else {
           if (f_note.vexNote && l_note.vexNote &&
               f_note.vexNote.getStemDirection() !== l_note.vexNote.getStemDirection()) {
+
+            //            console.log(f_note.vexNote.getLineNumber());
+            //            console.log(l_note.vexNote.getLineNumber());
             slurOptions.invert = true;
-            slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+            if (Math.abs(f_note.vexNote.getLineNumber() - l_note.vexNote.getLineNumber()) > 2.5 ) {
+
+              slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+            }
+
+
+
           }
         }
 

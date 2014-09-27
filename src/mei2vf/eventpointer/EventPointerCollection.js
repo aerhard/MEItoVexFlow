@@ -63,8 +63,29 @@ define([
       this.font = font;
     },
 
-    createVexFromInfos : function () {
-      throw new RuntimeError('You have to provide a createVexFromInfos method when inheriting MEI2VF.EventPointerCollection.');
+    createVexFromInfos : function (notes_by_id) {
+      var me = this, i, model, note;
+      i = me.allModels.length;
+      while (i--) {
+        model = me.allModels[i];
+        note = notes_by_id[model.startid];
+        if (note) {
+          me.addToNote(model, note);
+        } else {
+          if (model.startid) {
+            Logger.warn('Unknown reference', Util.serializeElement(model.element) +
+                                             ' could not be processed because the reference "' + model.startid +
+                                             '" could not be resolved.');
+          } else {
+            Logger.warn('Unknown reference', Util.serializeElement(model.element) +
+                                             ' could not be processed because it could not be assigned to an element.');
+          }
+        }
+      }
+    },
+
+    addToNote : function () {
+      throw new RuntimeError('You have to provide a addToNote() method when inheriting MEI2VF.EventPointerCollection.');
     },
 
     createInfos : function (elements, measureElement) {

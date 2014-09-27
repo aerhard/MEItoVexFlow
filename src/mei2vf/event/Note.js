@@ -69,6 +69,9 @@ define([
     if (atts.fermata) {
       EventUtil.addFermataAtt(this, element, atts.fermata);
     }
+    if (atts['stem.mod']) {
+      EventUtil.addStemModifier(this, element, atts['stem.mod']);
+    }
 
 
   };

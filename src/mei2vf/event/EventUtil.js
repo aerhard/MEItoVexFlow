@@ -128,7 +128,8 @@ define([
       }
     },
 
-    addFermataAtt : function() {},
+    addFermataAtt : function () {
+    },
 
     /**
      * adds a fermata to a note-like object
@@ -144,6 +145,19 @@ define([
       vexArtic.setMeiElement(element);
       note.addArticulation(index || 0, vexArtic);
     },
+
+    addStemModifier : function (note, element, stemMod) {
+      var n = parseInt(stemMod, 10);
+      if (n) {
+        note.addArticulation(0, new VF.Tremolo(n));
+      } else {
+        Logger.info('Not supported', 'The value of @stem.mod="' + stemMod + '" specified in ' +
+                                     Util.serializeElement(element) + ' is not supported. Ignoring attribute');
+      }
+
+
+    },
+
 
     addClefModifier : function (vexNote, prop) {
       var clef = new VF.ClefNote(prop.type, 'small', prop.shift === -1 ? '8vb' : undefined);

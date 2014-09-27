@@ -91,6 +91,18 @@ define([
       f.preFormat(justifyWidth, stave.getContext(), me.vexVoices, null);
     },
 
+//    getStaveLowestY : function (stave_n) {
+//      var me=this, i, j, voices, lowestY = 0;
+//      voices = me.vexVoicesStaffWise[stave_n];
+//      if (voices) {
+//        console.log(voices);
+//        for (i=0,j=voices.length;i<j;i++) {
+//          lowestY = Math.max(lowestY, voices[i].boundingBox.y + voices[i].boundingBox.h);
+//        }
+//        return lowestY;
+//      }
+//    },
+
     draw : function (context, staves) {
       var i, staveVoice, all_voices = this.all_voices;
       for (i = 0; i < all_voices.length; ++i) {

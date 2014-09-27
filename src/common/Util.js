@@ -140,11 +140,11 @@ define(function () {
       }
       // Do not include comment or processing instruction nodes
       return ret;
-    }
+    },
 
-//    getNormalizedText : function (elem) {
-//      return Util.getText(elem).replace(/\s+/g, ' ')
-//    }
+    getNormalizedText : function (elem) {
+      return Util.getText(elem).replace(/\s+/g, ' ')
+    }
 
   };
 

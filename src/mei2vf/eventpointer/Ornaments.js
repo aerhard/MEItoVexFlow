@@ -40,21 +40,8 @@ define([
       Ornaments.superclass.init.call(this, systemInfo, font);
     },
 
-    createVexFromInfos : function (notes_by_id) {
-      var me = this, i, model, note;
-      i = me.allModels.length;
-      while (i--) {
-        model = me.allModels[i];
-        note = notes_by_id[model.startid];
-        if (note) {
-          me.addOrnamentToNote(note.vexNote, model);
-        } else {
-          console.log(model);
-          Logger.warn('Unknown reference', Util.serializeElement(model.element) +
-                                            ' could not be rendered because the reference "' + model.startid +
-                                            '" could not be resolved.');
-        }
-      }
+    addToNote : function (model, note) {
+      this.addOrnamentToNote(note.vexNote, model);
     },
 
     /**

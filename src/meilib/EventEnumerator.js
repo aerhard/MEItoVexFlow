@@ -1,7 +1,6 @@
 define([
-  'jquery',
   'meilib/RuntimeError',
-], function ($, RuntimeError, undefined) {
+], function (RuntimeError, undefined) {
 
   if (!window.MeiLib) window.MeiLib = {};
 
@@ -26,9 +25,9 @@ define([
     }
     this.node = node;
     this.next_evnt = null;
-    this.EoI = true;
     // false if and only if next_evnt is valid.
-    this.children = $(this.node).children();
+    this.EoI = true;
+    this.children = this.node.childNodes;
     this.i_next = -1;
     this.proportion = proportion || {
       num : 1,
@@ -79,12 +78,20 @@ define([
    * @private
    */
   MeiLib.EventEnumerator.prototype.step_ahead = function () {
-    ++this.i_next;
-    if (this.i_next < this.children.length) {
-      this.next_evnt = this.children[this.i_next];
-      var node_name = $(this.next_evnt).prop('localName');
+    var end = false, i_next = this.i_next, children = this.children;
+
+    while (!end) {
+      ++i_next;
+      if (i_next === children.length || children[i_next].nodeType === 1) {
+        end = true;
+      }
+    }
+
+    if (i_next < children.length) {
+      this.next_evnt = children[i_next];
+      var node_name = this.next_evnt.localName;
       if (node_name === 'note' || node_name === 'rest' || node_name === 'mRest' || node_name === 'chord') {
-        this.EoI = false
+        this.EoI = false;
       } else if (node_name === 'beam') {
         this.beam_enumerator = new MeiLib.EventEnumerator(this.next_evnt);
         if (!this.beam_enumerator.EoI) {
@@ -113,6 +120,7 @@ define([
     } else {
       this.EoI = true;
     }
+    this.i_next = i_next;
   };
 
 

@@ -44,34 +44,23 @@ define([
       Directives.superclass.init.call(this, systemInfo, font);
     },
 
-    createVexFromInfos : function (notes_by_id) {
-      var me = this, i, model, note, annot;
-      i = me.allModels.length;
-      while (i--) {
-        model = me.allModels[i];
-        note = notes_by_id[model.startid];
-        if (note) {
-          annot =
-          (new VF.Annotation(Util.getText(model.element).trim())).setFont(me.font.family, me.font.size, me.font.weight).setMeiElement(model.element);
+    addToNote : function (model, note) {
+      var me = this, annot =
+      (new VF.Annotation(Util.getNormalizedText(model.element).trim())).setFont(me.font.family, me.font.size, me.font.weight).setMeiElement(model.element);
 
-          // TEMPORARY: set width of modifier to zero so voices with modifiers
-          // don't get too much width; remove when the width calculation in
-          // VexFlow does distinguish between different y values when
-          // calculating the width of tickables
-          annot.setWidth(0);
-          annot.setJustification(1); // left by default
-          if (model.atts.place === 'below') {
-            note.vexNote.addAnnotation(0, annot.setVerticalJustification(me.BOTTOM));
-          } else {
-            note.vexNote.addAnnotation(0, annot);
-          }
-        } else {
-          Logger.warn('Unknown reference', Util.serializeElement(model.element) +
-                                            ' could not be rendered because the reference "' + model.startid +
-                                            '" could not be resolved.');
-        }
+      // TEMPORARY: set width of modifier to zero so voices with modifiers
+      // don't get too much width; remove when the width calculation in
+      // VexFlow does distinguish between different y values when
+      // calculating the width of tickables
+      annot.setWidth(0);
+      annot.setJustification(1); // left by default
+      if (model.atts.place === 'below') {
+        note.vexNote.addAnnotation(0, annot.setVerticalJustification(me.BOTTOM));
+      } else {
+        note.vexNote.addAnnotation(0, annot);
       }
     }
+
   });
 
   return Directives;

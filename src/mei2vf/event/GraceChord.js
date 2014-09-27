@@ -87,7 +87,8 @@ define([
 
   GraceChord.prototype = Object.create(VF.GraceNote.prototype);
 
-  GraceChord.prototype.beamable = true;
+  GraceChord.prototype.grace = true;
+//  GraceChord.prototype.beamable = true;
 
   return GraceChord;
 

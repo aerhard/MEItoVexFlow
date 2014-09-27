@@ -68,7 +68,7 @@ define([
       return (tagName === 'note' || tagName === 'rest' || tagName === 'space');
     }
     var durationOf_SimpleEvent = function (simple_evnt, meter) {
-      var dur = $(simple_evnt).attr('dur');
+      var dur = simple_evnt.getAttribute('dur');
       if (!dur) {
         console.warn('@dur of <b>note</b>, <b>rest</b> or <b>space</b> must be specified. Proceeding with default @dur="4". Element:');
         console.log(simple_evnt);
@@ -82,15 +82,15 @@ define([
       if (!layer_no) {
         layer_no = "1";
       }
-      var dur = $(chord).attr('dur');
+      var dur = chord.getAttribute('dur');
       var dotsMult = MeiLib.dotsMult(chord);
       if (dur) {
         return dotsMult * MeiLib.dur2beats(Number(dur), meter);
       }
       $(chord.getElementsByTagName('note')).each(function () {
-        var lyr_n = $(this).attr('layer');
+        var lyr_n = this.getAttribute('layer');
         if (!lyr_n || lyr_n === layer_no) {
-          var dur_note = $(this).attr('dur');
+          var dur_note = this.getAttribute('dur');
           var dotsMult_note = MeiLib.dotsMult(chord);
           if (!dur && dur_note) {
             dur = dur_note;
@@ -141,7 +141,7 @@ define([
       });
       return acc;
     }
-    var evnt_name = $(evnt).prop('localName');
+    var evnt_name = evnt.localName;
     if (IsZeroDurEvent(evnt, evnt_name)) {
       return 0;
     }
@@ -232,10 +232,10 @@ define([
     winner = getFullNote(winner);
 
     var xml_id;
-    xml_id = $(winner).attr('xml:id');
+    xml_id = winner.getAttribute('xml:id');
     if (!xml_id) {
       xml_id = MeiLib.createPseudoUUID();
-      $(winner).attr('xml:id', xml_id);
+      winner.setAttribute('xml:id', xml_id);
     }
     return xml_id;
   }
@@ -247,10 +247,10 @@ define([
    * @return {String} the xml:id of the element
    */
   MeiLib.XMLID = function (elem) {
-    var xml_id = $(elem).attr('xml:id');
+    var xml_id = elem.getAttribute('xml:id');
     if (!xml_id) {
       xml_id = MeiLib.createPseudoUUID();
-      $(elem).attr('xml:id', xml_id);
+      elem.setAttribute('xml:id', xml_id);
     }
     return xml_id;
   }
@@ -328,14 +328,14 @@ define([
    * result is 1.75, etc.
    */
   MeiLib.dotsMult = function (node) {
-    var dots = $(node).attr('dots');
+    var dots = node.getAttribute('dots');
     dots = Number(dots || "0");
     var mult = 1;
     for (; dots > 0; --dots) {
       mult += (1 / Math.pow(2, dots))
     }
     return mult;
-  }
+  };
   /**
    * @method sumUpUntil
    * For a given event (such as note, rest chord or space) calculates the combined

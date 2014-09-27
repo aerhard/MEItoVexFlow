@@ -44,35 +44,22 @@ define([
       Dynamics.superclass.init.call(this, systemInfo, font);
     },
 
-    // TODO use Vex.Flow.Textnote instead of VF.Annotation!?
-    createVexFromInfos : function (notes_by_id) {
-      var me = this, i, model, note, annot;
-      i = me.allModels.length;
-      while (i--) {
-        model = me.allModels[i];
-        note = notes_by_id[model.startid];
-        if (note) {
-          annot =
-          (new VF.Annotation(Util.getText(model.element).trim())).setFont(me.font.family, me.font.size, me.font.weight).setMeiElement(model.element);
+    addToNote : function(model, note) {
+      var me = this, annot =
+      (new VF.Annotation(Util.getText(model.element).trim())).setFont(me.font.family, me.font.size, me.font.weight).setMeiElement(model.element);
 
-          // TEMPORARY: set width of modifier to zero so voices with modifiers
-          // don't get too much width; remove when the width calculation in
-          // VexFlow does distinguish between different y values when
-          // calculating the width of tickables
-          annot.setWidth(0);
-          if (model.atts.place === 'above') {
-            note.vexNote.addAnnotation(0, annot);
-          } else {
-            note.vexNote.addAnnotation(0, annot.setVerticalJustification(me.BOTTOM));
-          }
-        } else {
-          Logger.warn('Unknown reference', Util.serializeElement(model.element) +
-                                            ' could not be rendered because the reference "' + model.startid +
-                                            '" could not be resolved.');
-        }
+      // TEMPORARY: set width of modifier to zero so voices with modifiers
+      // don't get too much width; remove when the width calculation in
+      // VexFlow does distinguish between different y values when
+      // calculating the width of tickables
+      annot.setWidth(0);
+      if (model.atts.place === 'above') {
+        note.vexNote.addAnnotation(0, annot);
+      } else {
+        note.vexNote.addAnnotation(0, annot.setVerticalJustification(me.BOTTOM));
       }
-
     }
+
   });
 
   return Dynamics;

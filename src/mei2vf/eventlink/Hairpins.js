@@ -87,8 +87,13 @@ define([
 
         me.allVexObjects.push(hairpin);
       } else {
-        Logger.warn('Missing targets', 'Target elements of hairpin could not be found: ');
-        console.log(arguments);
+        if (f_note.vexNote) {
+          Logger.warn('Missing target', 'Hairpin could not be rendered because second note could not be identified.');
+        } else if (l_note.vexNote) {
+          Logger.warn('Missing target', 'Hairpin could not be rendered because first note could not be identified.');
+        } else {
+          Logger.warn('Missing targets', 'Hairpin could not be rendered because first and second note could not be identified.');
+        }
       }
 
     }
