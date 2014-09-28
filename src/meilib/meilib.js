@@ -79,6 +79,7 @@ define([
       return MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter);
     };
     var durationOf_Chord = function (chord, meter, layer_no) {
+      var i, j, childNodes, note;
       if (!layer_no) {
         layer_no = "1";
       }
@@ -87,48 +88,55 @@ define([
       if (dur) {
         return dotsMult * MeiLib.dur2beats(Number(dur), meter);
       }
-      $(chord.getElementsByTagName('note')).each(function () {
-        var lyr_n = this.getAttribute('layer');
-        if (!lyr_n || lyr_n === layer_no) {
-          var dur_note = this.getAttribute('dur');
-          var dotsMult_note = MeiLib.dotsMult(chord);
-          if (!dur && dur_note) {
-            dur = dur_note;
-            dotsMult = dotsMult_note;
-          } else if (dur && dur != dur_note) {
-            throw new MeiLib.RuntimeError('MeiLib.durationOf:E05', 'duration of <chord> is ambiguous.');
+      childNodes = chord.childNodes;
+      for (i = 0, j = childNodes.length; i < j; i++) {
+        if (childNodes[i].localName === 'note') {
+          note = childNodes[i];
+          var lyr_n = note.getAttribute('layer');
+          if (!lyr_n || lyr_n === layer_no) {
+            var dur_note = note.getAttribute('dur');
+            var dotsMult_note = MeiLib.dotsMult(chord);
+            if (!dur && dur_note) {
+              dur = dur_note;
+              dotsMult = dotsMult_note;
+            } else if (dur && dur != dur_note) {
+              throw new MeiLib.RuntimeError('MeiLib.durationOf:E05', 'duration of <chord> is ambiguous. Element: ' +
+                                                                     Util.serializeElement(chord));
+            }
           }
         }
-      });
+      }
+
       if (!dur) {
-        console.warn('@dur of chord must be specified either in <chord> or in at least one of its <note> elements. Proceeding with default @dur="4". Element:');
-        console.log(chord);
-        dur = "4";
+        throw new MeiLib.RuntimeError('MeiLib.durationOf:E06', '@dur of chord must be specified either in <chord> or in at least one of its <note> elements. Proceeding with default @dur="4". Element:' +
+                                                               Util.serializeElement(chord));
       }
       return dotsMult * MeiLib.dur2beats(Number(dur), meter);
     }
 
     var durationOf_Beam = function (beam, meter) {
-      var acc = 0;
-      $(beam).children().each(function () {
+      var acc = 0, i, j, childNodes, childNode;
+      childNodes = beam.childNodes;
+      for (i = 0, j = childNodes.length; i < j; i++) {
+        childNode = childNodes[i];
         var dur_b;
-        var tagName = this.localName;
-        if (IsZeroDurEvent(this, tagName)) {
+        var tagName = childNode.localName;
+        if (IsZeroDurEvent(childNode, tagName)) {
           dur_b = 0;
         } else if (IsSimpleEvent(tagName)) {
-          dur_b = durationOf_SimpleEvent(this, meter);
+          dur_b = durationOf_SimpleEvent(childNode, meter);
         } else if (tagName === 'chord') {
-          dur_b = durationOf_Chord(this, meter);
+          dur_b = durationOf_Chord(childNode, meter);
         } else if (tagName === 'beam') {
-          dur_b = durationOf_Beam(this, meter);
+          dur_b = durationOf_Beam(childNode, meter);
         } else if (tagName === 'tuplet') {
-          dur_b = durationOf_Tuplet(this, meter);
+          dur_b = durationOf_Tuplet(childNode, meter);
         } else {
           dur_b = 0;
           //throw new MeiLib.RuntimeError('MeiLib.durationOf:E03', "Not supported element '" + tagName + "'");
         }
         acc += dur_b;
-      });
+      }
       return acc;
     }
     var durationOf_Tuplet = function (tuplet, meter) {
@@ -399,12 +407,14 @@ define([
 
         // sum up childrens' duration
         beats = 0;
-        children = $(node).children();
+        children = node.childNodes;
         found = false;
         for (i = 0; i < children.length && !found; ++i) {
-          subtotal = sumUpUntil_inNode(children[i]);
-          beats += subtotal.beats;
-          found = subtotal.found;
+          if (children[i].nodeType === 1) {
+            subtotal = sumUpUntil_inNode(children[i]);
+            beats += subtotal.beats;
+            found = subtotal.found;
+          }
         }
         return {
           beats : beats,
@@ -421,7 +431,8 @@ define([
           // ... or find the longest note in the chord ????
           chord_dur = node.getAttribute('dur');
           if (chord_dur) {
-            if ($(node).find("[xml\\:id='" + eventid + "']").length) {
+//            if (node.querySelector("[*|id='" + eventid + "']")) {
+              if ($(node).find("[xml\\:id='" + eventid + "']").length) {
               return {
                 beats : 0,
                 found : true
@@ -433,12 +444,14 @@ define([
               };
             }
           } else {
-            children = $(node).children();
+            children = node.childNodes;
             found = false;
             for (i = 0; i < children.length && !found; ++i) {
-              subtotal = sumUpUntil_inNode(children[i]);
-              beats = subtotal.beats;
-              found = subtotal.found;
+              if (children[i].nodeType === 1) {
+                subtotal = sumUpUntil_inNode(children[i]);
+                beats = subtotal.beats;
+                found = subtotal.found;
+              }
             }
             return {
               beats : beats,

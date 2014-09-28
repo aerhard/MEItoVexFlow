@@ -98,9 +98,22 @@ define([
     // this.sourceList[xml_id] = serializer.serializeToString(src);
     // }
     // return this.sourceList;
-    this.sources = $(this.rich_head.getElementsByTagName('sourceDesc')).children();
+
+    //    this.sources = $(this.rich_head.getElementsByTagName('sourceDesc')).children();
+
+    var elementFilter = function (node) {
+      return node.nodeType === 1;
+    };
+
+    var sourceDesc = this.rich_head.getElementsByTagName('sourceDesc')[0];
+    if (sourceDesc){
+      this.sources = Array.prototype.filter.call(sourceDesc.childNodes, elementFilter);
+    } else {
+      this.sources = [];
+    }
+
     return this.sources;
-  }
+  };
   /**
    * @method parseEditorList
    */
@@ -113,9 +126,22 @@ define([
     // var xml_id = $(edtr).attr('xml:id');
     // this.editorList[xml_id] = edtr;
     // }
-    this.editors = $(this.rich_head.getElementsByTagName('titleStmt')).children('editor');
+
+    //    this.editors = $(this.rich_head.getElementsByTagName('titleStmt')).children('editor');
+
+    var editorFilter = function (node) {
+      return node.localName === 'editor';
+    };
+
+    var titleStmt = this.rich_head.getElementsByTagName('titleStmt')[0];
+    if (titleStmt) {
+      this.editors = Array.prototype.filter.call(titleStmt.childNodes, editorFilter);
+    } else {
+      this.editors = [];
+    }
+
     return this.editors;
-  }
+  };
   /**
    * @method parseALTs
    * Extracts information about the elements encoding alternatives. The method
@@ -137,10 +163,10 @@ define([
       AppsItem.altitems = {};
       for (j = 0; j < altitems.length; j++) {
         var altitem = altitems[j];
-        var source = $(altitem).attr('source');
-        var resp = $(altitem).attr('resp');
-        var n = $(altitem).attr('n');
-        var tagname = $(altitem).prop('localName');
+        var source = altitem.getAttribute('source');
+        var resp = altitem.getAttribute('resp');
+        var n = altitem.getAttribute('n');
+        var tagname = altitem.localName;
         var varXMLID = MeiLib.XMLID(altitem);
         AppsItem.altitems[varXMLID] = new MeiLib.Variant(altitem, varXMLID, tagname, source, resp, n);
       }
@@ -153,11 +179,11 @@ define([
   MeiLib.MeiDoc.prototype.initAltgroups = function () {
     var i, j, altgroup, token_list;
     //var ALTs = this.ALTs;
-    var annots = $(this.rich_score).find('annot[type="appGrp"], annot[type="choiceGrp"]');
+    var annots = this.rich_score.querySelectorAll('annot[type="appGrp"], annot[type="choiceGrp"]');
     this.altgroups = {};
     for (i = 0; i < annots.length; i++) {
       altgroup = [];
-      token_list = $(annots[i]).attr('plist').split(' ');
+      token_list = annots[i].getAttribute('plist').split(' ');
       for (j = 0; j < token_list.length; j++) {
         altgroup.push(token_list[j].replace('#', ''));
       }
@@ -266,14 +292,24 @@ define([
     var this_ALTs = this.ALTs;
     var xmlDoc = this.xmlDoc;
     var me = this;
-    $(alts).each(function (i, alt) {
+
+    var i, j;
+    for (i = 0, j = alts.length; i < j; i++) {
+      alt = alts[i];
+
+
       var alt_xml_id = MeiLib.XMLID(alt);
       var replacement = altReplacements[alt_xml_id];
       if (replacement) {
         // apply replacement, or...
         alt_item_xml_id = replacement.xmlID;
+
+//        var alt_item2insert = this_sectionview_score.querySelector(replacement.tagname + '[*|id="' + alt_item_xml_id +
+//                                                                   '"]');
+
         var alt_item2insert = $(this_sectionview_score).find(replacement.tagname + '[xml\\:id="' + alt_item_xml_id +
                                                              '"]')[0];
+
         if (!alt_item2insert) {
           throw new MeiLib.RuntimeError('MeiLib.MeiDoc.prototype.initSectionView():E01', "Cannot find <lem>, <rdg>, <sic>, or <corr> with @xml:id '" +
                                                                                          alt_item_xml_id + "'.");
@@ -290,9 +326,9 @@ define([
       parent.insertBefore(PIStart, alt);
       if (alt_item2insert) {
         var childNodes = alt_item2insert.childNodes;
-        var j;
-        for (j = 0; j < childNodes.length; ++j) {
-          parent.insertBefore(childNodes.item(j).cloneNode(true), alt);
+        var k;
+        for (k = 0; k < childNodes.length; ++k) {
+          parent.insertBefore(childNodes.item(k).cloneNode(true), alt);
         }
       }
       var PIEnd = xmlDoc.createProcessingInstruction('MEI2VF', 'rdgEnd="' + alt_xml_id + '"');
@@ -303,11 +339,11 @@ define([
       if (this_ALTs[alt_xml_id].altitems[alt_item_xml_id]) {
         this_sectionplane[alt_xml_id].push(this_ALTs[alt_xml_id].altitems[alt_item_xml_id]);
       }
-    });
+    }
 
     return this.sectionview_score;
 
-  }
+  };
   /**
    * @method updateSectionView
    * Updates the sectionview score (plain MEI) by replacing one or more
@@ -344,7 +380,7 @@ define([
         }
         //      console.log('vars_match: ' + res);
         return res;
-      }
+      };
       var max = 0;
       var corresponding_item, M;
       for (var alt_item_id in altitems) {
@@ -364,10 +400,16 @@ define([
       if (typeof sectionplaneUpdate[altID] === 'string') {
         sectionplaneUpdate[altID] = [sectionplaneUpdate[altID]];
       }
-      if (sectionplaneUpdate[altID].length > 0) {
-        $(sectionplaneUpdate[altID]).each(function () {
-          altitems2insert.push(this_ALTs[altID].altitems[this]);
-        });
+      var i, j;
+      j = sectionplaneUpdate[altID].length;
+      if (j > 0) {
+        for (i = 0; i < j; i++) {
+          altitems2insert.push(this_ALTs[altID].altitems[sectionplaneUpdate[altID][i]]);
+        }
+        //        $(sectionplaneUpdate[altID]).each(function () {
+        //          altitems2insert.push(this_ALTs[altID].altitems[this]);
+        //        });
+
       } else {
         var defaultAltItem = this.ALTs[altID].getDefaultItem();
         if (defaultAltItem) {
@@ -380,13 +422,18 @@ define([
         // with the
         // altitems that correspons to the any of the alt item that are being
         // inserted.
-        var i;
         for (i = 0; i < altgroup.length; i++) {
           altID__ = altgroup[i];
           var altitems2insert__ = [];
-          $(altitems2insert).each(function () {
-            altitems2insert__.push(corresponding_alt_item(this_ALTs[altID__].altitems, this))
-          });
+
+          var k, l;
+          for (k = 0, l = altitems2insert.length; k < l; k++) {
+            altitems2insert__.push(corresponding_alt_item(this_ALTs[altID__].altitems, altitems2insert[k]));
+          }
+          //          $(altitems2insert).each(function () {
+          //            altitems2insert__.push(corresponding_alt_item(this_ALTs[altID__].altitems, this))
+          //          });
+
           this.replaceAltInstance({
             appXmlID : altID__,
             replaceWith : altitems2insert__
@@ -420,22 +467,33 @@ define([
       return res;
     };
     var app_xml_id = alt_inst_update.appXmlID;
+
+
     var parent = $(this.sectionview_score).find('[xml\\:id=' + this.ALTs[app_xml_id].parentID + ']')[0];
     if (typeof parent === 'undefined') {
       return;
     }
+
+//    var parent = this.sectionview_score.querySelector('[*|id=' + this.ALTs[app_xml_id].parentID + ']');
+//    if (parent === null) {
+//      return;
+//    }
+
     var children = parent.childNodes;
 
     var replaceWith = alt_inst_update.replaceWith;
     var nodes2insert = [];
     var this_rich_score = this.rich_score;
     if (replaceWith) {
-      var i;
+      var i, j;
       for (i = 0; i < replaceWith.length; ++i) {
         var replaceWith_item = replaceWith[i];
         var replaceWith_xmlID = replaceWith_item.xmlID;
+
         var var_inst_elem = $(this_rich_score).find(replaceWith_item.tagname + '[xml\\:id="' + replaceWith_xmlID +
                                                     '"]')[0];
+//        var var_inst_elem = this_rich_score.querySelector(replaceWith_item.tagname + '[*|id="' + replaceWith_xmlID +
+//                                                          '"]');
         nodes2insert = extendWithNodeList(nodes2insert, var_inst_elem.childNodes);
       }
     }
@@ -445,12 +503,14 @@ define([
       data1 = data1.replace("'", '"');
       data2 = data2.replace("'", '"');
       return data1 === data2;
-    }
+    };
+
     var inside_inst = false;
     var found = false;
     var insert_before_this = null;
-    $(children).each(function () {
-      var child = this;
+
+    for (i = 0, j = children.length; i < j; i++) {
+      var child = children[i];
       if (child.nodeType === 7) {
         if (child.nodeName === 'MEI2VF' && match_pseudo_attrValues(child.nodeValue, 'rdgStart="' + app_xml_id + '"')) {
           inside_inst = true;
@@ -462,8 +522,10 @@ define([
         }
       } else if (inside_inst) {
         parent.removeChild(child);
+        i--;
+        j--;
       }
-    });
+    }
 
     if (!found) {
       throw "processing instruction not found";
@@ -483,14 +545,15 @@ define([
       };
     }
 
-    $.each(nodes2insert, function () {
-      insert_method(this.cloneNode(true));
-    });
+    for (i = 0, j = nodes2insert.length; i < j; i++) {
+      insert_method(nodes2insert[i].cloneNode(true));
+    }
 
     this.sectionplane[app_xml_id] = alt_inst_update.replaceWith;
 
     return this.sectionview_score;
-  }
+  };
+
   /**
    * @method getSectionViewSlice
    * Get a slice of the sectionview_score.

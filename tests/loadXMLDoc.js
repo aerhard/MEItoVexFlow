@@ -11,8 +11,9 @@ function loadXMLDoc(xmlDoc) {
   xmlhttp.send();
   //  var result = xmlhttp.responseXML;
   var result = createXMLDoc(xmlhttp.responseText.replace(/(<[\/]?)[\w]+:/g, '$1'));
-  if (!result)
-    throw "Error loading xml document: '" + xmlDoc + "' cannot be loaded!"
+  if (!result) {
+    throw new Error("Error loading xml document: '" + xmlDoc + "' cannot be loaded!");
+  }
   return result;
 }
 

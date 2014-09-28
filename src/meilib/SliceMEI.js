@@ -1,6 +1,4 @@
-define([
-  'jquery',
-], function ($) {
+define(function () {
 
   if (!window.MeiLib) window.MeiLib = {};
 
@@ -56,19 +54,25 @@ define([
      * If it's kept, remove unwanted staves
      */
     var keepOrRemove = function (elem, inside_slice, staffNSelector, params) {
-      var i, j, staffElements, staffElement, n;
+      var i, j, staffElements, staffElement, n, removed = false;
       if (!inside_slice) {
         if (elem.localName === 'measure' && Number(elem.getAttribute('n')) === params.start_n) {
           inside_slice = true;
         } else {
           elem.parentNode.removeChild(elem);
+          removed = true;
         }
       }
 
       if (inside_slice) {
         // remove unwanted staff
         if (params.staves && elem.nodeType === 1) {
-          $(elem).find('[staff]').remove(':not(' + staffNSelector + ')');
+//          $(elem).find('[staff]').remove(':not(' + staffNSelector + ')');
+
+          var elementsToRemove = elem.querySelectorAll('[staff]' + staffNSelector);
+          for (i= 0, j=elementsToRemove.length;i<j;i++){
+            elementsToRemove[i].parentNode.removeChild(elementsToRemove[i]);
+          }
 
           staffElements = elem.getElementsByTagName('staff');
           for (i = 0, j = staffElements.length; i < j; i++) {
@@ -87,26 +91,27 @@ define([
           inside_slice = false;
         }
       }
-      return inside_slice;
+      return {inside_slice: inside_slice, removed: removed};
     };
 
     var paramsStaves = params.staves;
     if (paramsStaves) {
       var staffDefSelector = '';
       var staffNSelector = '';
-      var commaspace = '';
       for (i = 0, j = paramsStaves.length; i < j; i++) {
-        staffDefSelector += commaspace + '[n="' + paramsStaves[i] + '"]';
-        staffNSelector += commaspace + '[staff="' + paramsStaves[i] + '"]';
-        if (i === 0) {
-          commaspace = ', ';
-        }
+        staffDefSelector += ':not([n="' + paramsStaves[i] + '"])';
+        staffNSelector += ':not([staff="' + paramsStaves[i] + '"])';
       }
     }
 
     var slice = MEI.cloneNode(true);
     if (paramsStaves) {
-      $(slice.getElementsByTagName('staffDef')).remove(':not(' + staffDefSelector + ')');
+      var staffDefsToRemove = slice.querySelectorAll('staffDef' + staffDefSelector);
+
+      for (i= 0, j=staffDefsToRemove.length;i<j;i++){
+        staffDefsToRemove[i].parentNode.removeChild(staffDefsToRemove[i]);
+      }
+      //$(slice.getElementsByTagName('staffDef')).remove(':not(' + staffDefSelector + ')');
     }
     if (params.noClef || params.noKey || params.noMeter) {
       var scoreDef = slice.getElementsByTagName('scoreDef')[0];
@@ -129,22 +134,41 @@ define([
      * the slice. Remove
      */
     var section_children = section.childNodes;
+    var sectionChild;
 
-    $(section_children).each(function () {
+//    $(section_children).each(function () {
 
-      if (this.localName === 'ending') {
-        var ending_children = this.childNodes;
-        $(ending_children).each(function () {
-          inside_slice = keepOrRemove(this, inside_slice, staffNSelector, params);
-        });
-        if (this.getElementsByTagName('measure').length === 0) {
-          this.parentNode.removeChild(this);
+    var o, p, q, r, res;
+    for (o=0,p=section_children.length;o<p;o++) {
+
+      sectionChild = section_children[o];
+
+      if (sectionChild.localName === 'ending') {
+        var ending_children = sectionChild.childNodes;
+
+        for (q=0,r=ending_children.length;q<r;q++){
+          res = keepOrRemove(ending_children[q], inside_slice, staffNSelector, params);
+          inside_slice = res.inside_slice;
+          if (res.removed){
+            q--;
+            r--;
+          }
+        }
+        if (sectionChild.getElementsByTagName('measure').length === 0) {
+          sectionChild.parentNode.removeChild(sectionChild);
+          o--;
+          p--;
         }
       } else {
-        inside_slice = keepOrRemove(this, inside_slice, staffNSelector, params);
+        res = keepOrRemove(sectionChild, inside_slice, staffNSelector, params);
+        inside_slice = res.inside_slice;
+        if (res.removed){
+          o--;
+          p--;
+        }
       }
 
-    });
+    }
 
     return slice;
   };
