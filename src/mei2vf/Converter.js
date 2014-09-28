@@ -414,14 +414,18 @@ define([
      * be processed further or drawn immediately to a canvas via {@link #draw}.
      * @method process
      * @chainable
-     * @param {XMLDocument} xmlDoc the XML document
+     * @param {XMLDocument} xmlDoc an XML document or element containing the MEI music to render 
      * @return {Converter} this
      */
     process : function (xmlDoc) {
       var me = this;
       me.reset();
 
-      me.processScoreChildren(xmlDoc);
+		if (xmlDoc.localName === 'score') {
+			me.processScoreChildren(xmlDoc);	
+		} else {
+			me.processScoreChildren(xmlDoc.querySelector('score'));
+		}
 
       //      me.systemInfo.processScoreDef(xmlDoc.getElementsByTagName('scoreDef')[0]);
       //      me.processSections(xmlDoc);
