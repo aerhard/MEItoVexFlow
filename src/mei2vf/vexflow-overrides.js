@@ -4,15 +4,15 @@ define([
 ], function (VF, Vex, undefined) {
 
   VF.Tremolo.prototype.draw = function () {
-    if (!this.context) throw new Vex.RERR("NoContext",
-      "Can't draw Tremolo without a context.");
-    if (!(this.note && (this.index != null))) throw new Vex.RERR("NoAttachedNote",
-      "Can't draw Tremolo without a note and index.");
+    if (!this.context) throw new Vex.RERR("NoContext", "Can't draw Tremolo without a context.");
+    if (!(this.note && (this.index != null))) {
+      throw new Vex.RERR("NoAttachedNote", "Can't draw Tremolo without a note and index.");
+    }
 
 
     var stem = this.note.getStem();
 
-    var start, x,y;
+    var start, x, y;
 
     if (this.note.duration === 'w') {
       x = (stem.x_end + stem.x_begin) / 2;
@@ -33,8 +33,7 @@ define([
 
     x += this.shift_right;
     for (var i = 0; i < this.num; ++i) {
-      Vex.Flow.renderGlyph(this.context, x, y,
-        this.render_options.font_scale, this.code);
+      Vex.Flow.renderGlyph(this.context, x, y, this.render_options.font_scale, this.code);
       y += this.y_spacing;
     }
   };
@@ -53,6 +52,201 @@ define([
   };
   VF.Articulation.prototype.getMeiElement = function () {
     return this.meiElement;
+  };
+  VF.Ornament.prototype.setMeiElement = function (element) {
+    this.meiElement = element;
+    return this;
+  };
+  VF.Ornament.prototype.getMeiElement = function () {
+    return this.meiElement;
+  };
+  VF.ClefNote.prototype.setMeiElement = function (element) {
+    this.meiElement = element;
+    return this;
+  };
+  VF.ClefNote.prototype.getMeiElement = function () {
+    return this.meiElement;
+  };
+
+  VF.Ornament.prototype.draw = function () {
+    if (!this.context) throw new Vex.RERR("NoContext", "Can't draw Ornament without a context.");
+    if (!(this.note && (this.index !== null))) {
+      throw new Vex.RERR("NoAttachedNote", "Can't draw Ornament without a note and index.");
+    }
+
+    var ctx = this.context;
+    var stem_direction = this.note.getStemDirection();
+    var stave = this.note.getStave();
+
+    // Get stem extents
+    var stem_ext = this.note.getStem().getExtents();
+    var top, bottom;
+    if (stem_direction === Vex.Flow.StaveNote.STEM_DOWN) {
+      top = stem_ext.baseY;
+      bottom = stem_ext.topY;
+    } else {
+      top = stem_ext.topY;
+      bottom = stem_ext.baseY;
+    }
+
+    // TabNotes don't have stems attached to them. Tab stems are rendered
+    // outside the stave.
+    var is_tabnote = this.note.getCategory() === 'tabnotes';
+    if (is_tabnote) {
+      if (this.note.hasStem()) {
+        if (stem_direction === Vex.Flow.StaveNote.STEM_UP) {
+          bottom = stave.getYForBottomText(this.text_line - 2);
+        } else if (stem_direction === Vex.Flow.StaveNote.STEM_DOWN) {
+          top = stave.getYForTopText(this.text_line - 1.5);
+        }
+      } else { // Without a stem
+        top = stave.getYForTopText(this.text_line - 1);
+        bottom = stave.getYForBottomText(this.text_line - 2);
+      }
+    }
+
+    var is_on_head = stem_direction === Vex.Flow.StaveNote.STEM_DOWN;
+    var spacing = stave.getSpacingBetweenLines();
+    var line_spacing = 1;
+
+    // Beamed stems are longer than quarter note stems, adjust accordingly
+    if (!is_on_head && this.note.beam) {
+      line_spacing += 0.5;
+    }
+
+    var total_spacing = spacing * (this.text_line + line_spacing);
+    var glyph_y_between_lines = (top - 7) - total_spacing;
+
+    // Get initial coordinates for the modifier position
+    var start = this.note.getModifierStartXY(this.position, this.index);
+    var glyph_x = start.x + this.ornament.shift_right;
+    var glyph_y = Math.min(stave.getYForTopText(this.text_line) - 3, glyph_y_between_lines);
+    glyph_y += this.ornament.shift_up + this.y_shift;
+
+    // Ajdust x position if ornament is delayed
+    if (this.delayed) {
+      glyph_x += this.ornament.width;
+      var next_context = Vex.Flow.TickContext.getNextContext(this.note.getTickContext());
+      if (next_context) {
+        glyph_x += (next_context.getX() - glyph_x) * 0.5;
+      } else {
+        glyph_x += (stave.x + stave.width - glyph_x) * 0.5;
+      }
+    }
+
+    var ornament = this;
+
+    function drawAccidental(ctx, code, upper) {
+      var acc_mods = {
+        "n" : {
+          shift_x : 1,
+          shift_y_upper : 0,
+          shift_y_lower : 0,
+          height : 17
+        },
+        "#" : {
+          shift_x : 0,
+          shift_y_upper : -2,
+          shift_y_lower : -2,
+          height : 20
+        },
+        "b" : {
+          shift_x : 1,
+          shift_y_upper : 0,
+          shift_y_lower : 3,
+          height : 18
+        },
+        "##" : {
+          shift_x : 0,
+          shift_y_upper : 0,
+          shift_y_lower : 0,
+          height : 12,
+        },
+        "bb" : {
+          shift_x : 0,
+          shift_y_upper : 0,
+          shift_y_lower : 4,
+          height : 17
+        },
+        "db" : {
+          shift_x : -3,
+          shift_y_upper : 0,
+          shift_y_lower : 4,
+          height : 17
+        },
+        "bbs" : {
+          shift_x : 0,
+          shift_y_upper : 0,
+          shift_y_lower : 4,
+          height : 17
+        },
+        "d" : {
+          shift_x : 0,
+          shift_y_upper : 0,
+          shift_y_lower : 0,
+          height : 17
+        },
+        "++" : {
+          shift_x : -2,
+          shift_y_upper : -6,
+          shift_y_lower : -3,
+          height : 22
+        },
+        "+" : {
+          shift_x : 1,
+          shift_y_upper : -4,
+          shift_y_lower : -2,
+          height : 20
+        }
+      };
+
+      var accidental = Vex.Flow.accidentalCodes(code);
+
+      var acc_x = glyph_x - 3;
+      var acc_y = glyph_y + 2;
+
+      // Special adjustments for trill glyph
+      if (upper) {
+        acc_y -= mods ? mods.height : 18;
+        acc_y += ornament.type === "tr" ? -8 : 0;
+      } else {
+        acc_y += ornament.type === "tr" ? -6 : 0;
+      }
+
+      // Fine tune position of accidental glyph
+      var mods = acc_mods[code];
+      if (mods) {
+        acc_x += mods.shift_x;
+        acc_y += upper ? mods.shift_y_upper : mods.shift_y_lower;
+      }
+
+      // Render the glyph
+      var scale = ornament.render_options.font_scale / 1.3;
+      Vex.Flow.renderGlyph(ctx, acc_x, acc_y, scale, accidental.code);
+
+      // If rendered a bottom accidental, increase the y value by the
+      // accidental height so that the ornament's glyph is shifted up
+      if (!upper) {
+        glyph_y -= mods ? mods.height : 18;
+      }
+    }
+
+    // Draw lower accidental for ornament
+    if (this.accidental_lower) {
+      drawAccidental(ctx, this.accidental_lower, false, glyph_x, glyph_y);
+    }
+
+    Vex.Flow.renderGlyph(ctx, glyph_x, glyph_y, this.render_options.font_scale, this.ornament.code);
+
+    // ADDITION:
+    this.x = glyph_x;
+    this.y = glyph_y;
+
+    // Draw upper accidental for ornament
+    if (this.accidental_upper) {
+      drawAccidental(ctx, this.accidental_upper, true, glyph_x, glyph_y);
+    }
+
   };
 
 
@@ -645,10 +839,6 @@ define([
   };
 
 
-
-
-
-
   VF.Annotation.prototype.draw = function () {
     if (!this.context) throw new Vex.RERR("NoContext", "Can't draw text annotation without a context.");
     if (!this.note) throw new Vex.RERR("NoNoteForAnnotation", "Can't draw text annotation without an attached note.");
@@ -735,18 +925,9 @@ define([
     // END ADDITION
 
 
-    L("Rendering annotation: ", this.text, x, y);
     this.context.fillText(this.text, x, y);
     this.context.restore();
   };
-
-
-
-
-
-
-
-
 
 
   // VexFlow - Music Engraving for HTML5
@@ -1120,8 +1301,7 @@ define([
       // Bar Line functions
       setBegBarType : function (type) {
         // Only valid bar types at beginning of stave is none, single or begin repeat
-        if (type == VF.Barline.type.SINGLE || type == VF.Barline.type.REPEAT_BEGIN ||
-            type == VF.Barline.type.NONE) {
+        if (type == VF.Barline.type.SINGLE || type == VF.Barline.type.REPEAT_BEGIN || type == VF.Barline.type.NONE) {
           this.modifiers[0] = new VF.Barline(type, this.x);
         }
         return this;
@@ -1474,46 +1654,6 @@ define([
   }());
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
   //
   // ## Description
@@ -1521,7 +1661,7 @@ define([
   // This file implements `Beams` that span over a set of `StemmableNotes`.
   //
   // Requires: vex.js, vexmusic.js, note.js
-  Vex.Flow.Beam = (function() {
+  Vex.Flow.Beam = (function () {
     function Beam(notes, auto_stem) {
       if (arguments.length > 0) this.init(notes, auto_stem);
     }
@@ -1530,7 +1670,7 @@ define([
 
     // ## Prototype Methods
     Beam.prototype = {
-      init: function(notes, auto_stem) {
+      init : function (notes, auto_stem) {
         if (!notes || notes == []) {
           throw new Vex.RuntimeError("BadArguments", "No notes provided for beam.");
         }
@@ -1543,8 +1683,7 @@ define([
         this.ticks = notes[0].getIntrinsicTicks();
 
         if (this.ticks >= Vex.Flow.durationToTicks("4")) {
-          throw new Vex.RuntimeError("BadArguments",
-            "Beams can only be applied to notes shorter than a quarter note.");
+          throw new Vex.RuntimeError("BadArguments", "Beams can only be applied to notes shorter than a quarter note.");
         }
 
         var i; // shared iterator
@@ -1562,11 +1701,11 @@ define([
 
         var stem_direction = this.stem_direction;
         // Figure out optimal stem direction based on given notes
-        if (auto_stem && notes[0].getCategory() === 'stavenotes')  {
+        if (auto_stem && notes[0].getCategory() === 'stavenotes') {
           stem_direction = calculateStemDirection(notes);
         } else if (auto_stem && notes[0].getCategory() === 'tabnotes') {
           // Auto Stem TabNotes
-          var stem_weight = notes.reduce(function(memo, note) {
+          var stem_weight = notes.reduce(function (memo, note) {
             return memo + note.stem_direction;
           }, 0);
 
@@ -1588,30 +1727,35 @@ define([
         this.beam_count = this.getBeamCount();
         this.break_on_indices = [];
         this.render_options = {
-          beam_width: 5,
-          max_slope: 0.25,
-          min_slope: -0.25,
-          slope_iterations: 20,
-          slope_cost: 100,
-          show_stemlets: false,
-          stemlet_extension: 7,
-          partial_beam_length: 10
+          beam_width : 5,
+          max_slope : 0.25,
+          min_slope : -0.25,
+          slope_iterations : 20,
+          slope_cost : 100,
+          show_stemlets : false,
+          stemlet_extension : 7,
+          partial_beam_length : 10
         };
       },
 
       // The the rendering `context`
-      setContext: function(context) { this.context = context; return this; },
+      setContext : function (context) {
+        this.context = context;
+        return this;
+      },
 
       // Get the notes in this beam
-      getNotes: function() { return this.notes; },
+      getNotes : function () {
+        return this.notes;
+      },
 
       // Get the max number of beams in the set of notes
-      getBeamCount: function(){
-        var beamCounts =  this.notes.map(function(note) {
+      getBeamCount : function () {
+        var beamCounts = this.notes.map(function (note) {
           return note.getGlyph().beam_count;
         });
 
-        var maxBeamCount =  beamCounts.reduce(function(max, beamCount) {
+        var maxBeamCount = beamCounts.reduce(function (max, beamCount) {
           return beamCount > max ? beamCount : max;
         });
 
@@ -1619,18 +1763,18 @@ define([
       },
 
       // Set which note `indices` to break the secondary beam at
-      breakSecondaryAt: function(indices) {
+      breakSecondaryAt : function (indices) {
         this.break_on_indices = indices;
         return this;
       },
 
       // Return the y coordinate for linear function
-      getSlopeY: function(x, first_x_px, first_y_px, slope) {
+      getSlopeY : function (x, first_x_px, first_y_px, slope) {
         return first_y_px + ((x - first_x_px) * slope);
       },
 
       // Calculate the best possible slope for the provided notes
-      calculateSlope: function() {
+      calculateSlope : function () {
         var first_note = this.notes[0];
         var first_y_px = first_note.getStemExtents().topY;
         var first_x_px = first_note.getStemX();
@@ -1642,9 +1786,7 @@ define([
         var y_shift = 0;
 
         // iterate through slope values to find best weighted fit
-        for (var slope = this.render_options.min_slope;
-          slope <= this.render_options.max_slope;
-          slope += inc) {
+        for (var slope = this.render_options.min_slope; slope <= this.render_options.max_slope; slope += inc) {
           var total_stem_extension = 0;
           var y_shift_tmp = 0;
 
@@ -1658,7 +1800,7 @@ define([
 
             // beam needs to be shifted up to accommodate note
             if (y_px * this.stem_direction < slope_y_px * this.stem_direction) {
-              var diff =  Math.abs(y_px - slope_y_px);
+              var diff = Math.abs(y_px - slope_y_px);
               y_shift_tmp += diff * -this.stem_direction;
               total_stem_extension += (diff * i);
             } else { // beam overshoots note, account for the difference
@@ -1668,8 +1810,7 @@ define([
           }
 
           var last_note = this.notes[this.notes.length - 1];
-          var first_last_slope = ((last_note.getStemExtents().topY - first_y_px) /
-                                  (last_note.getStemX() - first_x_px));
+          var first_last_slope = ((last_note.getStemExtents().topY - first_y_px) / (last_note.getStemX() - first_x_px));
           // most engraving books suggest aiming for a slope about half the angle of the
           // difference between the first and last notes' stem length;
           var ideal_slope = first_last_slope / 2;
@@ -1677,8 +1818,7 @@ define([
 
           // This tries to align most beams to something closer to the ideal_slope, but
           // doesn't go crazy. To disable, set this.render_options.slope_cost = 0
-          var cost = this.render_options.slope_cost * distance_from_ideal +
-                     Math.abs(total_stem_extension);
+          var cost = this.render_options.slope_cost * distance_from_ideal + Math.abs(total_stem_extension);
 
           // update state when a more ideal slope is found
           if (cost < min_cost) {
@@ -1694,7 +1834,7 @@ define([
 
       // Create new stems for the notes in the beam, so that each stem
       // extends into the beams.
-      applyStemExtensions: function(){
+      applyStemExtensions : function () {
         var first_note = this.notes[0];
         var first_y_px = first_note.getStemExtents().topY;
         var first_x_px = first_note.getStemX();
@@ -1718,74 +1858,70 @@ define([
               var centerGlyphX = note.getCenterGlyphX();
 
               var width = this.render_options.beam_width;
-              var total_width = ((this.beam_count - 1)* width * 1.5) + width;
+              var total_width = ((this.beam_count - 1) * width * 1.5) + width;
 
-              var stemlet_height = (total_width - y_displacement +
-                                    this.render_options.stemlet_extension);
+              var stemlet_height = (total_width - y_displacement + this.render_options.stemlet_extension);
 
-              var beam_y = this.getSlopeY(centerGlyphX, first_x_px,
-                first_y_px, this.slope) + this.y_shift;
+              var beam_y = this.getSlopeY(centerGlyphX, first_x_px, first_y_px, this.slope) + this.y_shift;
               var start_y = beam_y + (Vex.Flow.Stem.HEIGHT * this.stem_direction);
               var end_y = beam_y + (stemlet_height * this.stem_direction);
 
               // Draw Stemlet
               note.setStem(new Vex.Flow.Stem({
-                x_begin: centerGlyphX,
-                x_end: centerGlyphX,
-                y_bottom: this.stem_direction === 1 ? end_y : start_y,
-                y_top: this.stem_direction === 1 ? start_y : end_y,
-                y_extend: y_displacement,
-                stem_extension: -1, // To avoid protruding through the beam
-                stem_direction: this.stem_direction
+                x_begin : centerGlyphX,
+                x_end : centerGlyphX,
+                y_bottom : this.stem_direction === 1 ? end_y : start_y,
+                y_top : this.stem_direction === 1 ? start_y : end_y,
+                y_extend : y_displacement,
+                stem_extension : -1, // To avoid protruding through the beam
+                stem_direction : this.stem_direction
               }));
             }
 
             continue;
           }
 
-          var slope_y = this.getSlopeY(x_px, first_x_px, first_y_px,
-            this.slope) + this.y_shift;
+          var slope_y = this.getSlopeY(x_px, first_x_px, first_y_px, this.slope) + this.y_shift;
 
           note.setStem(new Vex.Flow.Stem({
-            x_begin: x_px - (Vex.Flow.STEM_WIDTH/2),
-            x_end: x_px,
-            y_top: this.stem_direction === 1 ? top_y_px : base_y_px,
-            y_bottom: this.stem_direction === 1 ? base_y_px :  top_y_px ,
-            y_extend: y_displacement,
-            stem_extension: Math.abs(top_y_px - slope_y) - Stem.HEIGHT - 1,
-            stem_direction: this.stem_direction
+            x_begin : x_px - (Vex.Flow.STEM_WIDTH / 2),
+            x_end : x_px,
+            y_top : this.stem_direction === 1 ? top_y_px : base_y_px,
+            y_bottom : this.stem_direction === 1 ? base_y_px : top_y_px,
+            y_extend : y_displacement,
+            stem_extension : Math.abs(top_y_px - slope_y) - Stem.HEIGHT - 1,
+            stem_direction : this.stem_direction
           }));
         }
       },
 
       // Get the x coordinates for the beam lines of specific `duration`
-      getBeamLines: function(duration) {
+      getBeamLines : function (duration) {
         var beam_lines = [];
-        var flipped_beam_lines = [];
         var beam_started = false;
         var current_beam;
         var partial_beam_length = this.render_options.partial_beam_length;
 
-        function determinePartialSide (prev_note, next_note){
+        function determinePartialSide(prev_note, next_note) {
           // Compare beam counts and store differences
           var unshared_beams = 0;
           if (next_note && prev_note) {
             unshared_beams = prev_note.getBeamCount() - next_note.getBeamCount();
           }
 
-//          var left_partial = duration !== "8" && unshared_beams > 0;
+          //          var left_partial = duration !== "8" && unshared_beams > 0;
           var right_partial = duration !== "8" && unshared_beams < 0;
 
           return {
-            left: prev_note,
-            right: right_partial
+            left : prev_note,
+            right : right_partial
           };
         }
 
         for (var i = 0; i < this.notes.length; ++i) {
           var note = this.notes[i];
-          var prev_note = this.notes[i-1];
-          var next_note = this.notes[i+1];
+          var prev_note = this.notes[i - 1];
+          var next_note = this.notes[i + 1];
           var ticks = note.getIntrinsicTicks();
           var partial = determinePartialSide(prev_note, next_note);
           var stem_x = note.isRest() ? note.getCenterGlyphX() : note.getStemX();
@@ -1793,14 +1929,17 @@ define([
           // Check whether to apply beam(s)
           if (ticks < Vex.Flow.durationToTicks(duration)) {
             if (!beam_started) {
-              var new_line = { start: stem_x, end: null, flipped: note.getStemDirection() !== this.stem_direction};
+              if (!note.isRest()) {
 
-              if (partial.left && !partial.right) {
-                new_line.end = stem_x - partial_beam_length;
+                var new_line = { start : stem_x, end : null, flipped : note.getStemDirection() !== this.stem_direction};
+
+                if (partial.left && !partial.right) {
+                  new_line.end = stem_x - partial_beam_length;
+                }
+
+                beam_lines.push(new_line);
+                beam_started = true;
               }
-
-              beam_lines.push(new_line);
-              beam_started = true;
             } else {
               current_beam = beam_lines[beam_lines.length - 1];
               current_beam.end = stem_x;
@@ -1809,7 +1948,7 @@ define([
               var should_break = this.break_on_indices.indexOf(i) !== -1;
               // Shorter than or eq an 8th note duration
               var can_break = parseInt(duration, 10) >= 8;
-              if (should_break  && can_break) {
+              if (should_break && can_break) {
                 beam_started = false;
               }
             }
@@ -1820,8 +1959,7 @@ define([
               current_beam = beam_lines[beam_lines.length - 1];
               if (current_beam.end == null) {
                 // single note
-                current_beam.end = current_beam.start +
-                                   partial_beam_length;
+                current_beam.end = current_beam.start + partial_beam_length;
               } else {
                 // we don't care
               }
@@ -1835,8 +1973,7 @@ define([
           current_beam = beam_lines[beam_lines.length - 1];
           if (current_beam.end == null) {
             // single note
-            current_beam.end = current_beam.start -
-                               partial_beam_length;
+            current_beam.end = current_beam.start - partial_beam_length;
           }
         }
 
@@ -1844,8 +1981,8 @@ define([
       },
 
       // Render the stems for each notes
-      drawStems: function() {
-        this.notes.forEach(function(note) {
+      drawStems : function () {
+        this.notes.forEach(function (note) {
           if (note.getStem()) {
             note.getStem().setContext(this.context).draw();
           }
@@ -1853,11 +1990,16 @@ define([
       },
 
       // Render the beam lines
-      drawBeamLines: function() {
-        if (!this.context) throw new Vex.RERR("NoCanvasContext",
-          "Can't draw without a canvas context.");
+      drawBeamLines : function () {
+        if (!this.context) throw new Vex.RERR("NoCanvasContext", "Can't draw without a canvas context.");
 
-        var valid_beam_durations = ["4", "8", "16", "32", "64"];
+        var valid_beam_durations = [
+          "4",
+          "8",
+          "16",
+          "32",
+          "64"
+        ];
 
         var first_note = this.notes[0];
         var last_note = this.notes[this.notes.length - 1];
@@ -1878,11 +2020,11 @@ define([
             var beam_line = beam_lines[j];
 
             if (!beam_line.flipped) {
-              var first_x = beam_line.start - (this.stem_direction == Stem.DOWN ? Vex.Flow.STEM_WIDTH/2:0);
+              var first_x = beam_line.start - (this.stem_direction == Stem.DOWN ? Vex.Flow.STEM_WIDTH / 2 : 0);
               var first_y = this.getSlopeY(first_x, first_x_px, first_y_px, this.slope);
 
               var last_x = beam_line.end +
-                           (this.stem_direction == 1 ? (Vex.Flow.STEM_WIDTH/3):(-Vex.Flow.STEM_WIDTH/3));
+                           (this.stem_direction == 1 ? (Vex.Flow.STEM_WIDTH / 3) : (-Vex.Flow.STEM_WIDTH / 3));
               var last_y = this.getSlopeY(last_x, first_x_px, first_y_px, this.slope);
 
               this.context.beginPath();
@@ -1899,7 +2041,6 @@ define([
           first_y_px += beam_width * 1.5;
           last_y_px += beam_width * 1.5;
         }
-
 
 
         // TODO integrate!:
@@ -1922,11 +2063,11 @@ define([
             var beam_line = beam_lines[j];
 
             if (beam_line.flipped) {
-              var first_x = beam_line.start - (this.stem_direction * -1 == Stem.DOWN ? Vex.Flow.STEM_WIDTH/2:0);
+              var first_x = beam_line.start - (this.stem_direction * -1 == Stem.DOWN ? Vex.Flow.STEM_WIDTH / 2 : 0);
               var first_y = this.getSlopeY(first_x, first_x_px, first_y_px, this.slope);
 
               var last_x = beam_line.end +
-                           (this.stem_direction * -1 == 1 ? (Vex.Flow.STEM_WIDTH/3):(-Vex.Flow.STEM_WIDTH/3));
+                           (this.stem_direction * -1 == 1 ? (Vex.Flow.STEM_WIDTH / 3) : (-Vex.Flow.STEM_WIDTH / 3));
               var last_y = this.getSlopeY(last_x, first_x_px, first_y_px, this.slope);
 
               this.context.beginPath();
@@ -1945,17 +2086,17 @@ define([
         }
 
 
-
-
       },
 
       // Pre-format the beam
-      preFormat: function() { return this; },
+      preFormat : function () {
+        return this;
+      },
 
       // Post-format the beam. This can only be called after
       // the notes in the beam have both `x` and `y` values. ie: they've
       // been formatted and have staves
-      postFormat: function() {
+      postFormat : function () {
         if (this.postFormatted) return;
 
         this.calculateSlope();
@@ -1965,9 +2106,8 @@ define([
       },
 
       // Render the beam to the canvas context
-      draw: function() {
-        if (!this.context) throw new Vex.RERR("NoCanvasContext",
-          "Can't draw without a canvas context.");
+      draw : function () {
+        if (!this.context) throw new Vex.RERR("NoCanvasContext", "Can't draw without a canvas context.");
 
         if (this.unbeamable) return;
 
@@ -1984,16 +2124,17 @@ define([
 
     function calculateStemDirection(notes) {
       var lineSum = 0;
-      notes.forEach(function(note) {
+      notes.forEach(function (note) {
         if (note.keyProps) {
-          note.keyProps.forEach(function(keyProp){
+          note.keyProps.forEach(function (keyProp) {
             lineSum += (keyProp.line - 3);
           });
         }
       });
 
-      if (lineSum >= 0)
+      if (lineSum >= 0) {
         return Stem.DOWN;
+      }
       return Stem.UP;
     }
 
@@ -2002,24 +2143,24 @@ define([
     // Gets the default beam groups for a provided time signature.
     // Attempts to guess if the time signature is not found in table.
     // Currently this is fairly naive.
-    Beam.getDefaultBeamGroups = function(time_sig){
+    Beam.getDefaultBeamGroups = function (time_sig) {
       if (!time_sig || time_sig == "c") time_sig = "4/4";
 
       var defaults = {
-        '1/2' :  ['1/2'],
-        '2/2' :  ['1/2'],
-        '3/2' :  ['1/2'],
-        '4/2' :  ['1/2'],
+        '1/2' : ['1/2'],
+        '2/2' : ['1/2'],
+        '3/2' : ['1/2'],
+        '4/2' : ['1/2'],
 
-        '1/4' :  ['1/4'],
-        '2/4' :  ['1/4'],
-        '3/4' :  ['1/4'],
-        '4/4' :  ['1/4'],
+        '1/4' : ['1/4'],
+        '2/4' : ['1/4'],
+        '3/4' : ['1/4'],
+        '4/4' : ['1/4'],
 
-        '1/8' :  ['1/8'],
-        '2/8' :  ['2/8'],
-        '3/8' :  ['3/8'],
-        '4/8' :  ['2/8'],
+        '1/8' : ['1/8'],
+        '2/8' : ['2/8'],
+        '3/8' : ['3/8'],
+        '4/8' : ['2/8'],
 
         '1/16' : ['1/16'],
         '2/16' : ['2/16'],
@@ -2046,7 +2187,7 @@ define([
           return [new Fraction(1, beatValue)];
         }
       } else {
-        return groups.map(function(group) {
+        return groups.map(function (group) {
           return new Fraction().parse(group);
         });
       }
@@ -2059,10 +2200,10 @@ define([
     // * `voice` - The voice to generate the beams for
     // * `stem_direction` - A stem direction to apply to the entire voice
     // * `groups` - An array of `Fraction` representing beat groupings for the beam
-    Beam.applyAndGetBeams = function(voice, stem_direction, groups) {
+    Beam.applyAndGetBeams = function (voice, stem_direction, groups) {
       return Beam.generateBeams(voice.getTickables(), {
-        groups: groups,
-        stem_direction: stem_direction
+        groups : groups,
+        stem_direction : stem_direction
       });
     };
 
@@ -2091,7 +2232,7 @@ define([
     //    * `show_stemlets` - Set to `true` to draw stemlets for rests
     //    * `maintain_stem_directions` - Set to `true` to not apply new stem directions
     //
-    Beam.generateBeams = function(notes, config) {
+    Beam.generateBeams = function (notes, config) {
 
       if (!config) config = {};
 
@@ -2100,21 +2241,20 @@ define([
       }
 
       // Convert beam groups to tick amounts
-      var tickGroups = config.groups.map(function(group) {
+      var tickGroups = config.groups.map(function (group) {
         if (!group.multiply) {
-          throw new Vex.RuntimeError("InvalidBeamGroups",
-            "The beam groups must be an array of Vex.Flow.Fractions");
+          throw new Vex.RuntimeError("InvalidBeamGroups", "The beam groups must be an array of Vex.Flow.Fractions");
         }
         return group.clone().multiply(Vex.Flow.RESOLUTION, 1);
       });
 
       var unprocessedNotes = notes;
       var currentTickGroup = 0;
-      var noteGroups       = [];
-      var currentGroup     = [];
+      var noteGroups = [];
+      var currentGroup = [];
 
-      function getTotalTicks(vf_notes){
-        return vf_notes.reduce(function(memo,note){
+      function getTotalTicks(vf_notes) {
+        return vf_notes.reduce(function (memo, note) {
           return note.getTicks().clone().add(memo);
         }, new Vex.Flow.Fraction(0, 1));
       }
@@ -2127,11 +2267,11 @@ define([
         }
       }
 
-      function createGroups(){
+      function createGroups() {
         var nextGroup = [];
 
-        unprocessedNotes.forEach(function(unprocessedNote){
-          nextGroup    = [];
+        unprocessedNotes.forEach(function (unprocessedNote) {
+          nextGroup = [];
           if (unprocessedNote.shouldIgnoreTicks()) {
             noteGroups.push(currentGroup);
             currentGroup = nextGroup;
@@ -2166,15 +2306,16 @@ define([
         });
 
         // Adds any remainder notes
-        if (currentGroup.length > 0)
+        if (currentGroup.length > 0) {
           noteGroups.push(currentGroup);
+        }
       }
 
       function getBeamGroups() {
-        return noteGroups.filter(function(group){
+        return noteGroups.filter(function (group) {
           if (group.length > 1) {
             var beamable = true;
-            group.forEach(function(note) {
+            group.forEach(function (note) {
               if (note.getIntrinsicTicks() >= Vex.Flow.durationToTicks("4")) {
                 beamable = false;
               }
@@ -2188,19 +2329,18 @@ define([
       // Splits up groups by Rest
       function sanitizeGroups() {
         var sanitizedGroups = [];
-        noteGroups.forEach(function(group) {
+        noteGroups.forEach(function (group) {
           var tempGroup = [];
-          group.forEach(function(note, index, group) {
+          group.forEach(function (note, index, group) {
             var isFirstOrLast = index === 0 || index === group.length - 1;
-            var prevNote = group[index-1];
+            var prevNote = group[index - 1];
 
             var breaksOnEachRest = !config.beam_rests && note.isRest();
-            var breaksOnFirstOrLastRest = (config.beam_rests &&
-                                           config.beam_middle_only && note.isRest() && isFirstOrLast);
+            var breaksOnFirstOrLastRest = (config.beam_rests && config.beam_middle_only && note.isRest() &&
+                                           isFirstOrLast);
 
             var breakOnStemChange = false;
-            if (config.maintain_stem_directions && prevNote &&
-                !note.isRest() && !prevNote.isRest()) {
+            if (config.maintain_stem_directions && prevNote && !note.isRest() && !prevNote.isRest()) {
               var prevDirection = prevNote.getStemDirection();
               var currentDirection = note.getStemDirection();
               breakOnStemChange = currentDirection !== prevDirection;
@@ -2209,8 +2349,7 @@ define([
             var isUnbeamableDuration = parseInt(note.duration, 10) < 8;
 
             // Determine if the group should be broken at this note
-            var shouldBreak = breaksOnEachRest || breaksOnFirstOrLastRest ||
-                              breakOnStemChange || isUnbeamableDuration;
+            var shouldBreak = breaksOnEachRest || breaksOnFirstOrLastRest || breakOnStemChange || isUnbeamableDuration;
 
             if (shouldBreak) {
               // Add current group
@@ -2238,13 +2377,13 @@ define([
       }
 
       function formatStems() {
-        noteGroups.forEach(function(group){
+        noteGroups.forEach(function (group) {
           var stemDirection;
           if (config.maintain_stem_directions) {
             var note = findFirstNote(group);
             stemDirection = note ? note.getStemDirection() : Stem.UP;
           } else {
-            if (config.stem_direction){
+            if (config.stem_direction) {
               stemDirection = config.stem_direction;
             } else {
               stemDirection = calculateStemDirection(group);
@@ -2266,13 +2405,13 @@ define([
       }
 
       function applyStemDirection(group, direction) {
-        group.forEach(function(note){
+        group.forEach(function (note) {
           note.setStemDirection(direction);
         });
       }
 
       function getTupletGroups() {
-        return noteGroups.filter(function(group){
+        return noteGroups.filter(function (group) {
           if (group[0]) return group[0].tuplet;
         });
       }
@@ -2293,7 +2432,7 @@ define([
 
       // Create a Vex.Flow.Beam from each group of notes to be beamed
       var beams = [];
-      beamedNoteGroups.forEach(function(group){
+      beamedNoteGroups.forEach(function (group) {
         var beam = new Vex.Flow.Beam(group);
 
         if (config.show_stemlets) {
@@ -2304,9 +2443,9 @@ define([
       });
 
       // Reformat tuplets
-      tupletGroups.forEach(function(group){
+      tupletGroups.forEach(function (group) {
         var firstNote = group[0];
-        for (var i=0; i<group.length; ++i) {
+        for (var i = 0; i < group.length; ++i) {
           if (group[i].hasStem()) {
             firstNote = group[i];
             break;
@@ -2326,8 +2465,6 @@ define([
 
     return Beam;
   }());
-
-
 
 
 });

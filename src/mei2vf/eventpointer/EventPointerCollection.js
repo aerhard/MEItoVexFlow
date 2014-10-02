@@ -102,6 +102,10 @@ define([
       var local_tstamp2id = function (tstamp, lnkelem, measureElement) {
         var stffinf = link_staveInfo(lnkelem);
         var stave = measureElement.querySelector('staff[n="' + stffinf.stave_n + '"]');
+        if (!stave) {
+          throw new RuntimeError('Could not find staff @n="' + stffinf.stave_n + '" in ' +
+                                 Util.serializeElement(measureElement) + ' while processing ' + Util.serializeElement(lnkelem));
+        }
         var layer = stave.querySelector('layer[n="' + stffinf.layer_n + '"]');
         if (!layer) {
           var layer_candid = stave.getElementsByTagName('layer')[0];
@@ -109,8 +113,8 @@ define([
             layer = layer_candid;
           }
           if (!layer) {
-            throw new RuntimeError('Cannot find layer @n="' + stffinf.layer_n + '" in ' +
-                                   Util.serializeElement(measureElement));
+            throw new RuntimeError('Could not find layer @n="' + stffinf.layer_n + '" in ' +
+                                   Util.serializeElement(measureElement) + ' while processing ' + Util.serializeElement(lnkelem));
           }
         }
         var staveInfo = me.systemInfo.getStaveInfo(stffinf.stave_n);

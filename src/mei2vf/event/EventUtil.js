@@ -21,9 +21,10 @@
 define([
   'vexflow',
   'common/Logger',
+  'common/RuntimeError',
   'common/Util',
   'mei2vf/Tables'
-], function (VF, Logger, Util, Tables, undefined) {
+], function (VF, Logger, RuntimeError, Util, Tables, undefined) {
 
 
   var EventUtil = {
@@ -68,8 +69,7 @@ define([
           return Tables.durations[alias[mei_dur] + ''];
         }
         if (mei_dur === undefined) {
-          Logger.warn('@dur expected', 'No duration attribute found in ' + Util.serializeElement(element) +
-                                       '. Using "4" instead.');
+          throw new RuntimeError('No duration attribute found in ' + Util.serializeElement(element));
         } else {
           Logger.warn('Not supported', 'Duration "' + mei_dur + ' in "' + Util.serializeElement(element) +
                                        '" is not supported. Using "4" instead.');
@@ -161,6 +161,7 @@ define([
 
     addClefModifier : function (vexNote, prop) {
       var clef = new VF.ClefNote(prop.type, 'small', prop.shift === -1 ? '8vb' : undefined);
+      clef.setMeiElement(prop.meiElement);
       vexNote.addModifier(0, new VF.GraceNoteGroup([clef], false));
       clef.setOffsetLeft(25);
     },

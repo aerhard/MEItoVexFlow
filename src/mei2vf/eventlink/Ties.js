@@ -109,8 +109,12 @@ define([
 
 
         if (!f_note.vexNote && !l_note.vexNote) {
-          Logger.warn('Tie could not be processed', 'Neither xml:id could be found: "' + model.getFirstId() +
-                                                          '" / "' + model.getLastId() + '"');
+          var param, paramString = '';
+          for (param in model.params) {
+            paramString += param + '="' + model.params[param] + '" ';
+          }
+          console.log(model);
+          Logger.warn('Tie could not be processed', 'No tie start or tie end could be found. Tie parameters: ' + paramString + '. Skipping tie.');
           return true;
         }
 

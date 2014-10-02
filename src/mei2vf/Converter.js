@@ -1211,8 +1211,8 @@ define([
         return note;
 
       } catch (e) {
-        throw new RuntimeError('A problem occurred processing ' + Util.serializeElement(element) +
-                               '\nORIGINAL ERROR MESSAGE: ' + e.toString());
+        throw new RuntimeError('An error occurred processing ' + Util.serializeElement(element) + ': "' +
+                              e.toString());
       }
     },
 
@@ -1377,8 +1377,8 @@ define([
         };
         return rest;
       } catch (e) {
-        console.log(e);
-        throw new RuntimeError('A problem occurred processing ' + Util.serializeElement(element));
+        throw new RuntimeError('An error occurred processing ' + Util.serializeElement(element) + ': "' +
+                               e.toString());
       }
     },
 
@@ -1412,7 +1412,8 @@ define([
         };
         return mRest;
       } catch (e) {
-        throw new RuntimeError('A problem occurred processing ' + Util.serializeElement(element));
+        throw new RuntimeError('An error occurred processing ' + Util.serializeElement(element) + ': "' +
+                               e.toString());
       }
     },
 
@@ -1435,7 +1436,8 @@ define([
           }
 
         } catch (e) {
-          throw new RuntimeError('A problem occurred processing ' + Util.serializeElement(element));
+          throw new RuntimeError('An error occurred processing ' + Util.serializeElement(element) + ': "' +
+                                 e.toString());
         }
       } else {
         Logger.info('@dur expected', 'No duration attribute in ' + Util.serializeElement(element) +

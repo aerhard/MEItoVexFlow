@@ -55,13 +55,13 @@ define([
       var atts = model.atts;
       // TODO support @tstamp2 etc -> make Link instead of Pointer
 
-      var vexOrnaments = {
+      var ornamentMap = {
         'trill':'tr',
         'mordent':'mordent',
         'turn': 'turn'
       };
 
-      var name = vexOrnaments[model.element.localName];
+      var name = ornamentMap[model.element.localName];
 
       var form;
       if (name==='mordent') {
@@ -74,6 +74,8 @@ define([
 
 
       var vexOrnament = new VF.Ornament(name + form);
+
+      vexOrnament.setMeiElement(model.element);
 
 
       // not yet implemented in vexFlow!?

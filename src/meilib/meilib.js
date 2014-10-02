@@ -5,8 +5,9 @@ define([
   'meilib/SliceMEI',
   'meilib/Alt',
   'meilib/Variant',
-  'meilib/MeiDoc'
-], function ($, RuntimeError, EventEnumerator, SliceMEI, Alt, Variant, MeiDoc, undefined) {
+  'meilib/MeiDoc',
+  'common/Util',
+], function ($, RuntimeError, EventEnumerator, SliceMEI, Alt, Variant, MeiDoc, Util, undefined) {
   /*
    * meilib.js
    *
@@ -236,8 +237,7 @@ define([
 
     var getFullNote = function (evnt) {
       if (evnt.hasAttribute('grace') || evnt.localName === 'clef') {
-        var next = eventList.nextEvent();
-        return getFullNote(next) || evnt;
+        return getFullNote(eventList.nextEvent()) || evnt;
       }
       return evnt;
     };
@@ -436,8 +436,8 @@ define([
           // ... or find the longest note in the chord ????
           chord_dur = node.getAttribute('dur');
           if (chord_dur) {
-//            if (node.querySelector("[*|id='" + eventid + "']")) {
-              if ($(node).find("[xml\\:id='" + eventid + "']").length) {
+            //            if (node.querySelector("[*|id='" + eventid + "']")) {
+            if ($(node).find("[xml\\:id='" + eventid + "']").length) {
               return {
                 beats : 0,
                 found : true
