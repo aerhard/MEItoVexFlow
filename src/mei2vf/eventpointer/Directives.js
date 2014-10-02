@@ -45,8 +45,24 @@ define([
     },
 
     addToNote : function (model, note) {
-      var me = this, annot =
-      (new VF.Annotation(Util.getNormalizedText(model.element).trim())).setFont(me.font.family, me.font.size, me.font.weight).setMeiElement(model.element);
+      var me = this, annot, rend, font, rendAtts;
+
+      font = {
+        family: me.font.family,
+        size: me.font.size,
+        weight: ''
+      };
+
+      rend = model.element.getElementsByTagName('rend')[0];
+      if (rend) {
+        rendAtts = Util.attsToObj(rend);
+        if (rendAtts.fontfamily) font.family = rendAtts.fontfamily;
+        if (rendAtts.fontweight) font.weight += rendAtts.fontweight + ' ';
+        if (rendAtts.fontstyle) font.weight += rendAtts.fontstyle;
+        if (rendAtts.fontsize) font.size = +rendAtts.fontsize * 1.5;
+      }
+
+      annot = (new VF.Annotation(Util.getNormalizedText(model.element).trim())).setFont(font.family, font.size, font.weight).setMeiElement(model.element);
 
       // TEMPORARY: set width of modifier to zero so voices with modifiers
       // don't get too much width; remove when the width calculation in

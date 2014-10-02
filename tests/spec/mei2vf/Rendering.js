@@ -169,7 +169,8 @@ define([
     test_cases.push({ title : "Dynamics", mei_xml : 'TC.Dynamics.xml'});
     test_cases.push({ title : "Fermatas", mei_xml : 'TC.Fermatas.xml'});
     test_cases.push({ title : "Tuplets", mei_xml : 'TC.Tuplets.xml', canvas_width : 1200, canvas_height : 400});
-    test_cases.push({ title : "Beam with Rest", mei_xml : 'TC.Beams.xml', canvas_width : 300});
+
+    test_cases.push({ title : "Beams", mei_xml : 'TC.Beams.xml', canvas_width : 600, canvas_height : 500});
     test_cases.push({ title : "Auto stem and tie directions with multiple layers", mei_xml : 'Demo.BachGMinorPrelude-WKII.xml', canvas_width : 1100, canvas_height : 500});
     test_cases.push({ title : "Grace Notes", mei_xml : 'TC.GraceNotes.xml', canvas_height : 400});
     test_cases.push({ title : "Ornaments and Trills", mei_xml : 'TC.Ornaments.xml'});

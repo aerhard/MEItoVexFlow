@@ -180,12 +180,10 @@ define([
        * 'pizz.')
        * @cfg {String} annotFont.family the font family
        * @cfg {Number} annotFont.size the font size
-       * @cfg {String} annotFont.weight the font weight
        */
       annotFont : {
         family : 'Times',
-        size : 15,
-        weight : 'Italic'
+        size : 15
       },
       /**
        * @cfg {Object} dynamFont the font used for dynamics
@@ -364,6 +362,11 @@ define([
        * object
        */
       me.notes_by_id = {};
+      /**
+       * an array of Beams across staves
+       * @property {Object} interStaveBeamInfos
+       */
+      me.beamInfosToResolve = [];
       /**
        * the number of the current system
        * @property {Number} currentSystem_n
@@ -979,11 +982,14 @@ define([
         notes_by_id : me.notes_by_id,
         currentSystem_n : me.currentSystem_n,
         stave : stave,
-        stave_n : stave_n
+        stave_n : stave_n,
+        beamInfosToResolve : me.beamInfosToResolve,
+        newBeamInfosToResolve : []
       };
 
       for (i = 0, j = layerElements.length; i < j; i++) {
-        context.layerDir = (j > 1) ? (i === 0 ? VF.StaveNote.STEM_UP : i === j - 1 ? VF.StaveNote.STEM_DOWN : null) : null;
+        context.layerDir =
+        (j > 1) ? (i === 0 ? VF.StaveNote.STEM_UP : i === j - 1 ? VF.StaveNote.STEM_DOWN : null) : null;
         me.resolveUnresolvedTimestamps(layerElements[i], stave_n, measureIndex, meter);
         staveInfo.checkInitialClef();
 
@@ -997,6 +1003,7 @@ define([
         context.currentClefChangeProperty = null;
       }
 
+      me.beamInfosToResolve = context.newBeamInfosToResolve;
       staveInfo.removeStartClefCopy();
     },
 
@@ -1127,18 +1134,18 @@ define([
 
         vexPitch = EventUtil.getVexPitch(element);
 
-//        mei_stave_n = +atts.staff || stave_n;
+        //        mei_stave_n = +atts.staff || stave_n;
         //        if (mei_stave_n !== stave_n) {
-//          var otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][mei_stave_n];
-//          if (otherStave) {
-//            stave = otherStave;
-//            clef = me.systemInfo.getClef(stave_n);
-//          } else {
-//            Logger.warn('Staff not found', 'No stave could be found which corresponds to @staff="' + mei_stave_n +
-//                                           '" specified in ' + Util.serializeElement(element) +
-//                                           '". Adding note to current stave.');
-//          }
-//        }
+        //          var otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][mei_stave_n];
+        //          if (otherStave) {
+        //            stave = otherStave;
+        //            clef = me.systemInfo.getClef(stave_n);
+        //          } else {
+        //            Logger.warn('Staff not found', 'No stave could be found which corresponds to @staff="' + mei_stave_n +
+        //                                           '" specified in ' + Util.serializeElement(element) +
+        //                                           '". Adding note to current stave.');
+        //          }
+        //        }
 
         if (!clef) {
           clef = staveInfo.getClef();
@@ -1207,11 +1214,14 @@ define([
      * @method processChord
      */
     processChord : function (context, element, staveInfo) {
-      var me = this, noteElements, xml_id, chord, chord_opts, atts, i, j;
+      var me = this, noteElements, xml_id, chord, chord_opts, atts, i, j, mei_tie, mei_slur;
 
       noteElements = element.getElementsByTagName('note');
 
       atts = Util.attsToObj(element);
+
+      mei_tie = atts.tie;
+      mei_slur = atts.slur;
 
       xml_id = MeiLib.XMLID(element);
 
@@ -1237,6 +1247,14 @@ define([
         for (i = 0, j = noteElements.length; i < j; i++) {
           me.processNoteInChord(context, i, noteElements[i], element, chord);
           allNoteIndices.push(i);
+        }
+
+        // TODO tie attribute on chord should render a tie on each note
+        //        if (mei_tie) {
+        //          me.processAttrTie(mei_tie, xml_id, vexPitch, context.stave_n);
+        //        }
+        if (mei_slur) {
+          me.processSlurAttribute(mei_slur, xml_id);
         }
 
         context.notes_by_id[xml_id] = {
@@ -1340,6 +1358,12 @@ define([
           context.currentClefChangeProperty = null;
         }
 
+        if (context.graceNoteQueue.length > 0) {
+          rest.addModifier(0, new VF.GraceNoteGroup(context.graceNoteQueue, false).beamNotes());
+          context.graceNoteQueue = [];
+        }
+
+
         context.notes_by_id[xml_id] = {
           meiNote : element,
           vexNote : rest,
@@ -1370,6 +1394,11 @@ define([
 
         xml_id = MeiLib.XMLID(element);
 
+        if (context.graceNoteQueue.length > 0) {
+          mRest.addModifier(0, new VF.GraceNoteGroup(context.graceNoteQueue, false).beamNotes());
+          context.graceNoteQueue = [];
+        }
+
         context.notes_by_id[xml_id] = {
           meiNote : element,
           vexNote : mRest,
@@ -1389,6 +1418,16 @@ define([
       if (element.hasAttribute('dur')) {
         try {
           space = new Space({ element : element, stave : context.stave });
+
+          if (context.inBeamNo > 0) {
+            context.hasSpaceInBeam = true;
+          }
+
+          if (context.graceNoteQueue.length > 0) {
+            space.addModifier(0, new VF.GraceNoteGroup(context.graceNoteQueue, false).beamNotes());
+            context.graceNoteQueue = [];
+          }
+
         } catch (e) {
           throw new RuntimeError('A problem occurred processing ' + Util.serializeElement(element));
         }
@@ -1438,20 +1477,42 @@ define([
      * @param {MEI2VF.StaveInfo} staveInfo
      */
     processBeam : function (context, element, staveInfo) {
-      var me = this, vexNotes, childElements, k, l;
+      var me = this, vexNotes, childElements, k, l, filteredElements;
       context.inBeamNo += 1;
 
       vexNotes = me.processNoteLikeChildren(context, element, staveInfo);
 
-      // TODO remove filter later and modify beam object to skip objects other than note and clef
-      var filteredElements = vexNotes.filter(function (element) {
-        return element.beamable === true;
-      });
+      if (context.hasSpaceInBeam) {
+        if (context.beamInfosToResolve.length !== 0) {
+          var otherBeamNotes = context.beamInfosToResolve.shift();
+          var combinedVexNotes = [];
+          for (var i = 0, j = vexNotes.length; i < j; i++) {
+            if (vexNotes[i] instanceof Space) {
+              combinedVexNotes.push(otherBeamNotes.vexNotes[i]);
+            } else {
+              combinedVexNotes.push(vexNotes[i]);
+            }
+          }
+          filteredElements = combinedVexNotes.filter(function (element) {
+            return element.beamable === true;
+          });
+        } else {
+          context.newBeamInfosToResolve.push({
+            element : element,
+            vexNotes : vexNotes
+          })
+        }
 
-      // set autostem parameter of VF.Beam to true if neither layerDir nor any stem direction in the beam is specified
+      } else {
+        // TODO remove filter later and modify beam object to skip objects other than note and clef
+        filteredElements = vexNotes.filter(function (element) {
+          return element.beamable === true;
+        });
+      }
 
-      if (vexNotes.length > 0) {
+      if (filteredElements && filteredElements.length > 1) {
         try {
+          // set autostem parameter of VF.Beam to true if neither layerDir nor any stem direction in the beam is specified
           me.allBeams.push(new VF.Beam(filteredElements, !context.layerDir && !context.hasStemDirInBeam));
         } catch (e) {
           Logger.error('VexFlow Error', 'An error occurred processing ' + Util.serializeElement(element) + ': "' +
@@ -1462,6 +1523,7 @@ define([
       context.inBeamNo -= 1;
       if (context.inBeamNo === 0) {
         context.hasStemDirInBeam = false;
+        context.hasSpaceInBeam = false;
       }
       return vexNotes;
     },
