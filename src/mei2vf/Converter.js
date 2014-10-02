@@ -331,10 +331,10 @@ define([
       me.fermatas = new Fermatas(me.systemInfo);
       /**
        * an instance of MEI2VF.Ornaments dealing with and storing all
-       * trill elements found in the MEI document
-       * @property {MEI2VF.Ornaments} trills
+       * ornament elements found in the MEI document
+       * @property {MEI2VF.Ornaments} ornaments
        */
-      me.trills = new Ornaments(me.systemInfo);
+      me.ornaments = new Ornaments(me.systemInfo);
       /**
        * an instance of MEI2VF.Ties dealing with and storing all ties found in
        * the MEI document
@@ -422,7 +422,7 @@ define([
       me.directives.createVexFromInfos(me.notes_by_id);
       me.dynamics.createVexFromInfos(me.notes_by_id);
       me.fermatas.createVexFromInfos(me.notes_by_id);
-      me.trills.createVexFromInfos(me.notes_by_id);
+      me.ornaments.createVexFromInfos(me.notes_by_id);
       me.ties.createVexFromInfos(me.notes_by_id);
       me.slurs.createVexFromInfos(me.notes_by_id);
       me.hairpins.createVexFromInfos(me.notes_by_id);
@@ -717,7 +717,7 @@ define([
      * @param {Element} element the MEI measure element
      */
     processMeasure : function (element) {
-      var me = this, atSystemStart, left_barline, right_barline, system, system_n, allDescendants;
+      var me = this, atSystemStart, left_barline, right_barline, system, system_n, childNodes;
 
       if (me.pendingSectionBreak || me.pendingSystemBreak) {
         system_n = me.systems.length;
@@ -734,42 +734,48 @@ define([
       left_barline = element.getAttribute('left');
       right_barline = element.getAttribute('right');
 
-      var staveElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [], trillElements = [], rehElements = [], i, j;
+      var staveElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [], rehElements = [], ornamentElements = [], i, j;
 
-      allDescendants = element.querySelectorAll('*');
-      for (i = 0, j = allDescendants.length; i < j; i++) {
-        switch (allDescendants[i].localName) {
+      childNodes = element.childNodes;
+      for (i = 0, j = childNodes.length; i < j; i++) {
+        switch (childNodes[i].localName) {
+          // skip text nodes
+          case null :
+            break;
           case 'staff':
-            staveElements.push(allDescendants[i]);
+            staveElements.push(childNodes[i]);
             break;
           case 'dir':
-            dirElements.push(allDescendants[i]);
+            dirElements.push(childNodes[i]);
             break;
           case 'tie':
-            tieElements.push(allDescendants[i]);
+            tieElements.push(childNodes[i]);
             break;
           case 'slur':
-            slurElements.push(allDescendants[i]);
+            slurElements.push(childNodes[i]);
             break;
           case 'hairpin':
-            hairpinElements.push(allDescendants[i]);
+            hairpinElements.push(childNodes[i]);
             break;
           case 'tempo':
-            tempoElements.push(allDescendants[i]);
+            tempoElements.push(childNodes[i]);
             break;
           case 'dynam':
-            dynamElements.push(allDescendants[i]);
+            dynamElements.push(childNodes[i]);
             break;
           case 'fermata':
-            fermataElements.push(allDescendants[i]);
+            fermataElements.push(childNodes[i]);
             break;
+          case 'mordent':
+          case 'turn':
           case 'trill':
-            trillElements.push(allDescendants[i]);
+            ornamentElements.push(childNodes[i]);
             break;
           case 'reh':
-            rehElements.push(allDescendants[i]);
+            rehElements.push(childNodes[i]);
             break;
           default:
+            Logger.info('Not supported', '<' + childNodes[i].localName + '> is not supported as child of <measure>.');
             break;
         }
       }
@@ -789,7 +795,7 @@ define([
       me.directives.createInfos(dirElements, element);
       me.dynamics.createInfos(dynamElements, element);
       me.fermatas.createInfos(fermataElements, element);
-      me.trills.createInfos(trillElements, element);
+      me.ornaments.createInfos(ornamentElements, element);
       me.ties.createInfos(tieElements, element, measureIndex, me.systemInfo);
       me.slurs.createInfos(slurElements, element, measureIndex, me.systemInfo);
       me.hairpins.createInfos(hairpinElements, element, measureIndex, me.systemInfo);

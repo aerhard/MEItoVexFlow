@@ -55,7 +55,50 @@ define([
       var atts = model.atts;
       // TODO support @tstamp2 etc -> make Link instead of Pointer
 
-      var vexOrnament = new VF.Ornament("tr");
+      var vexOrnaments = {
+        'trill':'tr',
+        'mordent':'mordent',
+        'turn': 'turn'
+      };
+
+      var name = vexOrnaments[model.element.localName];
+
+      var form;
+      if (name==='mordent') {
+        form = (atts.form === 'inv') ? '' : '_inverted';
+      } else {
+        form = (atts.form === 'inv') ? '_inverted' : '';
+      }
+
+
+
+
+      var vexOrnament = new VF.Ornament(name + form);
+
+
+      // not yet implemented in vexFlow!?
+//      var place = atts.place;
+//      if (place) {
+//        vexOrnament.position = Tables.positions[place];
+//      }
+
+
+//      notesBar1[0].addModifier(0, new Vex.Flow.Ornament("mordent"));
+//      notesBar1[1].addModifier(0, new Vex.Flow.Ornament("mordent_inverted"));
+//      notesBar1[2].addModifier(0, new Vex.Flow.Ornament("turn"));
+//      notesBar1[3].addModifier(0, new Vex.Flow.Ornament("turn_inverted"));
+//      notesBar1[4].addModifier(0, new Vex.Flow.Ornament("tr"));
+//      notesBar1[5].addModifier(0, new Vex.Flow.Ornament("upprall"));
+//      notesBar1[6].addModifier(0, new Vex.Flow.Ornament("downprall"));
+//      notesBar1[7].addModifier(0, new Vex.Flow.Ornament("prallup"));
+//      notesBar1[8].addModifier(0, new Vex.Flow.Ornament("pralldown"));
+//      notesBar1[9].addModifier(0, new Vex.Flow.Ornament("upmordent"));
+//      notesBar1[10].addModifier(0, new Vex.Flow.Ornament("downmordent"));
+//      notesBar1[11].addModifier(0, new Vex.Flow.Ornament("lineprall"));
+//      notesBar1[12].addModifier(0, new Vex.Flow.Ornament("prallprall"));
+
+
+
 
       if (atts.accidupper) {
         vexOrnament.setUpperAccidental(Tables.accidentals[atts.accidupper]);
@@ -63,10 +106,6 @@ define([
       if (atts.accidlower) {
         vexOrnament.setLowerAccidental(Tables.accidentals[atts.accidlower]);
       }
-
-      // TODO support position below
-      //      vexOrnament.setPosition(Tables.positions[model.atts.place]);
-      vexOrnament.setPosition(VF.Modifier.Position.ABOVE);
 
       note.addModifier(index || 0, vexOrnament);
     }

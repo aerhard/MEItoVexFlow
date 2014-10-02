@@ -55,6 +55,34 @@
                             <trill tstamp="4" place="below" accidlower="ss"/>
                         </measure>
                         <sb/>
+                        <measure n="3">
+                            <staff n="1">
+                                <layer n="1">
+                                    <note xml:id="ae01" pname="c" oct="4" dur="4"/>
+                                    <note xml:id="ae02" pname="d" oct="4" dur="4"/>
+                                    <note xml:id="ae03" pname="b" oct="3" dur="4"/>
+                                    <note xml:id="ae04" pname="c" oct="4" dur="4"/>
+                                </layer>
+                            </staff>
+                            <mordent startid="#ae01" form="norm"/>
+                            <mordent startid="#ae02" place="below" form="inv"/>
+                            <turn startid="#ae03" place="above" form="norm"/>
+                            <turn startid="#ae04" form="inv"/>
+                        </measure>
+                        <measure n="4">
+                            <staff n="1">
+                                <layer n="1">
+                                    <note xml:id="ae05" pname="c" oct="4" dur="4"/>
+                                    <note xml:id="ae06" pname="d" oct="4" dur="4"/>
+                                    <note xml:id="ae07" pname="b" oct="3" dur="4"/>
+                                    <note xml:id="ae08" pname="c" oct="4" dur="4"/>
+                                </layer>
+                            </staff>
+                            <mordent tstamp="1" place="above" accidupper="f" accidlower="ff"/>
+                            <mordent tstamp="2" place="below" accidupper="s" accidlower="n"/>
+                            <turn tstamp="3" place="above" accidupper="n"/>
+                            <turn tstamp="4" place="below" accidlower="ss"/>
+                        </measure>
                     </section>
                 </score>
             </mdiv>

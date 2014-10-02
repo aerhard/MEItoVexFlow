@@ -173,7 +173,7 @@ define([
     test_cases.push({ title : "Beams", mei_xml : 'TC.Beams.xml', canvas_width : 600, canvas_height : 500});
     test_cases.push({ title : "Auto stem and tie directions with multiple layers", mei_xml : 'Demo.BachGMinorPrelude-WKII.xml', canvas_width : 1100, canvas_height : 500});
     test_cases.push({ title : "Grace Notes", mei_xml : 'TC.GraceNotes.xml', canvas_height : 400});
-    test_cases.push({ title : "Ornaments and Trills", mei_xml : 'TC.Ornaments.xml'});
+    test_cases.push({ title : "Ornaments and Trills", mei_xml : 'TC.Ornaments.xml', canvas_height : 400, options: {pageTopMar:80}});
     test_cases.push({ title : 'Throw an exception on missing attribute', mei_xml : 'TC.MissingAttribute.xml', fail: true});
     test_cases.push({ title : "Dots", mei_xml : 'TC.Dots.xml', canvas_height: 600, options : {labelMode : 'full'}});
     test_cases.push({ title : "Measure widths (with pick-up beat)", mei_xml : 'TC.MeasureWidths.xml', options : {labelMode : 'full'}});
