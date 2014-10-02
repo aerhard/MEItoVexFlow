@@ -64,9 +64,11 @@ define([
     } : function (evnt, tagName) {
       return tagName === 'clef';
     };
+
     var IsSimpleEvent = function (tagName) {
       return (tagName === 'note' || tagName === 'rest' || tagName === 'space');
-    }
+    };
+
     var durationOf_SimpleEvent = function (simple_evnt, meter) {
       var dur = simple_evnt.getAttribute('dur');
       if (!dur) {
@@ -78,6 +80,7 @@ define([
       //    console.log(MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter));
       return MeiLib.dotsMult(simple_evnt) * MeiLib.dur2beats(Number(dur), meter);
     };
+
     var durationOf_Chord = function (chord, meter, layer_no) {
       var i, j, childNodes, note;
       if (!layer_no) {
@@ -138,7 +141,8 @@ define([
         acc += dur_b;
       }
       return acc;
-    }
+    };
+
     var durationOf_Tuplet = function (tuplet, meter) {
       // change the meter unit according to the ratio in the tuplet, the get the duration as if the tuplet were a beam
       var num = +tuplet.getAttribute('num') || 3;
@@ -148,7 +152,8 @@ define([
         unit : meter.unit * numbase / num
       });
       return acc;
-    }
+    };
+
     var evnt_name = evnt.localName;
     if (IsZeroDurEvent(evnt, evnt_name)) {
       return 0;
@@ -194,7 +199,7 @@ define([
     };// tstamp of current event
     var distF = function () {
       return ts - c_ts();
-    }// signed distance between tstamp and tstamp of current event;
+    };// signed distance between tstamp and tstamp of current event;
     var eventList = new MeiLib.EventEnumerator(layer);
     var evnt;
     var dist;

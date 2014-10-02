@@ -105,32 +105,32 @@
 
                         <measure n="4">
                             <staff n="1">
-                                <layer>
+                                <layer n="1">
                                     <note pname="g" oct="4" dur="4"/>
                                     <note pname="g" oct="4" dur="4"/>
                                     <note pname="g" oct="4" dur="4"/>
                                     <note pname="f" oct="4" dur="4"/>
                                 </layer>
-                                <layer>
+                                <layer n="2">
                                     <note pname="g" oct="4" dur="4"/>
                                     <note pname="f" oct="4" dur="4"/>
                                     <note pname="g" oct="4" dur="4"/>
                                     <note pname="f" oct="4" dur="4"/>
                                 </layer>
                             </staff>
-                            <slur staff="1" tstamp="1" tstamp2="4" position="above"/>
-                            <slur staff="1" tstamp="1" tstamp2="4" position="below"/>
+                            <slur staff="1" layer="1" tstamp="1" tstamp2="4"/>
+                            <slur staff="1" layer="2" tstamp="1" tstamp2="4"/>
                         </measure>
 
                         <measure n="5">
                             <staff n="1">
-                                <layer>
+                                <layer n="1">
                                     <note pname="g" oct="4" dur="4"/>
                                     <note pname="g" oct="4" dur="4"/>
                                     <note pname="g" oct="4" dur="4"/>
                                     <note pname="f" oct="4" dur="4"/>
                                 </layer>
-                                <layer>
+                                <layer n="2">
                                     <note pname="g" oct="4" dur="4"/>
                                     <note pname="f" oct="4" dur="4"/>
                                     <note pname="g" oct="4" dur="4"/>
