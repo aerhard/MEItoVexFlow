@@ -152,6 +152,7 @@ define([
        * - null or undefined: renders no labels
        */
       labelMode : null, // 'full',
+      readMeasureWidths : true, // false
       processSb : 'sb', // sb / ignore
       processPb : 'sb', // pb / sb / ignore
       /**
@@ -819,7 +820,8 @@ define([
         },
         tempoElements : tempoElements,
         rehElements : rehElements,
-        tempoFont : me.cfg.tempoFont
+        tempoFont : me.cfg.tempoFont,
+        readMeasureWidths : me.cfg.readMeasureWidths
       }));
     },
 

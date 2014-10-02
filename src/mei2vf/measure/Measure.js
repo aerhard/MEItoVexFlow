@@ -111,7 +111,7 @@ define([
        * @property {Number} meiW the width attribute of the measure element or
        * null if NaN
        */
-      me.meiW = me.readMEIW(me.element);
+      me.meiW = (config.readMeasureWidths) ? me.setMeiWidth(me.element) : null;
     },
 
     getSystem : function () {
@@ -124,7 +124,7 @@ define([
      * @param {Element} element the element to process
      * @return {Number} the number of the attribute or null if NaN
      */
-    readMEIW : function (element) {
+    setMeiWidth : function (element) {
       return +element.getAttribute('width') || null;
     },
 
