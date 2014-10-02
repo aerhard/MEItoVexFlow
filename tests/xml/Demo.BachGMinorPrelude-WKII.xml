@@ -44,13 +44,13 @@
                                     <note pname="e" oct="4" dur="4" tie="i"/>
                                     <beam>
                                         <note pname="e" oct="4" dur="16" dots="1" tie="t"/>
-                                        <note pname="e" oct="4" dur="32" breaksec="1"/>
+                                        <note pname="e" oct="4" dur="32"/>
                                         <note pname="d" oct="4" dur="16" dots="1"/>
                                         <note pname="c" oct="4" dur="32"/>
                                     </beam>
                                     <beam>
                                         <note pname="a" oct="4" dur="16" dots="1"/>
-                                        <note pname="c" oct="4" dur="32" breaksec="1"/>
+                                        <note pname="c" oct="4" dur="32"/>
                                         <note pname="b" oct="3" dur="16" dots="1"/>
                                         <note pname="a" oct="3" dur="32"/>
                                     </beam>
@@ -87,13 +87,13 @@
                                     <note pname="b" oct="4" dur="4" tie="i"/>
                                     <beam>
                                         <note pname="b" oct="4" dur="16" dots="1" tie="t"/>
-                                        <note pname="b" oct="4" dur="32" breaksec="1"/>
+                                        <note pname="b" oct="4" dur="32"/>
                                         <note pname="a" oct="4" dur="16" dots="1"/>
                                         <note pname="g" oct="4" dur="32"/>
                                     </beam>
                                     <beam>
                                         <note pname="e" oct="5" dur="16" dots="1" accid="n"/>
-                                        <note pname="g" oct="4" dur="32" breaksec="1"/>
+                                        <note pname="g" oct="4" dur="32"/>
                                         <note pname="f" oct="4" dur="16" dots="1" accid="s"/>
                                         <note pname="e" oct="4" dur="32" accid="n"/>
                                     </beam>
@@ -105,7 +105,7 @@
                                     </beam>
                                     <beam>
                                         <note pname="d" oct="4" dur="16" dots="1"/>
-                                        <note pname="f" oct="4" dur="32" breaksec="1"/>
+                                        <note pname="f" oct="4" dur="32"/>
                                         <note pname="e" oct="4" dur="16" dots="1" accid="n"/>
                                         <note pname="g" oct="4" dur="32"/>
                                     </beam>
@@ -129,25 +129,28 @@
                                     </beam>
                                     <beam>
                                         <note pname="a" oct="4" dur="16" dots="1" tie="t"/>
-                                        <note pname="d" oct="4" dur="32" breaksec="1"/>
+                                        <note pname="d" oct="4" dur="32"/>
                                         <note pname="g" oct="4" dur="16" dots="1"/>
                                         <note pname="b" oct="4" dur="32"/>
                                     </beam>
                                     <note pname="c" oct="5" dur="4" tie="i"/>
                                     <beam>
                                         <note pname="c" oct="5" dur="16" dots="1" tie="t"/>
-                                        <note pname="d" oct="5" dur="32" breaksec="1"/>
+                                        <note pname="d" oct="5" dur="32"/>
                                         <note pname="a" oct="4" dur="16" dots="1"/>
                                         <note pname="c" oct="5" dur="32"/>
                                     </beam>
                                 </layer>
                                 <layer n="2">
-                                    <space dur="4"></space>
+                                    <beam>
+                                        <note pname="d" oct="4" dur="8" dots="1" staff="1"/>
+                                        <space dur="16"></space>
+                                    </beam>
                                     <space dur="8"></space>
                                     <note pname="g" oct="4" dur="8" tie="i"/>
                                     <beam>
                                         <note pname="g" oct="4" dur="16" dots="1" tie="t"/>
-                                        <note pname="g" oct="4" dur="32" breaksec="1"/>
+                                        <note pname="g" oct="4" dur="32"/>
                                         <note pname="f" oct="4" dur="16" dots="1" accid="s"/>
                                         <note pname="e" oct="4" dur="32" accid="n"/>
                                     </beam>
@@ -157,7 +160,7 @@
                             <staff n="2">
                                 <layer n="1">
                                     <beam>
-                                        <note pname="d" oct="4" dur="8" dots="1" staff="1"/>
+                                        <space dur="8" dots="1"></space>
                                         <note pname="c" oct="4" dur="16"/>
                                     </beam>
                                     <note pname="b" oct="3" dur="4"/>
@@ -183,14 +186,14 @@
                                     </beam>
                                     <beam>
                                         <note pname="d" oct="5" dur="16" dots="1" tie="t"/>
-                                        <note pname="g" oct="4" dur="32" breaksec="1"/>
+                                        <note pname="g" oct="4" dur="32"/>
                                         <note pname="c" oct="5" dur="16" dots="1"/>
                                         <note pname="e" oct="5" dur="32"/>
                                     </beam>
                                     <note pname="f" oct="5" dur="4" tie="i"/>
                                     <beam>
                                         <note pname="f" oct="5" dur="16" dots="1" tie="t"/>
-                                        <note pname="g" oct="5" dur="32" breaksec="1"/>
+                                        <note pname="g" oct="5" dur="32"/>
                                         <note pname="d" oct="5" dur="16" dots="1"/>
                                         <note pname="f" oct="5" dur="32"/>
                                     </beam>
@@ -201,7 +204,7 @@
                                     <note pname="c" oct="5" dur="8" tie="i"/>
                                     <beam>
                                         <note pname="c" oct="5" dur="16" dots="1" tie="t"/>
-                                        <note pname="c" oct="5" dur="32" breaksec="1"/>
+                                        <note pname="c" oct="5" dur="32"/>
                                         <note pname="b" oct="4" dur="16" dots="1" accid="n"/>
                                         <note pname="a" oct="4" dur="32" accid="n"/>
                                     </beam>
