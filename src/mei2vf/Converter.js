@@ -103,6 +103,8 @@ define([
 
     BOTTOM : VF.Annotation.VerticalJustify.BOTTOM,
 
+    STAVE_HEIGHT : 40,
+
     defaults : {
       /**
        * @cfg {Number|null} pageWidth The width of the page. If null, the page width is calculated on
@@ -110,15 +112,19 @@ define([
        */
       pageWidth : null,
       /**
-       * @cfg {Number} pageTopMar The top page margin
+       * @cfg {Number} pageTopMar The page top margin
        */
       pageTopMar : 60,
       /**
-       * @cfg {Number} pageLeftMar The left page margin
+       * @cfg {Number} pageBottomMar The page bottom margin
+       */
+      pageBottomMar : 80,
+      /**
+       * @cfg {Number} pageLeftMar The page left margin
        */
       pageLeftMar : 20,
       /**
-       * @cfg {Number} pageRightMar The right page margin
+       * @cfg {Number} pageRightMar The page right margin
        */
       pageRightMar : 20,
       /**
@@ -1715,6 +1721,9 @@ define([
           systems[i].format(ctx);
         }
       }
+
+      me.pageInfo.setLowestY(me.systemInfo.getCurrentLowestY() + me.STAVE_HEIGHT);
+
     },
 
     drawSystems : function (systems, ctx) {

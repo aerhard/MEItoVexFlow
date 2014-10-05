@@ -61,8 +61,16 @@ define([
           var MEI = xmlDoc.getElementsByTagNameNS("http://www.music-encoding.org/ns/mei", 'score');
           window.console.log('Rendering... ');
 
-          var callback = function (calculatedWidth) {
-            $(canvas).attr('height', canvas_height);
+          var callback = function (calculatedHeight, calculatedWidth) {
+            console.info(calculatedHeight);
+            console.info(canvas_height);
+
+            if (calculatedHeight) {
+              $(canvas).attr('height', calculatedHeight);
+            } else {
+              $(canvas).attr('height', canvas_height);
+            }
+
             if (calculatedWidth) {
               $(canvas).attr('width', Math.ceil(calculatedWidth));
             } else {

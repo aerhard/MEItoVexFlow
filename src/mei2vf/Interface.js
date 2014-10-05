@@ -138,6 +138,7 @@ define([
       ctx = new VF.Renderer(target, backend || VF.Renderer.Backends.CANVAS).getContext();
 
 //      width = null;
+//        height = null;
 
 //      width = width || 800;
 //      height = height || 350;
@@ -153,16 +154,21 @@ define([
 
       this.Converter.format(ctx);
 
+      // if height is specified don't return the calculated height to get same behavior as width
+      if (height) {
+        this.calculatedHeight = null;
+      } else {
+        this.calculatedHeight = Converter.prototype.pageInfo.getCalculatedHeight();
+      }
       if (Converter.prototype.pageInfo.hasCalculatedWidth()) {
         this.calculatedWidth = Converter.prototype.pageInfo.getCalculatedWidth();
       } else {
         this.calculatedWidth = null;
       }
-      callback(this.calculatedWidth);
+      callback(this.calculatedHeight, this.calculatedWidth);
 
       this.Converter.draw(ctx);
       this.rendered_measures = this.Converter.getAllVexMeasureStaffs();
-
 
     }
   };

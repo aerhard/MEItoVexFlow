@@ -26,6 +26,7 @@ define([
 
     me.pageLeftMar = config.pageLeftMar;
     me.pageRightMar = config.pageRightMar;
+    me.pageBottomMar = config.pageBottomMar;
 
     /**
      * The print space coordinates calculated from the page config.
@@ -68,6 +69,14 @@ define([
     getCalculatedWidth : function () {
       var me = this;
       return me.printSpace.width + me.pageLeftMar + me.pageRightMar;
+    },
+
+    setLowestY : function (lowestY) {
+      this.lowestY = lowestY;
+    },
+
+    getCalculatedHeight : function () {
+      return this.lowestY + this.pageBottomMar;
     }
 
   };
