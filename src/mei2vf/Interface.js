@@ -40,14 +40,14 @@ define([
      * - 'error' errors
      * - false no logging
      */
-    setLogging : function(level) {
+    setLogging : function (level) {
       Logger.setLevel.call(Logger, level);
     },
     /**
      * @method setLoggerAppender sets the logger's appender
      * @param appender an object implementing the methods error(), warn(), info() and debug(), for example window.console
      */
-    setLoggerAppender : function(appender) {
+    setLoggerAppender : function (appender) {
       Logger.setAppender.call(Logger, appender);
     },
     /**
@@ -138,14 +138,7 @@ define([
       ctx = new VF.Renderer(target, backend || VF.Renderer.Backends.CANVAS).getContext();
 
 //      width = null;
-//        height = null;
-
-//      width = width || 800;
-//      height = height || 350;
-
-      if (+backend === VF.Renderer.Backends.RAPHAEL) {
-        ctx.paper.setSize(width || 800, height || 350);
-      }
+//      height = null;
 
       cfg.pageWidth = width;
 
@@ -165,6 +158,11 @@ define([
       } else {
         this.calculatedWidth = null;
       }
+
+      if (+backend === VF.Renderer.Backends.RAPHAEL) {
+        ctx.paper.setSize(this.calculatedWidth || width, this.calculatedHeight || height);
+      }
+
       callback(this.calculatedHeight, this.calculatedWidth);
 
       this.Converter.draw(ctx);
