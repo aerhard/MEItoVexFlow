@@ -126,7 +126,7 @@ define([
        * width when no page width is specified (i.e. when the width cannot be determined on basis
        * of the page width)
        */
-      defaultSpacingInMeasure : 200,
+      defaultSpacingInMeasure : 180,
       /**
        * @cfg {Number} systemSpacing The default spacing between two stave
        * systems
