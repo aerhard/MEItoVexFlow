@@ -67,11 +67,12 @@ define([
   'mei2vf/lyrics/Syllable',
   'mei2vf/stave/Stave',
   'mei2vf/measure/Measure',
+  'mei2vf/page/PageInfo',
   'mei2vf/system/System',
   'mei2vf/system/SystemInfo',
   'mei2vf/Tables',
   'mei2vf/voice/StaveVoices'
-], function (VF, MeiLib, Logger, RuntimeError, Util, EventUtil, Note, GraceNote, Chord, GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments, Verses, Syllable, Stave, Measure, System, SystemInfo, Tables, StaveVoices) {
+], function (VF, MeiLib, Logger, RuntimeError, Util, EventUtil, Note, GraceNote, Chord, GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments, Verses, Syllable, Stave, Measure, PageInfo, System, SystemInfo, Tables, StaveVoices) {
 
   /**
    * Converts an MEI XML document / document fragment to VexFlow objects and
@@ -104,9 +105,10 @@ define([
 
     defaults : {
       /**
-       * @cfg {Number} pageWidth The width of the page
+       * @cfg {Number|null} pageWidth The width of the page. If null, the page width is calculated on
+       * basis of the page content
        */
-      pageWidth : 800,
+      pageWidth : null,
       /**
        * @cfg {Number} pageTopMar The top page margin
        */
@@ -120,7 +122,13 @@ define([
        */
       pageRightMar : 20,
       /**
-       * @cfg {Number} systemSpacing The spacing between two stave
+       * @cfg {Number} defaultSpacingInMeasure The default spacing added to a measure's minimum
+       * width when no page width is specified (i.e. when the width cannot be determined on basis
+       * of the page width)
+       */
+      defaultSpacingInMeasure : 200,
+      /**
+       * @cfg {Number} systemSpacing The default spacing between two stave
        * systems
        */
       systemSpacing : 90,
@@ -226,23 +234,9 @@ define([
        * @property {MEI2VF.SystemInfo} systemInfo
        */
       me.systemInfo = new SystemInfo();
-      /**
-       * The print space coordinates calculated from the page config.
-       * @property {Object} printSpace
-       * @property {Number} printSpace.top
-       * @property {Number} printSpace.left
-       * @property {Number} printSpace.right
-       * @property {Number} printSpace.width
-       */
-      me.printSpace = {
-        // substract four line distances (40px) from pageTopMar in order
-        // to compensate VexFlow's default top spacing / allow specifying
-        // absolute values
-        top : me.cfg.pageTopMar - 40,
-        left : me.cfg.pageLeftMar,
-        right : me.cfg.pageWidth - me.cfg.pageRightMar,
-        width : Math.floor(me.cfg.pageWidth - me.cfg.pageRightMar - me.cfg.pageLeftMar) - 1
-      };
+
+      me.pageInfo = new PageInfo(me.cfg);
+
       if (me.cfg.renderFermataAttributes === true) {
         EventUtil.addFermataAtt = EventUtil.addFermata;
       }
@@ -281,7 +275,7 @@ define([
      */
     reset : function () {
       var me = this;
-      me.systemInfo.init(me.cfg, me.printSpace);
+      me.systemInfo.init(me.cfg);
       /**
        * @property {MEI2VF.EventLink[][]} unresolvedTStamp2
        */
@@ -427,7 +421,14 @@ define([
       me.ties.createVexFromInfos(me.notes_by_id);
       me.slurs.createVexFromInfos(me.notes_by_id);
       me.hairpins.createVexFromInfos(me.notes_by_id);
+
       return me;
+    },
+
+
+    format: function (ctx) {
+      var me = this;
+      me.formatSystems(me.systems, ctx);
     },
 
     /**
@@ -439,7 +440,7 @@ define([
      */
     draw : function (ctx) {
       var me = this;
-      me.checkSetContextAndDraw(me.systems, ctx);
+      me.drawSystems(me.systems, ctx);
       me.setContextAndDraw(me.allBeams, ctx);
       me.setContextAndDraw(me.allTuplets, ctx);
       me.ties.setContext(ctx).draw();
@@ -532,10 +533,12 @@ define([
       me.pendingSystemBreak = false;
       me.currentSystem_n += 1;
 
+      var printSpace = me.pageInfo.getPrintSpace();
+
       coords = {
-        x : me.printSpace.left,
-        y : (me.currentSystem_n === 1) ? me.printSpace.top : me.systemInfo.getCurrentLowestY() + me.cfg.systemSpacing,
-        w : me.printSpace.width
+        x : printSpace.left,
+        y : (me.currentSystem_n === 1) ? printSpace.top : me.systemInfo.getCurrentLowestY() + me.cfg.systemSpacing,
+        width : printSpace.width
       };
 
       system = new System({
@@ -712,8 +715,7 @@ define([
     },
 
     /**
-     * Processes a MEI measure element and calls functions to process a
-     * selection of ancestors: .//staff, ./slur, ./tie, ./hairpin, .//tempo
+     * Processes a MEI measure element
      * @method processMeasure
      * @param {Element} element the MEI measure element
      */
@@ -801,7 +803,7 @@ define([
       me.slurs.createInfos(slurElements, element, measureIndex, me.systemInfo);
       me.hairpins.createInfos(hairpinElements, element, measureIndex, me.systemInfo);
 
-      system.addMeasure(new Measure({
+      var measure = new Measure({
         system : system,
         element : element,
         staves : staves,
@@ -822,7 +824,12 @@ define([
         rehElements : rehElements,
         tempoFont : me.cfg.tempoFont,
         readMeasureWidths : me.cfg.readMeasureWidths
-      }));
+      });
+
+      system.addMeasure(measure);
+
+      measure.calculateMinWidth();
+
     },
 
     /**
@@ -1213,8 +1220,7 @@ define([
         return note;
 
       } catch (e) {
-        throw new RuntimeError('An error occurred processing ' + Util.serializeElement(element) + ': "' +
-                              e.toString());
+        throw new RuntimeError('An error occurred processing ' + Util.serializeElement(element) + ': "' + e.toString());
       }
     },
 
@@ -1379,8 +1385,7 @@ define([
         };
         return rest;
       } catch (e) {
-        throw new RuntimeError('An error occurred processing ' + Util.serializeElement(element) + ': "' +
-                               e.toString());
+        throw new RuntimeError('An error occurred processing ' + Util.serializeElement(element) + ': "' + e.toString());
       }
     },
 
@@ -1414,8 +1419,7 @@ define([
         };
         return mRest;
       } catch (e) {
-        throw new RuntimeError('An error occurred processing ' + Util.serializeElement(element) + ': "' +
-                               e.toString());
+        throw new RuntimeError('An error occurred processing ' + Util.serializeElement(element) + ': "' + e.toString());
       }
     },
 
@@ -1681,13 +1685,44 @@ define([
       }
     },
 
-    checkSetContextAndDraw : function (items, ctx) {
-      var i, j;
-      for (i = 0, j = items.length; i < j; i++) {
-        if (items[i]) {
-          items[i].format(ctx).draw(ctx);
+    formatSystems : function (systems, ctx) {
+      var me = this, i, j, totalMinSystemWidth = 0, minSystemWidth, broadestMeasureN = 1;
+      j = systems.length;
+
+      // calculate page width if me.cfg.pageWidth is falsy
+      if (!me.cfg.pageWidth) {
+        for (i = 1; i < j; i++) {
+          minSystemWidth = systems[i].preFormat(ctx);
+          if (totalMinSystemWidth < minSystemWidth) {
+            broadestMeasureN = i;
+            totalMinSystemWidth = minSystemWidth;
+          }
+        }
+        var totalSystemWidth = totalMinSystemWidth +
+                               (systems[broadestMeasureN].openWidthMeasureCount * me.cfg.defaultSpacingInMeasure);
+        me.pageInfo.setPrintSpaceWidth(totalSystemWidth);
+
+
+        for (i = 1; i < j; i++) {
+          systems[i].setFinalMeasureWidths(totalSystemWidth);
+          systems[i].format(ctx);
+        }
+
+      } else {
+        for (i = 1; i < j; i++) {
+          minSystemWidth = systems[i].preFormat(ctx);
+          systems[i].setFinalMeasureWidths();
+          systems[i].format(ctx);
         }
       }
+    },
+
+    drawSystems : function (systems, ctx) {
+      var me = this, i, j;
+      j = systems.length;
+        for (i = 1; i < j; i++) {
+          systems[i].format(ctx).draw(ctx);
+        }
     }
 
   };

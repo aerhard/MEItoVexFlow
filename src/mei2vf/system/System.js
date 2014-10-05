@@ -59,7 +59,7 @@ define([
        * @cfg {Object} coords the coords of the current system
        * @cfg {Number} coords.x the x coordinate of the system
        * @cfg {Number} coords.y the y coordinate of the system
-       * @cfg {Number} coords.w the system width
+       * @cfg {Number} coords.width the system width
        */
       me.coords = config.coords;
       /**
@@ -126,7 +126,7 @@ define([
      * stave-connector labels
      * @param {Object} ctx the canvas context
      */
-    calculateInitialIndent : function (ctx) {
+    calculateLeftMar : function (ctx) {
       var me = this, label, max = 0, w, connectors, i, text;
       ctx.setFont('Times', 16);
       for (label in me.labels) {
@@ -163,24 +163,44 @@ define([
     },
 
     /**
-     * calculates the width of all measures in a stave which don't have a
-     * specified width in the MEI code and writes them to their enclosing
-     * measure object
+     * calculates the minimum width of all measures in a stave
      */
-    setFinalMeasureWidths : function () {
-      var me = this, i, j, totalSpecifiedMeasureWidth = 0, singleAdditionalWidth, nonSpecified_n = 0;
+    calculateMinSystemWidth : function () {
+      var me = this, i, j, totalSpecifiedMeasureWidth = 0, singleAdditionalWidth, openWidthMeasureCount = 0;
       for (i = 0, j = me.measures.length; i < j; i += 1) {
         if (me.measures[i].meiW === null) {
-          nonSpecified_n += 1;
+          openWidthMeasureCount += 1;
           totalSpecifiedMeasureWidth += me.measures[i].getMinWidth();
         } else {
           totalSpecifiedMeasureWidth += me.measures[i].meiW;
         }
       }
-      singleAdditionalWidth = Math.floor((me.coords.w - me.leftMar - totalSpecifiedMeasureWidth) / nonSpecified_n);
+      me.minSystemWidth = totalSpecifiedMeasureWidth;
+      me.openWidthMeasureCount = openWidthMeasureCount;
+    },
+
+    /**
+     * sets the final width of all measures in a stave
+     */
+    setFinalMeasureWidths : function (overrideWidth) {
+      var me = this, i, j, singleAdditionalWidth;
+
+      var totalWidth = overrideWidth || me.coords.width;
+
+      singleAdditionalWidth = Math.floor((totalWidth - me.leftMar - me.minSystemWidth) / me.openWidthMeasureCount);
+
       for (i = 0, j = me.measures.length; i < j; i += 1) {
         me.measures[i].setFinalWidth(singleAdditionalWidth);
       }
+    },
+
+    preFormat : function (ctx) {
+      var me = this;
+      if (typeof me.leftMar !== 'number') {
+        me.calculateLeftMar(ctx);
+      }
+      me.calculateMinSystemWidth();
+      return me.minSystemWidth + me.leftMar;
     },
 
     /**
@@ -190,11 +210,6 @@ define([
      */
     format : function (ctx) {
       var me = this, i, j, measures, offsetX, labels;
-      if (typeof me.leftMar !== 'number') {
-        me.calculateInitialIndent(ctx);
-      }
-      me.calculateMinMeasureWidths();
-      me.setFinalMeasureWidths();
       offsetX = me.coords.x + me.leftMar;
       measures = me.getMeasures();
       j = measures.length;

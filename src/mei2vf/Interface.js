@@ -77,6 +77,14 @@ define([
         Converter.prototype.process(xmlDoc);
       },
       /**
+       * Formats the processed data
+       * @method format
+       * @param ctx The canvas context
+       */
+      format : function (ctx) {
+        Converter.prototype.format(ctx);
+      },
+      /**
        * Draws the processed data to a canvas
        * @method draw
        * @param ctx The canvas context
@@ -123,25 +131,38 @@ define([
      * @param {Object} options The options passed to the converter. For a list, see
      * {@link MEI2VF.Converter MEI2VF.Converter}
      */
-    render_notation : function (xmlDoc, target, width, height, backend, options) {
+    render_notation : function (xmlDoc, target, width, height, backend, options, callback) {
       var ctx;
       var cfg = options || {};
 
       ctx = new VF.Renderer(target, backend || VF.Renderer.Backends.CANVAS).getContext();
 
-      width = width || 800;
-      height = height || 350;
+      width = null;
+
+//      width = width || 800;
+//      height = height || 350;
 
       if (+backend === VF.Renderer.Backends.RAPHAEL) {
-        ctx.paper.setSize(width, height);
+        ctx.paper.setSize(width || 800, height || 350);
       }
 
       cfg.pageWidth = width;
 
       this.Converter.initConfig(cfg);
       this.Converter.process(xmlDoc[0] || xmlDoc);
+
+      this.Converter.format(ctx);
+
+      if (Converter.prototype.pageInfo.hasCalculatedWidth()) {
+        this.calculatedWidth = Converter.prototype.pageInfo.getCalculatedWidth();
+      } else {
+        this.calculatedWidth = null;
+      }
+      callback(this.calculatedWidth);
+
       this.Converter.draw(ctx);
       this.rendered_measures = this.Converter.getAllVexMeasureStaffs();
+
 
     }
   };

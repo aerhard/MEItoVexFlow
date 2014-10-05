@@ -39,8 +39,10 @@ define([
           $(titleElem).html(input.title);
           var canvas_width = input.canvas_width || 1031;
           var canvas_height = input.canvas_height || 200;
-          $(canvas).attr('width', canvas_width);
-          $(canvas).attr('height', canvas_height);
+
+//          $(canvas).attr('width', canvas_width);
+//          $(canvas).attr('height', canvas_height);
+
           var score_width = canvas_width; // - 50;
           var score_height = canvas_height; // - 50;
 
@@ -58,7 +60,18 @@ define([
           //... and render it onto the canvas
           var MEI = xmlDoc.getElementsByTagNameNS("http://www.music-encoding.org/ns/mei", 'score');
           window.console.log('Rendering... ');
-          MEI2VF.render_notation(MEI, canvas, score_width, score_height, backend, input.options);
+
+          var callback = function (calculatedWidth) {
+            $(canvas).attr('height', canvas_height);
+            if (calculatedWidth) {
+              $(canvas).attr('width', Math.ceil(calculatedWidth));
+            } else {
+              $(canvas).attr('width', canvas_width);
+            }
+          };
+
+          MEI2VF.render_notation(MEI, canvas, score_width, score_height, backend, input.options, callback);
+
           window.console.log('Done (' + input.title + ')');
         };
 

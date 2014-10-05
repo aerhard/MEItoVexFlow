@@ -43,10 +43,9 @@ define([
 
     STAVE_HEIGHT : 40,
 
-    init : function (cfg, printSpace) {
+    init : function (cfg) {
       var me = this;
       me.cfg = cfg;
-      me.printSpace = printSpace;
 
       /**
        * contains the current {@link MEI2VF.StaveInfo} objects
