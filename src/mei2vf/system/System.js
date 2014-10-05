@@ -199,6 +199,7 @@ define([
       if (typeof me.leftMar !== 'number') {
         me.calculateLeftMar(ctx);
       }
+      me.calculateMinMeasureWidths();
       me.calculateMinSystemWidth();
       return me.minSystemWidth + me.leftMar;
     },

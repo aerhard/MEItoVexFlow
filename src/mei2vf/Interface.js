@@ -137,7 +137,7 @@ define([
 
       ctx = new VF.Renderer(target, backend || VF.Renderer.Backends.CANVAS).getContext();
 
-      width = null;
+//      width = null;
 
 //      width = width || 800;
 //      height = height || 350;

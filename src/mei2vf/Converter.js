@@ -828,7 +828,7 @@ define([
 
       system.addMeasure(measure);
 
-      measure.calculateMinWidth();
+//      measure.calculateMinWidth();
 
     },
 
@@ -1721,7 +1721,7 @@ define([
       var me = this, i, j;
       j = systems.length;
         for (i = 1; i < j; i++) {
-          systems[i].format(ctx).draw(ctx);
+          systems[i].draw(ctx);
         }
     }
 
