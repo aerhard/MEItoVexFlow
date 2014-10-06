@@ -1692,7 +1692,7 @@ define([
     },
 
     formatSystems : function (systems, ctx) {
-      var me = this, i, j, totalMinSystemWidth = 0, minSystemWidth, broadestMeasureN = 1;
+      var me = this, i, j, totalMinSystemWidth = 0, minSystemWidth, broadestSystemN = 1;
       j = systems.length;
 
       // calculate page width if me.cfg.pageWidth is falsy
@@ -1700,14 +1700,16 @@ define([
         for (i = 1; i < j; i++) {
           minSystemWidth = systems[i].preFormat(ctx);
           if (totalMinSystemWidth < minSystemWidth) {
-            broadestMeasureN = i;
+            broadestSystemN = i;
             totalMinSystemWidth = minSystemWidth;
           }
         }
-        var totalSystemWidth = totalMinSystemWidth +
-                               (systems[broadestMeasureN].openWidthMeasureCount * me.cfg.defaultSpacingInMeasure);
-        me.pageInfo.setPrintSpaceWidth(totalSystemWidth);
 
+        // calculate the width of all systems based on the final width of the system with the
+        // largest minSystemWidth and the default space to be added to each measure
+        var totalSystemWidth = totalMinSystemWidth +
+                               (systems[broadestSystemN].openWidthMeasureCount * me.cfg.defaultSpacingInMeasure);
+        me.pageInfo.setPrintSpaceWidth(totalSystemWidth);
 
         for (i = 1; i < j; i++) {
           systems[i].setFinalMeasureWidths(totalSystemWidth);
@@ -1715,6 +1717,7 @@ define([
         }
 
       } else {
+        // ... if me.cfg.pageWidth is specified, format the measures based on that width
         for (i = 1; i < j; i++) {
           minSystemWidth = systems[i].preFormat(ctx);
           systems[i].setFinalMeasureWidths();
