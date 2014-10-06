@@ -372,7 +372,7 @@ define([
        * the number of the current system
        * @property {Number} currentSystem_n
        */
-      me.currentSystem_n = 0;
+      me.currentSystem_n = -1;
       /**
        * indicates if a system break is currently to be processed
        * @property {Boolean} pendingSystemBreak
@@ -543,7 +543,7 @@ define([
 
       coords = {
         x : printSpace.left,
-        y : (me.currentSystem_n === 1) ? printSpace.top : me.systemInfo.getCurrentLowestY() + me.cfg.systemSpacing,
+        y : (me.currentSystem_n === 0) ? printSpace.top : me.systemInfo.getCurrentLowestY() + me.cfg.systemSpacing,
         width : printSpace.width
       };
 
@@ -952,7 +952,7 @@ define([
       if (!me.cfg.labelMode) {
         return labels;
       }
-      labelType = (me.cfg.labelMode === 'full' && me.currentSystem_n === 1) ? 'label' : 'labelAbbr';
+      labelType = (me.cfg.labelMode === 'full' && me.currentSystem_n === 0) ? 'label' : 'labelAbbr';
       infos = me.systemInfo.getAllStaveInfos();
       i = infos.length;
       while (i--) {
@@ -1697,7 +1697,7 @@ define([
 
       // calculate page width if me.cfg.pageWidth is falsy
       if (!me.cfg.pageWidth) {
-        for (i = 1; i < j; i++) {
+        for (i = 0; i < j; i++) {
           minSystemWidth = systems[i].preFormat(ctx);
           if (totalMinSystemWidth < minSystemWidth) {
             broadestSystemN = i;
@@ -1711,14 +1711,14 @@ define([
                                (systems[broadestSystemN].openWidthMeasureCount * me.cfg.defaultSpacingInMeasure);
         me.pageInfo.setPrintSpaceWidth(totalSystemWidth);
 
-        for (i = 1; i < j; i++) {
+        for (i = 0; i < j; i++) {
           systems[i].setFinalMeasureWidths(totalSystemWidth);
           systems[i].format(ctx);
         }
 
       } else {
         // ... if me.cfg.pageWidth is specified, format the measures based on that width
-        for (i = 1; i < j; i++) {
+        for (i = 0; i < j; i++) {
           minSystemWidth = systems[i].preFormat(ctx);
           systems[i].setFinalMeasureWidths();
           systems[i].format(ctx);
@@ -1732,7 +1732,7 @@ define([
     drawSystems : function (systems, ctx) {
       var me = this, i, j;
       j = systems.length;
-        for (i = 1; i < j; i++) {
+        for (i = 0; i < j; i++) {
           systems[i].draw(ctx);
         }
     }

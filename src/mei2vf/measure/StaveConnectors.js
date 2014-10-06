@@ -95,7 +95,7 @@ define([
 
           me.allVexConnectors.push(vexConnector);
           if (labelMode === 'full') {
-            label = (system_n === 1) ? model.label : model.labelAbbr;
+            label = (system_n === 0) ? model.label : model.labelAbbr;
           } else if (labelMode === 'abbr') {
             label = model.labelAbbr;
           }

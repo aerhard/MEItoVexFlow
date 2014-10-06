@@ -24,6 +24,7 @@ define([
 
     var me = this;
 
+    me.pageTopMar = config.pageTopMar;
     me.pageLeftMar = config.pageLeftMar;
     me.pageRightMar = config.pageRightMar;
     me.pageBottomMar = config.pageBottomMar;
