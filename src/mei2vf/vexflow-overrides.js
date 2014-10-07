@@ -160,7 +160,7 @@ define([
           shift_x : 0,
           shift_y_upper : 0,
           shift_y_lower : 0,
-          height : 12,
+          height : 12
         },
         "bb" : {
           shift_x : 0,

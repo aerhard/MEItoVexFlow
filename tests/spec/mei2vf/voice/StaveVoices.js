@@ -59,9 +59,15 @@ define([
       newNote({ keys : ["a/5"], stem_direction : -1, duration : "8"}).setStave(stave31)
     ];
 
-    var voice11 = new Vex.Flow.Voice(Vex.Flow.Test.Formatter.TIME6_8);
-    var voice21 = new Vex.Flow.Voice(Vex.Flow.Test.Formatter.TIME6_8);
-    var voice31 = new Vex.Flow.Voice(Vex.Flow.Test.Formatter.TIME6_8);
+      var TIME6_8 = {
+        num_beats: 6,
+        beat_value: 8,
+        resolution: Vex.Flow.RESOLUTION
+      };
+
+    var voice11 = new Vex.Flow.Voice(TIME6_8);
+    var voice21 = new Vex.Flow.Voice(TIME6_8);
+    var voice31 = new Vex.Flow.Voice(TIME6_8);
     voice11.addTickables(notes11);
     voice21.addTickables(notes21);
     voice31.addTickables(notes31);
@@ -122,9 +128,10 @@ define([
       newNote({ keys : ["a/5"], stem_direction : -1, duration : "8"}).setStave(stave32),
       newNote({ keys : ["a/5"], stem_direction : -1, duration : "8"}).setStave(stave32)
     ];
-    var voice12 = new Vex.Flow.Voice(Vex.Flow.Test.Formatter.TIME6_8);
-    var voice22 = new Vex.Flow.Voice(Vex.Flow.Test.Formatter.TIME6_8);
-    var voice32 = new Vex.Flow.Voice(Vex.Flow.Test.Formatter.TIME6_8);
+
+    var voice12 = new Vex.Flow.Voice(TIME6_8);
+    var voice22 = new Vex.Flow.Voice(TIME6_8);
+    var voice32 = new Vex.Flow.Voice(TIME6_8);
     voice12.addTickables(notes12);
     voice22.addTickables(notes22);
     voice32.addTickables(notes32);

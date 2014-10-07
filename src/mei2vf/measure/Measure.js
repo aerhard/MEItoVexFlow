@@ -53,10 +53,9 @@ define([
        */
       me.element = config.element;
       /**
-       * @cfg {Number} n The number of the current measure as specified in
-       * the MEI document
+       * @cfg {String} n The value of the measure's n attribute
        */
-      me.n = +config.element.getAttribute('n'); // set in Measure constructor
+      me.n = config.element.getAttribute('n');
       /**
        * @cfg {Array} staves an array of the staves in the current
        * measure. Contains
@@ -160,7 +159,7 @@ define([
      * gets the number of the current staff as specified in the MEI code
      * @return {Number}
      */
-    getN : function () {
+    getNAttr : function () {
       return this.n;
     },
 

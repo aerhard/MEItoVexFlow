@@ -21,15 +21,15 @@ module.exports = function(grunt) {
           baseUrl: "src",
           mainConfigFile: "src/config.js",
           out: 'dist/<%= pkg.name %>.js',
-
+          paths: {
+            "vexflow": "empty:"
+          },
           wrap: {
             start: "(function($, VF, undefined) {",
             end: "})(jQuery, Vex.Flow);"
           },
-
           exclude: [
             'jquery',
-            'vexflow',
             'vex'
           ],
 
@@ -115,13 +115,12 @@ module.exports = function(grunt) {
           livereload: true
         }
       }
-    },
+    }
 
   });
 
 
   // Tasks.
-//  grunt.registerTask('default', ['concat', 'uglify']);
   grunt.registerTask('default', ['requirejs:compile', 'closurecompiler:minify']);
 
   grunt.registerTask('run', ['connect', 'watch']);

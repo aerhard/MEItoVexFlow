@@ -18,11 +18,7 @@
 
     <script type="text/javascript" src="../bower_components/jasmine/lib/jasmine-core/jasmine.js"></script>
     <script type="text/javascript" src="../bower_components/jasmine/lib/jasmine-core/jasmine-html.js"></script>
-    <script type="text/JavaScript" src="../bower_components/jquery/dist/jquery.min.js"></script>
     <script type="text/JavaScript" src="../bower_components/raphael/raphael-min.js"></script>
-    <script src="../bower_components/vexflow/build/vexflow/vexflow-min.js"></script>
-    <script type="text/JavaScript" src="../bower_components/vexflow/tests/vexflow_test_helpers.js"></script>
-    <script type="text/JavaScript" src="../bower_components/vexflow/tests/formatter_tests.js"></script>
 
     <!-- MEISnippetViewer development -->
     <script src="../bower_components/requirejs/require.js"></script>
@@ -30,13 +26,10 @@
 
     <script type="text/javascript" src="loadXMLDoc.js"></script>
 
-    <!-- MEISnippetViewer production -->
-    <!--<script type="text/JavaScript" src="../build/meisnippetviewer.min.js"></script>-->
-
     <script type="text/javascript" src="runSpec.js"></script>
 
     <script>
-        window.vexBackend = Vex.Flow.Renderer.Backends.RAPHAEL;
+        window.vexBackend = 2; // Vex.Flow.Renderer.Backends.RAPHAEL;
         runSpec();
     </script>
 </head>
