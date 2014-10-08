@@ -6,7 +6,7 @@ define([
   'meilib/Alt',
   'meilib/Variant',
   'meilib/MeiDoc',
-  'common/Util',
+  'common/Util'
 ], function ($, RuntimeError, EventEnumerator, SliceMEI, Alt, Variant, MeiDoc, Util, undefined) {
   /*
    * meilib.js
@@ -66,7 +66,7 @@ define([
       return tagName === 'clef';
     };
 
-    var IsSimpleEvent = function (tagName) {
+    var isSimpleEvent = function (tagName) {
       return (tagName === 'note' || tagName === 'rest' || tagName === 'space');
     };
 
@@ -116,7 +116,7 @@ define([
                                                                Util.serializeElement(chord));
       }
       return dotsMult * MeiLib.dur2beats(Number(dur), meter);
-    }
+    };
 
     var durationOf_Beam = function (beam, meter) {
       var acc = 0, i, j, childNodes, childNode;
@@ -127,7 +127,7 @@ define([
         var tagName = childNode.localName;
         if (IsZeroDurEvent(childNode, tagName)) {
           dur_b = 0;
-        } else if (IsSimpleEvent(tagName)) {
+        } else if (isSimpleEvent(tagName)) {
           dur_b = durationOf_SimpleEvent(childNode, meter);
         } else if (tagName === 'chord') {
           dur_b = durationOf_Chord(childNode, meter);
@@ -159,7 +159,7 @@ define([
     if (IsZeroDurEvent(evnt, evnt_name)) {
       return 0;
     }
-    if (IsSimpleEvent(evnt_name)) {
+    if (isSimpleEvent(evnt_name)) {
       return durationOf_SimpleEvent(evnt, meter);
     }
     if (evnt_name === 'mRest') {
@@ -177,7 +177,7 @@ define([
     return 0;
     //throw new MeiLib.RuntimeError('MeiLib.durationOf:E05', "Not supported element: '" + evnt_name + "'");
 
-  }
+  };
   /**
    * @method tstamp2id
    * Find the event with the minimum distance from of the given timestamp.
@@ -251,7 +251,7 @@ define([
       winner.setAttribute('xml:id', xml_id);
     }
     return xml_id;
-  }
+  };
   /**
    * @method XMLID
    * returns the xml:id attribute of an element; if there is none, the function
@@ -266,7 +266,7 @@ define([
       elem.setAttribute('xml:id', xml_id);
     }
     return xml_id;
-  }
+  };
   /**
    * @method id2tstamp
    * Calculates a timestamp value for an event in a given context. (Event refers
@@ -316,7 +316,7 @@ define([
    */
   MeiLib.dur2beats = function (dur, meter) {
     return (meter.unit / dur);
-  }
+  };
   /**
    * @method beats2dur
    * Convert relative duration (nuber of beats) into absolute duration (e.g.
@@ -329,7 +329,7 @@ define([
    */
   MeiLib.beats2dur = function (beats, meter) {
     return (meter.unit / beats);
-  }
+  };
   /**
    * @method dotsMult
    * Converts the <b>dots</b> attribute value into a duration multiplier.

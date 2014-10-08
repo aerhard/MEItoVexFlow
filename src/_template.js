@@ -17,7 +17,7 @@
 define([
   'vexflow',
   'common/Logger'
-], function (VF, Logger, undefined) {
+], function (VF, Logger) {
 
 
   var O = function () {

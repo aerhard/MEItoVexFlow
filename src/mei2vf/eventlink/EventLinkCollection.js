@@ -84,7 +84,7 @@ define([
 
       // convert tstamp into startid in current measure
       var local_tstamp2id = function (tstamp, lnkelem, measureElement) {
-        var i, j, element, eventLink, atts, startid, tstamp, endid, tstamp2, measures_ahead;
+        var tstamp;
 
         var stffinf = link_staveInfo(lnkelem);
         var stave = measureElement.querySelector('staff[n="' + stffinf.stave_n + '"]');
@@ -117,6 +117,8 @@ define([
       var beat_partOf = function (tstamp2) {
         return tstamp2.substring(tstamp2.indexOf('+') + 1);
       };
+
+      var i, j, eventLink, element, atts, startid, tstamp, tstamp2, endid, measures_ahead;
 
       for (i = 0, j = link_elements.length; i < j; i++) {
         element = link_elements[i];

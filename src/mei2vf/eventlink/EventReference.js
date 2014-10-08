@@ -65,7 +65,7 @@ define([
      * @private
      */
     tryResolveReference : function () {
-      var tstamp, meicontext;
+      var tstamp;
       tstamp = this.tstamp;
       if (!tstamp) {
         throw new RuntimeError('tstamp must be set in order to resolve reference.');

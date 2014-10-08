@@ -22,7 +22,7 @@ define([
 
   var GraceChord = function (options) {
     var me = this, atts = options.atts, element = options.element;
-    var hasDots, durAtt, durations = [], duration, keys = [], i, j, noteElements, dots;
+    var durAtt, durations = [], duration, keys = [], i, j, noteElements, dots;
 
     noteElements = options.noteElements;
 

@@ -45,7 +45,6 @@ define([
     },
 
     validateAtts : function () {
-      return;
     },
 
     // NB called from tie/slur attributes elements

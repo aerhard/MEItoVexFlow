@@ -205,6 +205,8 @@ define([
       var acc_x = glyph_x - 3;
       var acc_y = glyph_y + 2;
 
+      var mods = acc_mods[code];
+
       // Special adjustments for trill glyph
       if (upper) {
         acc_y -= mods ? mods.height : 18;
@@ -214,7 +216,6 @@ define([
       }
 
       // Fine tune position of accidental glyph
-      var mods = acc_mods[code];
       if (mods) {
         acc_x += mods.shift_x;
         acc_y += upper ? mods.shift_y_upper : mods.shift_y_lower;
@@ -577,7 +578,7 @@ define([
       if (arguments.length > 0) {
         this.init(config);
       }
-    };
+    }
 
     Hyphen.prototype = {
       init : function (config) {
@@ -846,8 +847,6 @@ define([
     // START ADDITION
     var Annotation = VF.Annotation;
     var Modifier = VF.Modifier;
-    var L = function () {
-    };
     // END ADDITION
 
 

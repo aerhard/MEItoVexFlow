@@ -1,9 +1,7 @@
 define([
   'jquery',
-  'meilib/Alt',
-  'meilib/Variant',
-  'meilib/SliceMEI'
-], function ($, Alt, Variant, SliceMEI) {
+  'meilib/Alt'
+], function ($, Alt) {
 
   if (!window.MeiLib) window.MeiLib = {};
 
@@ -21,7 +19,7 @@ define([
     if (meiXmlDoc) {
       this.init(meiXmlDoc);
     }
-  }
+  };
   /**
    * @method init
    * Initializes a <code>MeiLib.MeiDoc</code> object.
@@ -49,37 +47,37 @@ define([
     this.parseALTs();
     this.initAltgroups();
     this.initSectionView();
-  }
+  };
   /**
    * @method getRichScore
    */
   MeiLib.MeiDoc.prototype.getRichScore = function () {
     return this.rich_score;
-  }
+  };
   /**
    * @method getPlainScore
    */
   MeiLib.MeiDoc.prototype.getPlainScore = function () {
     return this.plain_score;
-  }
+  };
   /**
    * @method getALTs
    */
   MeiLib.MeiDoc.prototype.getALTs = function () {
     return this.ALTs;
-  }
+  };
   /**
    * @method getSourceList
    */
   MeiLib.MeiDoc.prototype.getSourceList = function () {
     return this.sourceList;
-  }
+  };
   /**
    * @method getEditorList
    */
   MeiLib.MeiDoc.prototype.getEditorList = function () {
     return this.editorList;
-  }
+  };
   /**
    * @method parseSourceList
    * Extracts information about the sources as defined in the MEI header.
@@ -172,7 +170,7 @@ define([
       }
       this.ALTs[MeiLib.XMLID(app)] = AppsItem;
     }
-  }
+  };
   /**
    * @method initAltgroups
    */
@@ -262,7 +260,7 @@ define([
       }
     }
     return result;
-  }
+  };
 
   MeiLib.MeiDoc.prototype.initSectionView = function (altReplacements) {
     altReplacements = altReplacements || {};
@@ -292,7 +290,7 @@ define([
     var this_ALTs = this.ALTs;
     var xmlDoc = this.xmlDoc;
     var me = this;
-
+    var alt;
     var i, j;
     for (i = 0, j = alts.length; i < j; i++) {
       alt = alts[i];

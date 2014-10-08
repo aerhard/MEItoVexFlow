@@ -25,7 +25,7 @@ define([
   'common/Logger',
   'common/RuntimeError',
   '../stave/StaveInfo'
-], function (Util, Logger, RuntimeError, StaveInfo, undefined) {
+], function (Util, Logger, RuntimeError, StaveInfo) {
 
   /**
    * @class MEI2VF.SystemInfo
@@ -36,7 +36,6 @@ define([
 
    */
   var SystemInfo = function () {
-    return;
   };
 
   SystemInfo.prototype = {

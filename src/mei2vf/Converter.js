@@ -729,7 +729,6 @@ define([
       var me = this, atSystemStart, left_barline, right_barline, system, system_n, childNodes;
 
       if (me.pendingSectionBreak || me.pendingSystemBreak) {
-        system_n = me.systems.length;
         system = me.createNewSystem();
         atSystemStart = true;
       } else {
@@ -848,7 +847,7 @@ define([
      * @param {Boolean} atSystemStart indicates if the current measure is the system's start measure
      */
     initializeStavesInMeasure : function (system, staveElements, left_barline, right_barline, atSystemStart) {
-      var me = this, i, j, stave, stave_n, staves, isFirstVolta = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaves, newClef, currentStaveInfo, element, padding;
+      var me = this, i, j, stave, stave_n, staves, isFirstVolta = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaves, newClef, currentStaveInfo, padding;
 
       staves = [];
 
@@ -975,7 +974,7 @@ define([
      * object
      */
     processStaveEvents : function (staves, staveElement, measureIndex, currentStaveVoices) {
-      var me = this, stave, stave_n, readEvents, layerElements, i, j, k, l, childElements, vexNotes, staveInfo, event;
+      var me = this, stave, stave_n, layerElements, i, j, vexNotes, staveInfo;
 
       stave_n = parseInt(staveElement.getAttribute('n'), 10) || 1;
       stave = staves[stave_n];
@@ -1099,12 +1098,9 @@ define([
      * function
      *
      * @method processNoteLikeElement
-     * @param {Element} element the element to process
-     * @param {MEI2VF.Stave} stave the containing stave
-     * @param {Number} stave_n the number of the containing stave
-     * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
-     * layer
-     * @param {MEI2VF.StaveInfo} staveInfo the stave info object
+     * @param {Object} context the processing context object
+     * @param {Element} element the MEI element
+     * @param {StaveInfo} staveInfo
      */
     processNoteLikeElement : function (context, element, staveInfo) {
       var me = this;
@@ -1142,7 +1138,7 @@ define([
      * @method processNote
      */
     processNote : function (context, element, staveInfo) {
-      var me = this, xml_id, mei_tie, mei_slur, mei_stave_n, atts, note_opts, note, clef, vexPitch;
+      var me = this, xml_id, mei_tie, mei_slur, atts, note_opts, note, clef, vexPitch;
 
       atts = Util.attsToObj(element);
 
@@ -1460,12 +1456,10 @@ define([
 
     /**
      * @method processClef
+     * @param {Object} context the processing context object
      * @param {Element} element the MEI clef element
-     * @param {Stave} stave the containing stave
-     * @param {Number} stave_n the number of the containing stave
-     * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
-     * layer
-     * @param {StaveInfo} staveInfo the stave info object
+     * @param {StaveInfo} staveInfo
+
      */
     processClef : function (context, element, staveInfo) {
       context.currentClefChangeProperty = staveInfo.clefChangeInMeasure(element);
@@ -1473,11 +1467,9 @@ define([
 
     /**
      * @method processBTrem
-     * @param {Element} element the element
-     * @param {MEI2VF.Stave} stave the containing stave
-     * @param {Number} stave_n the number of the containing stave
-     * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current layer
-     * @param {MEI2VF.StaveInfo} staveInfo
+     * @param {Object} context the processing context object
+     * @param {Element} element the MEI bTrem element
+     * @param {StaveInfo} staveInfo
      */
     processBTrem : function (context, element, staveInfo) {
       var me = this;
@@ -1490,14 +1482,12 @@ define([
 
     /**
      * @method processBeam
+     * @param {Object} context the processing context object
      * @param {Element} element the MEI beam element
-     * @param {MEI2VF.Stave} stave the containing stave
-     * @param {Number} stave_n the number of the containing stave
-     * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current layer
-     * @param {MEI2VF.StaveInfo} staveInfo
+     * @param {StaveInfo} staveInfo
      */
     processBeam : function (context, element, staveInfo) {
-      var me = this, vexNotes, childElements, k, l, filteredElements;
+      var me = this, vexNotes, filteredElements;
       context.inBeamNo += 1;
 
       vexNotes = me.processNoteLikeChildren(context, element, staveInfo);
@@ -1520,7 +1510,7 @@ define([
           context.newBeamInfosToResolve.push({
             element : element,
             vexNotes : vexNotes
-          })
+          });
         }
 
       } else {
@@ -1559,11 +1549,8 @@ define([
      * - bracket.place (auto if not specified)
      *
      * @method processTuplet
+     * @param {Object} context the processing context object
      * @param {Element} element the MEI tuplet element
-     * @param {MEI2VF.Stave} stave the containing stave
-     * @param {Number} stave_n the number of the containing stave
-     * @param {VF.StaveNote.STEM_UP|VF.StaveNote.STEM_DOWN|null} layerDir the direction of the current
-     * layer
      * @param {MEI2VF.StaveInfo} staveInfo the stave info object
      */
     processTuplet : function (context, element, staveInfo) {
@@ -1730,7 +1717,7 @@ define([
     },
 
     drawSystems : function (systems, ctx) {
-      var me = this, i, j;
+      var i, j;
       j = systems.length;
         for (i = 0; i < j; i++) {
           systems[i].draw(ctx);

@@ -15,9 +15,7 @@
  *
  */
 define([
-  'vexflow',
-  'common/Logger'
-], function (VF, Logger, undefined) {
+], function () {
 
 
   var PageInfo = function (config) {

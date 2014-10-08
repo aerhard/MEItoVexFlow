@@ -1,6 +1,5 @@
 define([
-  'meilib/RuntimeError',
-], function (RuntimeError, undefined) {
+], function () {
 
   if (!window.MeiLib) window.MeiLib = {};
 

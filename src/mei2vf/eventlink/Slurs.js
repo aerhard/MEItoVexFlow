@@ -46,7 +46,6 @@ define([
     },
 
     validateAtts : function () {
-      return;
     },
 
     // NB called from slur attributes elements

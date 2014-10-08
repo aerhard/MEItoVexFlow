@@ -166,7 +166,7 @@ define([
      * calculates the minimum width of all measures in a stave
      */
     calculateMinSystemWidth : function () {
-      var me = this, i, j, totalSpecifiedMeasureWidth = 0, singleAdditionalWidth, openWidthMeasureCount = 0;
+      var me = this, i, j, totalSpecifiedMeasureWidth = 0, openWidthMeasureCount = 0;
       for (i = 0, j = me.measures.length; i < j; i += 1) {
         if (me.measures[i].meiW === null) {
           openWidthMeasureCount += 1;
@@ -206,10 +206,9 @@ define([
 
     /**
      * formats the measures in the current system
-     * @param {Object} ctx the canvas context
      * @return {System} this
      */
-    format : function (ctx) {
+    format : function () {
       var me = this, i, j, measures, offsetX, labels;
       offsetX = me.coords.x + me.leftMar;
       measures = me.getMeasures();
