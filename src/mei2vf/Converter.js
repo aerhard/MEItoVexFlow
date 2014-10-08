@@ -304,6 +304,7 @@ define([
        * @property {Vex.Flow.Beam[]} allBeams
        */
       me.allBeams = [];
+      me.allBeamSpans = [];
       /**
        * Contains all Vex.Flow.Tuplet objects. Data is just pushed in
        * and later processed as a whole, so the array index is
@@ -428,11 +429,51 @@ define([
       me.slurs.createVexFromInfos(me.notes_by_id);
       me.hairpins.createVexFromInfos(me.notes_by_id);
 
+      me.resolveBeamSpans();
+
       return me;
     },
 
+    resolveBeamSpans : function () {
+      var me = this, i, j, beamSpans = me.allBeamSpans, idString, beamSpan, notes;
+      var startid, endid;
 
-    format: function (ctx) {
+      var getId = function (beamSpan, attName) {
+        idString = beamSpan.getAttribute(attName);
+        if (typeof idString === 'string') {
+          return idString.substring(1);
+        }
+      }
+
+      for (i = 0, j = beamSpans.length; i < j; i++) {
+        notes = [];
+        console.log(beamSpans[i]);
+
+        beamSpan = beamSpans[i];
+        startid = getId(beamSpan, 'startid');
+        endid = getId(beamSpan, 'endid');
+
+        if (startid && endid) {
+
+          notes.push(me.notes_by_id[startid].vexNote);
+          notes.push(me.notes_by_id[endid].vexNote);
+
+          console.log(notes);
+
+                    me.allBeams.push(new VF.Beam(notes, false));
+          //          me.allBeams.push(new VF.Beam(filteredElements, !context.layerDir && !context.hasStemDirInBeam));
+
+        } else {
+          // warn and abort: beam span could not be resolved
+        }
+
+        console.log(startid + ' ' + endid);
+
+      }
+    },
+
+
+    format : function (ctx) {
       var me = this;
       me.formatSystems(me.systems, ctx);
     },
@@ -596,10 +637,10 @@ define([
           me.onPb(element);
           break;
         case 'ending' :
-          me.processEnding(element);
+          me.processEnding(element, {});
           break;
         case 'section' :
-          me.processSection(element);
+          me.processSection(element, {});
           break;
         default :
           Logger.info('Not supported', 'Element ' + Util.serializeElement(element) +
@@ -621,11 +662,11 @@ define([
     /**
      *@method processSection
      */
-    processSection : function (element) {
+    processSection : function (element, sectionChildContext) {
       var me = this, i, j, sectionChildren = element.childNodes;
       for (i = 0, j = sectionChildren.length; i < j; i += 1) {
         if (sectionChildren[i].nodeType === 1) {
-          me.processSectionChild(sectionChildren[i]);
+          me.processSectionChild(sectionChildren[i], sectionChildContext);
         }
       }
     },
@@ -633,7 +674,7 @@ define([
     /**
      * @method processEnding
      */
-    processEnding : function (element) {
+    processEnding : function (element, sectionChildContext) {
       var me = this, isFirst = true, next, childNode;
 
       var getNext = function (node) {
@@ -658,7 +699,7 @@ define([
         if (!next) {
           me.currentVoltaType.end = true;
         }
-        me.processSectionChild(childNode);
+        me.processSectionChild(childNode, sectionChildContext);
 
         childNode = next;
       }
@@ -676,11 +717,11 @@ define([
      * <b>sb</b>
      * @method processSectionChild
      */
-    processSectionChild : function (element) {
+    processSectionChild : function (element, sectionChildContext) {
       var me = this;
       switch (element.localName) {
         case 'measure' :
-          me.processMeasure(element);
+          me.processMeasure(element, sectionChildContext);
           break;
         case 'scoreDef' :
           me.systemInfo.processScoreDef(element);
@@ -695,10 +736,10 @@ define([
           me.onSb(element);
           break;
         case 'ending' :
-          me.processEnding(element);
+          me.processEnding(element, sectionChildContext);
           break;
         case 'section' :
-          me.processSection(element);
+          me.processSection(element, sectionChildContext);
           break;
         default :
           Logger.info('Not supported', 'Element ' + Util.serializeElement(element) +
@@ -725,8 +766,8 @@ define([
      * @method processMeasure
      * @param {Element} element the MEI measure element
      */
-    processMeasure : function (element) {
-      var me = this, atSystemStart, left_barline, right_barline, system, system_n, childNodes;
+    processMeasure : function (element, sectionChildContext) {
+      var me = this, atSystemStart, leftBarline, rightBarline, system, system_n, childNodes;
 
       if (me.pendingSectionBreak || me.pendingSystemBreak) {
         system = me.createNewSystem();
@@ -739,8 +780,18 @@ define([
 
       Logger.debug('Converter.processMeasure()', '{enter}');
 
-      left_barline = element.getAttribute('left');
-      right_barline = element.getAttribute('right');
+      leftBarline = element.getAttribute('left');
+      rightBarline = element.getAttribute('right');
+
+      // VexFlow doesn't support repetition starts at the end of staves -> pass
+      // the value of @right to the following measure if @left isn't specified in it
+      if (rightBarline === 'rptstart') {
+        sectionChildContext.leftBarline = rightBarline;
+      }
+      if (!leftBarline && sectionChildContext.leftBarline) {
+        leftBarline = sectionChildContext.leftBarline;
+        sectionChildContext.leftBarline = null;
+      }
 
       var staveElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [], rehElements = [], ornamentElements = [], i, j;
 
@@ -782,6 +833,9 @@ define([
           case 'reh':
             rehElements.push(childNodes[i]);
             break;
+          case 'beamSpan':
+            me.allBeamSpans.push(childNodes[i]);
+            break;
           default:
             Logger.info('Not supported', '<' + childNodes[i].localName + '> is not supported as child of <measure>.');
             break;
@@ -791,7 +845,7 @@ define([
       // the stave objects will be stored in two places:
       // 1) in each MEI2VF.Measure
       // 2) in MEI2VF.Converter.allVexMeasureStaves
-      var staves = me.initializeStavesInMeasure(system, staveElements, left_barline, right_barline, atSystemStart);
+      var staves = me.initializeStavesInMeasure(system, staveElements, leftBarline, rightBarline, atSystemStart);
       var measureIndex = me.allVexMeasureStaves.push(staves) - 1;
 
       var currentStaveVoices = new StaveVoices();
@@ -822,8 +876,8 @@ define([
         inlineConnectorCfg : {
           models : me.systemInfo.inlineConnectorInfos,
           staves : staves,
-          barline_l : left_barline,
-          barline_r : right_barline
+          barline_l : leftBarline,
+          barline_r : rightBarline
         },
         tempoElements : tempoElements,
         rehElements : rehElements,
@@ -833,7 +887,7 @@ define([
 
       system.addMeasure(measure);
 
-//      measure.calculateMinWidth();
+      //      measure.calculateMinWidth();
 
     },
 
@@ -1719,9 +1773,9 @@ define([
     drawSystems : function (systems, ctx) {
       var i, j;
       j = systems.length;
-        for (i = 0; i < j; i++) {
-          systems[i].draw(ctx);
-        }
+      for (i = 0; i < j; i++) {
+        systems[i].draw(ctx);
+      }
     }
 
   };
