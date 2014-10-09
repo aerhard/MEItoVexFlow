@@ -247,6 +247,10 @@ define([
           me.processStaffGrp(element);
           break;
         case 'pgHead' :
+          me.processPgHead(element);
+          break;
+        case 'pgFoot' :
+          me.processPgFoot(element);
           break;
         default :
           Logger.info('Not supported', 'Element <' + element.localName +
@@ -254,6 +258,15 @@ define([
       }
     },
 
+    processPgHead : function (element) {
+      Logger.info('Not supported', 'Element <' + element.localName +
+                                   '> is not supported in <scoreDef>. Ignoring element.');
+    },
+
+    processPgFoot : function (element) {
+      Logger.info('Not supported', 'Element <' + element.localName +
+                                   '> is not supported in <scoreDef>. Ignoring element.');
+    },
 
     /**
      *

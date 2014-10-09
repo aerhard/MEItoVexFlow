@@ -74,6 +74,10 @@ define([
       this.lowestY = lowestY;
     },
 
+    getLowestY : function (lowestY) {
+      return this.lowestY;
+    },
+
     getCalculatedHeight : function () {
       return this.lowestY + this.pageBottomMar;
     }
