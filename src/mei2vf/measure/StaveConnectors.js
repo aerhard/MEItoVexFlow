@@ -67,18 +67,20 @@ define([
     },
 
     init : function (config) {
-      var me = this, vexType, topStave, bottomStave, vexConnector, label, labelMode, i, model;
+      var me = this, vexType, topStave, bottomStave, vexConnector, label, labelMode, i, model, leftBarline, rightBarline;
       var models = config.models;
       var staves = config.staves;
-      var barline_l = config.barline_l;
-      var barline_r = config.barline_r;
+      if (config.barlineInfo) {
+        leftBarline = config.barlineInfo.leftBarline;
+        rightBarline = config.barlineInfo.rightBarline;
+      }
       var system_n = config.system_n;
       labelMode = config.labelMode;
 
       for (i in models) {
         model = models[i];
 
-        vexType = (barline_r) ? me.vexTypesBarlineRight[barline_r] : me.vexTypes[model.symbol];
+        vexType = (rightBarline) ? me.vexTypesBarlineRight[rightBarline] : me.vexTypes[model.symbol];
         topStave = staves[model.top_stave_n];
         bottomStave = staves[model.bottom_stave_n];
 
@@ -104,8 +106,8 @@ define([
           }
         }
 
-        if (barline_l) {
-          vexType = me.vexTypesBarlineLeft[barline_l];
+        if (leftBarline) {
+          vexType = me.vexTypesBarlineLeft[leftBarline];
           if (typeof vexType === 'number' && topStave && bottomStave) {
             vexConnector = new VF.StaveConnector(topStave, bottomStave);
             vexConnector.setType(vexType);

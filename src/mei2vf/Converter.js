@@ -460,7 +460,7 @@ define([
 
           console.log(notes);
 
-                    me.allBeams.push(new VF.Beam(notes, false));
+          me.allBeams.push(new VF.Beam(notes, false));
           //          me.allBeams.push(new VF.Beam(filteredElements, !context.layerDir && !context.hasStemDirInBeam));
 
         } else {
@@ -611,12 +611,12 @@ define([
     },
 
     processScoreChildren : function (score) {
-      var me = this, i, j, childNodes;
+      var me = this, i, j, childNodes, sectionChildContext = {};
       if (score) {
         childNodes = score.childNodes;
         for (i = 0, j = childNodes.length; i < j; i++) {
           if (childNodes[i].nodeType === 1) {
-            me.processScoreChild(childNodes[i]);
+            me.processScoreChild(childNodes[i], sectionChildContext);
           }
         }
       } else {
@@ -624,7 +624,7 @@ define([
       }
     },
 
-    processScoreChild : function (element) {
+    processScoreChild : function (element, sectionChildContext) {
       var me = this;
       switch (element.localName) {
         case 'scoreDef' :
@@ -637,10 +637,10 @@ define([
           me.onPb(element);
           break;
         case 'ending' :
-          me.processEnding(element, {});
+          me.processEnding(element, sectionChildContext);
           break;
         case 'section' :
-          me.processSection(element, {});
+          me.processSection(element, sectionChildContext);
           break;
         default :
           Logger.info('Not supported', 'Element ' + Util.serializeElement(element) +
@@ -767,7 +767,7 @@ define([
      * @param {Element} element the MEI measure element
      */
     processMeasure : function (element, sectionChildContext) {
-      var me = this, atSystemStart, leftBarline, rightBarline, system, system_n, childNodes;
+      var me = this, atSystemStart, system, system_n, childNodes;
 
       if (me.pendingSectionBreak || me.pendingSystemBreak) {
         system = me.createNewSystem();
@@ -780,18 +780,24 @@ define([
 
       Logger.debug('Converter.processMeasure()', '{enter}');
 
-      leftBarline = element.getAttribute('left');
-      rightBarline = element.getAttribute('right');
+      var barlineInfo = {
+        leftBarline : element.getAttribute('left'),
+        rightBarline : element.getAttribute('right')
+      };
+
 
       // VexFlow doesn't support repetition starts at the end of staves -> pass
       // the value of @right to the following measure if @left isn't specified in it
-      if (rightBarline === 'rptstart') {
-        sectionChildContext.leftBarline = rightBarline;
+      if (sectionChildContext.leftBarlineElement && !barlineInfo.leftBarline) {
+        barlineInfo.leftBarline = sectionChildContext.leftBarlineElement.getAttribute('right');
+        barlineInfo.leftBarlineElement = sectionChildContext.leftBarlineElement;
+        sectionChildContext.leftBarlineElement = null;
       }
-      if (!leftBarline && sectionChildContext.leftBarline) {
-        leftBarline = sectionChildContext.leftBarline;
-        sectionChildContext.leftBarline = null;
+      if (barlineInfo.rightBarline === 'rptstart') {
+        barlineInfo.rightBarline = null;
+        sectionChildContext.leftBarlineElement = element;
       }
+
 
       var staveElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [], rehElements = [], ornamentElements = [], i, j;
 
@@ -845,7 +851,7 @@ define([
       // the stave objects will be stored in two places:
       // 1) in each MEI2VF.Measure
       // 2) in MEI2VF.Converter.allVexMeasureStaves
-      var staves = me.initializeStavesInMeasure(system, staveElements, leftBarline, rightBarline, atSystemStart);
+      var staves = me.initializeStavesInMeasure(system, staveElements, barlineInfo, atSystemStart);
       var measureIndex = me.allVexMeasureStaves.push(staves) - 1;
 
       var currentStaveVoices = new StaveVoices();
@@ -876,8 +882,7 @@ define([
         inlineConnectorCfg : {
           models : me.systemInfo.inlineConnectorInfos,
           staves : staves,
-          barline_l : leftBarline,
-          barline_r : rightBarline
+          barlineInfo : barlineInfo
         },
         tempoElements : tempoElements,
         rehElements : rehElements,
@@ -896,11 +901,10 @@ define([
      * @param {MEI2VF.System} system the current system
      * @param {Element[]} staveElements all stave elements in the current
      * measure
-     * @param {String} left_barline the left barline
-     * @param {String} right_barline the right barline
+     * @param {Object} barlineInfo information about the barlines to render to the measure
      * @param {Boolean} atSystemStart indicates if the current measure is the system's start measure
      */
-    initializeStavesInMeasure : function (system, staveElements, left_barline, right_barline, atSystemStart) {
+    initializeStavesInMeasure : function (system, staveElements, barlineInfo, atSystemStart) {
       var me = this, i, j, stave, stave_n, staves, isFirstVolta = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaves, newClef, currentStaveInfo, padding;
 
       staves = [];
@@ -922,8 +926,7 @@ define([
         stave = new Stave({
           system : system,
           y : system.getStaveYs()[stave_n],
-          leftBarline : left_barline,
-          rightBarline : right_barline
+          barlineInfo : barlineInfo
         });
         staves[stave_n] = stave;
 

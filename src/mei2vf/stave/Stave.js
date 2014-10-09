@@ -31,7 +31,7 @@ define([
    * @param {Object} cfg
    */
   var Stave = function (cfg) {
-    var me = this;
+    var me = this, leftBarline, rightBarline;
 
     me.init(0, cfg.y, 1000, {
       vertical_bar_width : 20, // 10 // Width around vertical bar end-marker
@@ -42,10 +42,17 @@ define([
 
     me.setSystem(cfg.system);
 
-    var leftBarline = cfg.leftBarline;
-    var rightBarline = cfg.rightBarline;
+    if (cfg.barlineInfo) {
+      leftBarline = cfg.barlineInfo.leftBarline;
+      rightBarline = cfg.barlineInfo.rightBarline;
+    }
 
-    me.setBegBarType(leftBarline ? me.barlines[leftBarline] : me.barlines['invis']);
+    if (leftBarline) {
+      me.setBegBarType(me.barlines[leftBarline]);
+      me.leftBarlineElement = cfg.barlineInfo.leftBarlineElement;
+    } else {
+      me.setBegBarType(me.barlines['invis']);
+    }
     if (rightBarline) {
       me.setEndBarType(me.barlines[rightBarline]);
     }
