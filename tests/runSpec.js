@@ -33,14 +33,15 @@
 var runSpec = function (m2vTests) {
 
   var allTests = [
-    'spec/mei2vf/Rendering',
     'spec/common/Logger',
     'spec/mei2vf/event/EventUtil',
     'spec/mei2vf/eventlink/EventLink',
     'spec/mei2vf/eventlink/EventReference',
-    'spec/meilib/MeiLib',
+    'spec/mei2vf/stave/StaveInfo',
     'spec/mei2vf/system/SystemInfo',
-    'spec/mei2vf/voice/StaveVoices'
+    'spec/mei2vf/voice/StaveVoices',
+    'spec/mei2vf/Rendering',
+    'spec/meilib/MeiLib'
   ];
 
   if (!m2vTests) {
@@ -157,6 +158,14 @@ var runSpec = function (m2vTests) {
       if (currentWindowOnload) {
         currentWindowOnload();
       }
+
+      require.config({
+        paths : {
+          'tests' : '../tests',
+          'spec' : '../tests/spec'
+        }
+      });
+
       require(m2vTests, function () {
         htmlReporter.initialize();
         env.execute();

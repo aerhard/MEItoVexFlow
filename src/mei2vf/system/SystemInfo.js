@@ -203,25 +203,26 @@ define([
       for (i = 0, j = children.length; i < j; i += 1) {
         if (children[i].nodeType === 1) {
           me.processScoreDef_child(children[i]);
-          hasChild = true;
+//          hasChild = true;
         }
       }
 
-      if (!hasChild) {
+      // TODO do this in any case!!!
+//      if (!hasChild) {
         me.updateStaffDefs(scoredef);
-      }
+//      }
 
     },
 
     /**
-     * TODO CHANGE
+     * process scoreDef in all system which didn't get updated by a staffDef child of the current scoreDef
      * @param scoredef
      */
     updateStaffDefs : function (scoredef) {
       var me = this, i = me.currentStaveInfos.length;
       while (i--) {
-        if (me.currentStaveInfos[i]) {
-          me.currentStaveInfos[i].overrideWithScoreDef(scoredef);
+        if (me.currentStaveInfos[i] && me.currentStaveInfos[i].scoreDef !== scoredef) {
+          me.currentStaveInfos[i].updateDef(null, scoredef);
         }
       }
     },
@@ -315,7 +316,7 @@ define([
       var me = this, stave_n, myAncestorSymbols;
       switch (element.localName) {
         case 'staffDef' :
-          stave_n = me.processStaffDef(element);
+          stave_n = me.processStaffDef(element, me.scoreDefElement);
           return {
             first_n : stave_n,
             last_n : stave_n
@@ -336,15 +337,15 @@ define([
      * @param {Element} element
      * @return {Number} the staff number of the staffDef
      */
-    processStaffDef : function (element) {
+    processStaffDef : function (element, scoreDef) {
       var me = this, stave_n, staveInfo;
       stave_n = parseInt(element.getAttribute('n'), 10);
       if (!isNaN(stave_n)) {
         staveInfo = me.currentStaveInfos[stave_n];
         if (staveInfo) {
-          staveInfo.updateDef(element, me.scoreDefElement);
+          staveInfo.updateDef(element, scoreDef);
         } else {
-          me.currentStaveInfos[stave_n] = new StaveInfo(element, me.scoreDefElement, true, true, true);
+          me.currentStaveInfos[stave_n] = new StaveInfo(element, scoreDef, true, true, true);
         }
         return stave_n;
       } else {

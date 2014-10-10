@@ -17,14 +17,16 @@
  * the License.
  */
 /*
- * Contributors and reworking: Alexander Erhard, @davethehat
+ * Contributors and additions: Alexander Erhard, @davethehat
  */
+
+// TODO take diverging parameter names with <clef> into account!!!
+
 define([
   'vexflow',
   'common/Logger',
   'common/Util'
 ], function (VF, Logger, Util) {
-
 
   /**
    * @class MEI2VF.StaveInfo
@@ -42,16 +44,6 @@ define([
   var StaveInfo = function (staffDef, scoreDef, w_clef, w_keysig, w_timesig) {
     var me = this;
     /**
-     * the most current scoreDef element.
-     * @private
-     */
-    me.scoreDef = scoreDef;
-    /**
-     * the most current staffDef element
-     * @private
-     */
-    me.staffDef = staffDef;
-    /**
      * @private
      */
     me.renderWith = {
@@ -63,12 +55,12 @@ define([
      * the currently valid keySpec
      * @private
      */
-    me.keySpec = {key : 'C'}; // default key
+    me.keySpec = {key : 'C', meiElement : staffDef}; // default key
     /**
      * the currently valid timeSpec
      * @private
      */
-    me.timeSpec = null;
+    me.timeSpec = {};
     /**
      * the currently valid staff labels
      * @private
@@ -89,11 +81,7 @@ define([
      */
     me.startClefCopy = null;
 
-    me.updateKeySpec();
-    me.updateTimeSpec();
-    me.updateLabels();
-    me.updateSpacing();
-    me.updateClef(me.staffDef);
+    me.updateDef(staffDef, scoreDef, true);
   };
 
   StaveInfo.prototype = {
@@ -116,56 +104,125 @@ define([
       perc : 'percussion'
     },
 
+    getCurrentScoreDef : function () {
+      return this.currentScoreDef;
+    },
+
     /**
-     * @private
+     * @public
+     * @param staffDef
+     * @param scoreDef
      */
-    updateTimeSpec : function () {
+    updateDef : function (staffDef, scoreDef, skipRenderWith) {
+      var me = this, clefDefiningElement, timeSigDefiningElement, keySigDefiningElement;
+
+      me.currentScoreDef = scoreDef;
+
+      var getDefiningElement = function (element1, element2, att) {
+        if (element1 && element1.hasAttribute(att)) {
+          return element1;
+        }
+        if (element2 && element2.hasAttribute(att)) {
+          return element2;
+        }
+      };
+
+      clefDefiningElement = getDefiningElement(staffDef, scoreDef, 'clef.shape');
+      keySigDefiningElement = getDefiningElement(staffDef, scoreDef, 'key.pname');
+      timeSigDefiningElement = getDefiningElement(staffDef, scoreDef, 'meter.count');
+
+      if (!skipRenderWith) {
+        me.updateRenderWith(clefDefiningElement, keySigDefiningElement, timeSigDefiningElement);
+      }
+
+      if (clefDefiningElement) me.updateClef(clefDefiningElement);
+      if (keySigDefiningElement) me.updateKeySpec(keySigDefiningElement);
+      if (timeSigDefiningElement) me.updateTimeSpec(timeSigDefiningElement);
+
+      // TODO currently, labels and spacing are only read from <staffDef>
+      if (staffDef) {
+        me.updateLabels(staffDef);
+        me.updateSpacing(staffDef);
+      }
+
+    },
+
+    /**
+     * updated the definition from a <scoreDef> only if the <scoreDef> hasn't been processed yet with a <staffDef>
+     * @param scoreDef
+     */
+    updateIfNew : function (scoreDef) {
       var me = this;
-      if (me.staffDef.hasAttribute('meter.count') && me.staffDef.hasAttribute('meter.unit')) {
-        me.timeSpec = {
-          count : +me.staffDef.getAttribute('meter.count'),
-          unit : +me.staffDef.getAttribute('meter.unit'),
-          sym : me.staffDef.getAttribute('meter.sym'),
-          meiElement : me.staffDef
-        };
-      } else if (me.scoreDef.hasAttribute('meter.count') && me.scoreDef.hasAttribute('meter.unit')) {
-        me.timeSpec = {
-          count : +me.scoreDef.getAttribute('meter.count'),
-          unit : +me.scoreDef.getAttribute('meter.unit'),
-          sym : me.scoreDef.getAttribute('meter.sym'),
-          meiElement : me.scoreDef
-        };
+      if (scoreDef !== me.currentScoreDef) {
+        me.updateDef(null, scoreDef);
       }
     },
 
     /**
      * @private
+     * @param newStaffDef
      */
-    updateKeySpec : function () {
-      var me = this;
-      if (me.staffDef.hasAttribute('key.pname')) {
-        me.keySpec = {
-          key : me.convertKeySpec(me.staffDef),
-          meiElement : me.staffDef
-        };
-      } else if (me.scoreDef.hasAttribute('key.pname')) {
-        me.keySpec = {
-          key : me.convertKeySpec(me.scoreDef),
-          meiElement : me.scoreDef
-        };
+    updateRenderWith : function (clefDefiningElement, keySigDefiningElement, timeSigDefiningElement) {
+      var me = this, result, hasEqualAtt;
+
+      result = {
+        clef : false,
+        keysig : false,
+        timesig : false
+      };
+
+      // if (Object.keys(newStaffDef).length === 0) {
+      // return result;
+      // }
+
+      hasEqualAtt = function (currentElement, newElement, attr_name) {
+        return
+//        (newElement.hasAttribute(attr_name)) ?
+               currentElement.getAttribute(attr_name) === newElement.getAttribute(attr_name);
+//        : true;
+      };
+
+      var hasEqualClefAtt = function (currentElement, newElement, currentPrefix, newPrefix, attr_name) {
+        return currentElement.getAttribute(currentPrefix + attr_name) === newElement.getAttribute(newPrefix + attr_name);
+      };
+
+      var currentClefElement = me.clef.meiElement;
+      var currentKeySigElement = me.keySpec.meiElement;
+      var currentTimeSigElement = me.timeSpec.meiElement;
+
+      if (clefDefiningElement) {
+        var currentPrefix = (currentClefElement.localName === 'clef') ? '' : 'clef.';
+        var newPrefix = (clefDefiningElement.localName === 'clef') ? '' : 'clef.';
+        if (!hasEqualClefAtt(currentClefElement, clefDefiningElement, currentPrefix, newPrefix, 'shape') ||
+            !hasEqualClefAtt(currentClefElement, clefDefiningElement, currentPrefix, newPrefix, 'line')) {
+          result.clef = true;
+        }
       }
+
+      if (keySigDefiningElement && (!hasEqualAtt(currentKeySigElement, keySigDefiningElement, 'key.pname') ||
+                                    !hasEqualAtt(currentKeySigElement, keySigDefiningElement, 'key.accid') ||
+                                    !hasEqualAtt(currentKeySigElement, keySigDefiningElement, 'key.mode'))) {
+        result.keysig = true;
+      }
+      if (timeSigDefiningElement && (!hasEqualAtt(currentTimeSigElement, timeSigDefiningElement, 'meter.count') ||
+                                     !hasEqualAtt(currentTimeSigElement, timeSigDefiningElement, 'meter.unit') ||
+                                     !hasEqualAtt(currentTimeSigElement, timeSigDefiningElement, 'meter.sym'))) {
+        result.timesig = true;
+      }
+
+      me.renderWith = result;
     },
 
     /**
      * @private
      */
-    updateLabels : function () {
+    updateLabels : function (staffDef) {
       var me = this, label, labelAbbr;
-      label = me.staffDef.getAttribute('label');
+      label = staffDef.getAttribute('label');
       if (typeof label === 'string') {
         me.label = label;
       }
-      labelAbbr = me.staffDef.getAttribute('label.abbr');
+      labelAbbr = staffDef.getAttribute('label.abbr');
       if (typeof labelAbbr === 'string') {
         me.labelAbbr = labelAbbr;
       }
@@ -174,9 +231,9 @@ define([
     /**
      * @private
      */
-    updateSpacing : function () {
+    updateSpacing : function (staffDef) {
       var me = this, spacing;
-      spacing = me.staffDef.getAttribute('spacing');
+      spacing = staffDef.getAttribute('spacing');
       if (spacing !== null && !isNaN(spacing)) {
         me.spacing = +spacing;
       }
@@ -184,61 +241,104 @@ define([
     },
 
     /**
-     * @public
+     * @private
+     * @param element
+     * @returns {*}
      */
-    forceSectionStartInfo : function () {
-      var me = this;
-      me.renderWith.clef = true;
-      me.renderWith.keysig = true;
-      me.renderWith.timesig = true;
-    },
+    updateClef : function (element) {
+      var me = this, clefShape, clefDis, clefDisPlace, clefType, prefix;
 
-    /**
-     * @public
-     */
-    forceStaveStartInfo : function () {
-      var me = this;
-      me.renderWith.clef = true;
-      me.renderWith.keysig = true;
-    },
+      // prefix for clef attribute names
+      prefix = (element.localName === 'clef') ? '' : 'clef.';
 
-    /**
-     * @public
-     */
-    showClefCheck : function () {
-      var me = this;
-      if (me.renderWith.clef && me.staffDef.getAttribute('clef.visible') !== 'false') {
-        me.renderWith.clef = false;
-        return true;
+      clefShape = element.getAttribute(prefix + 'shape');
+      if (!clefShape) {
+        Logger.warn('@clef.shape expected', 'No clef shape attribute found in ' + Util.serializeElement(element) +
+                                            '. Setting default clef.shape "G".');
+        clefShape = 'G';
+      }
+      clefType = clefShape + (element.getAttribute(prefix + 'line') || '');
+      clefDis = element.getAttribute(prefix + 'dis');
+      clefDisPlace = element.getAttribute(prefix + 'dis.place');
+
+      var type = me.clefTypeMap[clefType];
+      if (type) {
+        if (clefDis === '8' && clefDisPlace === 'below') {
+          me.clef = {
+            type : type,
+            shift : -1,
+            meiElement : element
+          };
+        } else {
+          me.clef = {
+            type : type,
+            meiElement : element
+          };
+        }
+      } else {
+        me.clef = {
+          type : 'treble',
+          meiElement : null
+        };
+        Logger.warn('Not supported', 'Clef definition in ' + Util.serializeElement(element) +
+                                     ' is not supported. Setting default treble clef.');
       }
     },
 
     /**
-     * @public
+     * @private
      */
-    showKeysigCheck : function () {
+    updateTimeSpec : function (element) {
       var me = this;
-      if (me.renderWith.keysig) {
-        me.renderWith.keysig = false;
-        if (me.staffDef.getAttribute('key.sig.show') === 'true' ||
-            me.scoreDef.getAttribute('key.sig.show') !== 'false') {
-          return true;
+      me.timeSpec = {
+        count : +element.getAttribute('meter.count'),
+        unit : +element.getAttribute('meter.unit'),
+        sym : element.getAttribute('meter.sym'),
+        meiElement : element
+      };
+    },
+
+    /**
+     * @private
+     */
+    updateKeySpec : function (element) {
+      var me = this;
+      me.keySpec = {
+        key : me.convertKeySpec(element),
+        meiElement : element
+      };
+    },
+
+    /**
+     * @private
+     * @param element
+     * @returns {*}
+     */
+    convertKeySpec : function (element) {
+      var keyname, key_accid, key_mode;
+      keyname = element.getAttribute('key.pname').toUpperCase();
+      key_accid = element.getAttribute('key.accid');
+      if (key_accid !== null) {
+        switch (key_accid) {
+          case 's' :
+            keyname += '#';
+            break;
+          case 'f' :
+            keyname += 'b';
+            break;
+          default :
+            Logger.warn('Not supported', 'expected to find value "s" or "f" instead of "' + key_accid +
+                                         '" in @key.accid of ' + Util.serializeElement(element) +
+                                         '. Ignoring processing of this attribute.');
         }
       }
+      key_mode = element.getAttribute('key.mode');
+      if (key_mode !== null) {
+        keyname += (key_mode === 'major') ? '' : 'm';
+      }
+      return keyname;
     },
 
-    /**
-     * @public
-     */
-    showTimesigCheck : function () {
-      var me = this;
-      if (me.renderWith.timesig) {
-        me.renderWith.timesig = false;
-        if (me.staffDef.getAttribute('meter.rend') === 'norm' || me.scoreDef.getAttribute('meter.rend') !== 'invis') {
-          return true;
-        }
-      }
-    },
 
     /**
      * @public
@@ -275,48 +375,57 @@ define([
     },
 
     /**
-     * @private
-     * @param element
-     * @returns {*}
+     * @public
      */
-    updateClef : function (element) {
-      var me = this, clefShape, clefDis, clefDisPlace, clefType, prefix;
-
-      // prefix for clef attribute names
-      prefix = (element.localName === 'clef') ? '' : 'clef.';
-
-      clefShape = element.getAttribute(prefix + 'shape');
-      if (!clefShape) {
-        Logger.warn('@clef.shape expected', 'No clef shape attribute found in ' +
-                                                   Util.serializeElement(element) +
-                                                   '. Setting default clef.shape "G".');
-        clefShape = 'G';
+    forceSectionStartInfo : function () {
+      this.renderWith = {
+        clef: true,
+        keysig:true,
+        timesig: true
       }
-      clefType = clefShape + (element.getAttribute(prefix + 'line') || '');
-      clefDis = element.getAttribute(prefix + 'dis');
-      clefDisPlace = element.getAttribute(prefix + 'dis.place');
+    },
 
-      var type = me.clefTypeMap[clefType];
-      if (type) {
-        if (clefDis === '8' && clefDisPlace === 'below') {
-          me.clef = {
-            type : type,
-            shift : -1,
-            meiElement : element
-          };
-        } else {
-          me.clef = {
-            type : type,
-            meiElement : element
-          };
+    /**
+     * @public
+     */
+    forceStaveStartInfo : function () {
+      var me = this;
+      me.renderWith.clef = true;
+      me.renderWith.keysig = true;
+    },
+
+    /**
+     * @public
+     */
+    showClefCheck : function () {
+      var me = this;
+      if (me.renderWith.clef && me.clef.meiElement.getAttribute('clef.visible') !== 'false') {
+        me.renderWith.clef = false;
+        return true;
+      }
+    },
+
+    /**
+     * @public
+     */
+    showKeysigCheck : function () {
+      var me = this;
+      if (me.renderWith.keysig && me.keySpec.meiElement.getAttribute('key.sig.show') !== 'false') {
+        me.renderWith.keysig = false;
+        return true;
+      }
+    },
+
+    /**
+     * @public
+     */
+    showTimesigCheck : function () {
+      var me = this;
+      if (me.renderWith.timesig) {
+        me.renderWith.timesig = false;
+        if (me.timeSpec.meiElement.getAttribute('meter.rend') !== 'invis') {
+          return true;
         }
-      } else {
-        me.clef = {
-          type : 'treble',
-          meiElement : null
-        };
-        Logger.warn('Not supported', 'Clef definition in ' + Util.serializeElement(element) +
-                                            ' is not supported. Setting default treble clef.');
       }
     },
 
@@ -335,111 +444,12 @@ define([
     },
 
     /**
-     * @private
-     * @param element
-     * @returns {*}
+     * @public
      */
-    convertKeySpec : function (element) {
-      var keyname, key_accid, key_mode;
-      keyname = element.getAttribute('key.pname').toUpperCase();
-      key_accid = element.getAttribute('key.accid');
-      if (key_accid !== null) {
-        switch (key_accid) {
-          case 's' :
-            keyname += '#';
-            break;
-          case 'f' :
-            keyname += 'b';
-            break;
-          default :
-            Logger.warn('Not supported', 'expected to find value "s" or "f" instead of "' + key_accid +
-                                                '" in @key.accid of ' + Util.serializeElement(element) +
-                                                '. Ignoring processing of this attribute.');
-        }
-      }
-      key_mode = element.getAttribute('key.mode');
-      if (key_mode !== null) {
-        keyname += (key_mode === 'major') ? '' : 'm';
-      }
-      return keyname;
-    },
-
     getTimeSpec : function () {
       return this.timeSpec;
-    },
-
-    /**
-     * @private
-     * @param newStaffDef
-     */
-    updateRenderWith : function (newStaffDef) {
-      var me = this, result, hasEqualAtt;
-
-      result = {
-        clef : false,
-        keysig : false,
-        timesig : false
-      };
-
-      // if (Object.keys(newStaffDef).length === 0) {
-      // return result;
-      // }
-
-      hasEqualAtt = function (attr_name) {
-        return me.staffDef.getAttribute(attr_name) === newStaffDef.getAttribute(attr_name);
-      };
-
-      if (!hasEqualAtt('clef.shape') || !hasEqualAtt('clef.line')) {
-        result.clef = true;
-      }
-      if ((!hasEqualAtt('key.pname') || !hasEqualAtt('key.accid') || !hasEqualAtt('key.mode'))) {
-        result.keysig = true;
-      }
-      if (!hasEqualAtt('meter.count') || !hasEqualAtt('meter.unit')) {
-        result.timesig = true;
-      }
-
-      me.renderWith = result;
-    },
-
-    /**
-     * @public
-     * @param staffDef
-     * @param scoreDef
-     */
-    updateDef : function (staffDef, scoreDef) {
-      var me = this;
-      me.updateRenderWith(staffDef);
-      me.staffDef = staffDef;
-      me.scoreDef = scoreDef;
-      me.updateKeySpec();
-      me.updateTimeSpec();
-      me.updateLabels();
-      me.updateSpacing();
-      if (staffDef.hasAttribute('clef.shape')) {
-        me.updateClef(staffDef);
-      }
-    },
-
-    /**
-     * @public
-     * @param scoreDef
-     */
-    overrideWithScoreDef : function (scoreDef) {
-      var me = this;
-
-      me.scoreDef = scoreDef;
-
-      if (me.scoreDef.hasAttribute('meter.count') && me.scoreDef.hasAttribute('meter.unit')) {
-        me.timeSpec = {
-          count : +me.scoreDef.getAttribute('meter.count'),
-          unit : +me.scoreDef.getAttribute('meter.unit'),
-          sym : me.scoreDef.getAttribute('meter.sym'),
-          meiElement : scoreDef
-        };
-        me.renderWith.timesig = true;
-      }
     }
+
   };
 
   return StaveInfo;

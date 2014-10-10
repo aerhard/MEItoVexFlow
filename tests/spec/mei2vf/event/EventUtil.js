@@ -1,5 +1,5 @@
 define([
-  '../../../../src/mei2vf/event/EventUtil',
+  'mei2vf/event/EventUtil',
   'common/Logger'
 ], function (EventUtil, Logger, undefined) {
 

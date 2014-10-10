@@ -406,12 +406,15 @@ define([
      * be processed further or drawn immediately to a canvas via {@link #draw}.
      * @method process
      * @chainable
-     * @param {XMLDocument} xmlDoc an XML document or element containing the MEI music to render
+     * @param {XMLDocument|Element} xmlDoc an XML document or element containing the MEI music to render
      * @return {Converter} this
      */
     process : function (xmlDoc) {
       var me = this;
       me.reset();
+
+//      me.systemInfo.processScoreDef(xmlDoc.getElementsByTagName('scoreDef')[0]);
+      //      me.processSections(xmlDoc);
 
       if (xmlDoc.localName === 'score') {
         me.processScoreChildren(xmlDoc);
@@ -419,8 +422,6 @@ define([
         me.processScoreChildren(xmlDoc.querySelector('score'));
       }
 
-      //      me.systemInfo.processScoreDef(xmlDoc.getElementsByTagName('scoreDef')[0]);
-      //      me.processSections(xmlDoc);
       me.directives.createVexFromInfos(me.notes_by_id);
       me.dynamics.createVexFromInfos(me.notes_by_id);
       me.fermatas.createVexFromInfos(me.notes_by_id);
@@ -631,7 +632,7 @@ define([
           me.systemInfo.processScoreDef(element);
           break;
         case 'staffDef' :
-          me.systemInfo.processStaffDef(element);
+          me.systemInfo.processStaffDef(element, null);
           break;
         case 'pb' :
           me.onPb(element);
@@ -727,7 +728,7 @@ define([
           me.systemInfo.processScoreDef(element);
           break;
         case 'staffDef' :
-          me.systemInfo.processStaffDef(element);
+          me.systemInfo.processStaffDef(element, null);
           break;
         case 'pb' :
           me.onPb(element);

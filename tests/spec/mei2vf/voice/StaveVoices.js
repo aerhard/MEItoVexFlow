@@ -1,5 +1,5 @@
 define([
-  '../../../../src/mei2vf/voice/StaveVoices',
+  'mei2vf/voice/StaveVoices',
 ], function (StaveVoices, undefined) {
 
   describe("StaveVoices", function () {
