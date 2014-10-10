@@ -20,8 +20,6 @@
  * Contributors and additions: Alexander Erhard, @davethehat
  */
 
-// TODO take diverging parameter names with <clef> into account!!!
-
 define([
   'vexflow',
   'common/Logger',
@@ -171,15 +169,8 @@ define([
         timesig : false
       };
 
-      // if (Object.keys(newStaffDef).length === 0) {
-      // return result;
-      // }
-
       hasEqualAtt = function (currentElement, newElement, attr_name) {
-        return
-//        (newElement.hasAttribute(attr_name)) ?
-               currentElement.getAttribute(attr_name) === newElement.getAttribute(attr_name);
-//        : true;
+        return currentElement.getAttribute(attr_name) === newElement.getAttribute(attr_name);
       };
 
       var hasEqualClefAtt = function (currentElement, newElement, currentPrefix, newPrefix, attr_name) {
