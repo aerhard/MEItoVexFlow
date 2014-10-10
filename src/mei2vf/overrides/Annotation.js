@@ -1,3 +1,8 @@
+/**
+ * Changes:
+ * 1 let left justified notes align with note heads on the left
+ */
+
 define([
   'vexflow',
   'vex'
@@ -38,7 +43,8 @@ define([
     var x, y;
 
     if (this.justification == Annotation.Justify.LEFT) {
-      x = start.x;
+      //x = start.x;
+      x = this.note.getAbsoluteX();
     } else if (this.justification == Annotation.Justify.RIGHT) {
       x = start.x - text_width;
     } else if (this.justification == Annotation.Justify.CENTER) {
