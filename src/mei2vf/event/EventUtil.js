@@ -123,14 +123,9 @@ define([
 
         var artics = articElement.split(' ');
 
-
-
         for (k=0;k<artics.length;k++) {
 
           articCode = Tables.articulations[artics[k]];
-
-          console.log(artics);
-          console.log(articCode);
 
           if (articCode) {
             vexArtic = null;
