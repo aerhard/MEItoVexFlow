@@ -152,10 +152,6 @@ define([
        */
       autoStaveConnectorLine : true,
       /**
-       * @cfg {Boolean} renderFermataAttributes Specifies if fermata attributes should
-       * be rendered. Defaults to `true`
-       */
-      /**
        * @cfg {"full"/"abbr"/null} labelMode Specifies the way voice labels are
        * added
        * to staves. Values:
@@ -243,9 +239,6 @@ define([
 
       me.pageInfo = new PageInfo(me.cfg);
 
-      if (me.cfg.renderFermataAttributes === true) {
-        EventUtil.addFermataAtt = EventUtil.addFermata;
-      }
       switch (me.cfg.processSb) {
         case 'pb' :
           me.onSb = me.setPendingPageBreak;

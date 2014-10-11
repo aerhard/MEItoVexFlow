@@ -128,9 +128,13 @@ define([
       }
     },
 
-    addFermataAtt : function () {
+    addFermataAtt : function (note, element, place, index) {
+      var me = this;
+      var vexPlace = Tables.fermata[place];
+      me.addNewFermata(note, element, place, index, vexPlace);
     },
 
+    // TODO improve
     /**
      * adds a fermata to a note-like object
      * @method addFermataAtt
@@ -140,7 +144,24 @@ define([
      * @param {Number} index The index of the note in a chord (optional)
      */
     addFermata : function (note, element, place, index) {
-      var vexArtic = new VF.Articulation(Tables.fermata[place]);
+      var me = this, i, j, alreadyDefined = null, vexPlace;
+      vexPlace = Tables.fermata[place];
+      for (i = 0, j = note.modifiers.length; i < j; i++) {
+        if (note.modifiers[i].type === vexPlace) {
+          alreadyDefined = note.modifiers[i];
+          break;
+        }
+      }
+      if (alreadyDefined) {
+        // TODO improve
+        alreadyDefined.otherMeiElement = element;
+      } else {
+        me.addNewFermata(note, element, place, index, vexPlace);
+      }
+    },
+
+    addNewFermata : function (note, element, place, index, vexPlace) {
+      var vexArtic = new VF.Articulation(vexPlace);
       vexArtic.setPosition(Tables.positions[place]);
       vexArtic.setMeiElement(element);
       note.addArticulation(index || 0, vexArtic);
@@ -154,7 +175,6 @@ define([
         Logger.info('Not supported', 'The value of @stem.mod="' + stemMod + '" specified in ' +
                                      Util.serializeElement(element) + ' is not supported. Ignoring attribute');
       }
-
 
     },
 
