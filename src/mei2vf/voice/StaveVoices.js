@@ -122,7 +122,8 @@ define([
       var i, staveVoice, all_voices = this.all_voices;
       for (i = 0; i < all_voices.length; ++i) {
         staveVoice = all_voices[i];
-        staveVoice.voice.draw(context, staves[staveVoice.stave_n]);
+        staveVoice.voice.draw(context);
+//        staveVoice.voice.draw(context, staves[staveVoice.stave_n]);
       }
     }
   };

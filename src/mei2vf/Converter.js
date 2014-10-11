@@ -358,11 +358,6 @@ define([
        */
       me.notes_by_id = {};
       /**
-       * an array of Beams across staves
-       * @property {Object} interStaveBeamInfos
-       */
-      me.beamInfosToResolve = [];
-      /**
        * the number of the current system
        * @property {Number} currentSystem_n
        */
@@ -406,7 +401,7 @@ define([
       var me = this;
       me.reset();
 
-//      me.systemInfo.processScoreDef(xmlDoc.getElementsByTagName('scoreDef')[0]);
+      //      me.systemInfo.processScoreDef(xmlDoc.getElementsByTagName('scoreDef')[0]);
       //      me.processSections(xmlDoc);
 
       if (xmlDoc.localName === 'score') {
@@ -850,8 +845,11 @@ define([
 
       var currentStaveVoices = new StaveVoices();
 
+      var beamInfosToResolve = [];
+
+
       for (i = 0, j = staveElements.length; i < j; i++) {
-        me.processStaveEvents(staves, staveElements[i], measureIndex, currentStaveVoices);
+        beamInfosToResolve = me.processStaveEvents(staves, staveElements[i], measureIndex, currentStaveVoices, beamInfosToResolve);
       }
 
       me.directives.createInfos(dirElements, element);
@@ -885,14 +883,11 @@ define([
       });
 
       system.addMeasure(measure);
-
-      //      measure.calculateMinWidth();
-
     },
 
     /**
      * @method initializeStavesInMeasure
-     * @param {MEI2VF.System} system the current system
+     * @param {System} system the current system
      * @param {Element[]} staveElements all stave elements in the current
      * measure
      * @param {Object} barlineInfo information about the barlines to render to the measure
@@ -1024,7 +1019,7 @@ define([
      * @param {MEI2VF.StaveVoices} currentStaveVoices The current StaveVoices
      * object
      */
-    processStaveEvents : function (staves, staveElement, measureIndex, currentStaveVoices) {
+    processStaveEvents : function (staves, staveElement, measureIndex, currentStaveVoices, beamInfosToResolve) {
       var me = this, stave, stave_n, layerElements, i, j, vexNotes, staveInfo;
 
       stave_n = parseInt(staveElement.getAttribute('n'), 10) || 1;
@@ -1054,7 +1049,7 @@ define([
         currentSystem_n : me.currentSystem_n,
         stave : stave,
         stave_n : stave_n,
-        beamInfosToResolve : me.beamInfosToResolve,
+        beamInfosToResolve : beamInfosToResolve,
         newBeamInfosToResolve : []
       };
 
@@ -1074,8 +1069,9 @@ define([
         context.currentClefChangeProperty = null;
       }
 
-      me.beamInfosToResolve = context.newBeamInfosToResolve;
+
       staveInfo.removeStartClefCopy();
+      return context.newBeamInfosToResolve;
     },
 
     /**
@@ -1189,7 +1185,7 @@ define([
      * @method processNote
      */
     processNote : function (context, element, staveInfo) {
-      var me = this, xml_id, mei_tie, mei_slur, atts, note_opts, note, clef, vexPitch;
+      var me = this, xml_id, mei_tie, mei_slur, atts, note_opts, note, clef, vexPitch, stave;
 
       atts = Util.attsToObj(element);
 
@@ -1202,29 +1198,27 @@ define([
 
         vexPitch = EventUtil.getVexPitch(element);
 
-        //        mei_stave_n = +atts.staff || stave_n;
-        //        if (mei_stave_n !== stave_n) {
-        //          var otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][mei_stave_n];
-        //          if (otherStave) {
-        //            stave = otherStave;
-        //            clef = me.systemInfo.getClef(stave_n);
-        //          } else {
-        //            Logger.warn('Staff not found', 'No stave could be found which corresponds to @staff="' + mei_stave_n +
-        //                                           '" specified in ' + Util.serializeElement(element) +
-        //                                           '". Adding note to current stave.');
-        //          }
-        //        }
-
-        if (!clef) {
-          clef = staveInfo.getClef();
+        if (atts.staff) {
+          var otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][+atts.staff];
+          if (otherStave) {
+            stave = otherStave;
+            clef = me.systemInfo.getClef(+atts.staff);
+          } else {
+            Logger.warn('Staff not found', 'No stave could be found which corresponds to @staff="' + atts.staff +
+                                           '" specified in ' + Util.serializeElement(element) +
+                                           '". Adding note to current stave.');
+          }
         }
+
+        if (!clef) clef = staveInfo.getClef();
+        if (!stave) stave =context.stave;
 
         note_opts = {
           vexPitch : vexPitch,
           clef : clef,
           element : element,
           atts : atts,
-          stave : context.stave,
+          stave : stave,
           layerDir : context.layerDir
         };
 
@@ -1281,7 +1275,7 @@ define([
      * @method processChord
      */
     processChord : function (context, element, staveInfo) {
-      var me = this, noteElements, xml_id, chord, chord_opts, atts, i, j, mei_tie, mei_slur;
+      var me = this, noteElements, xml_id, chord, chord_opts, atts, i, j, mei_tie, mei_slur, clef, stave;
 
       noteElements = element.getElementsByTagName('note');
 
@@ -1294,10 +1288,28 @@ define([
 
       try {
 
+        if (atts.staff) {
+          var otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][+atts.staff];
+          if (otherStave) {
+            stave = otherStave;
+            clef = me.systemInfo.getClef(+atts.staff);
+            console.log(atts.staff);
+            console.log(otherStave);
+          } else {
+            Logger.warn('Staff not found', 'No stave could be found which corresponds to @staff="' + atts.staff +
+                                           '" specified in ' + Util.serializeElement(element) +
+                                           '". Adding note to current stave.');
+          }
+        }
+
+        if (!clef) clef = staveInfo.getClef();
+        if (!stave) stave =context.stave;
+
+
         chord_opts = {
           noteElements : noteElements,
-          clef : staveInfo.getClef(),
-          stave : context.stave,
+          clef : clef,
+          stave : stave,
           element : element,
           atts : atts,
           layerDir : context.layerDir
@@ -1555,7 +1567,7 @@ define([
             }
           }
           filteredElements = combinedVexNotes.filter(function (element) {
-            return element.beamable === true;
+            return element && element.beamable === true;
           });
         } else {
           context.newBeamInfosToResolve.push({
