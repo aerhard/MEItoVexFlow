@@ -82,8 +82,9 @@ define([
      * return {Number}
      */
     getFillFactor : function () {
-      var voice = this.vexVoices[0];
-      return voice.getTicksUsed().numerator / voice.getTotalTicks().numerator
+      var voice = this.vexVoices[0], ticksUsed;
+      ticksUsed = voice.getTicksUsed().numerator;
+      return (ticksUsed === 0) ? 1 : ticksUsed / voice.getTotalTicks().numerator
     },
 
     /**
