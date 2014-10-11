@@ -123,12 +123,17 @@ define([
 
         var artics = articElement.split(' ');
 
+
+
         for (k=0;k<artics.length;k++) {
 
           articCode = Tables.articulations[artics[k]];
 
-          if (articCode) {
+          console.log(artics);
+          console.log(articCode);
 
+          if (articCode) {
+            vexArtic = null;
             for (i = 0, j = note.modifiers.length; i < j; i++) {
               if (note.modifiers[i].type === articCode) {
                 vexArtic = note.modifiers[i];
@@ -155,7 +160,7 @@ define([
         }
       } else {
         Logger.warn('Missing attribute', Util.serializeElement(element) +
-                                      ' does not have an @artic attribute. Ignoring articulation.');
+                                         ' does not have an @artic attribute. Ignoring articulation.');
       }
     },
 
