@@ -77,7 +77,9 @@ define([
     for (i=0,j=articElements.length;i<j;i++) {
       EventUtil.addArticulation(me, articElements[i]);
     }
-
+    if (atts.artic) {
+      EventUtil.addArticulation(me, element);
+    }
 
     if (atts.fermata) {
       EventUtil.addFermataAtt(me, element, atts.fermata);

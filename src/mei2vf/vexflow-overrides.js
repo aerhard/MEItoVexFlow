@@ -1,6 +1,5 @@
 define([
   'mei2vf/overrides/Annotation',
-  'mei2vf/overrides/Articulation',
   'mei2vf/overrides/Beam',
   'mei2vf/overrides/ClefNote',
   'mei2vf/overrides/Curve',

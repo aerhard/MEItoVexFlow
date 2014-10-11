@@ -62,6 +62,9 @@ define([
     if (atts.accid) {
       EventUtil.processAttrAccid(atts.accid, this, 0);
     }
+    if (atts.artic) {
+      EventUtil.addArticulation(me, element);
+    }
     if (atts.ho) {
       EventUtil.processAttrHo(atts.ho, this, options.stave);
     }

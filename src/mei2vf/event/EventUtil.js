@@ -23,8 +23,9 @@ define([
   'common/Logger',
   'common/RuntimeError',
   'common/Util',
-  'mei2vf/Tables'
-], function (VF, Logger, RuntimeError, Util, Tables, undefined) {
+  'mei2vf/Tables',
+  'mei2vf/eventpointer/Articulation'
+], function (VF, Logger, RuntimeError, Util, Tables, Articulation) {
 
 
   var EventUtil = {
@@ -117,6 +118,7 @@ define([
       var i, j, articCode, alreadyDefined;
 
       articCode = Tables.articulations[element.getAttribute('artic')];
+
       if (articCode) {
 
         for (i = 0, j = note.modifiers.length; i < j; i++) {
@@ -126,20 +128,23 @@ define([
           }
         }
         if (alreadyDefined) {
-          // TODO keep both mei elements instead of overwriting
-          alreadyDefined.setMeiElement(element);
+          alreadyDefined.addMeiElement(element);
         } else {
-
-          var vexArtic = new VF.Articulation(articCode).setMeiElement(element);
+          var vexArtic = new Articulation(articCode).addMeiElement(element);
           var place = element.getAttribute('place');
           if (place) {
             vexArtic.setPosition(Tables.positions[place]);
+          } else {
+            console.log(note);
+            // TODO @artic attributes on notes have no place specified; they currently get always rendered above
+            vexArtic.setPosition(Tables.positions['above']);
           }
           note.addArticulation(0, vexArtic);
-
         }
 
-        // TODO take position into account, too
+        // NB place is currently not taken into account; it might be good to support
+        // multiple articulations of the same kind in different places, although this
+        // should only be a requirement in special cases like diplomatic transcriptions
 
       } else {
         Logger.warn('unknown @artic', 'The @artic attribute in ' + Util.serializeElement(element) +
@@ -147,15 +152,12 @@ define([
       }
     },
 
-
-
     addFermataAtt : function (note, element, place, index) {
       var me = this;
       var vexPlace = Tables.fermata[place];
       me.addNewFermata(note, element, place, index, vexPlace);
     },
 
-    // TODO improve
     /**
      * adds a fermata to a note-like object
      * @method addFermataAtt
@@ -174,17 +176,16 @@ define([
         }
       }
       if (alreadyDefined) {
-        // TODO keep both mei elements instead of overwriting
-        alreadyDefined.setMeiElement(element);
+        alreadyDefined.addMeiElement(element);
       } else {
         me.addNewFermata(note, element, place, index, vexPlace);
       }
     },
 
-    addNewFermata : function (note, element, place, index, vexPlace) {
-      var vexArtic = new VF.Articulation(vexPlace);
+    addNewFermata : function (note, element, place, index, articCode) {
+      var vexArtic = new Articulation(articCode);
       vexArtic.setPosition(Tables.positions[place]);
-      vexArtic.setMeiElement(element);
+      vexArtic.addMeiElement(element);
       note.addArticulation(index || 0, vexArtic);
     },
 
@@ -196,9 +197,7 @@ define([
         Logger.info('Not supported', 'The value of @stem.mod="' + stemMod + '" specified in ' +
                                      Util.serializeElement(element) + ' is not supported. Ignoring attribute');
       }
-
     },
-
 
     addClefModifier : function (vexNote, prop) {
       var clef = new VF.ClefNote(prop.type, 'small', prop.shift === -1 ? '8vb' : undefined);
@@ -226,7 +225,6 @@ define([
         return false;
       }
     }
-
 
   };
 

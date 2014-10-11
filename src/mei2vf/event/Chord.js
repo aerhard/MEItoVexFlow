@@ -15,80 +15,83 @@
  *
  */
 define([
-    'vexflow',
-    'mei2vf/event/EventUtil'
-  ], function (VF, EventUtil) {
+  'vexflow',
+  'mei2vf/event/EventUtil'
+], function (VF, EventUtil) {
 
 
-    var Chord = function (options) {
+  var Chord = function (options) {
 
-          var me = this, atts = options.atts, element = options.element;
-          var durAtt, durations = [], duration, keys = [], i, j, noteElements, dots;
+    var me = this, atts = options.atts, element = options.element;
+    var durAtt, durations = [], duration, keys = [], i, j, noteElements, dots;
 
-          noteElements = options.noteElements;
+    noteElements = options.noteElements;
 
-          durAtt = atts.dur;
+    durAtt = atts.dur;
 
-          if (durAtt) {
-            duration = EventUtil.processAttsDuration(element, atts);
-            dots = +atts.dots || 0;
-            for (i = 0, j = noteElements.length; i < j; i += 1) {
-              keys.push(EventUtil.getVexPitch(noteElements[i]));
-            }
-          } else {
-            for (i = 0, j = noteElements.length; i < j; i += 1) {
-              durations.push(+noteElements[i].getAttribute('dur'));
-              dots =+noteElements[i].getAttribute('dots') || 0;
-              keys.push(EventUtil.getVexPitch(noteElements[i]));
-            }
-            duration = EventUtil.translateDuration(element, Math.max.apply(Math, durations));
-            for (i = 0; i < dots; i += 1) {
-              duration += 'd';
-            }
-          }
-
-
-          var vexOptions = {
-            keys : keys,
-            duration : duration,
-            clef : options.clef.type,
-            octave_shift : options.clef.shift
-          };
-
-          this.hasMeiStemDir = EventUtil.setStemDir(options, vexOptions);
-
-
-          VF.StaveNote.call(this, vexOptions);
-
-          for (i = 0; i < dots; i += 1) {
-            this.addDotToAll();
-          }
-
-          this.setStave(options.stave);
-
-          if (atts.ho) {
-            EventUtil.processAttrHo(atts.ho, me, options.stave);
-          }
-
-          var articElements = element.getElementsByTagName('artic');
-          for (i=0,j=articElements.length;i<j;i++) {
-            EventUtil.addArticulation(me, articElements[i]);
-          }
-
-          if (atts.fermata) {
-            EventUtil.addFermataAtt(me, element, atts.fermata);
-          }
-      if (atts['stem.mod']) {
-        EventUtil.addStemModifier(this, element, atts['stem.mod']);
+    if (durAtt) {
+      duration = EventUtil.processAttsDuration(element, atts);
+      dots = +atts.dots || 0;
+      for (i = 0, j = noteElements.length; i < j; i += 1) {
+        keys.push(EventUtil.getVexPitch(noteElements[i]));
       }
+    } else {
+      for (i = 0, j = noteElements.length; i < j; i += 1) {
+        durations.push(+noteElements[i].getAttribute('dur'));
+        dots = +noteElements[i].getAttribute('dots') || 0;
+        keys.push(EventUtil.getVexPitch(noteElements[i]));
+      }
+      duration = EventUtil.translateDuration(element, Math.max.apply(Math, durations));
+      for (i = 0; i < dots; i += 1) {
+        duration += 'd';
+      }
+    }
 
-        };
 
-    Chord.prototype = Object.create(VF.StaveNote.prototype);
+    var vexOptions = {
+      keys : keys,
+      duration : duration,
+      clef : options.clef.type,
+      octave_shift : options.clef.shift
+    };
 
-    Chord.prototype.beamable = true;
+    this.hasMeiStemDir = EventUtil.setStemDir(options, vexOptions);
 
-    return Chord;
 
-  });
+    VF.StaveNote.call(this, vexOptions);
+
+    for (i = 0; i < dots; i += 1) {
+      this.addDotToAll();
+    }
+
+    this.setStave(options.stave);
+
+    if (atts.ho) {
+      EventUtil.processAttrHo(atts.ho, me, options.stave);
+    }
+
+    var articElements = element.getElementsByTagName('artic');
+    for (i = 0, j = articElements.length; i < j; i++) {
+      EventUtil.addArticulation(me, articElements[i]);
+    }
+    if (atts.artic) {
+      EventUtil.addArticulation(me, element);
+    }
+
+    if (atts.fermata) {
+      EventUtil.addFermataAtt(me, element, atts.fermata);
+    }
+    if (atts['stem.mod']) {
+      EventUtil.addStemModifier(this, element, atts['stem.mod']);
+    }
+
+  };
+
+  Chord.prototype = Object.create(VF.StaveNote.prototype);
+
+  Chord.prototype.beamable = true;
+
+  return Chord;
+
+});
 
