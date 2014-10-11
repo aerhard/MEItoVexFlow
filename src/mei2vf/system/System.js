@@ -166,17 +166,17 @@ define([
      * calculates the minimum width of all measures in a stave
      */
     calculateMinSystemWidth : function () {
-      var me = this, i, j, totalSpecifiedMeasureWidth = 0, openWidthMeasureCount = 0;
+      var me = this, i, j, totalSpecifiedMeasureWidth = 0, voiceFillFactorSum = 0;
       for (i = 0, j = me.measures.length; i < j; i += 1) {
         if (me.measures[i].meiW === null) {
-          openWidthMeasureCount += 1;
           totalSpecifiedMeasureWidth += me.measures[i].getMinWidth();
+          voiceFillFactorSum += me.measures[i].getVoiceFillFactor();
         } else {
           totalSpecifiedMeasureWidth += me.measures[i].meiW;
         }
       }
       me.minSystemWidth = totalSpecifiedMeasureWidth;
-      me.openWidthMeasureCount = openWidthMeasureCount;
+      me.voiceFillFactorSum = voiceFillFactorSum;
     },
 
     /**
@@ -187,7 +187,7 @@ define([
 
       var totalWidth = overrideWidth || me.coords.width;
 
-      singleAdditionalWidth = Math.floor((totalWidth - me.leftMar - me.minSystemWidth) / me.openWidthMeasureCount);
+      singleAdditionalWidth = Math.floor((totalWidth - me.leftMar - me.minSystemWidth) / me.voiceFillFactorSum);
 
       for (i = 0, j = me.measures.length; i < j; i += 1) {
         me.measures[i].setFinalWidth(singleAdditionalWidth);

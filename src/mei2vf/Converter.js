@@ -1753,7 +1753,7 @@ define([
         // calculate the width of all systems based on the final width of the system with the
         // largest minSystemWidth and the default space to be added to each measure
         var totalSystemWidth = totalMinSystemWidth +
-                               (systems[broadestSystemN].openWidthMeasureCount * me.cfg.defaultSpacingInMeasure);
+                               (systems[broadestSystemN].voiceFillFactorSum * me.cfg.defaultSpacingInMeasure);
         me.pageInfo.setPrintSpaceWidth(totalSystemWidth);
 
         for (i = 0; i < j; i++) {

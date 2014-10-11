@@ -24,7 +24,7 @@ define([
   'common/Util',
   'common/Logger',
   'common/RuntimeError',
-  '../stave/StaveInfo'
+  'mei2vf/stave/StaveInfo'
 ], function (Util, Logger, RuntimeError, StaveInfo) {
 
   /**

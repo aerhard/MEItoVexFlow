@@ -97,16 +97,6 @@ define([
        */
       me.rehElements = config.rehElements;
       /**
-       * @property {Number} maxNoteStartX the maximum note_start_x value of all
-       * Vex.Flow.Stave objects in the current measure
-       */
-      me.maxNoteStartX = 0;
-      /**
-       * @property {Number} maxEndModifierW the maximum width of the end
-       * modifiers in all Vex.Flow.Stave objects in the current measure
-       */
-      me.maxEndModifierW = 0;
-      /**
        * @property {Number} meiW the width attribute of the measure element or
        * null if NaN
        */
@@ -237,19 +227,53 @@ define([
      * calculates the minimum width of the current measure
      */
     calculateMinWidth : function () {
-      var me = this;
-      me.calculateMaxNoteStartX();
-      me.calculateMaxEndModifierWidth();
-      me.calculateRepeatPadding();
+      var me = this, i, staves, stave, repeatPadding, maxNoteStartX=0, maxEndModifierW =0;
+
+      staves = me.staves;
+      i = staves.length;
+      while (i--) {
+        stave = staves[i];
+        if (stave) {
+          // max start modifier width
+          maxNoteStartX = Math.max(maxNoteStartX, stave.getNoteStartX());
+          // max end modifier width
+          maxEndModifierW = Math.max(maxEndModifierW, stave.getGlyphEndX() - stave.end_x);
+        }
+      }
+
+      /**
+       * @property {Number} maxNoteStartX the maximum note_start_x value of all
+       * Vex.Flow.Stave objects in the current measure
+       */
+      me.maxNoteStartX = maxNoteStartX;
+      /**
+       * @property {Number} maxEndModifierW the maximum width of the end
+       * modifiers in all Vex.Flow.Stave objects in the current measure
+       */
+      me.maxEndModifierW = maxEndModifierW;
+
+      // calculate additional padding (20px) if the staff does have a left REPEAT_BEGIN barline
+      // located to the right of other staff modifiers; 0px in all other cases.
+      stave = me.getFirstDefinedStave();
+      repeatPadding =
+      (stave.modifiers[0].barline == VF.Barline.type.REPEAT_BEGIN && stave.modifiers.length > 2) ? 20 : 0;
+
       /**
        * @property {Number} minVoicesW the minimum width of the voices in the
        * measure
        */
       me.minVoicesW = me.voices.preFormat();
+
+      me.voiceFillFactor = me.voices.getFillFactor();
+
       /**
        * @property {Number} minWidth the minimum width of the measure
        */
-      me.minWidth = me.maxNoteStartX + me.maxEndModifierW + me.minVoicesW + me.repeatPadding;
+      me.minWidth = maxNoteStartX + maxEndModifierW + repeatPadding + me.minVoicesW;
+    },
+
+    getVoiceFillFactor : function () {
+      return this.voiceFillFactor;
     },
 
     /**
@@ -268,51 +292,7 @@ define([
 
     setFinalWidth : function (additionalWidth) {
       var me = this;
-      me.w = (me.meiW === null) ? me.minWidth + additionalWidth : me.meiW;
-    },
-
-    /**
-     * calculates the maximum note_start_x of all Vex.Flow.Stave objects in the
-     * current measure
-     */
-    calculateMaxNoteStartX : function () {
-      var me = this, i, staves, stave;
-      staves = me.staves;
-      i = staves.length;
-      while (i--) {
-        stave = staves[i];
-        if (stave) {
-          me.maxNoteStartX = Math.max(me.maxNoteStartX, stave.getNoteStartX());
-        }
-      }
-    },
-
-    calculateMaxEndModifierWidth : function () {
-      var me = this, i, staves, stave;
-      staves = me.staves;
-      i = staves.length;
-      while (i--) {
-        stave = staves[i];
-        if (stave) {
-          me.maxEndModifierW = Math.max(me.maxEndModifierW, stave.getGlyphEndX() - stave.end_x);
-        }
-      }
-    },
-
-    /**
-     * calculates additional start padding when there are repetition start bars
-     * in the current measure
-     */
-    calculateRepeatPadding : function () {
-      var me = this;
-      var stave = me.getFirstDefinedStave();
-      /**
-       * @property {Number} repeatPadding additional padding (20px) if the staff
-       * does have a left REPEAT_BEGIN barline located to the right of other
-       * staff modifiers; 0px in all other cases.
-       */
-      me.repeatPadding =
-      (stave.modifiers[0].barline == VF.Barline.type.REPEAT_BEGIN && stave.modifiers.length > 2) ? 20 : 0;
+      me.w = (me.meiW === null) ? me.minWidth + (additionalWidth * me.voiceFillFactor) : me.meiW;
     },
 
     /**

@@ -54,22 +54,36 @@ define([
     },
 
     preFormat : function () {
-      var me = this, all, stave_n, i;
+      var me = this, all, stave_n, i, voice;
       all = me.all_voices;
       me.vexVoices = [];
       me.vexVoicesStaffWise = {};
       i = all.length;
+
       while (i--) {
-        me.vexVoices.push(all[i].voice);
+        voice = all[i].voice;
+        me.vexVoices.push(voice);
         stave_n = all[i].stave_n;
         if (me.vexVoicesStaffWise[stave_n]) {
-          me.vexVoicesStaffWise[stave_n].push(all[i].voice);
+          me.vexVoicesStaffWise[stave_n].push(voice);
         } else {
-          me.vexVoicesStaffWise[stave_n] = [all[i].voice];
+          me.vexVoicesStaffWise[stave_n] = [voice];
         }
       }
+
       me.formatter.preCalculateMinTotalWidth(me.vexVoices);
       return me.formatter.getMinTotalWidth();
+    },
+
+    // TODO it might be necessary to calculate this for every voice
+    // TODO also check if this works well with mRests!
+    /**
+     * returns how much of the total tick count in the measure is actually used by the first voice
+     * return {Number}
+     */
+    getFillFactor : function () {
+      var voice = this.vexVoices[0];
+      return voice.getTicksUsed().numerator / voice.getTotalTicks().numerator
     },
 
     /**
