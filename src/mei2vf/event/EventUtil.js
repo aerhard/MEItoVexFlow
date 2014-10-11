@@ -114,19 +114,40 @@ define([
      * @param {Element} element the articulation element
      */
     addArticulation : function (note, element) {
-      var articCode = Tables.articulations[element.getAttribute('artic')];
+      var i, j, articCode, alreadyDefined;
+
+      articCode = Tables.articulations[element.getAttribute('artic')];
       if (articCode) {
-        var vexArtic = new VF.Articulation(articCode).setMeiElement(element);
-        var place = element.getAttribute('place');
-        if (place) {
-          vexArtic.setPosition(Tables.positions[place]);
+
+        for (i = 0, j = note.modifiers.length; i < j; i++) {
+          if (note.modifiers[i].type === articCode) {
+            alreadyDefined = note.modifiers[i];
+            break;
+          }
         }
-        note.addArticulation(0, vexArtic);
+        if (alreadyDefined) {
+          // TODO keep both mei elements instead of overwriting
+          alreadyDefined.setMeiElement(element);
+        } else {
+
+          var vexArtic = new VF.Articulation(articCode).setMeiElement(element);
+          var place = element.getAttribute('place');
+          if (place) {
+            vexArtic.setPosition(Tables.positions[place]);
+          }
+          note.addArticulation(0, vexArtic);
+
+        }
+
+        // TODO take position into account, too
+
       } else {
         Logger.warn('unknown @artic', 'The @artic attribute in ' + Util.serializeElement(element) +
-                                      ' is unknown or undefined. Ignoring element.');
+                                      ' is unknown or undefined. Ignoring articulation.');
       }
     },
+
+
 
     addFermataAtt : function (note, element, place, index) {
       var me = this;
@@ -153,8 +174,8 @@ define([
         }
       }
       if (alreadyDefined) {
-        // TODO improve
-        alreadyDefined.otherMeiElement = element;
+        // TODO keep both mei elements instead of overwriting
+        alreadyDefined.setMeiElement(element);
       } else {
         me.addNewFermata(note, element, place, index, vexPlace);
       }
