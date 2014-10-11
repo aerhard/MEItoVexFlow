@@ -39,6 +39,15 @@ define([
 
     getMeiElement : function () {
       return this.meiElement;
+    },
+
+    draw : function () {
+
+      if (this.position === null) {
+        this.position = (this.note.getStemDirection() === VF.StaveNote.STEM_DOWN) ? VF.Modifier.Position.ABOVE : VF.Modifier.Position.BELOW;
+      }
+
+      Articulation.superclass.draw.call(this);
     }
 
   });

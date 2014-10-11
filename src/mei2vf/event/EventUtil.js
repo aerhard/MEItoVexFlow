@@ -115,40 +115,47 @@ define([
      * @param {Element} element the articulation element
      */
     addArticulation : function (note, element) {
-      var i, j, articCode, alreadyDefined;
+      var i, j, k, articCode, vexArtic, articElement;
 
-      articCode = Tables.articulations[element.getAttribute('artic')];
+      var articElement = element.getAttribute('artic');
 
-      if (articCode) {
+      if (articElement !== null) {
 
-        for (i = 0, j = note.modifiers.length; i < j; i++) {
-          if (note.modifiers[i].type === articCode) {
-            alreadyDefined = note.modifiers[i];
-            break;
-          }
-        }
-        if (alreadyDefined) {
-          alreadyDefined.addMeiElement(element);
-        } else {
-          var vexArtic = new Articulation(articCode).addMeiElement(element);
-          var place = element.getAttribute('place');
-          if (place) {
-            vexArtic.setPosition(Tables.positions[place]);
+        var artics = articElement.split(' ');
+
+        for (k=0;k<artics.length;k++) {
+
+          articCode = Tables.articulations[artics[k]];
+
+          if (articCode) {
+
+            for (i = 0, j = note.modifiers.length; i < j; i++) {
+              if (note.modifiers[i].type === articCode) {
+                vexArtic = note.modifiers[i];
+                break;
+              }
+            }
+            if (vexArtic) {
+              vexArtic.addMeiElement(element);
+            } else {
+              var vexArtic = new Articulation(articCode).addMeiElement(element);
+              var place = element.getAttribute('place');
+              if (place) {
+                vexArtic.setPosition(Tables.positions[place]);
+              } else{
+                // sets position to null; null positions are processed in Articulation.draw()
+                vexArtic.setPosition(null);
+              }
+              note.addArticulation(0, vexArtic);
+            }
           } else {
-            console.log(note);
-            // TODO @artic attributes on notes have no place specified; they currently get always rendered above
-            vexArtic.setPosition(Tables.positions['above']);
+            Logger.info('unknown @artic', 'The @artic attribute in ' + Util.serializeElement(element) +
+                                          ' is unknown. Ignoring articulation.');
           }
-          note.addArticulation(0, vexArtic);
         }
-
-        // NB place is currently not taken into account; it might be good to support
-        // multiple articulations of the same kind in different places, although this
-        // should only be a requirement in special cases like diplomatic transcriptions
-
       } else {
-        Logger.warn('unknown @artic', 'The @artic attribute in ' + Util.serializeElement(element) +
-                                      ' is unknown or undefined. Ignoring articulation.');
+        Logger.warn('Missing attribute', Util.serializeElement(element) +
+                                      ' does not have an @artic attribute. Ignoring articulation.');
       }
     },
 
@@ -167,16 +174,16 @@ define([
      * @param {Number} index The index of the note in a chord (optional)
      */
     addFermata : function (note, element, place, index) {
-      var me = this, i, j, alreadyDefined = null, vexPlace;
+      var me = this, i, j, vexArtic = null, vexPlace;
       vexPlace = Tables.fermata[place];
       for (i = 0, j = note.modifiers.length; i < j; i++) {
         if (note.modifiers[i].type === vexPlace) {
-          alreadyDefined = note.modifiers[i];
+          vexArtic = note.modifiers[i];
           break;
         }
       }
-      if (alreadyDefined) {
-        alreadyDefined.addMeiElement(element);
+      if (vexArtic) {
+        vexArtic.addMeiElement(element);
       } else {
         me.addNewFermata(note, element, place, index, vexPlace);
       }
