@@ -6,6 +6,7 @@
  * 2) Changed beaming behavior: Never beam rests, draw partial beams instead
  * 3) Treat rests in beams distinctly so they don't clash with their beam when the beam is
  * below and they don't claim too much space when the beam is above
+ * 4) extend beam stems of notes with diverging stem direction
  */
 
 define([
