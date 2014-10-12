@@ -70,6 +70,11 @@ define([
 
     VF.StaveNote.call(this, vexOptions);
 
+    if (atts.size === 'cue') {
+      EventUtil.setCueSize.call(this);
+    }
+
+
     dots = +atts.dots || 0;
     for (i = 0; i < dots; i += 1) {
       this.addDotToAll();

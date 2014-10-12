@@ -802,6 +802,9 @@ define([
           case 'dir':
             dirElements.push(childNodes[i]);
             break;
+          case 'harm':
+            dirElements.push(childNodes[i]);
+            break;
           case 'tie':
             tieElements.push(childNodes[i]);
             break;
