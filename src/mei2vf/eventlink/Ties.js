@@ -117,10 +117,11 @@ define([
           return true;
         }
 
+        // if the curve direction isn't specified in the model, calculate it:
         if (!model.params.curvedir) {
           var layerDir = f_note.layerDir || l_note.layerDir;
+          // if a layer direction is specified, take this as basis for the curve direction
           if (layerDir) {
-            // calculate default curve direction based on the relative layer
             model.params.curvedir = layerDir === -1 ? 'below' : layerDir === 1 ? 'above' : undefined;
           } else {
             // if the tie links to a note in a chord, let the outer ties of the
@@ -141,6 +142,7 @@ define([
           }
         }
 
+        // if the tied notes belong to different staves, render a tie to each of the staves:
         if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
           me.createSingleTie(f_note, {}, model.params);
           if (!model.params.curvedir) {
@@ -148,6 +150,7 @@ define([
           }
           me.createSingleTie({}, l_note, model.params);
         } else {
+          // ... otherwise render only one tie:
           me.createSingleTie(f_note, l_note, model.params);
         }
       }
