@@ -257,8 +257,26 @@ define([
           if (note.stem_direction === this.stem_direction) {
             additional_stem_extension = 0;
           } else {
-            additional_stem_extension = (note.getGlyph().beam_count - 1) *
-                                        this.render_options.beam_width * -1.5;
+            var prev_note, regular_dir_beam_count = true;
+            var k;
+            k = i;
+            while (k--) {
+              prev_note = this.notes[k];
+              if (prev_note.stem_direction === this.stem_direction) {
+                regular_dir_beam_count = prev_note.getBeamCount();
+                break;
+              }
+            }
+            //            var next_note = this.notes[i+1];
+            //            prev_note.getBeamCount() - next_note.getBeamCount()
+
+            if (regular_dir_beam_count > 1) {
+              var width = this.render_options.beam_width;
+              regular_dir_beam_count = Math.min (regular_dir_beam_count, note.getGlyph().beam_count);
+              additional_stem_extension = (((regular_dir_beam_count - 1) * width * 1.5) + width - 1)
+                * -1;
+            }
+
           }
 
           note.setStem(new Vex.Flow.Stem({
@@ -309,7 +327,11 @@ define([
             if (!beam_started) {
               if (!note.isRest()) {
 
-                var new_line = { start : stem_x, end : null, flipped : note.getStemDirection() !== this.stem_direction};
+                var new_line = {
+                  start : stem_x,
+                  end : null,
+                  flipped : note.getStemDirection() !== this.stem_direction
+                };
 
                 if (partial.left && !partial.right) {
                   new_line.end = stem_x - partial_beam_length;
@@ -425,11 +447,12 @@ define([
 
         var beam_width = this.render_options.beam_width * this.stem_direction * -1;
 
-        var first_y_px = first_note.getStemExtents().topY - beam_width;
-        var last_y_px = last_note.getStemExtents().topY - beam_width;
+        var first_y_px = first_note.getStemExtents().topY + (beam_width * 0.5);
+        var last_y_px = last_note.getStemExtents().topY + (beam_width * 0.5);
 
         var first_x_px = first_note.getStemX();
 
+        var inc = false;
 
         // Draw the beams.
         for (var i = 0; i < valid_beam_durations.length; ++i) {
@@ -440,6 +463,8 @@ define([
             var beam_line = beam_lines[j];
 
             if (beam_line.flipped) {
+              inc = true;
+
               var first_x = beam_line.start - (this.stem_direction * -1 == Stem.DOWN ? Vex.Flow.STEM_WIDTH / 2 : 0);
               var first_y = this.getSlopeY(first_x, first_x_px, first_y_px, this.slope);
 
@@ -458,10 +483,12 @@ define([
             }
           }
 
-          first_y_px += beam_width * 1.5;
-          last_y_px += beam_width * 1.5;
-        }
+          if (inc) {
+            first_y_px += beam_width * 1.5;
+            last_y_px += beam_width * 1.5;
+          }
 
+        }
 
       },
 

@@ -82,7 +82,6 @@
                                 </layer>
                             </staff>
         				</measure>
-                        <sb/>
                         <measure n="3">
                             <staff n="1">
                                 <layer>
@@ -113,7 +112,7 @@
                                 </layer>
                             </staff>
                         </measure>
-
+                        <sb/>
                         <measure n="4">
                             <staff n="1">
                                 <layer>
@@ -140,6 +139,45 @@
                                         <space dur="16"/>
                                         <note pname="f" oct="3" dur="16" stem.dir="up"/>
                                         <note pname="c" oct="3" dur="16" stem.dir="up"/>
+                                    </beam>
+                                </layer>
+                            </staff>
+                        </measure>
+
+                        <measure n="5">
+                            <staff n="1">
+                                <layer>
+                                    <beam>
+                                        <note pname="c" oct="5" dur="32" stem.dir="down"/>
+                                        <note pname="f" oct="5" dur="32" stem.dir="down"/>
+                                        <space dur="32"/>
+                                        <note pname="f" oct="5" dur="32" stem.dir="down"/>
+                                        <space dur="16"/>
+                                        <note pname="c" oct="4" dur="16" stem.dir="down"/>
+                                        <space dur="8"/>
+                                        <note pname="f" oct="4" dur="16" stem.dir="down"/>
+                                        <space dur="64"/>
+                                        <space dur="64"/>
+                                        <space dur="64"/>
+                                        <space dur="64"/>
+                                    </beam>
+                                </layer>
+                            </staff>
+                            <staff n="2">
+                                <layer>
+                                    <beam>
+                                        <space dur="32"/>
+                                        <space dur="32"/>
+                                        <note pname="c" oct="3" dur="32" stem.dir="up"/>
+                                        <space dur="32"/>
+                                        <note pname="f" oct="3" dur="16" stem.dir="up"/>
+                                        <space dur="16"/>
+                                        <note pname="c" oct="3" dur="8" stem.dir="up"/>
+                                        <space dur="16"/>
+                                        <note pname="f" oct="2" dur="64" stem.dir="up"/>
+                                        <note pname="c" oct="2" dur="64" stem.dir="up"/>
+                                        <note pname="f" oct="2" dur="64" stem.dir="up"/>
+                                        <note pname="c" oct="2" dur="64" stem.dir="up"/>
                                     </beam>
                                 </layer>
                             </staff>
