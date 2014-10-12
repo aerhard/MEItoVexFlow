@@ -1188,7 +1188,7 @@ define([
      * @method processNote
      */
     processNote : function (context, element, staveInfo) {
-      var me = this, xml_id, mei_tie, mei_slur, atts, note_opts, note, clef, vexPitch, stave;
+      var me = this, xml_id, mei_tie, mei_slur, atts, note_opts, note, clef, vexPitch, stave, stave_n;
 
       atts = Util.attsToObj(element);
 
@@ -1197,15 +1197,17 @@ define([
 
       xml_id = MeiLib.XMLID(element);
 
+      atts.staff = parseInt(atts.staff);
+
       try {
 
         vexPitch = EventUtil.getVexPitch(element);
 
         if (atts.staff) {
-          var otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][+atts.staff];
+          var otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][atts.staff];
           if (otherStave) {
             stave = otherStave;
-            clef = me.systemInfo.getClef(+atts.staff);
+            clef = me.systemInfo.getClef(atts.staff);
           } else {
             Logger.warn('Staff not found', 'No stave could be found which corresponds to @staff="' + atts.staff +
                                            '" specified in ' + Util.serializeElement(element) +
@@ -1240,7 +1242,7 @@ define([
         //        }
 
         if (mei_tie) {
-          me.processAttrTie(mei_tie, xml_id, vexPitch, context.stave_n);
+          me.processAttrTie(mei_tie, xml_id, vexPitch, atts.staff || context.stave_n);
         }
         if (mei_slur) {
           me.processSlurAttribute(mei_slur, xml_id);
@@ -1289,13 +1291,15 @@ define([
 
       xml_id = MeiLib.XMLID(element);
 
+      atts.staff = parseInt(atts.staff);
+
       try {
 
         if (atts.staff) {
-          var otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][+atts.staff];
+          var otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][atts.staff];
           if (otherStave) {
             stave = otherStave;
-            clef = me.systemInfo.getClef(+atts.staff);
+            clef = me.systemInfo.getClef(atts.staff);
             console.log(atts.staff);
             console.log(otherStave);
           } else {
@@ -1332,9 +1336,9 @@ define([
         }
 
         // TODO tie attribute on chord should render a tie on each note
-        //        if (mei_tie) {
-        //          me.processAttrTie(mei_tie, xml_id, vexPitch, context.stave_n);
-        //        }
+//                if (mei_tie) {
+//                  me.processAttrTie(mei_tie, xml_id, vexPitch, atts.staff || context.stave_n);
+//                }
         if (mei_slur) {
           me.processSlurAttribute(mei_slur, xml_id);
         }
@@ -1384,7 +1388,7 @@ define([
       xml_id = MeiLib.XMLID(element);
 
       if (atts.tie) {
-        me.processAttrTie(atts.tie, xml_id, vexPitch, context.stave_n);
+        me.processAttrTie(atts.tie, xml_id, vexPitch, parseInt(atts.staff) || context.stave_n);
       }
       if (atts.slur) {
         me.processSlurAttribute(atts.slur, xml_id);
