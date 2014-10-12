@@ -3,8 +3,8 @@
  * 1) set default partial beam direction to left instead of right (that's the correct direction in
  * most cases; in order to get 100% correct beams, the direction must be calculated on basis of the
  * metrical position of the beam)
- * 2) Changed beaming behavior: Never beam rests, instead draw partial beams
- * 3) Treat rests in beams in a distinct way sothey don't clash with their beam when the beam is
+ * 2) Changed beaming behavior: Never beam rests, draw partial beams instead
+ * 3) Treat rests in beams distinctly so they don't clash with their beam when the beam is
  * below and they don't claim too much space when the beam is above
  */
 
@@ -251,13 +251,22 @@ define([
 
           var slope_y = this.getSlopeY(x_px, first_x_px, first_y_px, this.slope) + this.y_shift;
 
+          // addition to the stem extension when notes are on the other side of the beam
+          var additional_stem_extension;
+          if (note.stem_direction === this.stem_direction) {
+            additional_stem_extension = 0;
+          } else {
+            additional_stem_extension = (note.getGlyph().beam_count - 1) *
+                                        this.render_options.beam_width * 1.5 * this.stem_direction;
+          }
+
           note.setStem(new Vex.Flow.Stem({
             x_begin : x_px - (Vex.Flow.STEM_WIDTH / 2),
             x_end : x_px,
             y_top : this.stem_direction === 1 ? top_y_px : base_y_px,
             y_bottom : this.stem_direction === 1 ? base_y_px : top_y_px,
             y_extend : y_displacement,
-            stem_extension : Math.abs(top_y_px - slope_y) - Stem.HEIGHT - 1,
+            stem_extension : Math.abs(top_y_px - slope_y) - Stem.HEIGHT - 1 + additional_stem_extension,
             stem_direction : this.stem_direction
           }));
         }
