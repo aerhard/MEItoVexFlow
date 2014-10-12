@@ -1550,7 +1550,7 @@ define([
      * @param {StaveInfo} staveInfo
      */
     processBeam : function (context, element, staveInfo) {
-      var me = this, vexNotes, filteredElements;
+      var me = this, vexNotes, filteredVexNotes, i, j;
       context.inBeamNo += 1;
 
       vexNotes = me.processNoteLikeChildren(context, element, staveInfo);
@@ -1559,16 +1559,22 @@ define([
         if (context.beamInfosToResolve.length !== 0) {
           var otherBeamNotes = context.beamInfosToResolve.shift();
           var combinedVexNotes = [];
-          for (var i = 0, j = vexNotes.length; i < j; i++) {
+          j = vexNotes.length;
+          if (j !== otherBeamNotes.vexNotes.length) {
+            Logger.warn('Beam content mismatch', Util.serializeElement(element)+ ' and ' + Util.serializeElement(otherBeamNotes.element) +
+                                                 ' could not be combined, because their content does not match.');
+          }
+          for (i = 0; i < j; i++) {
             if (vexNotes[i] instanceof Space) {
               combinedVexNotes.push(otherBeamNotes.vexNotes[i]);
             } else {
               combinedVexNotes.push(vexNotes[i]);
             }
           }
-          filteredElements = combinedVexNotes.filter(function (element) {
+          filteredVexNotes = combinedVexNotes.filter(function (element) {
             return element && element.beamable === true;
           });
+
         } else {
           context.newBeamInfosToResolve.push({
             element : element,
@@ -1577,16 +1583,15 @@ define([
         }
 
       } else {
-        // TODO remove filter later and modify beam object to skip objects other than note and clef
-        filteredElements = vexNotes.filter(function (element) {
+        filteredVexNotes = vexNotes.filter(function (element) {
           return element.beamable === true;
         });
       }
 
-      if (filteredElements && filteredElements.length > 1) {
+      if (filteredVexNotes && filteredVexNotes.length > 1) {
         try {
           // set autostem parameter of VF.Beam to true if neither layerDir nor any stem direction in the beam is specified
-          me.allBeams.push(new VF.Beam(filteredElements, !context.layerDir && !context.hasStemDirInBeam));
+          me.allBeams.push(new VF.Beam(filteredVexNotes, !context.layerDir && !context.hasStemDirInBeam));
         } catch (e) {
           Logger.error('VexFlow Error', 'An error occurred processing ' + Util.serializeElement(element) + ': "' +
                                         e.toString() + '". Ignoring beam.');
