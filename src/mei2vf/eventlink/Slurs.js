@@ -82,7 +82,7 @@ define([
 
     createVexFromInfos : function (notes_by_id) {
       var me = this, f_note, l_note, i, j, model;
-      for (i=0,j=me.allModels.length;i<j;i++) {
+      for (i = 0, j = me.allModels.length; i < j; i++) {
         model = me.allModels[i];
 
         var keysInChord;
@@ -96,7 +96,8 @@ define([
             paramString += param + '="' + model.params[param] + '" ';
           }
           console.log(model);
-          Logger.warn('Slur could not be processed', 'No slur start or slur end could be found. Slur parameters: ' + paramString + '. Skipping slur.');
+          Logger.warn('Slur could not be processed', 'No slur start or slur end could be found. Slur parameters: ' +
+                                                     paramString + '. Skipping slur.');
           return true;
         }
 
@@ -148,60 +149,203 @@ define([
 
       };
 
+      var firstStemDir, lastStemDir;
+      if (f_note.vexNote) firstStemDir = f_note.vexNote.getStemDirection();
+      if (l_note.vexNote) lastStemDir = l_note.vexNote.getStemDirection();
+
       //bezier = params.bezier;
       // ignore bezier for now!
       bezier = null;
 
-      if (bezier) {
-        slurOptions.cps = me.bezierStringToCps(bezier);
-      } else {
+      if (params.curvedir) {
+        // CURVEDIR SPECIFIED
 
-        // if one of the notes is in multi-voice stave ...
+        if ((params.curvedir === 'above' && lastStemDir === 1) || (params.curvedir === 'below' && lastStemDir === -1)) {
+          //        slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+          slurOptions.invert = true;
+        }
+
+
+        // FIXED PLACE - SINGLE LAYER
+        if (f_note.vexNote && l_note.vexNote) {
+
+          var firstNoteLine = f_note.vexNote.getLineNumber();
+          var lastNoteLine = l_note.vexNote.getLineNumber();
+
+          var distance = firstNoteLine - lastNoteLine;
+
+          console.log(f_note);
+          console.log(f_note.vexNote.getLineNumber())
+          console.log(l_note.vexNote.getLineNumber())
+          console.log(distance);
+
+          //            if (distance > 2.5) {
+          //
+          //              if (firstStemDir !== lastStemDir) {
+          //                slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+          //              }
+          //
+          //            }
+
+          // TODO improve: make Curvedir a number 1 / -1
+
+          if (firstStemDir !== lastStemDir) {
+            if ((distance < -0.5 && params.curvedir === 'above') || (distance > 0.5 && params.curvedir === 'below')) {
+              // first note noticeably lower than last note
+              slurOptions.position = VF.Curve.Position.NEAR_TOP;
+              slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
+            } else if ((distance > 0.5 && params.curvedir === 'above') ||
+                       (distance < -0.5 && params.curvedir === 'below')) {
+              // first note noticeably higher than last note
+              slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+              //                slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+            }
+          } else {
+            if (slurOptions.invert === true) {
+              slurOptions.position = VF.Curve.Position.NEAR_TOP;
+            } else {
+              //                slurOptions.position = VF.Curve.Position.NEAR_HEAD;
+            }
+          }
+
+
+          //            if (distance < -2.5 && lastStemDir === 1) {
+          //              // first note noticeably lower than last note and last note pointing upwards
+          //              slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+          //            }
+
+        }
+
+      } else {
+        // NO CURVEDIR SPECIFIED
+
+
         if (f_note.layerDir || l_note.layerDir) {
-          // invert the slur so it points outwards
+          // NO FIXED PLACE - MULTI LAYER
           slurOptions.invert = true;
 
           if (f_note.vexNote && l_note.vexNote && f_note.vexNote.hasStem() && l_note.vexNote.hasStem()) {
-            slurOptions.position = VF.Curve.Position.NEAR_TOP; // = 2 STEM END POSITION
+            slurOptions.position = VF.Curve.Position.NEAR_TOP;
 
             if (f_note.vexNote.getStemDirection() !== l_note.vexNote.getStemDirection()) {
               slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
             }
 
           }
-
         } else {
-          if (f_note.vexNote && l_note.vexNote &&
-              f_note.vexNote.getStemDirection() !== l_note.vexNote.getStemDirection()) {
+          // NO FIXED PLACE - SINGLE LAYER
 
-            //            console.log(f_note.vexNote.getLineNumber());
-            //            console.log(l_note.vexNote.getLineNumber());
-            slurOptions.invert = true;
-            if (Math.abs(f_note.vexNote.getLineNumber() - l_note.vexNote.getLineNumber()) > 2.5 ) {
 
+          var firstNoteLine = f_note.vexNote.getLineNumber();
+          var lastNoteLine = l_note.vexNote.getLineNumber();
+
+          var distance = firstNoteLine - lastNoteLine;
+
+          if (firstStemDir !== lastStemDir) {
+            if ((distance < -0.5 && params.curvedir === 'above') || (distance > 0.5 && params.curvedir === 'below')) {
+              // first note noticeably lower than last note
+              slurOptions.position = VF.Curve.Position.NEAR_TOP;
+              slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
+            } else if ((distance > 0.5 && params.curvedir === 'above') ||
+                       (distance < -0.5 && params.curvedir === 'below')) {
+              // first note noticeably higher than last note
               slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+              //                slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
             }
-
-
-
+          } else {
+            if (slurOptions.invert === true) {
+              slurOptions.position = VF.Curve.Position.NEAR_TOP;
+            } else {
+              //                slurOptions.position = VF.Curve.Position.NEAR_HEAD;
+            }
           }
+
+
+
         }
 
-
-        //        vexSlur = new VF.Curve(f_note.vexNote, l_note.vexNote, {
-        //          position : 2
-        //        });
-        //        vexSlur = new VF.StaveTie({
-        //          first_note : f_note.vexNote,
-        //          last_note : l_note.vexNote,
-        //          first_indices : f_note.index,
-        //          last_indices : l_note.index
-        //        });
-        //        vexSlur.setDir(params.curvedir);
-        //        if (f_note.vexNote && f_note.vexNote.label === 'gracenote') {
-        //          vexSlur.render_options.first_x_shift = -5;
-        //        }
       }
+
+
+      //      if ((params.curvedir === 'above' && firstStemDir === 1) ||
+      //          (params.curvedir === 'below' && firstStemDir === -1)) {
+      //
+      //        slurOptions.position = VF.Curve.Position.NEAR_TOP;
+      //
+      //
+      //        if (firstStemDir !== lastStemDir) {
+      //          slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
+      //        }
+      //
+      //      } else {
+      //
+      //        if (firstStemDir !== lastStemDir) {
+      //          slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+      //          slurOptions.invert = true;
+      //        }
+      //
+      //      }
+
+
+      //            console.log(f_note.vexNote.getLineNumber());
+      //            console.log(l_note.vexNote.getLineNumber());
+      //          slurOptions.invert = true;
+      //          if (Math.abs(f_note.vexNote.getLineNumber() - l_note.vexNote.getLineNumber()) > 2.5) {
+      //
+      //            slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+      //          }
+
+
+      //      if (bezier) {
+      //        slurOptions.cps = me.bezierStringToCps(bezier);
+      //      } else {
+      //
+      //        // if one of the notes is in multi-voice stave ...
+      //        if (f_note.layerDir || l_note.layerDir) {
+      //          // invert the slur so it points outwards
+      //          slurOptions.invert = true;
+      //
+      //          if (f_note.vexNote && l_note.vexNote && f_note.vexNote.hasStem() && l_note.vexNote.hasStem()) {
+      //            slurOptions.position = VF.Curve.Position.NEAR_TOP; // = 2 STEM END POSITION
+      //
+      //            if (f_note.vexNote.getStemDirection() !== l_note.vexNote.getStemDirection()) {
+      //              slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
+      //            }
+      //
+      //          }
+      //
+      //        } else {
+      //          if (f_note.vexNote && l_note.vexNote &&
+      //              f_note.vexNote.getStemDirection() !== l_note.vexNote.getStemDirection()) {
+      //
+      //            //            console.log(f_note.vexNote.getLineNumber());
+      //            //            console.log(l_note.vexNote.getLineNumber());
+      //            slurOptions.invert = true;
+      //            if (Math.abs(f_note.vexNote.getLineNumber() - l_note.vexNote.getLineNumber()) > 2.5 ) {
+      //
+      //              slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+      //            }
+      //
+      //
+      //
+      //          }
+      //        }
+
+
+      //        vexSlur = new VF.Curve(f_note.vexNote, l_note.vexNote, {
+      //          position : 2
+      //        });
+      //        vexSlur = new VF.StaveTie({
+      //          first_note : f_note.vexNote,
+      //          last_note : l_note.vexNote,
+      //          first_indices : f_note.index,
+      //          last_indices : l_note.index
+      //        });
+      //        vexSlur.setDir(params.curvedir);
+      //        if (f_note.vexNote && f_note.vexNote.label === 'gracenote') {
+      //          vexSlur.render_options.first_x_shift = -5;
+      //        }
+      //      }
 
       vexSlur = new VF.Curve(f_note.vexNote, l_note.vexNote, slurOptions);
 
