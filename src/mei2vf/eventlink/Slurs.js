@@ -92,7 +92,7 @@ define([
         f_note = notes_by_id[model.getFirstId()] || {};
         l_note = notes_by_id[model.getLastId()] || {};
 
-
+        // Skip slurs where no vexNote could be found for both first and last note
         if (!f_note.vexNote && !l_note.vexNote) {
           var param, paramString = '';
           for (param in params) {
@@ -104,6 +104,8 @@ define([
           return true;
         }
 
+        // if no @curvedir is specified, set @curvedir according to the layer direction or to
+        // the position of a note in a chord
         if (!params.curvedir) {
           var layerDir = f_note.layerDir || l_note.layerDir;
           if (layerDir) {
@@ -112,13 +114,16 @@ define([
           } else {
             // if the slur links to a note in a chord, let the outer slurs of the
             // chord point outwards
+
+
+            // TODO adjust to slurs!!
             if (f_note.vexNote) {
               keysInChord = f_note.vexNote.keys.length;
               if (keysInChord > 1) {
                 params.curvedir =
                 (+f_note.index === 0) ? 'below' : (+f_note.index === keysInChord - 1) ? 'above' : undefined;
               }
-            } else if (l_note.vexNote) {
+            } else {
               keysInChord = l_note.vexNote.keys.length;
               if (keysInChord > 1) {
                 params.curvedir =
@@ -127,10 +132,6 @@ define([
             }
           }
         }
-
-
-
-
 
 
         var slurOptions = {
@@ -143,14 +144,21 @@ define([
         if (f_note.vexNote) firstStemDir = f_note.vexNote.getStemDirection();
         if (l_note.vexNote) lastStemDir = l_note.vexNote.getStemDirection();
 
+
         //bezier = params.bezier;
         // ignore bezier for now!
         bezier = null;
+        //      if (bezier) {
+        //        slurOptions.cps = me.bezierStringToCps(bezier);
+        //      } else {
+        //
+
 
         if (params.curvedir) {
           // CURVEDIR SPECIFIED
 
-          if ((params.curvedir === 'above' && lastStemDir === 1) || (params.curvedir === 'below' && lastStemDir === -1)) {
+          if ((params.curvedir === 'above' && lastStemDir === 1) ||
+              (params.curvedir === 'below' && lastStemDir === -1)) {
             //        slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
             slurOptions.invert = true;
           }
@@ -204,6 +212,10 @@ define([
             //              slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
             //            }
 
+          } else {
+
+            // set rules for the case when only first or last vexNote are specified
+
           }
 
         } else {
@@ -253,17 +265,17 @@ define([
         }
 
 
-        //      if (bezier) {
-        //        slurOptions.cps = me.bezierStringToCps(bezier);
-        //      } else {
-        //
-
-
         if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
-          me.createSingleSlur(f_note, {}, slurOptions);
-//          if (!params.curvedir) {
-//            params.curvedir = (f_note.vexNote.getStemDirection() === -1) ? 'above' : 'below';
-//          }
+          me.createSingleSlur(f_note, {}, {
+            y_shift_start : slurOptions.y_shift_start,
+            y_shift_end : slurOptions.y_shift_end,
+            invert: ((params.curvedir === 'above' && firstStemDir === 1) ||
+                     (params.curvedir === 'below' && firstStemDir === -1)),
+            position: slurOptions.position,
+            position_end : slurOptions.position
+          });
+
+          slurOptions.position = slurOptions.position_end;
           me.createSingleSlur({}, l_note, slurOptions);
         } else {
           me.createSingleSlur(f_note, l_note, slurOptions);
@@ -271,8 +283,6 @@ define([
       }
       return this;
     },
-
-    // TODO auch noch unvollständige slurs testen
 
     createSingleSlur : function (f_note, l_note, slurOptions) {
       var me = this, vexSlur;
