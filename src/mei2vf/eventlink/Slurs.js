@@ -172,10 +172,10 @@ define([
 
             var distance = firstNoteLine - lastNoteLine;
 
-            console.log(f_note);
-            console.log(f_note.vexNote.getLineNumber())
-            console.log(l_note.vexNote.getLineNumber())
-            console.log(distance);
+//            console.log(f_note);
+//            console.log(f_note.vexNote.getLineNumber())
+//            console.log(l_note.vexNote.getLineNumber())
+//            console.log(distance);
 
             //            if (distance > 2.5) {
             //
