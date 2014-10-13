@@ -600,7 +600,12 @@ define([
     },
 
     processScoreChildren : function (score) {
-      var me = this, i, j, childNodes, sectionChildContext = {};
+      var me = this, i, j, childNodes, sectionChildContext;
+
+      sectionChildContext = {
+        currentVoltaType : null
+      };
+
       if (score) {
         childNodes = score.childNodes;
         for (i = 0, j = childNodes.length; i < j; i++) {
@@ -664,7 +669,11 @@ define([
      * @method processEnding
      */
     processEnding : function (element, sectionChildContext) {
-      var me = this, isFirst = true, next, childNode;
+      var me = this, next, childNode, currentVoltaType, endVoltaHere;
+
+      currentVoltaType = sectionChildContext.currentVoltaType;
+
+      endVoltaHere = (currentVoltaType === null);
 
       var getNext = function (node) {
         var nextSibling = node.nextSibling;
@@ -679,22 +688,31 @@ define([
         childNode = getNext(childNode);
       }
 
+      // TODO take into account that section children may be other elements than measures;
+      // in this case, the last measure wouldn't be the last child element in the list!!
+
       while (childNode) {
         next = getNext(childNode);
-        if (isFirst) {
-          me.currentVoltaType = {start : element.getAttribute('n')};
-          isFirst = false;
-        } else {
-          delete me.currentVoltaType.start;
-        }
-        if (!next) {
-          me.currentVoltaType.end = true;
+        // modify volta information only on measure elements
+        if (childNode.localName === 'measure') {
+          if (sectionChildContext.currentVoltaType === null) {
+            sectionChildContext.currentVoltaType = {
+              start : element.getAttribute('n')
+            };
+          } else {
+            delete sectionChildContext.currentVoltaType.start;
+          }
+          if (!next && endVoltaHere) {
+            sectionChildContext.currentVoltaType.end = true;
+          }
+        } else if (childNode.localName === 'ending' || childNode.localName === 'section') {
+          Logger.info('Not supported', Util.serializeElement(childNode) + ' is not supported as a child of '
+                                         + Util.serializeElement(element) + '. Trying to process it anyway.');
         }
         me.processSectionChild(childNode, sectionChildContext);
-
         childNode = next;
       }
-      me.currentVoltaType = null;
+      if (endVoltaHere) sectionChildContext.currentVoltaType = null;
     },
 
     /**
@@ -845,7 +863,7 @@ define([
       // the stave objects will be stored in two places:
       // 1) in each MEI2VF.Measure
       // 2) in MEI2VF.Converter.allVexMeasureStaves
-      var staves = me.initializeStavesInMeasure(system, staveElements, barlineInfo, atSystemStart);
+      var staves = me.initializeStavesInMeasure(system, staveElements, barlineInfo, atSystemStart, sectionChildContext);
       var measureIndex = me.allVexMeasureStaves.push(staves) - 1;
 
       var currentStaveVoices = new StaveVoices();
@@ -854,7 +872,8 @@ define([
 
 
       for (i = 0, j = staveElements.length; i < j; i++) {
-        beamInfosToResolve = me.processStaveEvents(staves, staveElements[i], measureIndex, currentStaveVoices, beamInfosToResolve);
+        beamInfosToResolve =
+        me.processStaveEvents(staves, staveElements[i], measureIndex, currentStaveVoices, beamInfosToResolve);
       }
 
       me.directives.createInfos(dirElements, element);
@@ -897,9 +916,10 @@ define([
      * measure
      * @param {Object} barlineInfo information about the barlines to render to the measure
      * @param {Boolean} atSystemStart indicates if the current measure is the system's start measure
+     * @param {Object} sectionChildContext an object containing section child context information
      */
-    initializeStavesInMeasure : function (system, staveElements, barlineInfo, atSystemStart) {
-      var me = this, i, j, stave, stave_n, staves, isFirstVoltaStave = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaves, newClef, currentStaveInfo, padding;
+    initializeStavesInMeasure : function (system, staveElements, barlineInfo, atSystemStart, sectionChildContext) {
+      var me = this, i, j, stave, stave_n, staves, isFirstStaveInMeasure = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaves, newClef, currentStaveInfo, padding;
 
       staves = [];
 
@@ -924,10 +944,11 @@ define([
         });
         staves[stave_n] = stave;
 
-        var currentVoltaType = me.currentVoltaType;
-        if (isFirstVoltaStave && currentVoltaType) {
-          stave.addVoltaFromInfo(currentVoltaType);
+        if (isFirstStaveInMeasure && sectionChildContext.currentVoltaType) {
+          stave.addVoltaFromInfo(sectionChildContext.currentVoltaType);
+          isFirstStaveInMeasure = false;
         }
+
         if (precedingMeasureStaves && precedingMeasureStaves[stave_n]) {
           currentStaveInfo = me.systemInfo.getStaveInfo(stave_n);
           newClef = currentStaveInfo.getClef();
@@ -949,7 +970,6 @@ define([
           clefOffsets[stave_n] = stave.getModifierXShift();
           maxClefOffset = Math.max(maxClefOffset, clefOffsets[stave_n]);
         }
-        isFirstVoltaStave = false;
       }
 
       // second run: add key signatures; if the clefOffset of a stave is less than
@@ -1218,7 +1238,7 @@ define([
         }
 
         if (!clef) clef = staveInfo.getClef();
-        if (!stave) stave =context.stave;
+        if (!stave) stave = context.stave;
 
         note_opts = {
           vexPitch : vexPitch,
@@ -1312,7 +1332,7 @@ define([
         }
 
         if (!clef) clef = staveInfo.getClef();
-        if (!stave) stave =context.stave;
+        if (!stave) stave = context.stave;
 
 
         chord_opts = {
@@ -1338,9 +1358,9 @@ define([
         }
 
         // TODO tie attribute on chord should render a tie on each note
-//                if (mei_tie) {
-//                  me.processAttrTie(mei_tie, xml_id, vexPitch, atts.staff || context.stave_n);
-//                }
+        //                if (mei_tie) {
+        //                  me.processAttrTie(mei_tie, xml_id, vexPitch, atts.staff || context.stave_n);
+        //                }
         if (mei_slur) {
           me.processSlurAttribute(mei_slur, xml_id);
         }
@@ -1570,7 +1590,8 @@ define([
           var combinedVexNotes = [];
           j = vexNotes.length;
           if (j !== otherBeamNotes.vexNotes.length) {
-            Logger.warn('Beam content mismatch', Util.serializeElement(element)+ ' and ' + Util.serializeElement(otherBeamNotes.element) +
+            Logger.warn('Beam content mismatch', Util.serializeElement(element) + ' and ' +
+                                                 Util.serializeElement(otherBeamNotes.element) +
                                                  ' could not be combined, because their content does not match.');
           }
           for (i = 0; i < j; i++) {

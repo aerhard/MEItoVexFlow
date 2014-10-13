@@ -1,11 +1,14 @@
 define([
   'mei2vf/Interface',
+  'tests/TestUtil',
   'common/Util',
   'common/Logger',
   'common/RuntimeError'
-], function (x, Util, Logger, RuntimeError) {
+], function (x, TestUtil, Util, Logger, RuntimeError) {
 
   describe("x", function () {
+
+    var mei = TestUtil.createMEIFragment;
 
     it('bla', function () {
 

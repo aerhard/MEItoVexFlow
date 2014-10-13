@@ -73,14 +73,19 @@ define([
       'invis' : VF.Barline.type.NONE
     },
 
-    addVoltaFromInfo : function (volta) {
-      var begin = volta.hasOwnProperty('start');
-      var end = volta.hasOwnProperty('end');
+    addVoltaFromInfo : function (voltaInfo) {
+      var begin = voltaInfo.hasOwnProperty('start');
+      var end = voltaInfo.hasOwnProperty('end');
       if (begin) {
-        this.setVoltaType((end) ? VF.Volta.type.BEGIN_END : VF.Volta.type.BEGIN, volta.start + '.', 30);
+        this.setVoltaType((end) ? VF.Volta.type.BEGIN_END : VF.Volta.type.BEGIN, voltaInfo.start, 30);
       } else {
         this.setVoltaType((end) ? VF.Volta.type.END : VF.Volta.type.MID, "", 30);
       }
+      // TODO [think through in which cases we actually need type.END]
+      // 1) at the end of a composition
+      // 2) if the current volta is followed by another volta (type.MID might be sufficient when
+      // both volte are in the same system, but in cases where the first volta is at the end of
+      // a system, it erroneously remains 'open'
     },
 
     // FIXME check if deviation of clef.shift between clef and end clef is OK
