@@ -684,6 +684,8 @@ define([
         if (isFirst) {
           me.currentVoltaType = {start : element.getAttribute('n')};
           isFirst = false;
+        } else {
+          delete me.currentVoltaType.start;
         }
         if (!next) {
           me.currentVoltaType.end = true;
@@ -897,7 +899,7 @@ define([
      * @param {Boolean} atSystemStart indicates if the current measure is the system's start measure
      */
     initializeStavesInMeasure : function (system, staveElements, barlineInfo, atSystemStart) {
-      var me = this, i, j, stave, stave_n, staves, isFirstVolta = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaves, newClef, currentStaveInfo, padding;
+      var me = this, i, j, stave, stave_n, staves, isFirstVoltaStave = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaves, newClef, currentStaveInfo, padding;
 
       staves = [];
 
@@ -923,7 +925,7 @@ define([
         staves[stave_n] = stave;
 
         var currentVoltaType = me.currentVoltaType;
-        if (isFirstVolta && currentVoltaType) {
+        if (isFirstVoltaStave && currentVoltaType) {
           stave.addVoltaFromInfo(currentVoltaType);
         }
         if (precedingMeasureStaves && precedingMeasureStaves[stave_n]) {
@@ -947,7 +949,7 @@ define([
           clefOffsets[stave_n] = stave.getModifierXShift();
           maxClefOffset = Math.max(maxClefOffset, clefOffsets[stave_n]);
         }
-        isFirstVolta = false;
+        isFirstVoltaStave = false;
       }
 
       // second run: add key signatures; if the clefOffset of a stave is less than

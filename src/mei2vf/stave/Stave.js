@@ -74,14 +74,12 @@ define([
     },
 
     addVoltaFromInfo : function (volta) {
-      if (volta.start) {
-        this.setVoltaType(VF.Volta.type.BEGIN, volta.start + '.', 30);
-      } else if (volta.end) {
-        //TODO: fix type.BEGIN and type.END interference in vexflow, then remove else!
-        //[think through in which cases we actually need type.END]
-        this.setVoltaType(VF.Volta.type.END, "", 30);
-      } else if (!volta.start && !volta.end) {
-        this.setVoltaType(VF.Volta.type.MID, "", 30);
+      var begin = volta.hasOwnProperty('start');
+      var end = volta.hasOwnProperty('end');
+      if (begin) {
+        this.setVoltaType((end) ? VF.Volta.type.BEGIN_END : VF.Volta.type.BEGIN, volta.start + '.', 30);
+      } else {
+        this.setVoltaType((end) ? VF.Volta.type.END : VF.Volta.type.MID, "", 30);
       }
     },
 
