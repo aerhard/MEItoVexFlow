@@ -28,20 +28,25 @@ define([
     var text_line = state.text_line;
     var max_width = 0;
 
-    var top_text_line = text_line;
-    var bottom_text_line = text_line;
+    var top_text_line = state.top_text_line;
+    if (top_text_line === undefined) top_text_line = text_line;
+    var bottom_text_line = state.bottom_text_line;
+    if (bottom_text_line === undefined) bottom_text_line = text_line;
 
     // Format Annotations
     var width;
     for (var i = 0; i < annotations.length; ++i) {
       var annotation = annotations[i];
 
-      if (annotation.vert_justification === 3) {
-        annotation.setTextLine(top_text_line++);
-      } else if (annotation.vert_justification === 1) {
-        annotation.setTextLine(bottom_text_line++);
+      if (annotation.vert_justification === 1) {
+        annotation.setTextLine(top_text_line);
+        top_text_line += 1;
+      } else if (annotation.vert_justification === 3) {
+        annotation.setTextLine(bottom_text_line);
+        bottom_text_line +=1;
       } else {
-        annotation.setTextLine(text_line++);
+        annotation.setTextLine(text_line);
+        text_line += 1;
       }
 
       width = annotation.getWidth() > max_width ?

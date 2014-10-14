@@ -11,6 +11,53 @@ define([
     return this.meiElement;
   };
 
+
+  // ## Static Methods
+  // Arrange ornaments inside `ModifierContext`
+  VF.Ornament.format = function(ornaments, state) {
+    if (!ornaments || ornaments.length === 0) return false;
+
+    var text_line = state.text_line;
+    var max_width = 0;
+
+    var top_text_line = state.top_text_line;
+    if (top_text_line === undefined) top_text_line = text_line;
+    var bottom_text_line = state.bottom_text_line;
+    if (bottom_text_line === undefined) bottom_text_line = text_line;
+
+    // Format Articulations
+    var width;
+    for (var i = 0; i < ornaments.length; ++i) {
+      var ornament = ornaments[i];
+
+      var type = Vex.Flow.ornamentCodes(ornament.type);
+
+      if (ornament.position === 3) {
+        ornament.setTextLine(top_text_line);
+        top_text_line += (type.between_lines) ? 1 : 1.5;
+      } else if (ornament.position=== 4) {
+        ornament.setTextLine(bottom_text_line);
+        bottom_text_line += (type.between_lines) ? 1 : 1.5;
+      } else {
+        ornament.setTextLine(text_line);
+        text_line += (type.between_lines) ? 1 : 1.5;
+      }
+
+      width = ornament.getWidth() > max_width ?
+              ornament.getWidth() : max_width;
+    }
+
+    state.left_shift += width / 2;
+    state.right_shift += width / 2;
+
+    state.text_line = text_line;
+    state.top_text_line = top_text_line;
+    state.bottom_text_line = bottom_text_line;
+
+    return true;
+  };
+
+
   VF.Ornament.prototype.draw = function () {
     if (!this.context) throw new Vex.RERR("NoContext", "Can't draw Ornament without a context.");
     if (!(this.note && (this.index !== null))) {
