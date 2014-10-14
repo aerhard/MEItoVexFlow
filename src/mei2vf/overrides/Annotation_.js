@@ -66,26 +66,29 @@ define([
       spacing = stave.getSpacingBetweenLines();
     }
 
+    // START ADDITION
+    var PADDING = 5;
+    // END ADDITION
+
     if (this.vert_justification == Annotation.VerticalJustify.BOTTOM) {
-      // START MODIFICATION
-      y = stave.getYForBottomText(this.text_line * 2);
-      // END MODIFICATION
+
+      y = stave.getYForBottomText(this.text_line);
       if (has_stem) {
-        var stem_base = (this.note.getStemDirection() === 1 ? stem_ext.baseY : stem_ext.topY);
-        y = Math.max(y, stem_base + (spacing * ((this.text_line * 2) + 2)));
+
+        // START MODIFICATION
+        var stem_base = (this.note.getStemDirection() === 1 ? stem_ext.baseY + 2 * PADDING : stem_ext.topY + PADDING);
+        // END MODIFICATION
+
+        y = Math.max(y, stem_base + (spacing * (this.text_line + 2)));
       }
-
     } else if (this.vert_justification == Annotation.VerticalJustify.CENTER) {
-      var yt = this.note.getYForTopText(this.text_line*2) - 1;
-      var yb = stave.getYForBottomText(this.text_line*2);
+      var yt = this.note.getYForTopText(this.text_line) - 1;
+      var yb = stave.getYForBottomText(this.text_line);
       y = yt + ( yb - yt ) / 2 + text_height / 2;
-
     } else if (this.vert_justification == Annotation.VerticalJustify.TOP) {
-      // START MODIFICATION
-      y = Math.min(stave.getYForTopText(this.text_line * 2), this.note.getYs()[0] - 10);
-      // END MODIFICATION
+      y = Math.min(stave.getYForTopText(this.text_line), this.note.getYs()[0] - 10);
       if (has_stem) {
-        y = Math.min(y, (stem_ext.topY - 5) - (spacing * this.text_line*2));
+        y = Math.min(y, (stem_ext.topY - 5) - (spacing * this.text_line));
       }
     } else /* CENTER_STEM */{
       var extents = this.note.getStemExtents();

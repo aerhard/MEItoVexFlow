@@ -413,8 +413,8 @@ define([
         me.processScoreChildren(xmlDoc.querySelector('score'));
       }
 
-      me.directives.createVexFromInfos(me.notes_by_id);
       me.dynamics.createVexFromInfos(me.notes_by_id);
+      me.directives.createVexFromInfos(me.notes_by_id);
       me.fermatas.createVexFromInfos(me.notes_by_id);
       me.ornaments.createVexFromInfos(me.notes_by_id);
       me.ties.createVexFromInfos(me.notes_by_id);
@@ -878,8 +878,8 @@ define([
         me.processStaveEvents(staves, staveElements[i], measureIndex, currentStaveVoices, beamInfosToResolve);
       }
 
-      me.directives.createInfos(dirElements, element);
       me.dynamics.createInfos(dynamElements, element);
+      me.directives.createInfos(dirElements, element);
       me.fermatas.createInfos(fermataElements, element);
       me.ornaments.createInfos(ornamentElements, element);
       me.ties.createInfos(tieElements, element, measureIndex, me.systemInfo);
