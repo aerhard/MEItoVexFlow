@@ -385,9 +385,9 @@ define([
        * measure
        *
        * If null, no volta is rendered
-       * @property {Object} currentVoltaType
+       * @property {Object} voltaInfo
        */
-      me.currentVoltaType = null;
+      me.voltaInfo = null;
       return me;
     },
 
@@ -605,7 +605,7 @@ define([
       var me = this, i, j, childNodes, sectionContext;
 
       sectionContext = {
-        currentVoltaType : null
+        voltaInfo : null
       };
 
       if (score) {
@@ -671,11 +671,11 @@ define([
      * @method processEnding
      */
     processEnding : function (element, sectionContext) {
-      var me = this, next, childNode, currentVoltaType, endVoltaHere;
+      var me = this, next, childNode, voltaInfo, endVoltaHere;
 
-      currentVoltaType = sectionContext.currentVoltaType;
+      voltaInfo = sectionContext.voltaInfo;
 
-      endVoltaHere = (currentVoltaType === null);
+      endVoltaHere = (voltaInfo === null);
 
       var getNext = function (node) {
         var nextSibling = node.nextSibling;
@@ -697,15 +697,15 @@ define([
         next = getNext(childNode);
         // modify volta information only on measure elements
         if (childNode.localName === 'measure') {
-          if (sectionContext.currentVoltaType === null) {
-            sectionContext.currentVoltaType = {
+          if (sectionContext.voltaInfo === null) {
+            sectionContext.voltaInfo = {
               start : element.getAttribute('n')
             };
           } else {
-            delete sectionContext.currentVoltaType.start;
+            delete sectionContext.voltaInfo.start;
           }
           if (!next && endVoltaHere) {
-            sectionContext.currentVoltaType.end = true;
+            sectionContext.voltaInfo.end = true;
           }
         } else if (childNode.localName === 'ending' || childNode.localName === 'section') {
           Logger.info('Not supported', Util.serializeElement(childNode) + ' is not supported as a child of '
@@ -714,7 +714,7 @@ define([
         me.processSectionChild(childNode, sectionContext);
         childNode = next;
       }
-      if (endVoltaHere) sectionContext.currentVoltaType = null;
+      if (endVoltaHere) sectionContext.voltaInfo = null;
     },
 
     /**
@@ -946,8 +946,8 @@ define([
         });
         staves[stave_n] = stave;
 
-        if (isFirstStaveInMeasure && sectionContext.currentVoltaType) {
-          stave.addVoltaFromInfo(sectionContext.currentVoltaType);
+        if (isFirstStaveInMeasure && sectionContext.voltaInfo) {
+          stave.addVoltaFromInfo(sectionContext.voltaInfo);
           isFirstStaveInMeasure = false;
         }
 
