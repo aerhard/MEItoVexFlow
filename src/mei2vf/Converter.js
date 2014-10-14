@@ -1,7 +1,7 @@
 /*
  * MEItoVexFlow, Converter class
  * (based on meitovexflow.js)
- * Reworkings: Alexander Erhard
+ * Rearrangements and additions: Alexander Erhard
  *
  * Copyright © 2014 Richard Lewis, Raffaele Viglianti, Zoltan Komives,
  * University of Maryland
@@ -48,6 +48,7 @@ define([
   'common/Logger',
   'common/RuntimeError',
   'common/Util',
+  'mei2vf/event/EventContext',
   'mei2vf/event/EventUtil',
   'mei2vf/event/Note',
   'mei2vf/event/GraceNote',
@@ -72,7 +73,9 @@ define([
   'mei2vf/system/SystemInfo',
   'mei2vf/Tables',
   'mei2vf/voice/StaveVoices'
-], function (VF, MeiLib, Logger, RuntimeError, Util, EventUtil, Note, GraceNote, Chord, GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments, Verses, Syllable, Stave, Measure, PageInfo, System, SystemInfo, Tables, StaveVoices) {
+], function (VF, MeiLib, Logger, RuntimeError, Util, EventContext, EventUtil, Note, GraceNote, Chord,
+  GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments,
+  Verses, Syllable, Stave, Measure, PageInfo, System, SystemInfo, Tables, StaveVoices) {
 
   /**
    * Converts an MEI XML document / document fragment to VexFlow objects and
@@ -432,7 +435,7 @@ define([
         if (typeof idString === 'string') {
           return idString.substring(1);
         }
-      }
+      };
 
       for (i = 0, j = beamSpans.length; i < j; i++) {
         notes = [];
@@ -450,7 +453,7 @@ define([
           console.log(notes);
 
           me.allBeams.push(new VF.Beam(notes, false));
-          //          me.allBeams.push(new VF.Beam(filteredElements, !eventContext.layerDir && !eventContext.hasStemDirInBeam));
+          //          me.allBeams.push(new VF.Beam(filteredElements, !eventContext.getLayerDir() && eventContext.getStemDirInBeam()===false));
 
         } else {
           // warn and abort: beam span could not be resolved
@@ -460,7 +463,6 @@ define([
 
       }
     },
-
 
     format : function (ctx) {
       var me = this;
@@ -1055,32 +1057,10 @@ define([
 
       layerElements = staveElement.getElementsByTagName('layer');
 
-      var eventContext = {
-        /**
-         * inBeamNo specifies the number of beams the current events are under
-         */
-        inBeamNo : 0,
-        /**
-         * hasStemDirInBeam specifies if a stem.dir has been specified in the current beam
-         */
-        hasStemDirInBeam : false,
-        /**
-         * Grace note or grace chord objects to be added to the next non-grace note or chord
-         * @property {Vex.Flow.StaveNote[]} graceNoteQueue
-         */
-        graceNoteQueue : [],
-        currentClefChangeProperty : null,
-        notes_by_id : me.notes_by_id,
-        currentSystem_n : me.currentSystem_n,
-        stave : stave,
-        stave_n : stave_n,
-        beamInfosToResolve : beamInfosToResolve,
-        newBeamInfosToResolve : []
-      };
+      var eventContext = new EventContext(me.notes_by_id, me.currentSystem_n, stave, stave_n, beamInfosToResolve);
 
       for (i = 0, j = layerElements.length; i < j; i++) {
-        eventContext.layerDir =
-        (j > 1) ? (i === 0 ? VF.StaveNote.STEM_UP : i === j - 1 ? VF.StaveNote.STEM_DOWN : null) : null;
+        eventContext.setLayerDir((j > 1) ? (i === 0 ? VF.StaveNote.STEM_UP : i === j - 1 ? VF.StaveNote.STEM_DOWN : null) : null);
         me.resolveUnresolvedTimestamps(layerElements[i], stave_n, measureIndex, meter);
         staveInfo.checkInitialClef();
 
@@ -1089,9 +1069,9 @@ define([
       }
 
       // if there is a clef not yet attached to a note (i.e. the last clef), add it as a stave end modifier
-      if (eventContext.currentClefChangeProperty) {
-        stave.addEndClefFromInfo(eventContext.currentClefChangeProperty);
-        eventContext.currentClefChangeProperty = null;
+      if (eventContext.clefChangeInfo) {
+        stave.addEndClefFromInfo(eventContext.clefChangeInfo);
+        eventContext.clefChangeInfo = null;
       }
 
 
@@ -1238,7 +1218,7 @@ define([
         }
 
         if (!clef) clef = staveInfo.getClef();
-        if (!stave) stave = eventContext.stave;
+        if (!stave) stave = eventContext.getStave();
 
         note_opts = {
           vexPitch : vexPitch,
@@ -1246,13 +1226,13 @@ define([
           element : element,
           atts : atts,
           stave : stave,
-          layerDir : eventContext.layerDir
+          layerDir : eventContext.getLayerDir()
         };
 
         note = (atts.grace) ? new GraceNote(note_opts) : new Note(note_opts);
 
-        if (note.hasMeiStemDir && eventContext.inBeamNo > 0) {
-          eventContext.hasStemDirInBeam = true;
+        if (note.hasMeiStemDir && eventContext.isInBeam()) {
+          eventContext.setStemDirInBeam(true);
         }
 
         me.processSyllables(note, element, eventContext.stave_n);
@@ -1270,16 +1250,14 @@ define([
           me.processSlurAttribute(mei_slur, xml_id);
         }
 
-        eventContext.notes_by_id[xml_id] = {
+        eventContext.addEvent(xml_id, {
           meiNote : element,
-          vexNote : note,
-          system : eventContext.currentSystem_n,
-          layerDir : eventContext.layerDir
-        };
+          vexNote : note
+        });
 
-        if (eventContext.currentClefChangeProperty) {
-          EventUtil.addClefModifier(note, eventContext.currentClefChangeProperty);
-          eventContext.currentClefChangeProperty = null;
+        if (eventContext.clefChangeInfo) {
+          EventUtil.addClefModifier(note, eventContext.clefChangeInfo);
+          eventContext.clefChangeInfo = null;
         }
 
         if (atts.grace) {
@@ -1332,7 +1310,7 @@ define([
         }
 
         if (!clef) clef = staveInfo.getClef();
-        if (!stave) stave = eventContext.stave;
+        if (!stave) stave = eventContext.getStave();
 
 
         chord_opts = {
@@ -1341,13 +1319,13 @@ define([
           stave : stave,
           element : element,
           atts : atts,
-          layerDir : eventContext.layerDir
+          layerDir : eventContext.getLayerDir()
         };
 
         chord = (atts.grace) ? new GraceChord(chord_opts) : new Chord(chord_opts);
 
-        if (chord.hasMeiStemDir && eventContext.inBeamNo > 0) {
-          eventContext.hasStemDirInBeam = true;
+        if (chord.hasMeiStemDir && eventContext.isInBeam()) {
+          eventContext.setStemDirInBeam(true);
         }
 
         var allNoteIndices = [];
@@ -1365,17 +1343,15 @@ define([
           me.processSlurAttribute(mei_slur, xml_id);
         }
 
-        eventContext.notes_by_id[xml_id] = {
+        eventContext.addEvent(xml_id, {
           meiNote : element,
           vexNote : chord,
-          index : allNoteIndices,
-          system : eventContext.currentSystem_n,
-          layerDir : eventContext.layerDir
-        };
+          index : allNoteIndices
+        });
 
-        if (eventContext.currentClefChangeProperty) {
-          EventUtil.addClefModifier(chord, eventContext.currentClefChangeProperty);
-          eventContext.currentClefChangeProperty = null;
+        if (eventContext.clefChangeInfo) {
+          EventUtil.addClefModifier(chord, eventContext.clefChangeInfo);
+          eventContext.clefChangeInfo = null;
         }
 
         if (atts.grace) {
@@ -1416,13 +1392,11 @@ define([
         me.processSlurAttribute(atts.slur, xml_id);
       }
 
-      eventContext.notes_by_id[xml_id] = {
+      eventContext.addEvent(xml_id, {
         meiNote : chordElement,
         vexNote : chord,
-        index : [chordIndex],
-        system : eventContext.currentSystem_n,
-        layerDir : eventContext.layerDir
-      };
+        index : [chordIndex]
+      });
 
       var childNodes = element.childNodes;
       for (i = 0, j = childNodes.length; i < j; i++) {
@@ -1455,15 +1429,15 @@ define([
 
         rest = new Rest({
           element : element,
-          stave : eventContext.stave,
+          stave : eventContext.getStave(),
           clef : (element.hasAttribute('ploc') && element.hasAttribute('oloc')) ? staveInfo.getClef() : null
         });
 
         xml_id = MeiLib.XMLID(element);
 
-        if (eventContext.currentClefChangeProperty) {
-          EventUtil.addClefModifier(rest, eventContext.currentClefChangeProperty);
-          eventContext.currentClefChangeProperty = null;
+        if (eventContext.clefChangeInfo) {
+          EventUtil.addClefModifier(rest, eventContext.clefChangeInfo);
+          eventContext.clefChangeInfo = null;
         }
 
         if (eventContext.graceNoteQueue.length > 0) {
@@ -1472,11 +1446,10 @@ define([
         }
 
 
-        eventContext.notes_by_id[xml_id] = {
+        eventContext.addEvent(xml_id, {
           meiNote : element,
-          vexNote : rest,
-          system : eventContext.currentSystem_n
-        };
+          vexNote : rest
+        });
         return rest;
       } catch (e) {
         throw new RuntimeError('An error occurred processing ' + Util.serializeElement(element) + ': "' + e.toString());
@@ -1493,7 +1466,7 @@ define([
         var mRestOpts = {
           meter : staveInfo.getTimeSpec(),
           element : element,
-          stave : eventContext.stave,
+          stave : eventContext.getStave(),
           clef : (element.hasAttribute('ploc') && element.hasAttribute('oloc')) ? staveInfo.getClef() : null
         };
 
@@ -1506,11 +1479,10 @@ define([
           eventContext.graceNoteQueue = [];
         }
 
-        eventContext.notes_by_id[xml_id] = {
+        eventContext.addEvent(xml_id, {
           meiNote : element,
-          vexNote : mRest,
-          system : eventContext.currentSystem_n
-        };
+          vexNote : mRest
+        });
         return mRest;
       } catch (e) {
         throw new RuntimeError('An error occurred processing ' + Util.serializeElement(element) + ': "' + e.toString());
@@ -1524,10 +1496,10 @@ define([
       var space = null;
       if (element.hasAttribute('dur')) {
         try {
-          space = new Space({ element : element, stave : eventContext.stave });
+          space = new Space({ element : element, stave : eventContext.getStave() });
 
-          if (eventContext.inBeamNo > 0) {
-            eventContext.hasSpaceInBeam = true;
+          if (eventContext.isInBeam()) {
+            eventContext.setSpaceInBeam(true);
           }
 
           if (eventContext.graceNoteQueue.length > 0) {
@@ -1554,7 +1526,7 @@ define([
 
      */
     processClef : function (eventContext, element, staveInfo) {
-      eventContext.currentClefChangeProperty = staveInfo.clefChangeInMeasure(element);
+      eventContext.clefChangeInfo = staveInfo.clefChangeInMeasure(element);
     },
 
     /**
@@ -1579,14 +1551,14 @@ define([
      * @param {StaveInfo} staveInfo
      */
     processBeam : function (eventContext, element, staveInfo) {
-      var me = this, vexNotes, filteredVexNotes, i, j;
-      eventContext.inBeamNo += 1;
+      var me = this, vexNotes, filteredVexNotes, i, j, otherBeamNotes;
+      eventContext.enterBeam();
 
       vexNotes = me.processNoteLikeChildren(eventContext, element, staveInfo);
 
-      if (eventContext.hasSpaceInBeam) {
-        if (eventContext.beamInfosToResolve.length !== 0) {
-          var otherBeamNotes = eventContext.beamInfosToResolve.shift();
+      if (eventContext.getSpaceInBeam() === true) {
+        otherBeamNotes = eventContext.shiftBeamInfoToResolve();
+        if (otherBeamNotes !== undefined) {
           var combinedVexNotes = [];
           j = vexNotes.length;
           if (j !== otherBeamNotes.vexNotes.length) {
@@ -1606,10 +1578,7 @@ define([
           });
 
         } else {
-          eventContext.newBeamInfosToResolve.push({
-            element : element,
-            vexNotes : vexNotes
-          });
+          eventContext.addBeamInfoToResolve(element, vexNotes);
         }
 
       } else {
@@ -1621,18 +1590,15 @@ define([
       if (filteredVexNotes && filteredVexNotes.length > 1) {
         try {
           // set autostem parameter of VF.Beam to true if neither layerDir nor any stem direction in the beam is specified
-          me.allBeams.push(new VF.Beam(filteredVexNotes, !eventContext.layerDir && !eventContext.hasStemDirInBeam));
+          me.allBeams.push(new VF.Beam(filteredVexNotes, !eventContext.getLayerDir() && eventContext.getStemDirInBeam() === false));
         } catch (e) {
           Logger.error('VexFlow Error', 'An error occurred processing ' + Util.serializeElement(element) + ': "' +
                                         e.toString() + '". Ignoring beam.');
         }
       }
 
-      eventContext.inBeamNo -= 1;
-      if (eventContext.inBeamNo === 0) {
-        eventContext.hasStemDirInBeam = false;
-        eventContext.hasSpaceInBeam = false;
-      }
+      eventContext.exitBeam();
+
       return vexNotes;
     },
 
