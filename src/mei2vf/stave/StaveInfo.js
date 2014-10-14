@@ -349,20 +349,30 @@ define([
     },
 
     /**
+     * called at the beginning of each layer. Sets the clef to the initial clef of the stave and saves
+     * any existing clef to this.changedClef
      * @public
      */
     checkInitialClef : function () {
       var me = this;
       if (me.startClefCopy) {
+        me.changedClef = me.clef;
         me.clef = me.startClefCopy;
       }
     },
 
     /**
+     * called after the last layer. Removes this.startClefCopy and sets the current clef to the last
+     * clef change
      * @public
      */
-    removeStartClefCopy : function () {
-      this.startClefCopy = null;
+    finalizeClefInfo : function () {
+      var me = this;
+      if (me.changedClef) {
+        me.clef = me.changedClef;
+        me.changedClef = null;
+      }
+      me.startClefCopy = null;
     },
 
     /**

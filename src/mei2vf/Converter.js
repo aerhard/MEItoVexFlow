@@ -1095,7 +1095,7 @@ define([
       }
 
 
-      staveInfo.removeStartClefCopy();
+      staveInfo.finalizeClefInfo();
       return eventContext.newBeamInfosToResolve;
     },
 
