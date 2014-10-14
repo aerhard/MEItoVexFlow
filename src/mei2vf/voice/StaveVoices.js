@@ -84,7 +84,7 @@ define([
     getFillFactor : function () {
       var voice = this.vexVoices[0], ticksUsed;
       ticksUsed = voice.getTicksUsed().numerator;
-      return (ticksUsed === 0) ? 1 : ticksUsed / voice.getTotalTicks().numerator
+      return (ticksUsed === 0) ? 1 : ticksUsed / voice.getTotalTicks().numerator;
     },
 
     /**
@@ -122,6 +122,11 @@ define([
       var i, staveVoice, all_voices = this.all_voices;
       for (i = 0; i < all_voices.length; ++i) {
         staveVoice = all_voices[i];
+
+        // TODO fix this in VexFLow: if staves are passed to draw(), all events to be rendered on other staves
+        // get rendered on the current stave. If no staves are passed, stave assignment is OK, but
+        // auto rest alignment doesn't work. We need both.
+
         staveVoice.voice.draw(context);
 //        staveVoice.voice.draw(context, staves[staveVoice.stave_n]);
       }

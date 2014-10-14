@@ -1299,9 +1299,10 @@ define([
           var otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][atts.staff];
           if (otherStave) {
             stave = otherStave;
+
+            // TODO take clef changes in a stave into account. It might be necessary to calculate the
+            // actual clef to use if there is a clef change in the measure
             clef = me.systemInfo.getClef(atts.staff);
-            console.log(atts.staff);
-            console.log(otherStave);
           } else {
             Logger.warn('Staff not found', 'No stave could be found which corresponds to @staff="' + atts.staff +
                                            '" specified in ' + Util.serializeElement(element) +
