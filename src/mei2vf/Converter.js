@@ -450,7 +450,7 @@ define([
           console.log(notes);
 
           me.allBeams.push(new VF.Beam(notes, false));
-          //          me.allBeams.push(new VF.Beam(filteredElements, !context.layerDir && !context.hasStemDirInBeam));
+          //          me.allBeams.push(new VF.Beam(filteredElements, !eventContext.layerDir && !eventContext.hasStemDirInBeam));
 
         } else {
           // warn and abort: beam span could not be resolved
@@ -600,9 +600,9 @@ define([
     },
 
     processScoreChildren : function (score) {
-      var me = this, i, j, childNodes, sectionChildContext;
+      var me = this, i, j, childNodes, sectionContext;
 
-      sectionChildContext = {
+      sectionContext = {
         currentVoltaType : null
       };
 
@@ -610,7 +610,7 @@ define([
         childNodes = score.childNodes;
         for (i = 0, j = childNodes.length; i < j; i++) {
           if (childNodes[i].nodeType === 1) {
-            me.processScoreChild(childNodes[i], sectionChildContext);
+            me.processScoreChild(childNodes[i], sectionContext);
           }
         }
       } else {
@@ -618,7 +618,7 @@ define([
       }
     },
 
-    processScoreChild : function (element, sectionChildContext) {
+    processScoreChild : function (element, sectionContext) {
       var me = this;
       switch (element.localName) {
         case 'scoreDef' :
@@ -631,10 +631,10 @@ define([
           me.onPb(element);
           break;
         case 'ending' :
-          me.processEnding(element, sectionChildContext);
+          me.processEnding(element, sectionContext);
           break;
         case 'section' :
-          me.processSection(element, sectionChildContext);
+          me.processSection(element, sectionContext);
           break;
         default :
           Logger.info('Not supported', 'Element ' + Util.serializeElement(element) +
@@ -656,11 +656,11 @@ define([
     /**
      *@method processSection
      */
-    processSection : function (element, sectionChildContext) {
+    processSection : function (element, sectionContext) {
       var me = this, i, j, sectionChildren = element.childNodes;
       for (i = 0, j = sectionChildren.length; i < j; i += 1) {
         if (sectionChildren[i].nodeType === 1) {
-          me.processSectionChild(sectionChildren[i], sectionChildContext);
+          me.processSectionChild(sectionChildren[i], sectionContext);
         }
       }
     },
@@ -668,10 +668,10 @@ define([
     /**
      * @method processEnding
      */
-    processEnding : function (element, sectionChildContext) {
+    processEnding : function (element, sectionContext) {
       var me = this, next, childNode, currentVoltaType, endVoltaHere;
 
-      currentVoltaType = sectionChildContext.currentVoltaType;
+      currentVoltaType = sectionContext.currentVoltaType;
 
       endVoltaHere = (currentVoltaType === null);
 
@@ -695,24 +695,24 @@ define([
         next = getNext(childNode);
         // modify volta information only on measure elements
         if (childNode.localName === 'measure') {
-          if (sectionChildContext.currentVoltaType === null) {
-            sectionChildContext.currentVoltaType = {
+          if (sectionContext.currentVoltaType === null) {
+            sectionContext.currentVoltaType = {
               start : element.getAttribute('n')
             };
           } else {
-            delete sectionChildContext.currentVoltaType.start;
+            delete sectionContext.currentVoltaType.start;
           }
           if (!next && endVoltaHere) {
-            sectionChildContext.currentVoltaType.end = true;
+            sectionContext.currentVoltaType.end = true;
           }
         } else if (childNode.localName === 'ending' || childNode.localName === 'section') {
           Logger.info('Not supported', Util.serializeElement(childNode) + ' is not supported as a child of '
                                          + Util.serializeElement(element) + '. Trying to process it anyway.');
         }
-        me.processSectionChild(childNode, sectionChildContext);
+        me.processSectionChild(childNode, sectionContext);
         childNode = next;
       }
-      if (endVoltaHere) sectionChildContext.currentVoltaType = null;
+      if (endVoltaHere) sectionContext.currentVoltaType = null;
     },
 
     /**
@@ -726,11 +726,11 @@ define([
      * <b>sb</b>
      * @method processSectionChild
      */
-    processSectionChild : function (element, sectionChildContext) {
+    processSectionChild : function (element, sectionContext) {
       var me = this;
       switch (element.localName) {
         case 'measure' :
-          me.processMeasure(element, sectionChildContext);
+          me.processMeasure(element, sectionContext);
           break;
         case 'scoreDef' :
           me.systemInfo.processScoreDef(element);
@@ -745,10 +745,10 @@ define([
           me.onSb(element);
           break;
         case 'ending' :
-          me.processEnding(element, sectionChildContext);
+          me.processEnding(element, sectionContext);
           break;
         case 'section' :
-          me.processSection(element, sectionChildContext);
+          me.processSection(element, sectionContext);
           break;
         default :
           Logger.info('Not supported', 'Element ' + Util.serializeElement(element) +
@@ -775,7 +775,7 @@ define([
      * @method processMeasure
      * @param {Element} element the MEI measure element
      */
-    processMeasure : function (element, sectionChildContext) {
+    processMeasure : function (element, sectionContext) {
       var me = this, atSystemStart, system, system_n, childNodes;
 
       if (me.pendingSectionBreak || me.pendingSystemBreak) {
@@ -797,14 +797,14 @@ define([
 
       // VexFlow doesn't support repetition starts at the end of staves -> pass
       // the value of @right to the following measure if @left isn't specified in it
-      if (sectionChildContext.leftBarlineElement && !barlineInfo.leftBarline) {
-        barlineInfo.leftBarline = sectionChildContext.leftBarlineElement.getAttribute('right');
-        barlineInfo.leftBarlineElement = sectionChildContext.leftBarlineElement;
-        sectionChildContext.leftBarlineElement = null;
+      if (sectionContext.leftBarlineElement && !barlineInfo.leftBarline) {
+        barlineInfo.leftBarline = sectionContext.leftBarlineElement.getAttribute('right');
+        barlineInfo.leftBarlineElement = sectionContext.leftBarlineElement;
+        sectionContext.leftBarlineElement = null;
       }
       if (barlineInfo.rightBarline === 'rptstart') {
         barlineInfo.rightBarline = null;
-        sectionChildContext.leftBarlineElement = element;
+        sectionContext.leftBarlineElement = element;
       }
 
 
@@ -863,7 +863,7 @@ define([
       // the stave objects will be stored in two places:
       // 1) in each MEI2VF.Measure
       // 2) in MEI2VF.Converter.allVexMeasureStaves
-      var staves = me.initializeStavesInMeasure(system, staveElements, barlineInfo, atSystemStart, sectionChildContext);
+      var staves = me.initializeStavesInMeasure(system, staveElements, barlineInfo, atSystemStart, sectionContext);
       var measureIndex = me.allVexMeasureStaves.push(staves) - 1;
 
       var currentStaveVoices = new StaveVoices();
@@ -916,9 +916,9 @@ define([
      * measure
      * @param {Object} barlineInfo information about the barlines to render to the measure
      * @param {Boolean} atSystemStart indicates if the current measure is the system's start measure
-     * @param {Object} sectionChildContext an object containing section child context information
+     * @param {Object} sectionContext an object containing section child context information
      */
-    initializeStavesInMeasure : function (system, staveElements, barlineInfo, atSystemStart, sectionChildContext) {
+    initializeStavesInMeasure : function (system, staveElements, barlineInfo, atSystemStart, sectionContext) {
       var me = this, i, j, stave, stave_n, staves, isFirstStaveInMeasure = true, clefOffsets = {}, maxClefOffset = 0, keySigOffsets = {}, maxKeySigOffset = 0, precedingMeasureStaves, newClef, currentStaveInfo, padding;
 
       staves = [];
@@ -944,8 +944,8 @@ define([
         });
         staves[stave_n] = stave;
 
-        if (isFirstStaveInMeasure && sectionChildContext.currentVoltaType) {
-          stave.addVoltaFromInfo(sectionChildContext.currentVoltaType);
+        if (isFirstStaveInMeasure && sectionContext.currentVoltaType) {
+          stave.addVoltaFromInfo(sectionContext.currentVoltaType);
           isFirstStaveInMeasure = false;
         }
 
@@ -1055,7 +1055,7 @@ define([
 
       layerElements = staveElement.getElementsByTagName('layer');
 
-      var context = {
+      var eventContext = {
         /**
          * inBeamNo specifies the number of beams the current events are under
          */
@@ -1079,24 +1079,24 @@ define([
       };
 
       for (i = 0, j = layerElements.length; i < j; i++) {
-        context.layerDir =
+        eventContext.layerDir =
         (j > 1) ? (i === 0 ? VF.StaveNote.STEM_UP : i === j - 1 ? VF.StaveNote.STEM_DOWN : null) : null;
         me.resolveUnresolvedTimestamps(layerElements[i], stave_n, measureIndex, meter);
         staveInfo.checkInitialClef();
 
-        vexNotes = me.processNoteLikeChildren(context, layerElements[i], staveInfo);
+        vexNotes = me.processNoteLikeChildren(eventContext, layerElements[i], staveInfo);
         currentStaveVoices.addVoice(me.createVexVoice(vexNotes, meter), stave_n);
       }
 
-      // if there is a clef not yet attached to a note (i.e. the last clef), add it to the last voice
-      if (context.currentClefChangeProperty) {
-        stave.addEndClefFromInfo(context.currentClefChangeProperty);
-        context.currentClefChangeProperty = null;
+      // if there is a clef not yet attached to a note (i.e. the last clef), add it as a stave end modifier
+      if (eventContext.currentClefChangeProperty) {
+        stave.addEndClefFromInfo(eventContext.currentClefChangeProperty);
+        eventContext.currentClefChangeProperty = null;
       }
 
 
       staveInfo.removeStartClefCopy();
-      return context.newBeamInfosToResolve;
+      return eventContext.newBeamInfosToResolve;
     },
 
     /**
@@ -1146,13 +1146,13 @@ define([
       }
     },
 
-    processNoteLikeChildren : function (context, element, staveInfo) {
+    processNoteLikeChildren : function (eventContext, element, staveInfo) {
       var me = this, vexNotes = [], k, l, processingResults;
 
       var childElements = element.childNodes;
       for (k = 0, l = childElements.length; k < l; k++) {
         if (childElements[k].nodeType === 1) {
-          processingResults = me.processNoteLikeElement(context, childElements[k], staveInfo);
+          processingResults = me.processNoteLikeElement(eventContext, childElements[k], staveInfo);
           if (processingResults) {
             if (Array.isArray(processingResults)) {
               vexNotes = vexNotes.concat(processingResults);
@@ -1170,46 +1170,46 @@ define([
      * function
      *
      * @method processNoteLikeElement
-     * @param {Object} context the processing context object
+     * @param {Object} eventContext the layer context object
      * @param {Element} element the MEI element
      * @param {StaveInfo} staveInfo
      */
-    processNoteLikeElement : function (context, element, staveInfo) {
+    processNoteLikeElement : function (eventContext, element, staveInfo) {
       var me = this;
       switch (element.localName) {
         case 'rest' :
-          return me.processRest(context, element, staveInfo);
+          return me.processRest(eventContext, element, staveInfo);
         case 'mRest' :
-          return me.processMRest(context, element, staveInfo);
+          return me.processMRest(eventContext, element, staveInfo);
         case 'space' :
-          return me.processSpace(context, element);
+          return me.processSpace(eventContext, element);
         case 'note' :
-          return me.processNote(context, element, staveInfo);
+          return me.processNote(eventContext, element, staveInfo);
         case 'beam' :
-          return me.processBeam(context, element, staveInfo);
+          return me.processBeam(eventContext, element, staveInfo);
         case 'tuplet' :
-          return me.processTuplet(context, element, staveInfo);
+          return me.processTuplet(eventContext, element, staveInfo);
         case 'chord' :
-          return me.processChord(context, element, staveInfo);
+          return me.processChord(eventContext, element, staveInfo);
         case 'clef' :
-          return me.processClef(context, element, staveInfo);
+          return me.processClef(eventContext, element, staveInfo);
         case 'bTrem' :
-          return me.processBTrem(context, element, staveInfo);
+          return me.processBTrem(eventContext, element, staveInfo);
         case 'anchoredText' :
-          me.processAnchoredText(context, element, staveInfo);
+          me.processAnchoredText(eventContext, element, staveInfo);
           return;
         default :
           Logger.info('Not supported', 'Element "' + element.localName + '" is not supported. Ignoring element.');
       }
     },
 
-    processAnchoredText : function (context, element, staveInfo) {
+    processAnchoredText : function (eventContext, element, staveInfo) {
     },
 
     /**
      * @method processNote
      */
-    processNote : function (context, element, staveInfo) {
+    processNote : function (eventContext, element, staveInfo) {
       var me = this, xml_id, mei_tie, mei_slur, atts, note_opts, note, clef, vexPitch, stave, stave_n;
 
       atts = Util.attsToObj(element);
@@ -1238,7 +1238,7 @@ define([
         }
 
         if (!clef) clef = staveInfo.getClef();
-        if (!stave) stave = context.stave;
+        if (!stave) stave = eventContext.stave;
 
         note_opts = {
           vexPitch : vexPitch,
@@ -1246,16 +1246,16 @@ define([
           element : element,
           atts : atts,
           stave : stave,
-          layerDir : context.layerDir
+          layerDir : eventContext.layerDir
         };
 
         note = (atts.grace) ? new GraceNote(note_opts) : new Note(note_opts);
 
-        if (note.hasMeiStemDir && context.inBeamNo > 0) {
-          context.hasStemDirInBeam = true;
+        if (note.hasMeiStemDir && eventContext.inBeamNo > 0) {
+          eventContext.hasStemDirInBeam = true;
         }
 
-        me.processSyllables(note, element, context.stave_n);
+        me.processSyllables(note, element, eventContext.stave_n);
 
 
         //        // FIXME For now, we'll remove any child nodes of <note>
@@ -1264,31 +1264,31 @@ define([
         //        }
 
         if (mei_tie) {
-          me.processAttrTie(mei_tie, xml_id, vexPitch, atts.staff || context.stave_n);
+          me.processAttrTie(mei_tie, xml_id, vexPitch, atts.staff || eventContext.stave_n);
         }
         if (mei_slur) {
           me.processSlurAttribute(mei_slur, xml_id);
         }
 
-        context.notes_by_id[xml_id] = {
+        eventContext.notes_by_id[xml_id] = {
           meiNote : element,
           vexNote : note,
-          system : context.currentSystem_n,
-          layerDir : context.layerDir
+          system : eventContext.currentSystem_n,
+          layerDir : eventContext.layerDir
         };
 
-        if (context.currentClefChangeProperty) {
-          EventUtil.addClefModifier(note, context.currentClefChangeProperty);
-          context.currentClefChangeProperty = null;
+        if (eventContext.currentClefChangeProperty) {
+          EventUtil.addClefModifier(note, eventContext.currentClefChangeProperty);
+          eventContext.currentClefChangeProperty = null;
         }
 
         if (atts.grace) {
-          context.graceNoteQueue.push(note);
+          eventContext.graceNoteQueue.push(note);
           return;
         } else {
-          if (context.graceNoteQueue.length > 0) {
-            note.addModifier(0, new VF.GraceNoteGroup(context.graceNoteQueue, false).beamNotes());
-            context.graceNoteQueue = [];
+          if (eventContext.graceNoteQueue.length > 0) {
+            note.addModifier(0, new VF.GraceNoteGroup(eventContext.graceNoteQueue, false).beamNotes());
+            eventContext.graceNoteQueue = [];
           }
         }
         return note;
@@ -1301,7 +1301,7 @@ define([
     /**
      * @method processChord
      */
-    processChord : function (context, element, staveInfo) {
+    processChord : function (eventContext, element, staveInfo) {
       var me = this, noteElements, xml_id, chord, chord_opts, atts, i, j, mei_tie, mei_slur, clef, stave;
 
       noteElements = element.getElementsByTagName('note');
@@ -1332,7 +1332,7 @@ define([
         }
 
         if (!clef) clef = staveInfo.getClef();
-        if (!stave) stave = context.stave;
+        if (!stave) stave = eventContext.stave;
 
 
         chord_opts = {
@@ -1341,50 +1341,50 @@ define([
           stave : stave,
           element : element,
           atts : atts,
-          layerDir : context.layerDir
+          layerDir : eventContext.layerDir
         };
 
         chord = (atts.grace) ? new GraceChord(chord_opts) : new Chord(chord_opts);
 
-        if (chord.hasMeiStemDir && context.inBeamNo > 0) {
-          context.hasStemDirInBeam = true;
+        if (chord.hasMeiStemDir && eventContext.inBeamNo > 0) {
+          eventContext.hasStemDirInBeam = true;
         }
 
         var allNoteIndices = [];
 
         for (i = 0, j = noteElements.length; i < j; i++) {
-          me.processNoteInChord(context, i, noteElements[i], element, chord);
+          me.processNoteInChord(eventContext, i, noteElements[i], element, chord);
           allNoteIndices.push(i);
         }
 
         // TODO tie attribute on chord should render a tie on each note
         //                if (mei_tie) {
-        //                  me.processAttrTie(mei_tie, xml_id, vexPitch, atts.staff || context.stave_n);
+        //                  me.processAttrTie(mei_tie, xml_id, vexPitch, atts.staff || eventContext.stave_n);
         //                }
         if (mei_slur) {
           me.processSlurAttribute(mei_slur, xml_id);
         }
 
-        context.notes_by_id[xml_id] = {
+        eventContext.notes_by_id[xml_id] = {
           meiNote : element,
           vexNote : chord,
           index : allNoteIndices,
-          system : context.currentSystem_n,
-          layerDir : context.layerDir
+          system : eventContext.currentSystem_n,
+          layerDir : eventContext.layerDir
         };
 
-        if (context.currentClefChangeProperty) {
-          EventUtil.addClefModifier(chord, context.currentClefChangeProperty);
-          context.currentClefChangeProperty = null;
+        if (eventContext.currentClefChangeProperty) {
+          EventUtil.addClefModifier(chord, eventContext.currentClefChangeProperty);
+          eventContext.currentClefChangeProperty = null;
         }
 
         if (atts.grace) {
-          context.graceNoteQueue.push(chord);
+          eventContext.graceNoteQueue.push(chord);
           return;
         } else {
-          if (context.graceNoteQueue.length > 0) {
-            chord.addModifier(0, new VF.GraceNoteGroup(context.graceNoteQueue, false).beamNotes());
-            context.graceNoteQueue = [];
+          if (eventContext.graceNoteQueue.length > 0) {
+            chord.addModifier(0, new VF.GraceNoteGroup(eventContext.graceNoteQueue, false).beamNotes());
+            eventContext.graceNoteQueue = [];
           }
         }
         return chord;
@@ -1400,7 +1400,7 @@ define([
     /**
      * @method processNoteInChord
      */
-    processNoteInChord : function (context, chordIndex, element, chordElement, chord) {
+    processNoteInChord : function (eventContext, chordIndex, element, chordElement, chord) {
       var me = this, i, j, atts, xml_id;
 
       atts = Util.attsToObj(element);
@@ -1410,18 +1410,18 @@ define([
       xml_id = MeiLib.XMLID(element);
 
       if (atts.tie) {
-        me.processAttrTie(atts.tie, xml_id, vexPitch, parseInt(atts.staff) || context.stave_n);
+        me.processAttrTie(atts.tie, xml_id, vexPitch, parseInt(atts.staff) || eventContext.stave_n);
       }
       if (atts.slur) {
         me.processSlurAttribute(atts.slur, xml_id);
       }
 
-      context.notes_by_id[xml_id] = {
+      eventContext.notes_by_id[xml_id] = {
         meiNote : chordElement,
         vexNote : chord,
         index : [chordIndex],
-        system : context.currentSystem_n,
-        layerDir : context.layerDir
+        system : eventContext.currentSystem_n,
+        layerDir : eventContext.layerDir
       };
 
       var childNodes = element.childNodes;
@@ -1449,33 +1449,33 @@ define([
     /**
      * @method processRest
      */
-    processRest : function (context, element, staveInfo) {
+    processRest : function (eventContext, element, staveInfo) {
       var rest, xml_id;
       try {
 
         rest = new Rest({
           element : element,
-          stave : context.stave,
+          stave : eventContext.stave,
           clef : (element.hasAttribute('ploc') && element.hasAttribute('oloc')) ? staveInfo.getClef() : null
         });
 
         xml_id = MeiLib.XMLID(element);
 
-        if (context.currentClefChangeProperty) {
-          EventUtil.addClefModifier(rest, context.currentClefChangeProperty);
-          context.currentClefChangeProperty = null;
+        if (eventContext.currentClefChangeProperty) {
+          EventUtil.addClefModifier(rest, eventContext.currentClefChangeProperty);
+          eventContext.currentClefChangeProperty = null;
         }
 
-        if (context.graceNoteQueue.length > 0) {
-          rest.addModifier(0, new VF.GraceNoteGroup(context.graceNoteQueue, false).beamNotes());
-          context.graceNoteQueue = [];
+        if (eventContext.graceNoteQueue.length > 0) {
+          rest.addModifier(0, new VF.GraceNoteGroup(eventContext.graceNoteQueue, false).beamNotes());
+          eventContext.graceNoteQueue = [];
         }
 
 
-        context.notes_by_id[xml_id] = {
+        eventContext.notes_by_id[xml_id] = {
           meiNote : element,
           vexNote : rest,
-          system : context.currentSystem_n
+          system : eventContext.currentSystem_n
         };
         return rest;
       } catch (e) {
@@ -1486,14 +1486,14 @@ define([
     /**
      * @method processMRest
      */
-    processMRest : function (context, element, staveInfo) {
+    processMRest : function (eventContext, element, staveInfo) {
       var mRest, xml_id;
 
       try {
         var mRestOpts = {
           meter : staveInfo.getTimeSpec(),
           element : element,
-          stave : context.stave,
+          stave : eventContext.stave,
           clef : (element.hasAttribute('ploc') && element.hasAttribute('oloc')) ? staveInfo.getClef() : null
         };
 
@@ -1501,15 +1501,15 @@ define([
 
         xml_id = MeiLib.XMLID(element);
 
-        if (context.graceNoteQueue.length > 0) {
-          mRest.addModifier(0, new VF.GraceNoteGroup(context.graceNoteQueue, false).beamNotes());
-          context.graceNoteQueue = [];
+        if (eventContext.graceNoteQueue.length > 0) {
+          mRest.addModifier(0, new VF.GraceNoteGroup(eventContext.graceNoteQueue, false).beamNotes());
+          eventContext.graceNoteQueue = [];
         }
 
-        context.notes_by_id[xml_id] = {
+        eventContext.notes_by_id[xml_id] = {
           meiNote : element,
           vexNote : mRest,
-          system : context.currentSystem_n
+          system : eventContext.currentSystem_n
         };
         return mRest;
       } catch (e) {
@@ -1520,19 +1520,19 @@ define([
     /**
      * @method processSpace
      */
-    processSpace : function (context, element) {
+    processSpace : function (eventContext, element) {
       var space = null;
       if (element.hasAttribute('dur')) {
         try {
-          space = new Space({ element : element, stave : context.stave });
+          space = new Space({ element : element, stave : eventContext.stave });
 
-          if (context.inBeamNo > 0) {
-            context.hasSpaceInBeam = true;
+          if (eventContext.inBeamNo > 0) {
+            eventContext.hasSpaceInBeam = true;
           }
 
-          if (context.graceNoteQueue.length > 0) {
-            space.addModifier(0, new VF.GraceNoteGroup(context.graceNoteQueue, false).beamNotes());
-            context.graceNoteQueue = [];
+          if (eventContext.graceNoteQueue.length > 0) {
+            space.addModifier(0, new VF.GraceNoteGroup(eventContext.graceNoteQueue, false).beamNotes());
+            eventContext.graceNoteQueue = [];
           }
 
         } catch (e) {
@@ -1548,45 +1548,45 @@ define([
 
     /**
      * @method processClef
-     * @param {Object} context the processing context object
+     * @param {Object} eventContext the layer context object
      * @param {Element} element the MEI clef element
      * @param {StaveInfo} staveInfo
 
      */
-    processClef : function (context, element, staveInfo) {
-      context.currentClefChangeProperty = staveInfo.clefChangeInMeasure(element);
+    processClef : function (eventContext, element, staveInfo) {
+      eventContext.currentClefChangeProperty = staveInfo.clefChangeInMeasure(element);
     },
 
     /**
      * @method processBTrem
-     * @param {Object} context the processing context object
+     * @param {Object} eventContext the layer context object
      * @param {Element} element the MEI bTrem element
      * @param {StaveInfo} staveInfo
      */
-    processBTrem : function (context, element, staveInfo) {
+    processBTrem : function (eventContext, element, staveInfo) {
       var me = this;
 
       Logger.info('Not implemented', 'Element <bTrem> not implemented. Processing child nodes.');
 
-      return me.processNoteLikeChildren(context, element, staveInfo);
+      return me.processNoteLikeChildren(eventContext, element, staveInfo);
 
     },
 
     /**
      * @method processBeam
-     * @param {Object} context the processing context object
+     * @param {Object} eventContext the layer context object
      * @param {Element} element the MEI beam element
      * @param {StaveInfo} staveInfo
      */
-    processBeam : function (context, element, staveInfo) {
+    processBeam : function (eventContext, element, staveInfo) {
       var me = this, vexNotes, filteredVexNotes, i, j;
-      context.inBeamNo += 1;
+      eventContext.inBeamNo += 1;
 
-      vexNotes = me.processNoteLikeChildren(context, element, staveInfo);
+      vexNotes = me.processNoteLikeChildren(eventContext, element, staveInfo);
 
-      if (context.hasSpaceInBeam) {
-        if (context.beamInfosToResolve.length !== 0) {
-          var otherBeamNotes = context.beamInfosToResolve.shift();
+      if (eventContext.hasSpaceInBeam) {
+        if (eventContext.beamInfosToResolve.length !== 0) {
+          var otherBeamNotes = eventContext.beamInfosToResolve.shift();
           var combinedVexNotes = [];
           j = vexNotes.length;
           if (j !== otherBeamNotes.vexNotes.length) {
@@ -1606,7 +1606,7 @@ define([
           });
 
         } else {
-          context.newBeamInfosToResolve.push({
+          eventContext.newBeamInfosToResolve.push({
             element : element,
             vexNotes : vexNotes
           });
@@ -1621,17 +1621,17 @@ define([
       if (filteredVexNotes && filteredVexNotes.length > 1) {
         try {
           // set autostem parameter of VF.Beam to true if neither layerDir nor any stem direction in the beam is specified
-          me.allBeams.push(new VF.Beam(filteredVexNotes, !context.layerDir && !context.hasStemDirInBeam));
+          me.allBeams.push(new VF.Beam(filteredVexNotes, !eventContext.layerDir && !eventContext.hasStemDirInBeam));
         } catch (e) {
           Logger.error('VexFlow Error', 'An error occurred processing ' + Util.serializeElement(element) + ': "' +
                                         e.toString() + '". Ignoring beam.');
         }
       }
 
-      context.inBeamNo -= 1;
-      if (context.inBeamNo === 0) {
-        context.hasStemDirInBeam = false;
-        context.hasSpaceInBeam = false;
+      eventContext.inBeamNo -= 1;
+      if (eventContext.inBeamNo === 0) {
+        eventContext.hasStemDirInBeam = false;
+        eventContext.hasSpaceInBeam = false;
       }
       return vexNotes;
     },
@@ -1647,14 +1647,14 @@ define([
      * - bracket.place (auto if not specified)
      *
      * @method processTuplet
-     * @param {Object} context the processing context object
+     * @param {Object} eventContext the layer context object
      * @param {Element} element the MEI tuplet element
      * @param {MEI2VF.StaveInfo} staveInfo the stave info object
      */
-    processTuplet : function (context, element, staveInfo) {
+    processTuplet : function (eventContext, element, staveInfo) {
       var me = this, vexNotes, tuplet, bracketPlace;
 
-      vexNotes = me.processNoteLikeChildren(context, element, staveInfo);
+      vexNotes = me.processNoteLikeChildren(eventContext, element, staveInfo);
 
       if (vexNotes.length === 0) {
         Logger.warn('Missing content', 'Not content found in ' + Util.serializeElement(element) +
