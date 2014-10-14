@@ -1,6 +1,9 @@
 /**
  * Changes:
- * 1 let left justified notes align with note heads on the left
+ * 1) let left justified notes align with note heads on the left
+ * 2) use this.text_line * 2 instead of this.text_line as y starting point so annotations don't
+ * collide when default font sizes are used
+ * 3) increase text_lines of annotations separately for top, bottom and the rest
  */
 
 define([
@@ -16,6 +19,41 @@ define([
   VF.Annotation.prototype.getMeiElement = function () {
     return this.meiElement;
   };
+
+
+
+  VF.Annotation.format = function(annotations, state) {
+    if (!annotations || annotations.length === 0) return false;
+
+    var text_line = state.text_line;
+    var max_width = 0;
+
+    var top_text_line = text_line;
+    var bottom_text_line = text_line;
+
+    // Format Annotations
+    var width;
+    for (var i = 0; i < annotations.length; ++i) {
+      var annotation = annotations[i];
+
+      if (annotation.vert_justification === 3) {
+        annotation.setTextLine(top_text_line++);
+      } else if (annotation.vert_justification === 1) {
+        annotation.setTextLine(bottom_text_line++);
+      } else {
+        annotation.setTextLine(text_line++);
+      }
+
+      width = annotation.getWidth() > max_width ?
+              annotation.getWidth() : max_width;
+    }
+
+    state.left_shift += width / 2;
+    state.right_shift += width / 2;
+    return true;
+  }
+
+
 
 
   VF.Annotation.prototype.draw = function () {
@@ -63,29 +101,28 @@ define([
     // has a stem.
     if (has_stem) {
       stem_ext = this.note.getStem().getExtents();
-      spacing = stave.getSpacingBetweenLines();
     }
+    spacing = stave.getSpacingBetweenLines();
+
+    // TODO check - spacing is not initialized when has_stem is false. does it need a default value
+    // or is has_stem always true?
 
     if (this.vert_justification == Annotation.VerticalJustify.BOTTOM) {
-      // START MODIFICATION
       y = stave.getYForBottomText(this.text_line * 2);
-      // END MODIFICATION
       if (has_stem) {
         var stem_base = (this.note.getStemDirection() === 1 ? stem_ext.baseY : stem_ext.topY);
         y = Math.max(y, stem_base + (spacing * ((this.text_line * 2) + 2)));
       }
 
     } else if (this.vert_justification == Annotation.VerticalJustify.CENTER) {
-      var yt = this.note.getYForTopText(this.text_line*2) - 1;
-      var yb = stave.getYForBottomText(this.text_line*2);
+      var yt = this.note.getYForTopText(this.text_line * 2) - 1;
+      var yb = stave.getYForBottomText(this.text_line * 2);
       y = yt + ( yb - yt ) / 2 + text_height / 2;
 
     } else if (this.vert_justification == Annotation.VerticalJustify.TOP) {
-      // START MODIFICATION
       y = Math.min(stave.getYForTopText(this.text_line * 2), this.note.getYs()[0] - 10);
-      // END MODIFICATION
       if (has_stem) {
-        y = Math.min(y, (stem_ext.topY - 5) - (spacing * this.text_line*2));
+        y = Math.min(y, (stem_ext.topY - 5) - (spacing * this.text_line * 2));
       }
     } else /* CENTER_STEM */{
       var extents = this.note.getStemExtents();

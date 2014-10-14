@@ -186,7 +186,7 @@ define([
        */
       lyricsFont : {
         family : 'Times',
-        size : 13,
+        size : 15,
         spacing : 1.3
       },
       /**
@@ -207,7 +207,7 @@ define([
        */
       dynamFont : {
         family : 'Times',
-        size : 18,
+        size : 17.5,
         weight : 'bold italic'
       },
       /**
@@ -414,9 +414,9 @@ define([
       }
 
       me.dynamics.createVexFromInfos(me.notes_by_id);
+      me.ornaments.createVexFromInfos(me.notes_by_id);
       me.directives.createVexFromInfos(me.notes_by_id);
       me.fermatas.createVexFromInfos(me.notes_by_id);
-      me.ornaments.createVexFromInfos(me.notes_by_id);
       me.ties.createVexFromInfos(me.notes_by_id);
       me.slurs.createVexFromInfos(me.notes_by_id);
       me.hairpins.createVexFromInfos(me.notes_by_id);
