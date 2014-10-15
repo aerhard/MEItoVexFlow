@@ -20,20 +20,21 @@ define([
   // This file implements the `Stroke` class which renders chord strokes
   // that can be arpeggiated, brushed, rasquedo, etc.
 
-  Vex.Flow.Stroke = (function() {
+  Vex.Flow.Stroke = (function () {
     function Stroke(type, options) {
       if (arguments.length > 0) this.init(type, options);
     }
+
     Stroke.CATEGORY = "strokes";
 
     Stroke.Type = {
       ROLL : 0,
-      BRUSH_DOWN: 1,
-      BRUSH_UP: 2,
-      ROLL_DOWN: 3,        // Arpegiated chord
-      ROLL_UP: 4,          // Arpegiated chord
-      RASQUEDO_DOWN: 5,
-      RASQUEDO_UP: 6
+      BRUSH_DOWN : 1,
+      BRUSH_UP : 2,
+      ROLL_DOWN : 3,        // Arpegiated chord
+      ROLL_UP : 4,          // Arpegiated chord
+      RASQUEDO_DOWN : 5,
+      RASQUEDO_UP : 6
     };
 
     var Modifier = Vex.Flow.Modifier;
@@ -41,7 +42,7 @@ define([
     // ## Static Methods
 
     // Arrange strokes inside `ModifierContext`
-    Stroke.format = function(strokes, state) {
+    Stroke.format = function (strokes, state) {
       var left_shift = state.left_shift;
       var stroke_spacing = 0;
 
@@ -56,10 +57,10 @@ define([
         if (note instanceof Vex.Flow.StaveNote) {
           props = note.getKeyProps()[str.getIndex()];
           shift = (props.displaced ? note.getExtraLeftPx() : 0);
-          str_list.push({ line: props.line, shift: shift, str: str });
+          str_list.push({ line : props.line, shift : shift, str : str });
         } else {
           props = note.getPositions()[str.getIndex()];
-          str_list.push({ line: props.str, shift: 0, str: str });
+          str_list.push({ line : props.str, shift : 0, str : str });
         }
       }
 
@@ -81,15 +82,14 @@ define([
 
     // ## Prototype Methods
     Vex.Inherit(Stroke, Modifier, {
-      init: function(type, options) {
+      init : function (type, options) {
         Stroke.superclass.init.call(this);
 
         this.note = null;
         this.options = Vex.Merge({}, options);
 
         // multi voice - span stroke across all voices if true
-        this.all_voices = 'all_voices' in this.options ?
-                          this.options.all_voices : true;
+        this.all_voices = 'all_voices' in this.options ? this.options.all_voices : true;
 
         // multi voice - end note of stroke, set in draw()
         this.note_end = null;
@@ -98,29 +98,34 @@ define([
         this.position = Modifier.Position.LEFT;
 
         this.render_options = {
-          font_scale: 38,
-          stroke_px: 3,
-          stroke_spacing: 10
+          font_scale : 38,
+          stroke_px : 3,
+          stroke_spacing : 10
         };
 
         this.font = {
-          family: "serif",
-          size: 10,
-          weight: "bold italic"
+          family : "serif",
+          size : 10,
+          weight : "bold italic"
         };
 
         this.setXShift(0);
         this.setWidth(10);
       },
 
-      getPosition: function() { return this.position; },
-      addEndNote: function(note) { this.note_end = note; return this; },
+      getPosition : function () {
+        return this.position;
+      },
+      addEndNote : function (note) {
+        this.note_end = note;
+        return this;
+      },
 
-      draw: function() {
-        if (!this.context) throw new Vex.RERR("NoContext",
-          "Can't draw stroke without a context.");
-        if (!(this.note && (this.index != null))) throw new Vex.RERR("NoAttachedNote",
-          "Can't draw stroke without a note and index.");
+      draw : function () {
+        if (!this.context) throw new Vex.RERR("NoContext", "Can't draw stroke without a context.");
+        if (!(this.note && (this.index != null))) {
+          throw new Vex.RERR("NoAttachedNote", "Can't draw stroke without a note and index.");
+        }
         var start = this.note.getModifierStartXY(this.position, this.index);
         var ys = this.note.getYs();
         var topY = start.y;
@@ -155,8 +160,12 @@ define([
             topY -= (line_space / 2);
             break;
           case Stroke.Type.ROLL:
-            botY += (line_space / 2);
             topY += (line_space / 2);
+            if (this.note instanceof Vex.Flow.StaveNote && (botY - topY) % 2 !== 0) {
+              botY += 0.5 * line_space;
+            } else {
+              botY += line_space;
+            }
             break;
           case Stroke.Type.ROLL_DOWN:
           case Stroke.Type.RASQUEDO_DOWN:
@@ -202,36 +211,31 @@ define([
         }
 
         // Draw the stroke
-        if (this.type == Stroke.Type.BRUSH_DOWN ||
-            this.type == Stroke.Type.BRUSH_UP) {
+        if (this.type == Stroke.Type.BRUSH_DOWN || this.type == Stroke.Type.BRUSH_UP) {
           this.context.fillRect(x + this.x_shift, topY, 1, botY - topY);
         } else {
           if (this.note instanceof Vex.Flow.StaveNote) {
             for (i = topY; i <= botY; i += line_space) {
-              Vex.Flow.renderGlyph(this.context, x + this.x_shift - 4,
-                i,
-                this.render_options.font_scale, "va3");
+              Vex.Flow.renderGlyph(this.context, x + this.x_shift - 4, i, this.render_options.font_scale, "va3");
             }
           } else {
-            for (i = topY; i <= botY; i+= 10) {
-              Vex.Flow.renderGlyph(this.context, x + this.x_shift - 4,
-                i,
-                this.render_options.font_scale, "va3");
+            for (i = topY; i <= botY; i += 10) {
+              Vex.Flow.renderGlyph(this.context, x + this.x_shift - 4, i, this.render_options.font_scale, "va3");
             }
-            if (this.type == Vex.Flow.Stroke.Type.RASQUEDO_DOWN)
+            if (this.type == Vex.Flow.Stroke.Type.RASQUEDO_DOWN) {
               text_y = i + 0.25 * line_space;
+            }
           }
         }
 
         // Draw the arrow head
         if (this.type !== Stroke.Type.ROLL) {
-          Vex.Flow.renderGlyph(this.context, x + this.x_shift + arrow_shift_x, arrow_y,
-            this.render_options.font_scale, arrow);
+          Vex.Flow.renderGlyph(this.context, x + this.x_shift +
+                                             arrow_shift_x, arrow_y, this.render_options.font_scale, arrow);
         }
 
         // Draw the rasquedo "R"
-        if (this.type == Stroke.Type.RASQUEDO_DOWN ||
-            this.type == Stroke.Type.RASQUEDO_UP) {
+        if (this.type == Stroke.Type.RASQUEDO_DOWN || this.type == Stroke.Type.RASQUEDO_UP) {
           this.context.save();
           this.context.setFont(this.font.family, this.font.size, this.font.weight);
           this.context.fillText("R", x + text_shift_x, text_y);

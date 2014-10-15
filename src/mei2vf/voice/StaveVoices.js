@@ -98,7 +98,7 @@ define([
       for (i in me.vexVoicesStaffWise) {
         alignRests = (me.vexVoicesStaffWise[i].length > 1);
         f.joinVoices(me.vexVoicesStaffWise[i]);
-        if (alignRests) f.alignRests(me.vexVoicesStaffWise[i],{align_rests : alignRests});
+        if (alignRests) f.alignRests(me.vexVoicesStaffWise[i], {align_rests : alignRests});
       }
 
       var justifyWidth = stave.getNoteEndX() - stave.getNoteStartX() - 10;
@@ -106,31 +106,55 @@ define([
       f.preFormat(justifyWidth, stave.getContext(), me.vexVoices, null);
     },
 
-//    getStaveLowestY : function (stave_n) {
-//      var me=this, i, j, voices, lowestY = 0;
-//      voices = me.vexVoicesStaffWise[stave_n];
-//      if (voices) {
-//        console.log(voices);
-//        for (i=0,j=voices.length;i<j;i++) {
-//          lowestY = Math.max(lowestY, voices[i].boundingBox.y + voices[i].boundingBox.h);
-//        }
-//        return lowestY;
-//      }
-//    },
+    //    getStaveLowestY : function (stave_n) {
+    //      var me=this, i, j, voices, lowestY = 0;
+    //      voices = me.vexVoicesStaffWise[stave_n];
+    //      if (voices) {
+    //        console.log(voices);
+    //        for (i=0,j=voices.length;i<j;i++) {
+    //          lowestY = Math.max(lowestY, voices[i].boundingBox.y + voices[i].boundingBox.h);
+    //        }
+    //        return lowestY;
+    //      }
+    //    },
 
     draw : function (context, staves) {
       var i, staveVoice, all_voices = this.all_voices;
       for (i = 0; i < all_voices.length; ++i) {
         staveVoice = all_voices[i];
 
-        // TODO fix this in VexFLow: if staves are passed to draw(), all events to be rendered on other staves
-        // get rendered on the current stave. If no staves are passed, stave assignment is OK, but
-        // auto rest alignment doesn't work. We need both.
-
-        staveVoice.voice.draw(context);
-//        staveVoice.voice.draw(context, staves[staveVoice.stave_n]);
+        this.drawVoice.call(staveVoice.voice, context);
+        //        staveVoice.voice.draw(context, staves[staveVoice.stave_n]);
       }
+    },
+
+    // modified version of VF.Voice.draw() which calls setStave with the voice's stave as parameter
+    drawVoice : function (context) {
+      var boundingBox = null;
+      for (var i = 0; i < this.tickables.length; ++i) {
+        var tickable = this.tickables[i];
+
+        tickable.setStave(tickable.getStave());
+
+        if (!tickable.getStave()) {
+          throw new Vex.RuntimeError("MissingStave", "The voice cannot draw tickables without staves.");
+        }
+
+        if (i === 0) boundingBox = tickable.getBoundingBox();
+
+        if (i > 0 && boundingBox) {
+          var tickable_bb = tickable.getBoundingBox();
+          if (tickable_bb) boundingBox.mergeWith(tickable_bb);
+        }
+
+        tickable.setContext(context);
+        tickable.draw();
+      }
+
+      this.boundingBox = boundingBox;
     }
+
+
   };
 
 
