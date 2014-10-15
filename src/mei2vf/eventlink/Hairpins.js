@@ -65,13 +65,13 @@ define([
 
         if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
         } else {
-          me.createSingleHairpin(f_note, l_note, model.params, vex_options);
+          me.createSingleHairpin(f_note, l_note, model.params, vex_options, model.getMeiElement());
         }
       }
       return this;
     },
 
-    createSingleHairpin : function (f_note, l_note, params, vex_options) {
+    createSingleHairpin : function (f_note, l_note, params, vex_options, element) {
       var me = this, place, type, hairpin;
       place = Tables.positions[params.place];
       type = Tables.hairpins[params.form];
@@ -84,6 +84,7 @@ define([
 
         hairpin.setRenderOptions(vex_options);
         hairpin.setPosition(place);
+        hairpin.setMeiElement(element);
 
         me.allVexObjects.push(hairpin);
       } else {

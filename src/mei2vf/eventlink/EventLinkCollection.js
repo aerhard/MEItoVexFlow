@@ -130,6 +130,7 @@ define([
         me.validateAtts(atts);
 
         eventLink.setParams(atts);
+        eventLink.setMeiElement(element);
 
         // find startid for eventLink. if tstamp is provided in the
         // element, tstamp will be calculated.

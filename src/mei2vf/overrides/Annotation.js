@@ -1,9 +1,8 @@
 /**
  * Changes:
- * 1) let left justified notes align with note heads on the left
- * 2) use this.text_line * 2 instead of this.text_line as y starting point so annotations don't
- * collide when default font sizes are used
- * 3) increase text_lines of annotations separately for top, bottom and the rest
+ * 1) draw(): let left justified notes align with note heads on the left
+ * 2) format(): take text height into account when calculating text_line
+ * 3) format(): increase text_lines of annotations separately for top, bottom and the rest
  */
 
 define([
@@ -21,8 +20,7 @@ define([
   };
 
 
-
-  VF.Annotation.format = function(annotations, state) {
+  VF.Annotation.format = function (annotations, state) {
     if (!annotations || annotations.length === 0) return false;
 
     var text_line = state.text_line;
@@ -33,32 +31,35 @@ define([
     var bottom_text_line = state.bottom_text_line;
     if (bottom_text_line === undefined) bottom_text_line = text_line;
 
+    // TODO get this from the stave
+    var spacing_between_lines = 10;
+    var height_in_lines;
+
     // Format Annotations
     var width;
     for (var i = 0; i < annotations.length; ++i) {
       var annotation = annotations[i];
 
+      height_in_lines = annotation.font.size / spacing_between_lines * 1.5;
+
       if (annotation.vert_justification === 1) {
         annotation.setTextLine(top_text_line);
-        top_text_line += 1;
+        top_text_line += height_in_lines;
       } else if (annotation.vert_justification === 3) {
         annotation.setTextLine(bottom_text_line);
-        bottom_text_line +=1;
+        bottom_text_line += height_in_lines;
       } else {
         annotation.setTextLine(text_line);
-        text_line += 1;
+        text_line += height_in_lines;
       }
 
-      width = annotation.getWidth() > max_width ?
-              annotation.getWidth() : max_width;
+      width = annotation.getWidth() > max_width ? annotation.getWidth() : max_width;
     }
 
     state.left_shift += width / 2;
     state.right_shift += width / 2;
     return true;
   }
-
-
 
 
   VF.Annotation.prototype.draw = function () {
@@ -113,21 +114,21 @@ define([
     // or is has_stem always true?
 
     if (this.vert_justification == Annotation.VerticalJustify.BOTTOM) {
-      y = stave.getYForBottomText(this.text_line * 2);
+      y = stave.getYForBottomText(this.text_line);
       if (has_stem) {
         var stem_base = (this.note.getStemDirection() === 1 ? stem_ext.baseY : stem_ext.topY);
-        y = Math.max(y, stem_base + (spacing * ((this.text_line * 2) + 2)));
+        y = Math.max(y, stem_base + (spacing * ((this.text_line) + 2)));
       }
 
     } else if (this.vert_justification == Annotation.VerticalJustify.CENTER) {
-      var yt = this.note.getYForTopText(this.text_line * 2) - 1;
-      var yb = stave.getYForBottomText(this.text_line * 2);
+      var yt = this.note.getYForTopText(this.text_line) - 1;
+      var yb = stave.getYForBottomText(this.text_line);
       y = yt + ( yb - yt ) / 2 + text_height / 2;
 
     } else if (this.vert_justification == Annotation.VerticalJustify.TOP) {
-      y = Math.min(stave.getYForTopText(this.text_line * 2), this.note.getYs()[0] - 10);
+      y = Math.min(stave.getYForTopText(this.text_line), this.note.getYs()[0] - 10);
       if (has_stem) {
-        y = Math.min(y, (stem_ext.topY - 5) - (spacing * this.text_line * 2));
+        y = Math.min(y, (stem_ext.topY - 5) - (spacing * this.text_line));
       }
     } else /* CENTER_STEM */{
       var extents = this.note.getStemExtents();

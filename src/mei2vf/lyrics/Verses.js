@@ -105,12 +105,18 @@ define([
      * @returns {Verses}
      */
     format : function () {
-      var me = this, stave_n, verse_n, text_line, verse, i, j, lowestY, padding;
+      var me = this, stave_n, verse_n, text_line, verse, i, j, lowestY, padding, lowestTextLine;
 
       padding = 20;
 
+      me.font.size=15;
+
+      var spacing_between_lines = 10;
+      var height_in_lines = me.font.size / spacing_between_lines * 1.5;
+
       for (stave_n in me.systemVerses) {
         text_line = 0;
+        lowestTextLine = 0;
         lowestY = -20;
 
         for (verse_n in me.systemVerses[stave_n]) {
@@ -120,12 +126,15 @@ define([
           for (i = 0, j = verse.length; i < j; i++) {
             verse[i].setTextLine(text_line);
             lowestY = Math.max(lowestY, verse[i].preProcess());
+
+//            lowestTextLine = Math.max(lowestTextLine, verse[i].text_line);
           }
           // second pass: set lowest y
           for (i = 0; i < j; i++) {
             verse[i].setY(lowestY);
+//            verse[i].setTextLine(lowestTextLine);
           }
-          text_line += 1;
+          lowestTextLine += height_in_lines;
         }
         me.lowestYs[stave_n] = lowestY;
 

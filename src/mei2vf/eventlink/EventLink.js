@@ -57,6 +57,14 @@ define([
       this.params = params;
     },
 
+    setMeiElement : function (element) {
+      this.meiElement = element;
+    },
+
+    getMeiElement : function () {
+      return this.meiElement;
+    },
+
     setFirstRef : function (first_ref) {
       this.first_ref = first_ref;
     },

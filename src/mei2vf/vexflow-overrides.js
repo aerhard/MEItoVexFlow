@@ -10,6 +10,7 @@ define([
   'mei2vf/overrides/Ornament',
   'mei2vf/overrides/Stave',
   'mei2vf/overrides/StaveNote',
+  'mei2vf/overrides/StaveHairpin',
   'mei2vf/overrides/StaveTie',
   'mei2vf/overrides/StaveVolta',
   'mei2vf/overrides/Tremolo'
