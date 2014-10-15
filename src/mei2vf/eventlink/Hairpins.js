@@ -51,36 +51,41 @@ define([
     },
 
     createVexFromInfos : function (notes_by_id) {
-      var me = this, f_note, l_note, vex_options, i, j, model;
-      vex_options = {
-        height : 10,
-        y_shift : 0,
-        left_shift_px : 0,
-        r_shift_px : 0
-      };
-      for (i=0,j=me.allModels.length;i<j;i++) {
+      var me = this, f_note, l_note, i, j, model;
+      for (i = 0, j = me.allModels.length; i < j; i++) {
         model = me.allModels[i];
         f_note = notes_by_id[model.getFirstId()] || {};
         l_note = notes_by_id[model.getLastId()] || {};
 
         if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
         } else {
-          me.createSingleHairpin(f_note, l_note, model.params, vex_options, model.getMeiElement());
+          me.createSingleHairpin(f_note, l_note, model.params, model.getMeiElement());
         }
       }
       return this;
     },
 
-    createSingleHairpin : function (f_note, l_note, params, vex_options, element) {
-      var me = this, place, type, hairpin;
+    createSingleHairpin : function (f_note, l_note, params, element) {
+      var me = this, place, type, vex_options, hairpin;
       place = Tables.positions[params.place];
       type = Tables.hairpins[params.form];
+
+
+      // TODO read from stave
+      var stave_spacing = 10;
 
       if (f_note.vexNote && l_note.vexNote) {
         hairpin = new VF.StaveHairpin({
           first_note : f_note.vexNote,
           last_note : l_note.vexNote
         }, type);
+
+        vex_options = {
+          height : stave_spacing * (parseFloat(params.opening) || 1),
+          y_shift : 0,
+          left_shift_px : 0,
+          right_shift_px : 0
+        };
 
         hairpin.setRenderOptions(vex_options);
         hairpin.setPosition(place);

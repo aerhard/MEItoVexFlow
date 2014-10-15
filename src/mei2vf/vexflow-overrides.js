@@ -13,5 +13,6 @@ define([
   'mei2vf/overrides/StaveHairpin',
   'mei2vf/overrides/StaveTie',
   'mei2vf/overrides/StaveVolta',
+  'mei2vf/overrides/Stroke',
   'mei2vf/overrides/Tremolo'
 ], function () {});

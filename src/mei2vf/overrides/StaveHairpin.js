@@ -121,9 +121,8 @@ define([
       },
 
       setRenderOptions : function (options) {
-        if (options.height != null && options.y_shift != null && options.left_shift_px != null &&
-            options.right_shift_px != null) {
-          this.render_options = options;
+        if (options) {
+          Vex.Merge(this.render_options, options);
         }
         return this;
       },

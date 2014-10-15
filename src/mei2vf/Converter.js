@@ -60,6 +60,7 @@ define([
   'mei2vf/eventlink/Hairpins',
   'mei2vf/eventlink/Ties',
   'mei2vf/eventlink/Slurs',
+  'mei2vf/eventpointer/Arpeggios',
   'mei2vf/eventpointer/Directives',
   'mei2vf/eventpointer/Dynamics',
   'mei2vf/eventpointer/Fermatas',
@@ -74,8 +75,8 @@ define([
   'mei2vf/Tables',
   'mei2vf/voice/StaveVoices'
 ], function (VF, MeiLib, Logger, RuntimeError, Util, EventContext, EventUtil, Note, GraceNote, Chord,
-  GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Directives, Dynamics, Fermatas, Ornaments,
-  Verses, Syllable, Stave, Measure, PageInfo, System, SystemInfo, Tables, StaveVoices) {
+  GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Arpeggios, Directives, Dynamics, Fermatas,
+  Ornaments, Verses, Syllable, Stave, Measure, PageInfo, System, SystemInfo, Tables, StaveVoices) {
 
   /**
    * Converts an MEI XML document / document fragment to VexFlow objects and
@@ -315,6 +316,12 @@ define([
        */
       me.dynamics = new Dynamics(me.systemInfo, me.cfg.dynamFont);
       /**
+       * an instance of MEI2VF.Arpeggios dealing with and storing all
+       * arpeggios found in the MEI document
+       * @property {Arpeggios} arpeggios
+       */
+      me.arpeggios = new Arpeggios(me.systemInfo);
+      /**
        * an instance of MEI2VF.Directives dealing with and storing all
        * directives found in the MEI document
        * @property {MEI2VF.Directives} directives
@@ -413,6 +420,7 @@ define([
         me.processScoreChildren(xmlDoc.querySelector('score'));
       }
 
+      me.arpeggios.createVexFromInfos(me.notes_by_id);
       me.dynamics.createVexFromInfos(me.notes_by_id);
       me.ornaments.createVexFromInfos(me.notes_by_id);
       me.directives.createVexFromInfos(me.notes_by_id);
@@ -810,7 +818,7 @@ define([
       }
 
 
-      var staveElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [], rehElements = [], ornamentElements = [], i, j;
+      var staveElements = [], arpegElements = [], dirElements = [], slurElements = [], tieElements = [], hairpinElements = [], tempoElements = [], dynamElements = [], fermataElements = [], rehElements = [], ornamentElements = [], i, j;
 
       childNodes = element.childNodes;
       for (i = 0, j = childNodes.length; i < j; i++) {
@@ -841,6 +849,9 @@ define([
             break;
           case 'dynam':
             dynamElements.push(childNodes[i]);
+            break;
+          case 'arpeg':
+            arpegElements.push(childNodes[i]);
             break;
           case 'fermata':
             fermataElements.push(childNodes[i]);
@@ -879,6 +890,7 @@ define([
       }
 
       me.dynamics.createInfos(dynamElements, element);
+      me.arpeggios.createInfos(arpegElements, element);
       me.directives.createInfos(dirElements, element);
       me.fermatas.createInfos(fermataElements, element);
       me.ornaments.createInfos(ornamentElements, element);
