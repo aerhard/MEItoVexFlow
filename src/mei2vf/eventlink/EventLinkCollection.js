@@ -88,6 +88,10 @@ define([
 
         var stffinf = link_staveInfo(lnkelem);
         var stave = measureElement.querySelector('staff[n="' + stffinf.stave_n + '"]');
+        if (!stave) {
+          throw new RuntimeError('Cannot find staff @n="' + stffinf.stave_n + '" in ' +
+                                 Util.serializeElement(measureElement));
+        }
         var layer = stave.querySelector('layer[n="' + stffinf.layer_n + '"]');
         if (!layer) {
           var layer_candid = stave.getElementsByTagName('layer')[0];

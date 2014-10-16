@@ -73,7 +73,7 @@ define([
      * the currently valid clef
      * @private
      */
-    me.clef = null;
+    me.clef = {};
     /**
      * a copy of the start clef of a measure-stave; used when there are clef changes in multi-voice staves
      */
@@ -400,7 +400,7 @@ define([
      */
     showClefCheck : function () {
       var me = this;
-      if (me.renderWith.clef && me.clef.meiElement.getAttribute('clef.visible') !== 'false') {
+      if (me.renderWith.clef && me.clef.meiElement && me.clef.meiElement.getAttribute('clef.visible') !== 'false') {
         me.renderWith.clef = false;
         return true;
       }
@@ -411,7 +411,7 @@ define([
      */
     showKeysigCheck : function () {
       var me = this;
-      if (me.renderWith.keysig && me.keySpec.meiElement.getAttribute('key.sig.show') !== 'false') {
+      if (me.renderWith.keysig && me.keySpec.meiElement && me.keySpec.meiElement.getAttribute('key.sig.show') !== 'false') {
         me.renderWith.keysig = false;
         return true;
       }
@@ -424,7 +424,7 @@ define([
       var me = this;
       if (me.renderWith.timesig) {
         me.renderWith.timesig = false;
-        if (me.timeSpec.meiElement.getAttribute('meter.rend') !== 'invis') {
+        if (me.timeSpec.meiElement && me.timeSpec.meiElement.getAttribute('meter.rend') !== 'invis') {
           return true;
         }
       }

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../odd/mei2vexflow.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../odd/mei2vexflow.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<mei meiversion="2013" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns="http://www.music-encoding.org/ns/mei" xmlns:mei="http://www.music-encoding.org/ns/mei">
+	<meiHead>
+		<fileDesc>
+			<titleStmt>
+				<title>MeiToVexFlow BeamSpan Test Case</title>
+			</titleStmt>
+			<pubStmt>
+				<respStmt>
+					<resp>Prepared by</resp>
+					<persName>Alexander Erhard</persName>
+				</respStmt>
+			</pubStmt>
+		</fileDesc>
+	</meiHead>
+    <music>
+        <body>
+        	<mdiv>
+        		<score>
+        			<scoreDef page.leftmar="8" page.topmar="10" page.scale="50%">
+        				<staffGrp symbol="brace">
+        					<staffDef n="1" lines="5" clef.line="2" clef.shape="G" meter.count="4" meter.unit="4" key.pname="c" key.mode="major"/>
+                            <staffDef n="2" lines="5" clef.line="4" clef.shape="F" meter.count="4" meter.unit="4" key.pname="c" key.mode="major"/>
+                            <staffDef n="3" lines="5" clef.line="4" clef.shape="F" meter.count="4" meter.unit="4" key.pname="c" key.mode="major"/>
+        				</staffGrp>
+        			</scoreDef>
+        			<section>
+        				<measure n="1">
+        					<staff n="1">
+        						<layer>
+                                    <beam>
+                                        <note xml:id="n01" pname="c" oct="5" dur="8"/>
+                                        <note xml:id="m01" pname="c" oct="5" dur="8"/>
+                                    </beam>
+                                    <beam>
+                                        <note xml:id="n02" pname="c" oct="5" dur="8"/>
+                                        <note xml:id="n04" pname="c" oct="5" dur="8"/>
+                                    </beam>
+                                    <beam>
+                                    <note xml:id="m04" pname="c" oct="5" dur="8"/>
+                                    <note xml:id="n05" pname="c" oct="5" dur="8"/>
+                                    </beam>
+                                    <note xml:id="xxx" pname="c" oct="5" dur="2"/>
+        						</layer>
+        					</staff>
+                            <staff n="2">
+                                <layer>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="2"/>
+                                </layer>
+                            </staff>
+                            <staff n="3">
+                                <layer>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                </layer>
+                            </staff>
+                            <tupletSpan startid="#n01" endid="#n02" plist="#n01 #m01 #n02" bracket.visible="true"/>
+                            <tupletSpan startid="#n04" endid="#n05" plist="#n04 #m04 #n05" bracket.visible="true"/>
+                            <!--<beamSpan startid="#n03" endid="#n05" plist="#n03 #n04 #n05"/>-->
+                            <!--<beamSpan startid="#n06" endid="#n07"/>-->
+                            <!--<beamSpan startid="#n08" endid="#n09"/>-->
+        				</measure>
+        				<measure n="2">
+                            <staff n="1">
+                                <layer>
+                                    <beam>
+                                        <note xml:id="n201" pname="c" oct="5" dur="8"/>
+                                        <note xml:id="n202" pname="c" oct="5" dur="8"/>
+                                    </beam>
+                                    <beam>
+                                        <note xml:id="n203" pname="c" oct="5" dur="8"/>
+                                        <note xml:id="n204" pname="c" oct="5" dur="8"/>
+                                    </beam>
+                                    <beam>
+                                        <note xml:id="n205" pname="c" oct="5" dur="8"/>
+                                        <note xml:id="n206" pname="c" oct="5" dur="8"/>
+                                    </beam>
+                                    <note xml:id="n207" pname="c" oct="5" dur="2"/>
+                                </layer>
+                            </staff>
+                            <staff n="2">
+                                <layer>
+                                    <beam>
+                                        <note xml:id="n208" pname="c" oct="3" dur="8"/>
+                                        <note xml:id="n209" pname="c" oct="3" dur="8"/>
+                                    </beam>
+                                    <beam>
+                                        <note xml:id="n2010" pname="c" oct="3" dur="8"/>
+                                        <note xml:id="n2011" pname="c" oct="3" dur="8"/>
+                                    </beam>
+                                    <beam>
+                                        <note xml:id="n2012" pname="c" oct="3" dur="8"/>
+                                        <note xml:id="n2013" pname="c" oct="3" dur="8"/>
+                                    </beam>
+                                    <note xml:id="n2014" pname="b" oct="3" dur="2"/>
+                                </layer>
+                            </staff>
+                            <staff n="3">
+                                <layer>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                </layer>
+                            </staff>
+                            <tupletSpan startid="#n201" endid="#n203" plist="#n201 #n202 #n203" bracket.visible="true"/>
+                            <tupletSpan startid="#n204" endid="#n206" plist="#n204 #n205 #n206" bracket.visible="true"/>
+                            <tupletSpan startid="#n208" endid="#n2010" plist="#n208 #n209 #n2010" bracket.visible="true"/>
+                            <tupletSpan startid="#n2011" endid="#n2013" plist="#n2011 #n2012 #n2013" bracket.visible="true"/>
+        				</measure>
+                        <measure n="3">
+                            <staff n="1">
+                                <layer>
+                                    <note xml:id="n2015" pname="g" oct="5" dur="4"/>
+                                    <note xml:id="n2016" pname="c" oct="5" dur="4"/>
+                                    <note xml:id="n2017" pname="g" oct="4" dur="4"/>
+
+                                    <note xml:id="n2018" pname="c" oct="4" dur="4"/>
+                                </layer>
+                            </staff>
+                            <staff n="2">
+                                <layer>
+                                    <space dur="2"/>
+                                    <note xml:id="n2019" pname="g" oct="3" dur="4"/>
+                                    <note xml:id="n2020" pname="c" oct="3" dur="4"/>
+                                </layer>
+                            </staff>
+                            <staff n="3">
+                                <layer>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                    <note pname="e" oct="3" dur="8"/>
+                                </layer>
+                            </staff>
+                            <tupletSpan startid="#n2015" endid="#n2017" plist="#n2015 #n2016 #n2017" bracket.visible="true"/>
+                            <tupletSpan startid="#n2018" endid="#n2020" plist="#n2018 #n2019 #n2020" bracket.visible="true"/>
+                        </measure>
+                        <sb/>
+                        <measure n="4">
+                            <staff n="1">
+                                <layer>
+                                </layer>
+                            </staff>
+                            <staff n="2">
+                                <layer>
+                                </layer>
+                            </staff>
+                        </measure>
+
+                        <measure n="5">
+                            <staff n="1">
+                                <layer>
+                                </layer>
+                            </staff>
+                            <staff n="2">
+                                <layer>
+                                </layer>
+                            </staff>
+                        </measure>
+
+        			</section>
+        		</score>
+        	</mdiv>
+        </body>
+    </music>
+</mei>

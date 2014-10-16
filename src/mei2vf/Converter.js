@@ -300,6 +300,7 @@ define([
        */
       me.allBeams = [];
       me.allBeamSpans = [];
+      me.allTupletSpans = [];
       /**
        * Contains all Vex.Flow.Tuplet objects. Data is just pushed in
        * and later processed as a whole, so the array index is
@@ -427,18 +428,73 @@ define([
       me.slurs.createVexFromInfos(me.notes_by_id);
       me.hairpins.createVexFromInfos(me.notes_by_id);
 
+      me.resolveTupletSpans();
       me.resolveBeamSpans();
 
       return me;
     },
 
     resolveBeamSpans : function () {
-      var me = this, i, j, beamSpans = me.allBeamSpans, idString, beamSpan, notes;
+      var me = this;
+      var spanObjectCreator = function (notes, voices, element) {
+        me.allBeams.push(new VF.Beam(notes, false));
+      };
+      me.resolveSpans(me.allBeamSpans, spanObjectCreator, null);
+    },
 
-      for (i = 0, j = beamSpans.length; i < j; i++) {
+    resolveTupletSpans : function () {
+      var me = this;
+
+      var fragmentPostProcessor = function (element, slice) {
+        new VF.Tuplet(slice, {
+          num_notes : parseInt(element.getAttribute('num'), 10) || 3,
+          beats_occupied : parseInt(element.getAttribute('numbase'), 10) || 2
+        })
+      };
+
+      var spanObjectCreator = function (notes, voices, element) {
+        var tickables, tuplet, voice;
+
+        tuplet = new VF.Tuplet(notes, {
+          num_notes : parseInt(element.getAttribute('num'), 10) || 3,
+          beats_occupied : parseInt(element.getAttribute('numbase'), 10) || 2
+        });
+
+        if (element.getAttribute('num.format') === 'ratio') {
+          tuplet.setRatioed(true);
+        }
+
+        tuplet.setBracketed(element.getAttribute('bracket.visible') === 'true');
+
+        var bracketPlace = element.getAttribute('bracket.place');
+        if (bracketPlace) {
+          tuplet.setTupletLocation((bracketPlace === 'above') ? 1 : -1);
+        }
+
+        me.allTuplets.push(tuplet);
+
+        // TODO make this more efficient
+        for (m = 0, n = voices.length; m < n; m++) {
+          voice = voices[m];
+          tickables = voice.tickables;
+          var v = voice;
+          v.ticksUsed = new Vex.Flow.Fraction(0, 1);
+          voice.tickables = [];
+          voice.addTickables(tickables);
+        }
+      };
+
+      me.resolveSpans(me.allTupletSpans, spanObjectCreator, fragmentPostProcessor);
+    },
+
+
+    resolveSpans : function (elements, spanObjectCreator, fragmentPostProcessor) {
+      var me = this, i, j, elements, idString, element, notes;
+
+      for (i = 0, j = elements.length; i < j; i++) {
         notes = [];
-        beamSpan = beamSpans[i];
-        var pList = beamSpan.getAttribute('plist');
+        element = elements[i];
+        var pList = element.getAttribute('plist');
         var pListArray;
         if (pList !== null) {
           pListArray = pList.split(' ');
@@ -446,8 +502,8 @@ define([
           pListArray = [];
         }
 
-        var startIdAtt = beamSpan.getAttribute('startid');
-        var endIdAtt = beamSpan.getAttribute('endid');
+        var startIdAtt = element.getAttribute('startid');
+        var endIdAtt = element.getAttribute('endid');
         if (startIdAtt !== null || endIdAtt !== null) {
           // insert startid and endid to the plist if they're not already there
           if (pListArray[0] !== startIdAtt) {
@@ -460,6 +516,10 @@ define([
           var firstMeasure;
           var noteObjects = pListArray.map(function (item, index) {
             var obj = me.notes_by_id[item.substring(1)];
+            if (!obj) {
+              throw new RuntimeError('Reference "' + item + '" given in ' + Util.serializeElement(element) +
+                                     ' not found.')
+            }
             var voice = obj.vexNote.voice;
             if (index === 0) {
               firstMeasure = $(obj.meiNote).closest('measure').get(0);
@@ -468,7 +528,7 @@ define([
             if (voiceIndex === -1) {
               // voice index remains -1 if the note is not in the start measure; it will not get
               // included then when adding spaces
-              if (!firstMeasure || $(obj.meiNote).closest('measure').get(0) === firstMeasure ) {
+              if (!firstMeasure || $(obj.meiNote).closest('measure').get(0) === firstMeasure) {
                 voiceIndex = voices.push(voice) - 1;
               }
             }
@@ -481,7 +541,7 @@ define([
 
           var newSpace;
 
-          var createSpaceFrom = function(vexNote, stave) {
+          var createSpaceFrom = function (vexNote, stave) {
             var gn = new VF.GhostNote(vexNote.getDuration());
 
             // TODO handle dots
@@ -515,17 +575,19 @@ define([
               }
 
               var t = voices[m].tickables;
-              voices[m].tickables = t.slice(0, indicesInVoice[0])
-                .concat(newVoiceSegment)
-                .concat(t.slice(indicesInVoice[indicesInVoice.length-1]+1));
+              if (m !== 0 && typeof fragmentPostProcessor === 'function') {
+                fragmentPostProcessor(element, newVoiceSegment);
+              }
+              voices[m].tickables =
+              t.slice(0, indicesInVoice[0]).concat(newVoiceSegment).concat(t.slice(indicesInVoice[indicesInVoice.length -
+                                                                                                  1] + 1));
             }
           }
 
-          me.allBeams.push(new VF.Beam(notes, false));
-          //          me.allBeams.push(new VF.Beam(filteredElements, !eventContext.getLayerDir() && eventContext.getStemDirInBeam()===false));
+          spanObjectCreator(notes, voices, element);
 
         } else {
-          Logger.warn('Missing attributes', 'Could not process ' + Util.serializeElement(beamSpan) +
+          Logger.warn('Missing attributes', 'Could not process ' + Util.serializeElement(element) +
                                             ', because @startid or @endid is missing.')
         }
       }
@@ -925,6 +987,9 @@ define([
             break;
           case 'beamSpan':
             me.allBeamSpans.push(childNodes[i]);
+            break;
+          case 'tupletSpan':
+            me.allTupletSpans.push(childNodes[i]);
             break;
           default:
             Logger.info('Not supported', '<' + childNodes[i].localName + '> is not supported as child of <measure>.');

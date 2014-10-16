@@ -203,6 +203,7 @@ define([
     test_cases.push({ title : "Hairpins across staves", mei_xml : 'TC.Hairpins.CrossStave.xml', canvas_height: 500});
 
     test_cases.push({ title : "Beam span", mei_xml : 'TC.BeamSpan.xml', canvas_width : 800, canvas_height : 500});
+    test_cases.push({ title : "Tuplet span", mei_xml : 'TC.TupletSpan.xml', canvas_width : 1100, canvas_height : 500});
 
     for (i = 0; i < test_cases.length; i++) {
       runTest(test_cases[i], i);
