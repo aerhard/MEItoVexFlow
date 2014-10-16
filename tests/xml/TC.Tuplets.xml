@@ -108,7 +108,7 @@
 											<note pname="f" oct="4" dur="8"/>
 										</beam>
 									</tuplet>
-									<tuplet>
+									<tuplet bracket.visible="true">
 										<beam>
 											<note pname="g" oct="4" dur="8"/>
 											<note pname="a" oct="4" dur="8"/>

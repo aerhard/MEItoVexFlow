@@ -192,7 +192,7 @@ define([
      *
      */
     processScoreDef : function (scoredef) {
-      var me = this, i, j, children, systemLeftmar, hasChild = false;
+      var me = this, i, j, children, systemLeftmar;
       me.scoreDefElement = scoredef;
       systemLeftmar = parseFloat(me.scoreDefElement.getAttribute('system.leftmar'));
       if (!isNaN(systemLeftmar)) {
@@ -203,14 +203,10 @@ define([
       for (i = 0, j = children.length; i < j; i += 1) {
         if (children[i].nodeType === 1) {
           me.processScoreDef_child(children[i]);
-//          hasChild = true;
         }
       }
 
-      // TODO do this in any case!!!
-//      if (!hasChild) {
-        me.updateStaffDefs(scoredef);
-//      }
+      me.updateStaffDefs(scoredef);
 
     },
 
@@ -221,7 +217,7 @@ define([
     updateStaffDefs : function (scoredef) {
       var me = this, i = me.currentStaveInfos.length;
       while (i--) {
-        if (me.currentStaveInfos[i] && me.currentStaveInfos[i].scoreDef !== scoredef) {
+        if (me.currentStaveInfos[i] && me.currentStaveInfos[i].getCurrentScoreDef() !== scoredef) {
           me.currentStaveInfos[i].updateDef(null, scoredef);
         }
       }

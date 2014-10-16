@@ -1083,7 +1083,7 @@ define([
       // if there is a clef not yet attached to a note (i.e. the last clef), add it as a stave end modifier
       if (eventContext.clefChangeInfo) {
         stave.addEndClefFromInfo(eventContext.clefChangeInfo);
-        eventContext.clefChangeInfo = null;
+        eventContext.setClefChangeInfo(null);
       }
 
 
@@ -1269,7 +1269,7 @@ define([
 
         if (eventContext.clefChangeInfo) {
           EventUtil.addClefModifier(note, eventContext.clefChangeInfo);
-          eventContext.clefChangeInfo = null;
+          eventContext.setClefChangeInfo(null);
         }
 
         if (atts.grace) {
@@ -1364,7 +1364,7 @@ define([
 
         if (eventContext.clefChangeInfo) {
           EventUtil.addClefModifier(chord, eventContext.clefChangeInfo);
-          eventContext.clefChangeInfo = null;
+          eventContext.setClefChangeInfo(null);
         }
 
         if (atts.grace) {
@@ -1450,7 +1450,7 @@ define([
 
         if (eventContext.clefChangeInfo) {
           EventUtil.addClefModifier(rest, eventContext.clefChangeInfo);
-          eventContext.clefChangeInfo = null;
+          eventContext.setClefChangeInfo(null);
         }
 
         if (eventContext.graceNoteQueue.length > 0) {
@@ -1539,7 +1539,7 @@ define([
 
      */
     processClef : function (eventContext, element, staveInfo) {
-      eventContext.clefChangeInfo = staveInfo.clefChangeInMeasure(element);
+      eventContext.setClefChangeInfo(staveInfo.clefChangeInMeasure(element));
     },
 
     /**

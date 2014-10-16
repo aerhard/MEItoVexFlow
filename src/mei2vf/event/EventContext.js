@@ -111,6 +111,14 @@ define([
       obj.system = me.system_n;
       obj.layerDir = me.layerDir;
       me.notes_by_id[xml_id] = obj;
+    },
+
+    setClefChangeInfo : function (info) {
+      this.clefChangeInfo = info;
+    },
+
+    getClefChangeInfo : function () {
+      return this.clefChangeInfo;
     }
 
   };
