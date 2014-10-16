@@ -58,6 +58,8 @@ define([
         l_note = notes_by_id[model.getLastId()] || {};
 
         if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
+          me.createSingleHairpin(f_note, {}, model.params, model.getMeiElement());
+          me.createSingleHairpin({}, l_note, model.params, model.getMeiElement());
         } else {
           me.createSingleHairpin(f_note, l_note, model.params, model.getMeiElement());
         }
@@ -74,33 +76,35 @@ define([
       // TODO read from stave
       var stave_spacing = 10;
 
-      if (f_note.vexNote && l_note.vexNote) {
-        hairpin = new VF.StaveHairpin({
-          first_note : f_note.vexNote,
-          last_note : l_note.vexNote
-        }, type);
 
-        vex_options = {
-          height : stave_spacing * (parseFloat(params.opening) || 1),
-          y_shift : 0,
-          left_shift_px : 0,
-          right_shift_px : 0
-        };
-
-        hairpin.setRenderOptions(vex_options);
-        hairpin.setPosition(place);
-        hairpin.setMeiElement(element);
-
-        me.allVexObjects.push(hairpin);
-      } else {
-        if (f_note.vexNote) {
-          Logger.warn('Missing target', 'Hairpin could not be rendered because second note could not be identified.');
-        } else if (l_note.vexNote) {
-          Logger.warn('Missing target', 'Hairpin could not be rendered because first note could not be identified.');
-        } else {
-          Logger.warn('Missing targets', 'Hairpin could not be rendered because first and second note could not be identified.');
+      if (!f_note.vexNote && !l_note.vexNote) {
+        var param, paramString = '';
+        for (param in params) {
+          paramString += param + '="' + params[param] + '" ';
         }
+        console.log(params);
+        Logger.warn('Hairpin could not be processed', 'No haipin start or hairpin end could be found. Hairpin parameters: ' +
+                                                      paramString + '. Skipping hairpin.');
+        return true;
       }
+
+      hairpin = new VF.StaveHairpin({
+        first_note : f_note.vexNote,
+        last_note : l_note.vexNote
+      }, type);
+
+      vex_options = {
+        height : stave_spacing * (parseFloat(params.opening) || 1),
+        y_shift : 0,
+        left_shift_px : 0,
+        right_shift_px : 0
+      };
+
+      hairpin.setRenderOptions(vex_options);
+      hairpin.setPosition(place);
+      hairpin.setMeiElement(element);
+
+      me.allVexObjects.push(hairpin);
 
     }
   });

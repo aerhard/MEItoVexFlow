@@ -200,6 +200,8 @@ define([
     test_cases.push({ title : "Measure widths (with pick-up beat)", mei_xml : 'TC.MeasureWidths.xml', options : {labelMode : 'full'}});
     test_cases.push({ title : "Stem modifiers", mei_xml : 'TC.StemModifiers.xml', options : {labelMode : 'full'}});
 
+    test_cases.push({ title : "Hairpins across staves", mei_xml : 'TC.Hairpins.CrossStave.xml', canvas_height: 500});
+
     for (i = 0; i < test_cases.length; i++) {
       runTest(test_cases[i], i);
     }

@@ -92,7 +92,7 @@ define([
          *
          **/
 
-        this.notes = notes;
+        this.setNotes(notes);
         this.hairpin = type;
         this.position = VF.Modifier.Position.BELOW;
 
@@ -174,14 +174,30 @@ define([
 
         switch (this.hairpin) {
           case StaveHairpin.type.CRESC:
-            ctx.moveTo(x1, y);
-            ctx.lineTo(x, y + (height / 2));
-            ctx.lineTo(x1, y + height);
+            if (params.continued_left) {
+              var height_diff = height * 0.2;
+              ctx.moveTo(x1 + l_shift, y);
+              ctx.lineTo(x, y + height_diff);
+              ctx.moveTo(x + l_shift,  y + height - height_diff);
+              ctx.lineTo(x1, y + height);
+            } else {
+              ctx.moveTo(x1, y);
+              ctx.lineTo(x, y + (height / 2));
+              ctx.lineTo(x1, y + height);
+            }
             break;
           case StaveHairpin.type.DECRESC:
-            ctx.moveTo(x + l_shift, y);
-            ctx.lineTo(x1, y + (height / 2));
-            ctx.lineTo(x, y + height);
+            if (params.continued_right) {
+              var height_diff = height * 0.2;
+              ctx.moveTo(x + l_shift, y);
+              ctx.lineTo(x1, y + height_diff);
+              ctx.moveTo(x1 + l_shift,  y + height - height_diff);
+              ctx.lineTo(x, y + height);
+            } else {
+              ctx.moveTo(x + l_shift, y);
+              ctx.lineTo(x1, y + (height / 2));
+              ctx.lineTo(x, y + height);
+            }
             break;
           default:
             // Default is NONE, so nothing to draw
@@ -198,17 +214,49 @@ define([
         var first_note = this.first_note;
         var last_note = this.last_note;
 
-        var start = first_note.getModifierStartXY(this.position, 0);
-        var end = last_note.getModifierStartXY(this.position, 0);
+        if (first_note && last_note) {
+          var start = first_note.getModifierStartXY(this.position, 0);
+          var end = last_note.getModifierStartXY(this.position, 0);
 
-        this.renderHairpin({
-          first_x : start.x,
-          last_x : end.x,
-          first_y : first_note.getStave().y + first_note.getStave().height,
-          last_y : last_note.getStave().y + last_note.getStave().height,
-          staff_height : first_note.getStave().height
-        });
-        return true;
+          this.renderHairpin({
+            first_x : start.x,
+            last_x : end.x,
+            first_y : first_note.getStave().y + first_note.getStave().height,
+            // currently not in use:
+//            last_y : last_note.getStave().y + last_note.getStave().height,
+            staff_height : first_note.getStave().height,
+            continued_left : false,
+            continued_right : false
+          });
+          return true;
+        } else if (first_note) {
+          var start = first_note.getModifierStartXY(this.position, 0);
+          this.renderHairpin({
+            first_x : start.x,
+            last_x : first_note.getStave().getSlurEndX(),
+            first_y : first_note.getStave().y + first_note.getStave().height,
+            // currently not in use:
+            //            last_y : last_note.getStave().y + last_note.getStave().height,
+            staff_height : first_note.getStave().height,
+            continued_left : false,
+            continued_right : true
+          });
+          return true;
+
+        } else {
+          var end = last_note.getModifierStartXY(this.position, 0);
+          this.renderHairpin({
+            first_x : last_note.getStave().getSlurStartX(),
+            last_x : end.x,
+            first_y : last_note.getStave().y + last_note.getStave().height,
+            // currently not in use:
+            //            last_y : last_note.getStave().y + last_note.getStave().height,
+            staff_height : last_note.getStave().height,
+            continued_left : true,
+            continued_right : false
+          });
+        }
+
       }
     };
     return StaveHairpin;
