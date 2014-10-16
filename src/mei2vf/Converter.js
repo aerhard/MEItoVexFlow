@@ -74,9 +74,7 @@ define([
   'mei2vf/system/SystemInfo',
   'mei2vf/Tables',
   'mei2vf/voice/StaveVoices'
-], function (VF, MeiLib, Logger, RuntimeError, Util, EventContext, EventUtil, Note, GraceNote, Chord,
-  GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Arpeggios, Directives, Dynamics, Fermatas,
-  Ornaments, Verses, Syllable, Stave, Measure, PageInfo, System, SystemInfo, Tables, StaveVoices) {
+], function (VF, MeiLib, Logger, RuntimeError, Util, EventContext, EventUtil, Note, GraceNote, Chord, GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Arpeggios, Directives, Dynamics, Fermatas, Ornaments, Verses, Syllable, Stave, Measure, PageInfo, System, SystemInfo, Tables, StaveVoices) {
 
   /**
    * Converts an MEI XML document / document fragment to VexFlow objects and
@@ -436,39 +434,100 @@ define([
 
     resolveBeamSpans : function () {
       var me = this, i, j, beamSpans = me.allBeamSpans, idString, beamSpan, notes;
-      var startid, endid;
-
-      var getId = function (beamSpan, attName) {
-        idString = beamSpan.getAttribute(attName);
-        if (typeof idString === 'string') {
-          return idString.substring(1);
-        }
-      };
 
       for (i = 0, j = beamSpans.length; i < j; i++) {
         notes = [];
-        console.log(beamSpans[i]);
-
         beamSpan = beamSpans[i];
-        startid = getId(beamSpan, 'startid');
-        endid = getId(beamSpan, 'endid');
+        var pList = beamSpan.getAttribute('plist');
+        var pListArray;
+        if (pList !== null) {
+          pListArray = pList.split(' ');
+        } else {
+          pListArray = [];
+        }
 
-        if (startid && endid) {
+        var startIdAtt = beamSpan.getAttribute('startid');
+        var endIdAtt = beamSpan.getAttribute('endid');
+        if (startIdAtt !== null || endIdAtt !== null) {
+          // insert startid and endid to the plist if they're not already there
+          if (pListArray[0] !== startIdAtt) {
+            pListArray.unshift(startIdAtt);
+          }
+          if (pListArray[pListArray.length - 1] !== endIdAtt) {
+            pListArray.push(endIdAtt);
+          }
+          var voices = [];
+          var firstMeasure;
+          var noteObjects = pListArray.map(function (item, index) {
+            var obj = me.notes_by_id[item.substring(1)];
+            var voice = obj.vexNote.voice;
+            if (index === 0) {
+              firstMeasure = $(obj.meiNote).closest('measure').get(0);
+            }
+            var voiceIndex = voices.indexOf(voice);
+            if (voiceIndex === -1) {
+              // voice index remains -1 if the note is not in the start measure; it will not get
+              // included then when adding spaces
+              if (!firstMeasure || $(obj.meiNote).closest('measure').get(0) === firstMeasure ) {
+                voiceIndex = voices.push(voice) - 1;
+              }
+            }
+            return {
+              obj : obj,
+              voiceIndex : voiceIndex,
+              vexNote : obj.vexNote
+            };
+          });
 
-          notes.push(me.notes_by_id[startid].vexNote);
-          notes.push(me.notes_by_id[endid].vexNote);
+          var newSpace;
 
-          console.log(notes);
+          var createSpaceFrom = function(vexNote, stave) {
+            var gn = new VF.GhostNote(vexNote.getDuration());
+
+            // TODO handle dots
+            gn.setStave(stave);
+            return gn;
+          };
+
+          var notes = noteObjects.map(function (item) {
+            return item.vexNote;
+          });
+
+          var newVoiceSegment;
+          var indicesInVoice;
+
+          if (voices.length > 1) {
+            // create spaces in voices
+
+            for (var m = 0, n = voices.length; m < n; m++) {
+              newVoiceSegment = [];
+              indicesInVoice = [];
+              for (var o = 0, p = noteObjects.length; o < p; o++) {
+                if (noteObjects[o].voiceIndex === m) {
+                  newVoiceSegment[o] = noteObjects[o].vexNote;
+                  indicesInVoice.push(voices[m].tickables.indexOf(noteObjects[o].vexNote));
+                } else if (noteObjects[o].voiceIndex !== -1) {
+
+                  // TODO handle this later for each measure!!!
+                  newSpace = createSpaceFrom(noteObjects[o].vexNote, voices[m].tickables[0].stave);
+                  newVoiceSegment[o] = newSpace;
+                }
+              }
+
+              var t = voices[m].tickables;
+              voices[m].tickables = t.slice(0, indicesInVoice[0])
+                .concat(newVoiceSegment)
+                .concat(t.slice(indicesInVoice[indicesInVoice.length-1]+1));
+            }
+          }
 
           me.allBeams.push(new VF.Beam(notes, false));
           //          me.allBeams.push(new VF.Beam(filteredElements, !eventContext.getLayerDir() && eventContext.getStemDirInBeam()===false));
 
         } else {
-          // warn and abort: beam span could not be resolved
+          Logger.warn('Missing attributes', 'Could not process ' + Util.serializeElement(beamSpan) +
+                                            ', because @startid or @endid is missing.')
         }
-
-        console.log(startid + ' ' + endid);
-
       }
     },
 
@@ -716,8 +775,8 @@ define([
             sectionContext.voltaInfo.end = true;
           }
         } else if (childNode.localName === 'ending' || childNode.localName === 'section') {
-          Logger.info('Not supported', Util.serializeElement(childNode) + ' is not supported as a child of '
-                                         + Util.serializeElement(element) + '. Trying to process it anyway.');
+          Logger.info('Not supported', Util.serializeElement(childNode) + ' is not supported as a child of ' +
+                                       Util.serializeElement(element) + '. Trying to process it anyway.');
         }
         me.processSectionChild(childNode, sectionContext);
         childNode = next;
@@ -1072,7 +1131,8 @@ define([
       var eventContext = new EventContext(me.notes_by_id, me.currentSystem_n, stave, stave_n, beamInfosToResolve);
 
       for (i = 0, j = layerElements.length; i < j; i++) {
-        eventContext.setLayerDir((j > 1) ? (i === 0 ? VF.StaveNote.STEM_UP : i === j - 1 ? VF.StaveNote.STEM_DOWN : null) : null);
+        eventContext.setLayerDir((j > 1) ?
+                                 (i === 0 ? VF.StaveNote.STEM_UP : i === j - 1 ? VF.StaveNote.STEM_DOWN : null) : null);
         me.resolveUnresolvedTimestamps(layerElements[i], stave_n, measureIndex, meter);
         staveInfo.checkInitialClef();
 
@@ -1603,7 +1663,8 @@ define([
       if (filteredVexNotes && filteredVexNotes.length > 1) {
         try {
           // set autostem parameter of VF.Beam to true if neither layerDir nor any stem direction in the beam is specified
-          me.allBeams.push(new VF.Beam(filteredVexNotes, !eventContext.getLayerDir() && eventContext.getStemDirInBeam() === false));
+          me.allBeams.push(new VF.Beam(filteredVexNotes, !eventContext.getLayerDir() &&
+                                                         eventContext.getStemDirInBeam() === false));
         } catch (e) {
           Logger.error('VexFlow Error', 'An error occurred processing ' + Util.serializeElement(element) + ': "' +
                                         e.toString() + '". Ignoring beam.');
