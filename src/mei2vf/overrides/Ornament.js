@@ -5,7 +5,7 @@ define([
 
   VF.Ornament.prototype.setMeiElement = function (element) {
     this.meiElement = element;
-    return this;Tremolo.js
+    return this;
   };
   VF.Ornament.prototype.getMeiElement = function () {
     return this.meiElement;
