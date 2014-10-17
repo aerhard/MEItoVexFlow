@@ -1005,12 +1005,14 @@ define([
 
       var currentStaveVoices = new StaveVoices();
 
-      var beamInfosToResolve = [];
-
+      var eventContext = new EventContext(me.notes_by_id, me.currentSystem_n);
 
       for (i = 0, j = staveElements.length; i < j; i++) {
-        beamInfosToResolve =
-        me.processStaveEvents(staves, staveElements[i], measureIndex, currentStaveVoices, beamInfosToResolve);
+        me.processStaveEvents(staves, staveElements[i], measureIndex, currentStaveVoices, eventContext);
+      }
+
+      if (eventContext.clefCheckQueue.length !== 0) {
+        me.processClefCheckQueue(eventContext.clefCheckQueue);
       }
 
       me.dynamics.createInfos(dynamElements, element);
@@ -1046,6 +1048,33 @@ define([
 
       system.addMeasure(measure);
     },
+
+    processClefCheckQueue : function (events) {
+
+      var i, j, event = events[i];
+      for (i = 0, j = events.length; i < j; i++) {
+        event = events[i];
+        if (event.clef !== event.stave.clef) {
+
+          // TODO check if there is a clef change in any of the voices in the other system
+          // and adjust accordingly determine the position
+          event.clef = event.stave.clef;
+
+          window.x = event;
+
+          //          console.log(event.clef);
+          //          console.log(event.stave.clef);
+
+          event.keyProps = [];
+          event.calculateKeyProps();
+          event.buildNoteHeads();
+          event.buildStem();
+        }
+      }
+
+
+    },
+
 
     /**
      * @method initializeStavesInMeasure
@@ -1182,18 +1211,18 @@ define([
      * @param {MEI2VF.StaveVoices} currentStaveVoices The current StaveVoices
      * object
      */
-    processStaveEvents : function (staves, staveElement, measureIndex, currentStaveVoices, beamInfosToResolve) {
+    processStaveEvents : function (staves, staveElement, measureIndex, currentStaveVoices, eventContext) {
       var me = this, stave, stave_n, layerElements, i, j, vexNotes, staveInfo;
 
       stave_n = parseInt(staveElement.getAttribute('n'), 10) || 1;
       stave = staves[stave_n];
 
+      eventContext.startNewStave(stave, stave_n);
+
       staveInfo = me.systemInfo.getStaveInfo(stave_n);
       var meter = staveInfo.getTimeSpec();
 
       layerElements = staveElement.getElementsByTagName('layer');
-
-      var eventContext = new EventContext(me.notes_by_id, me.currentSystem_n, stave, stave_n, beamInfosToResolve);
 
       for (i = 0, j = layerElements.length; i < j; i++) {
         eventContext.setLayerDir((j > 1) ?
@@ -1211,9 +1240,8 @@ define([
         eventContext.setClefChangeInfo(null);
       }
 
-
       staveInfo.finalizeClefInfo();
-      return eventContext.newBeamInfosToResolve;
+
     },
 
     /**
@@ -1327,7 +1355,7 @@ define([
      * @method processNote
      */
     processNote : function (eventContext, element, staveInfo) {
-      var me = this, xml_id, mei_tie, mei_slur, atts, note_opts, note, clef, vexPitch, stave, stave_n;
+      var me = this, xml_id, mei_tie, mei_slur, atts, note_opts, note, clef, vexPitch, stave, stave_n, otherStave;
 
       atts = Util.attsToObj(element);
 
@@ -1343,7 +1371,7 @@ define([
         vexPitch = EventUtil.getVexPitch(element);
 
         if (atts.staff) {
-          var otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][atts.staff];
+          otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][atts.staff];
           if (otherStave) {
             stave = otherStave;
             clef = me.systemInfo.getClef(atts.staff);
@@ -1367,6 +1395,10 @@ define([
         };
 
         note = (atts.grace) ? new GraceNote(note_opts) : new Note(note_opts);
+
+        if (otherStave) {
+          eventContext.addToClefCheckQueue(note);
+        }
 
         if (note.hasMeiStemDir && eventContext.isInBeam()) {
           eventContext.setStemDirInBeam(true);
@@ -1417,7 +1449,7 @@ define([
      * @method processChord
      */
     processChord : function (eventContext, element, staveInfo) {
-      var me = this, noteElements, xml_id, chord, chord_opts, atts, i, j, mei_tie, mei_slur, clef, stave;
+      var me = this, noteElements, xml_id, chord, chord_opts, atts, i, j, mei_tie, mei_slur, clef, stave, otherStave;
 
       noteElements = element.getElementsByTagName('note');
 
@@ -1433,7 +1465,7 @@ define([
       try {
 
         if (atts.staff) {
-          var otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][atts.staff];
+          otherStave = me.allVexMeasureStaves[me.allVexMeasureStaves.length - 1][atts.staff];
           if (otherStave) {
             stave = otherStave;
 
@@ -1461,6 +1493,10 @@ define([
         };
 
         chord = (atts.grace) ? new GraceChord(chord_opts) : new Chord(chord_opts);
+
+        if (otherStave) {
+          eventContext.addToClefCheckQueue(chord);
+        }
 
         if (chord.hasMeiStemDir && eventContext.isInBeam()) {
           eventContext.setStemDirInBeam(true);

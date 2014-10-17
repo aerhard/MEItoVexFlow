@@ -20,35 +20,44 @@ define([
 ], function (VF, Logger) {
 
 
-  var EventContext = function (notes_by_id, system_n, stave, stave_n, beamInfosToResolve) {
+  var EventContext = function (notes_by_id, system_n, beamInfosToResolve) {
 
     var me = this;
-    /**
-     * inBeamNo specifies the number of beams the current events are under
-     */
-    me.inBeamNo = 0;
-    /**
-     * hasStemDirInBeam specifies if a stem.dir has been specified in the current beam
-     */
-    me.hasStemDirInBeam = false;
-    me.hasSpaceInBeam = false;
-    /**
-     * Grace note or grace chord objects to be added to the next non-grace note or chord
-     * @property {Vex.Flow.StaveNote[]} graceNoteQueue
-     */
-    me.graceNoteQueue = [];
-    me.clefChangeInfo = null;
 
     me.notes_by_id = notes_by_id;
     me.system_n = system_n;
-    me.stave = stave;
-    me.stave_n = stave_n;
-    me.beamInfosToResolve = beamInfosToResolve;
     me.newBeamInfosToResolve = [];
+    me.clefCheckQueue = [];
 
   };
 
   EventContext.prototype = {
+
+    startNewStave : function(stave, stave_n) {
+      var me = this;
+
+      me.stave = stave;
+      me.stave_n = stave_n;
+
+      /**
+       * inBeamNo specifies the number of beams the current events are under
+       */
+      me.inBeamNo = 0;
+      /**
+       * hasStemDirInBeam specifies if a stem.dir has been specified in the current beam
+       */
+      me.hasStemDirInBeam = false;
+      me.hasSpaceInBeam = false;
+      /**
+       * Grace note or grace chord objects to be added to the next non-grace note or chord
+       * @property {Vex.Flow.StaveNote[]} graceNoteQueue
+       */
+      me.graceNoteQueue = [];
+      me.clefChangeInfo = null;
+
+      me.beamInfosToResolve = me.newBeamInfosToResolve;
+      me.newBeamInfosToResolve = [];
+    },
 
     setLayerDir : function (layerDir) {
       this.layerDir = layerDir;
@@ -56,6 +65,14 @@ define([
 
     getLayerDir : function () {
       return this.layerDir;
+    },
+
+    setStaveN : function(n) {
+      this.stave_n = n;
+    },
+
+    setStave : function(stave) {
+      this.stave = stave;
     },
 
     getStave : function () {
@@ -119,6 +136,14 @@ define([
 
     getClefChangeInfo : function () {
       return this.clefChangeInfo;
+    },
+
+    addToClefCheckQueue : function (event) {
+      this.clefCheckQueue.push(event);
+    },
+
+    emptyClefCheckQueue : function () {
+      this.clefCheckQueue = [];
     }
 
   };
