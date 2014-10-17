@@ -1047,7 +1047,7 @@ define([
     processClefCheckQueue : function (eventContext) {
 
 
-      var i, j, events = eventContext.clefCheckQueue;
+      var i, j, event, events = eventContext.clefCheckQueue;
       for (i = 0, j = events.length; i < j; i++) {
         event = events[i];
         if (event.clef !== event.stave.clef) {

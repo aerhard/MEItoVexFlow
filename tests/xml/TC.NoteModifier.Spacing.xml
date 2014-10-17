@@ -1,0 +1,1061 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../odd/mei2vexflow.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../odd/mei2vexflow.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<mei meiversion="2013" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.music-encoding.org/ns/mei" xmlns:mei="http://www.music-encoding.org/ns/mei">
+	<meiHead>
+		<fileDesc>
+			<titleStmt>
+				<title/>
+			</titleStmt>
+			<pubStmt/>
+		</fileDesc>
+	</meiHead>
+	<music>
+		<body>
+			<mdiv>
+				<score>
+					<scoreDef>
+						<staffGrp>
+							<staffDef n="1" label="Voice" clef.line="2" clef.shape="G" meter.count="12" meter.unit="1" lines='5'/>
+						</staffGrp>
+					</scoreDef>
+					<section>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="a" oct="3" dur="1"></note>
+                                    <note pname="b" oct="3" dur="1"></note>
+                                    <note pname="c" oct="4" dur="1"></note>
+                                    <note pname="d" oct="4" dur="1"></note>
+                                    <note pname="e" oct="4" dur="1"></note>
+                                    <note pname="f" oct="4" dur="1"></note>
+
+                                    <note pname="e" oct="5" dur="1"></note>
+                                    <note pname="f" oct="5" dur="1"></note>
+                                    <note pname="g" oct="5" dur="1"></note>
+                                    <note pname="a" oct="5" dur="1"></note>
+                                    <note pname="b" oct="5" dur="1"></note>
+                                    <note pname="c" oct="6" dur="1"></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="g" oct="4" dur="1" stem.dir="down"></note>
+                                    <note pname="a" oct="4" dur="1" stem.dir="down"></note>
+                                    <note pname="b" oct="4" dur="1" stem.dir="down"></note>
+                                    <note pname="c" oct="5" dur="1" stem.dir="down"></note>
+                                    <note pname="d" oct="5" dur="1" stem.dir="down"></note>
+                                    <note pname="e" oct="5" dur="1" stem.dir="down"></note>
+
+                                    <note pname="f" oct="4" dur="1" stem.dir="up"></note>
+                                    <note pname="g" oct="4" dur="1" stem.dir="up"></note>
+                                    <note pname="a" oct="4" dur="1" stem.dir="up"></note>
+                                    <note pname="b" oct="4" dur="1" stem.dir="up"></note>
+                                    <note pname="c" oct="5" dur="1" stem.dir="up"></note>
+                                    <note pname="d" oct="5" dur="1" stem.dir="up"></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="4"/>
+						<measure n="1">
+							<staff n="1">
+								<layer>
+                                    <note pname="a" oct="3" dur="4"></note>
+                                    <note pname="b" oct="3" dur="4"></note>
+									<note pname="c" oct="4" dur="4"></note>
+									<note pname="d" oct="4" dur="4"></note>
+                                    <note pname="e" oct="4" dur="4"></note>
+                                    <note pname="f" oct="4" dur="4"></note>
+
+                                    <note pname="e" oct="5" dur="4"></note>
+                                    <note pname="f" oct="5" dur="4"></note>
+                                    <note pname="g" oct="5" dur="4"></note>
+                                    <note pname="a" oct="5" dur="4"></note>
+                                    <note pname="b" oct="5" dur="4"></note>
+                                    <note pname="c" oct="6" dur="4"></note>
+								</layer>
+							</staff>
+							<dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+						</measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="g" oct="4" dur="4" stem.dir="down"></note>
+                                    <note pname="a" oct="4" dur="4" stem.dir="down"></note>
+                                    <note pname="b" oct="4" dur="4" stem.dir="down"></note>
+                                    <note pname="c" oct="5" dur="4" stem.dir="down"></note>
+                                    <note pname="d" oct="5" dur="4" stem.dir="down"></note>
+                                    <note pname="e" oct="5" dur="4" stem.dir="down"></note>
+
+                                    <note pname="f" oct="4" dur="4" stem.dir="up"></note>
+                                    <note pname="g" oct="4" dur="4" stem.dir="up"></note>
+                                    <note pname="a" oct="4" dur="4" stem.dir="up"></note>
+                                    <note pname="b" oct="4" dur="4" stem.dir="up"></note>
+                                    <note pname="c" oct="5" dur="4" stem.dir="up"></note>
+                                    <note pname="d" oct="5" dur="4" stem.dir="up"></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="8"/>
+						<measure n="2">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="a" oct="3" dur="8"></note>
+                                    <note pname="b" oct="3" dur="8"></note>
+                                    <note pname="c" oct="4" dur="8"></note>
+                                    <note pname="d" oct="4" dur="8"></note>
+                                    <note pname="e" oct="4" dur="8"></note>
+                                    <note pname="f" oct="4" dur="8"></note>
+
+                                    <note pname="e" oct="5" dur="8"></note>
+                                    <note pname="f" oct="5" dur="8"></note>
+                                    <note pname="g" oct="5" dur="8"></note>
+                                    <note pname="a" oct="5" dur="8"></note>
+                                    <note pname="b" oct="5" dur="8"></note>
+                                    <note pname="c" oct="6" dur="8"></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+						</measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="g" oct="4" dur="8" stem.dir="down"></note>
+                                    <note pname="a" oct="4" dur="8" stem.dir="down"></note>
+                                    <note pname="b" oct="4" dur="8" stem.dir="down"></note>
+                                    <note pname="c" oct="5" dur="8" stem.dir="down"></note>
+                                    <note pname="d" oct="5" dur="8" stem.dir="down"></note>
+                                    <note pname="e" oct="5" dur="8" stem.dir="down"></note>
+
+                                    <note pname="f" oct="4" dur="8" stem.dir="up"></note>
+                                    <note pname="g" oct="4" dur="8" stem.dir="up"></note>
+                                    <note pname="a" oct="4" dur="8" stem.dir="up"></note>
+                                    <note pname="b" oct="4" dur="8" stem.dir="up"></note>
+                                    <note pname="c" oct="5" dur="8" stem.dir="up"></note>
+                                    <note pname="d" oct="5" dur="8" stem.dir="up"></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="64"/>
+                        <measure n="2">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="a" oct="3" dur="64"></note>
+                                    <note pname="b" oct="3" dur="64"></note>
+                                    <note pname="c" oct="4" dur="64"></note>
+                                    <note pname="d" oct="4" dur="64"></note>
+                                    <note pname="e" oct="4" dur="64"></note>
+                                    <note pname="f" oct="4" dur="64"></note>
+
+                                    <note pname="e" oct="5" dur="64"></note>
+                                    <note pname="f" oct="5" dur="64"></note>
+                                    <note pname="g" oct="5" dur="64"></note>
+                                    <note pname="a" oct="5" dur="64"></note>
+                                    <note pname="b" oct="5" dur="64"></note>
+                                    <note pname="c" oct="6" dur="64"></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="g" oct="4" dur="64" stem.dir="down"></note>
+                                    <note pname="a" oct="4" dur="64" stem.dir="down"></note>
+                                    <note pname="b" oct="4" dur="64" stem.dir="down"></note>
+                                    <note pname="c" oct="5" dur="64" stem.dir="down"></note>
+                                    <note pname="d" oct="5" dur="64" stem.dir="down"></note>
+                                    <note pname="e" oct="5" dur="64" stem.dir="down"></note>
+
+                                    <note pname="f" oct="4" dur="64" stem.dir="up"></note>
+                                    <note pname="g" oct="4" dur="64" stem.dir="up"></note>
+                                    <note pname="a" oct="4" dur="64" stem.dir="up"></note>
+                                    <note pname="b" oct="4" dur="64" stem.dir="up"></note>
+                                    <note pname="c" oct="5" dur="64" stem.dir="up"></note>
+                                    <note pname="d" oct="5" dur="64" stem.dir="up"></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="64"/>
+                        <measure n="2">
+                            <staff n="1">
+                                <layer>
+                                    <beam>
+                                        <note pname="g" oct="4" dur="64" stem.dir="down"></note>
+                                        <note pname="a" oct="3" dur="64" stem.dir="down"></note>
+                                        <note pname="b" oct="4" dur="64" stem.dir="down"></note>
+                                        <note pname="c" oct="5" dur="64" stem.dir="down"></note>
+                                        <note pname="d" oct="5" dur="64" stem.dir="down"></note>
+                                        <note pname="e" oct="5" dur="64" stem.dir="down"></note>
+                                    </beam>
+                                    <beam>
+                                        <note pname="f" oct="4" dur="64" stem.dir="up"></note>
+                                        <note pname="g" oct="4" dur="64" stem.dir="up"></note>
+                                        <note pname="a" oct="4" dur="64" stem.dir="up"></note>
+                                        <note pname="b" oct="4" dur="64" stem.dir="up"></note>
+                                        <note pname="c" oct="6" dur="64" stem.dir="up"></note>
+                                        <note pname="d" oct="5" dur="64" stem.dir="up"></note>
+                                    </beam>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <beam>
+                                    <note pname="g" oct="4" dur="64" stem.dir="down"></note>
+                                    <note pname="a" oct="4" dur="64" stem.dir="down"></note>
+                                    <note pname="b" oct="4" dur="64" stem.dir="down"></note>
+                                    <note pname="c" oct="5" dur="64" stem.dir="down"></note>
+                                    <note pname="d" oct="5" dur="64" stem.dir="down"></note>
+                                    <note pname="e" oct="5" dur="64" stem.dir="down"></note>
+                                    </beam>
+                                    <beam>
+                                    <note pname="f" oct="4" dur="64" stem.dir="up"></note>
+                                    <note pname="g" oct="4" dur="64" stem.dir="up"></note>
+                                    <note pname="a" oct="4" dur="64" stem.dir="up"></note>
+                                    <note pname="b" oct="4" dur="64" stem.dir="up"></note>
+                                    <note pname="c" oct="5" dur="64" stem.dir="up"></note>
+                                    <note pname="d" oct="5" dur="64" stem.dir="up"></note>
+                                    </beam>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="1"/>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="a" oct="3" dur="1" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="3" dur="1" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="4" dur="1" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="d" oct="4" dur="1" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="e" oct="4" dur="1" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="f" oct="4" dur="1" ><artic artic="stacc" place="below"/></note>
+
+                                    <note pname="e" oct="5" dur="1" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="f" oct="5" dur="1" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="g" oct="5" dur="1" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="a" oct="5" dur="1" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="5" dur="1" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="6" dur="1" ><artic artic="stacc" place="below"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="g" oct="4" dur="1" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="a" oct="4" dur="1" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="4" dur="1" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="5" dur="1" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="d" oct="5" dur="1" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="e" oct="5" dur="1" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+
+                                    <note pname="f" oct="4" dur="1" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="g" oct="4" dur="1" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="a" oct="4" dur="1" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="4" dur="1" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="5" dur="1" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="d" oct="5" dur="1" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="4"/>
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="a" oct="3" dur="4" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="3" dur="4" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="4" dur="4" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="d" oct="4" dur="4" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="e" oct="4" dur="4" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="f" oct="4" dur="4" ><artic artic="stacc" place="below"/></note>
+
+                                    <note pname="e" oct="5" dur="4" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="f" oct="5" dur="4" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="g" oct="5" dur="4" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="a" oct="5" dur="4" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="5" dur="4" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="6" dur="4" ><artic artic="stacc" place="below"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="g" oct="4" dur="4" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="a" oct="4" dur="4" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="4" dur="4" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="5" dur="4" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="d" oct="5" dur="4" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="e" oct="5" dur="4" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+
+                                    <note pname="f" oct="4" dur="4" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="g" oct="4" dur="4" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="a" oct="4" dur="4" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="4" dur="4" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="5" dur="4" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="d" oct="5" dur="4" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="8"/>
+                        <measure n="2">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="a" oct="3" dur="8" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="3" dur="8" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="4" dur="8" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="d" oct="4" dur="8" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="e" oct="4" dur="8" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="f" oct="4" dur="8" ><artic artic="stacc" place="below"/></note>
+
+                                    <note pname="e" oct="5" dur="8" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="f" oct="5" dur="8" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="g" oct="5" dur="8" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="a" oct="5" dur="8" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="5" dur="8" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="6" dur="8" ><artic artic="stacc" place="below"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="g" oct="4" dur="8" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="a" oct="4" dur="8" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="4" dur="8" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="5" dur="8" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="d" oct="5" dur="8" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="e" oct="5" dur="8" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+
+                                    <note pname="f" oct="4" dur="8" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="g" oct="4" dur="8" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="a" oct="4" dur="8" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="4" dur="8" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="5" dur="8" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="d" oct="5" dur="8" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="64"/>
+                        <measure n="2">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="a" oct="3" dur="64" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="3" dur="64" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="4" dur="64" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="d" oct="4" dur="64" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="e" oct="4" dur="64" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="f" oct="4" dur="64" ><artic artic="stacc" place="below"/></note>
+
+                                    <note pname="e" oct="5" dur="64" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="f" oct="5" dur="64" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="g" oct="5" dur="64" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="a" oct="5" dur="64" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="5" dur="64" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="6" dur="64" ><artic artic="stacc" place="below"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="g" oct="4" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="a" oct="4" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="4" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="5" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="d" oct="5" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="e" oct="5" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+
+                                    <note pname="f" oct="4" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="g" oct="4" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="a" oct="4" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="b" oct="4" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="c" oct="5" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    <note pname="d" oct="5" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="64"/>
+                        <measure n="2">
+                            <staff n="1">
+                                <layer>
+                                    <beam>
+                                        <note pname="g" oct="4" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="a" oct="3" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="b" oct="4" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="c" oct="5" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="d" oct="5" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="e" oct="5" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    </beam>
+                                    <beam>
+                                        <note pname="f" oct="4" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="g" oct="4" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="a" oct="4" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="b" oct="4" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="c" oct="6" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="d" oct="5" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    </beam>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <beam>
+                                        <note pname="g" oct="4" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="a" oct="4" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="b" oct="4" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="c" oct="5" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="d" oct="5" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="e" oct="5" dur="64" stem.dir="down" ><artic artic="stacc" place="below"/></note>
+                                    </beam>
+                                    <beam>
+                                        <note pname="f" oct="4" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="g" oct="4" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="a" oct="4" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="b" oct="4" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="c" oct="5" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                        <note pname="d" oct="5" dur="64" stem.dir="up" ><artic artic="stacc" place="below"/></note>
+                                    </beam>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="1"/>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="a" oct="3" dur="1" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="3" dur="1" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="4" dur="1" ><artic artic="acc" place="above"/></note>
+                                    <note pname="d" oct="4" dur="1" ><artic artic="acc" place="above"/></note>
+                                    <note pname="e" oct="4" dur="1" ><artic artic="acc" place="above"/></note>
+                                    <note pname="f" oct="4" dur="1" ><artic artic="acc" place="above"/></note>
+
+                                    <note pname="e" oct="5" dur="1" ><artic artic="acc" place="above"/></note>
+                                    <note pname="f" oct="5" dur="1" ><artic artic="acc" place="above"/></note>
+                                    <note pname="g" oct="5" dur="1" ><artic artic="acc" place="above"/></note>
+                                    <note pname="a" oct="5" dur="1" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="5" dur="1" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="6" dur="1" ><artic artic="acc" place="above"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="g" oct="4" dur="1" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="a" oct="4" dur="1" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="4" dur="1" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="5" dur="1" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="d" oct="5" dur="1" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="e" oct="5" dur="1" stem.dir="down" ><artic artic="acc" place="above"/></note>
+
+                                    <note pname="f" oct="4" dur="1" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="g" oct="4" dur="1" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="a" oct="4" dur="1" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="4" dur="1" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="5" dur="1" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="d" oct="5" dur="1" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="4"/>
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="a" oct="3" dur="4" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="3" dur="4" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="4" dur="4" ><artic artic="acc" place="above"/></note>
+                                    <note pname="d" oct="4" dur="4" ><artic artic="acc" place="above"/></note>
+                                    <note pname="e" oct="4" dur="4" ><artic artic="acc" place="above"/></note>
+                                    <note pname="f" oct="4" dur="4" ><artic artic="acc" place="above"/></note>
+
+                                    <note pname="e" oct="5" dur="4" ><artic artic="acc" place="above"/></note>
+                                    <note pname="f" oct="5" dur="4" ><artic artic="acc" place="above"/></note>
+                                    <note pname="g" oct="5" dur="4" ><artic artic="acc" place="above"/></note>
+                                    <note pname="a" oct="5" dur="4" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="5" dur="4" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="6" dur="4" ><artic artic="acc" place="above"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="g" oct="4" dur="4" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="a" oct="4" dur="4" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="4" dur="4" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="5" dur="4" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="d" oct="5" dur="4" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="e" oct="5" dur="4" stem.dir="down" ><artic artic="acc" place="above"/></note>
+
+                                    <note pname="f" oct="4" dur="4" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="g" oct="4" dur="4" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="a" oct="4" dur="4" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="4" dur="4" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="5" dur="4" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="d" oct="5" dur="4" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="8"/>
+                        <measure n="2">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="a" oct="3" dur="8" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="3" dur="8" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="4" dur="8" ><artic artic="acc" place="above"/></note>
+                                    <note pname="d" oct="4" dur="8" ><artic artic="acc" place="above"/></note>
+                                    <note pname="e" oct="4" dur="8" ><artic artic="acc" place="above"/></note>
+                                    <note pname="f" oct="4" dur="8" ><artic artic="acc" place="above"/></note>
+
+                                    <note pname="e" oct="5" dur="8" ><artic artic="acc" place="above"/></note>
+                                    <note pname="f" oct="5" dur="8" ><artic artic="acc" place="above"/></note>
+                                    <note pname="g" oct="5" dur="8" ><artic artic="acc" place="above"/></note>
+                                    <note pname="a" oct="5" dur="8" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="5" dur="8" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="6" dur="8" ><artic artic="acc" place="above"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="g" oct="4" dur="8" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="a" oct="4" dur="8" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="4" dur="8" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="5" dur="8" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="d" oct="5" dur="8" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="e" oct="5" dur="8" stem.dir="down" ><artic artic="acc" place="above"/></note>
+
+                                    <note pname="f" oct="4" dur="8" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="g" oct="4" dur="8" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="a" oct="4" dur="8" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="4" dur="8" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="5" dur="8" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="d" oct="5" dur="8" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="64"/>
+                        <measure n="2">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="a" oct="3" dur="64" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="3" dur="64" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="4" dur="64" ><artic artic="acc" place="above"/></note>
+                                    <note pname="d" oct="4" dur="64" ><artic artic="acc" place="above"/></note>
+                                    <note pname="e" oct="4" dur="64" ><artic artic="acc" place="above"/></note>
+                                    <note pname="f" oct="4" dur="64" ><artic artic="acc" place="above"/></note>
+
+                                    <note pname="e" oct="5" dur="64" ><artic artic="acc" place="above"/></note>
+                                    <note pname="f" oct="5" dur="64" ><artic artic="acc" place="above"/></note>
+                                    <note pname="g" oct="5" dur="64" ><artic artic="acc" place="above"/></note>
+                                    <note pname="a" oct="5" dur="64" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="5" dur="64" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="6" dur="64" ><artic artic="acc" place="above"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <note pname="g" oct="4" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="a" oct="4" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="4" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="5" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="d" oct="5" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    <note pname="e" oct="5" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+
+                                    <note pname="f" oct="4" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="g" oct="4" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="a" oct="4" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="b" oct="4" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="c" oct="5" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    <note pname="d" oct="5" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+                        <sb/>
+                        <staffDef n="1" meter.count="12" meter.unit="64"/>
+                        <measure n="2">
+                            <staff n="1">
+                                <layer>
+                                    <beam>
+                                        <note pname="g" oct="4" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                        <note pname="a" oct="3" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                        <note pname="b" oct="4" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                        <note pname="c" oct="5" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                        <note pname="d" oct="5" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                        <note pname="e" oct="5" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    </beam>
+                                    <beam>
+                                        <note pname="f" oct="4" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                        <note pname="g" oct="4" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                        <note pname="a" oct="4" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                        <note pname="b" oct="4" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                        <note pname="c" oct="6" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                        <note pname="d" oct="5" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    </beam>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+                        <measure n="1">
+                            <staff n="1">
+                                <layer>
+                                    <beam>
+                                        <note pname="g" oct="4" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                        <note pname="a" oct="4" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                        <note pname="b" oct="4" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                        <note pname="c" oct="5" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                        <note pname="d" oct="5" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                        <note pname="e" oct="5" dur="64" stem.dir="down" ><artic artic="acc" place="above"/></note>
+                                    </beam>
+                                    <beam>
+                                        <note pname="f" oct="4" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                        <note pname="g" oct="4" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                        <note pname="a" oct="4" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                        <note pname="b" oct="4" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                        <note pname="c" oct="5" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                        <note pname="d" oct="5" dur="64" stem.dir="up" ><artic artic="acc" place="above"/></note>
+                                    </beam>
+                                </layer>
+                            </staff>
+                            <dynam tstamp="1" place="below">f</dynam>
+                            <dynam tstamp="2" place="below">f</dynam>
+                            <dynam tstamp="3" place="below">f</dynam>
+                            <dynam tstamp="4" place="below">f</dynam>
+                            <dynam tstamp="5" place="below">f</dynam>
+                            <dynam tstamp="6" place="below">f</dynam>
+                            <dynam tstamp="7" place="above">f</dynam>
+                            <dynam tstamp="8" place="above">f</dynam>
+                            <dynam tstamp="9" place="above">f</dynam>
+                            <dynam tstamp="10" place="above">f</dynam>
+                            <dynam tstamp="11" place="above">f</dynam>
+                            <dynam tstamp="12" place="above">f</dynam>
+                        </measure>
+
+
+
+
+                    </section>
+				</score>
+			</mdiv>
+		</body>
+	</music>
+</mei>

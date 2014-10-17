@@ -94,6 +94,12 @@ define([
       });
     }
 
+    var go = function() {
+      for (i = 0; i < test_cases.length; i++) {
+        runTest(test_cases[i], i);
+      }
+    }
+
     /**
      * add test cases
      */
@@ -200,14 +206,14 @@ define([
     test_cases.push({ title : "Measure widths (with pick-up beat)", mei_xml : 'TC.MeasureWidths.xml', options : {labelMode : 'full'}});
     test_cases.push({ title : "Stem modifiers", mei_xml : 'TC.StemModifiers.xml', options : {labelMode : 'full'}});
 
-    test_cases.push({ title : "Hairpins across staves", mei_xml : 'TC.Hairpins.CrossStave.xml', canvas_height: 500});
+    test_cases.push({ title : "Hairpins across systems", mei_xml : 'TC.Hairpins.CrossStave.xml', canvas_height: 500});
 
     test_cases.push({ title : "Beam span", mei_xml : 'TC.BeamSpan.xml', canvas_width : 800, canvas_height : 500});
     test_cases.push({ title : "Tuplet span", mei_xml : 'TC.TupletSpan.xml', canvas_width : 1100, canvas_height : 500});
 
-    for (i = 0; i < test_cases.length; i++) {
-      runTest(test_cases[i], i);
-    }
+    test_cases.push({ title : "Note modifiers - Spacing", mei_xml : 'TC.NoteModifier.Spacing.xml', canvas_height : 2200});
+
+    go();
 
   });
 
