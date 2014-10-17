@@ -495,12 +495,7 @@ define([
         notes = [];
         element = elements[i];
         var pList = element.getAttribute('plist');
-        var pListArray;
-        if (pList !== null) {
-          pListArray = pList.split(' ');
-        } else {
-          pListArray = [];
-        }
+        var pListArray = Util.pListToArray(pList);
 
         var startIdAtt = element.getAttribute('startid');
         var endIdAtt = element.getAttribute('endid');
@@ -1012,7 +1007,7 @@ define([
       }
 
       if (eventContext.clefCheckQueue.length !== 0) {
-        me.processClefCheckQueue(eventContext.clefCheckQueue);
+        me.processClefCheckQueue(eventContext);
       }
 
       me.dynamics.createInfos(dynamElements, element);
@@ -1049,9 +1044,10 @@ define([
       system.addMeasure(measure);
     },
 
-    processClefCheckQueue : function (events) {
+    processClefCheckQueue : function (eventContext) {
 
-      var i, j, event = events[i];
+
+      var i, j, events = eventContext.clefCheckQueue;
       for (i = 0, j = events.length; i < j; i++) {
         event = events[i];
         if (event.clef !== event.stave.clef) {
@@ -1059,8 +1055,6 @@ define([
           // TODO check if there is a clef change in any of the voices in the other system
           // and adjust accordingly determine the position
           event.clef = event.stave.clef;
-
-          window.x = event;
 
           //          console.log(event.clef);
           //          console.log(event.stave.clef);
@@ -1071,6 +1065,8 @@ define([
           event.buildStem();
         }
       }
+
+      eventContext.emptyClefCheckQueue();
 
 
     },

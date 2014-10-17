@@ -37,6 +37,10 @@ define(function () {
       return obj;
     },
 
+    pListToArray : function (pList) {
+      return (pList !== null) ? pList.split(' ') : [];
+    },
+
     /**
      *
      */
