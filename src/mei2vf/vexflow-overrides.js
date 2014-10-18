@@ -5,6 +5,7 @@ define([
   'mei2vf/overrides/ClefNote',
   'mei2vf/overrides/Curve',
   'mei2vf/overrides/Glyphs',
+  'mei2vf/overrides/GraceNoteGroup',
   'mei2vf/overrides/Hyphen',
   'mei2vf/overrides/KeySignature',
   'mei2vf/overrides/Ornament',

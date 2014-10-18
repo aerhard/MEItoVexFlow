@@ -433,6 +433,29 @@ define([
       return me;
     },
 
+    format : function (ctx) {
+      var me = this;
+      me.formatSystems(me.systems, ctx);
+    },
+
+    /**
+     * Draws the internal data objects to a canvas
+     * @method draw
+     * @chainable
+     * @param ctx The canvas context
+     * @return {Converter} this
+     */
+    draw : function (ctx) {
+      var me = this;
+      me.drawSystems(me.systems, ctx);
+      me.setContextAndDraw(me.allBeams, ctx);
+      me.setContextAndDraw(me.allTuplets, ctx);
+      me.ties.setContext(ctx).draw();
+      me.slurs.setContext(ctx).draw();
+      me.hairpins.setContext(ctx).draw();
+      return me;
+    },
+
     resolveBeamSpans : function () {
       var me = this;
       var spanObjectCreator = function (notes, voices, element) {
@@ -585,29 +608,6 @@ define([
                                             ', because @startid or @endid is missing.')
         }
       }
-    },
-
-    format : function (ctx) {
-      var me = this;
-      me.formatSystems(me.systems, ctx);
-    },
-
-    /**
-     * Draws the internal data objects to a canvas
-     * @method draw
-     * @chainable
-     * @param ctx The canvas context
-     * @return {Converter} this
-     */
-    draw : function (ctx) {
-      var me = this;
-      me.drawSystems(me.systems, ctx);
-      me.setContextAndDraw(me.allBeams, ctx);
-      me.setContextAndDraw(me.allTuplets, ctx);
-      me.ties.setContext(ctx).draw();
-      me.slurs.setContext(ctx).draw();
-      me.hairpins.setContext(ctx).draw();
-      return me;
     },
 
     /**
@@ -1905,13 +1905,6 @@ define([
       }
     },
 
-    setContextAndDraw : function (items, ctx) {
-      var i, j;
-      for (i = 0, j = items.length; i < j; i++) {
-        items[i].setContext(ctx).draw();
-      }
-    },
-
     formatSystems : function (systems, ctx) {
       var me = this, i, j, totalMinSystemWidth = 0, minSystemWidth, broadestSystemN = 1;
       j = systems.length;
@@ -1948,6 +1941,13 @@ define([
 
       me.pageInfo.setLowestY(me.systemInfo.getCurrentLowestY() + me.STAVE_HEIGHT);
 
+    },
+
+    setContextAndDraw : function (items, ctx) {
+      var i, j;
+      for (i = 0, j = items.length; i < j; i++) {
+        items[i].setContext(ctx).draw();
+      }
     },
 
     drawSystems : function (systems, ctx) {

@@ -134,11 +134,11 @@ define([
       for (var i = 0; i < this.tickables.length; ++i) {
         var tickable = this.tickables[i];
 
-        tickable.setStave(tickable.getStave());
-
         if (!tickable.getStave()) {
           throw new Vex.RuntimeError("MissingStave", "The voice cannot draw tickables without staves.");
         }
+
+        tickable.setStave(tickable.getStave());
 
         if (i === 0) boundingBox = tickable.getBoundingBox();
 
