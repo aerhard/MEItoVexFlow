@@ -67,6 +67,13 @@ define([
         Converter.prototype.initConfig(config);
       },
       /**
+       * Resets the conversion results data to its initial state. Call this before process()
+       * @method reset
+       */
+      reset : function () {
+        Converter.prototype.reset();
+      },
+      /**
        * Processes the specified MEI document or document fragment. The generated
        * objects can be processed further or drawn immediately to a canvas via
        * {@link #draw}.
@@ -143,6 +150,7 @@ define([
       cfg.pageWidth = width;
 
       this.Converter.initConfig(cfg);
+      this.Converter.reset();
       this.Converter.process(xmlDoc[0] || xmlDoc);
 
       this.Converter.format(ctx);

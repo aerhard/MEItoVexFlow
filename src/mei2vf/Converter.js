@@ -398,7 +398,7 @@ define([
     },
 
     /**
-     * Calls {@link #reset} and then processes the specified MEI document or
+     * Processes the specified MEI document or
      * document fragment. The generated objects can
      * be processed further or drawn immediately to a canvas via {@link #draw}.
      * @method process
@@ -408,7 +408,6 @@ define([
      */
     process : function (xmlDoc) {
       var me = this;
-      me.reset();
 
       //      me.systemInfo.processScoreDef(xmlDoc.getElementsByTagName('scoreDef')[0]);
       //      me.processSections(xmlDoc);
