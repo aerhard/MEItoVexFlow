@@ -81,12 +81,16 @@ define([
     },
 
     createVexFromInfos : function (notes_by_id) {
-      var me = this, f_note, l_note, i, j, model, bezier, params;
+      var me = this, f_note, l_note, i, j, model, bezier, params, curveDir, layerDir;
+
+      var BELOW = -1;
+      var ABOVE = 1;
+
 
       for (i = 0, j = me.allModels.length; i < j; i++) {
         model = me.allModels[i];
-
         params = model.params;
+        curveDir = (params.curvedir === 'above') ? ABOVE : (params.curvedir=== 'below') ? BELOW : null;
 
         var keysInChord;
         f_note = notes_by_id[model.getFirstId()] || {};
@@ -104,45 +108,67 @@ define([
           return true;
         }
 
+
         // if no @curvedir is specified, set @curvedir according to the layer direction or to
         // the position of a note in a chord
-        if (!params.curvedir) {
-          var layerDir = f_note.layerDir || l_note.layerDir;
+        if (!curveDir) {
+          layerDir = f_note.layerDir || l_note.layerDir;
           if (layerDir) {
             // calculate default curve direction based on the relative layer
-            params.curvedir = layerDir === -1 ? 'below' : layerDir === 1 ? 'above' : undefined;
+            curveDir = layerDir;
           } else {
             // if the slur links to a note in a chord, let the outer slurs of the
             // chord point outwards
-
 
             // TODO adjust to slurs!!
             if (f_note.vexNote) {
               keysInChord = f_note.vexNote.keys.length;
               if (keysInChord > 1) {
-                params.curvedir =
-                (+f_note.index === 0) ? 'below' : (+f_note.index === keysInChord - 1) ? 'above' : undefined;
+                curveDir =
+                (+f_note.index === 0) ? BELOW : (+f_note.index === keysInChord - 1) ? ABOVE : undefined;
               }
             } else {
               keysInChord = l_note.vexNote.keys.length;
               if (keysInChord > 1) {
-                params.curvedir =
-                +l_note.index === 0 ? 'below' : (+l_note.index === keysInChord - 1) ? 'above' : undefined;
+                curveDir = +l_note.index === 0 ? BELOW : (+l_note.index === keysInChord - 1) ? ABOVE : undefined;
               }
             }
           }
         }
 
-
         var slurOptions = {
           y_shift_start : +params.startvo || undefined,
-          y_shift_end : +params.endvo || undefined
+          y_shift_end : +params.endvo || undefined,
 
         };
 
         var firstStemDir, lastStemDir;
         if (f_note.vexNote) firstStemDir = f_note.vexNote.getStemDirection();
         if (l_note.vexNote) lastStemDir = l_note.vexNote.getStemDirection();
+
+        var setPositionBasedOnDistance = function () {
+          var firstNoteLine = f_note.vexNote.getLineNumber();
+          var lastNoteLine = l_note.vexNote.getLineNumber();
+          var distance = firstNoteLine - lastNoteLine;
+          if (firstStemDir !== lastStemDir) {
+            if ((firstStemDir === ABOVE && distance < -0.5 && curveDir === ABOVE) ||
+                (lastStemDir === BELOW && distance > 0.5 && curveDir === BELOW)) {
+              slurOptions.position = VF.Curve.Position.NEAR_TOP;
+              slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
+            } else if ((distance > 0.5 && curveDir === ABOVE) ||
+                       (distance < -0.5 && curveDir === BELOW)) {
+              slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+              //                slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+            } else if (distance > 0.5 || distance < -0.5) {
+              slurOptions.position = VF.Curve.Position.NEAR_HEAD;
+              slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
+            }
+          } else {
+            if (slurOptions.invert === true) {
+              slurOptions.position = VF.Curve.Position.NEAR_TOP;
+            }
+          }
+        };
 
 
         //bezier = params.bezier;
@@ -154,73 +180,20 @@ define([
         //
 
 
-        if (params.curvedir) {
-          // CURVEDIR SPECIFIED
-
-          if ((params.curvedir === 'above' && lastStemDir === 1) ||
-              (params.curvedir === 'below' && lastStemDir === -1)) {
-            //        slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-            slurOptions.invert = true;
-          }
+        if ((curveDir === ABOVE && lastStemDir === ABOVE) ||
+            (curveDir === BELOW && lastStemDir === BELOW)) {
+          slurOptions.invert = true;
+        }
 
 
-          // FIXED PLACE - SINGLE LAYER
-          if (f_note.vexNote && l_note.vexNote) {
 
-            var firstNoteLine = f_note.vexNote.getLineNumber();
-            var lastNoteLine = l_note.vexNote.getLineNumber();
-
-            var distance = firstNoteLine - lastNoteLine;
-
-//            console.log(f_note);
-//            console.log(f_note.vexNote.getLineNumber())
-//            console.log(l_note.vexNote.getLineNumber())
-//            console.log(distance);
-
-            //            if (distance > 2.5) {
-            //
-            //              if (firstStemDir !== lastStemDir) {
-            //                slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-            //              }
-            //
-            //            }
-
-            // TODO improve: make Curvedir a number 1 / -1
-
-            if (firstStemDir !== lastStemDir) {
-              if ((distance < -0.5 && params.curvedir === 'above') || (distance > 0.5 && params.curvedir === 'below')) {
-                // first note noticeably lower than last note
-                slurOptions.position = VF.Curve.Position.NEAR_TOP;
-                slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
-              } else if ((distance > 0.5 && params.curvedir === 'above') ||
-                         (distance < -0.5 && params.curvedir === 'below')) {
-                // first note noticeably higher than last note
-                slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-                //                slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-              }
-            } else {
-              if (slurOptions.invert === true) {
-                slurOptions.position = VF.Curve.Position.NEAR_TOP;
-              } else {
-                //                slurOptions.position = VF.Curve.Position.NEAR_HEAD;
-              }
-            }
-
-
-            //            if (distance < -2.5 && lastStemDir === 1) {
-            //              // first note noticeably lower than last note and last note pointing upwards
-            //              slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-            //            }
-
-          } else {
-
-            // set rules for the case when only first or last vexNote are specified
-
-          }
+        if (curveDir && f_note.vexNote && l_note.vexNote
+          && f_note.vexNote.duration !== 'w' && l_note.vexNote.duration !== 'w') {
+          // CURVEDIR SPECIFIED - TWO NOTES THERE
+            setPositionBasedOnDistance();
 
         } else {
           // NO CURVEDIR SPECIFIED
-
 
           if (f_note.layerDir || l_note.layerDir) {
             // NO FIXED PLACE - MULTI LAYER
@@ -235,43 +208,20 @@ define([
 
             }
           } else {
-            // NO FIXED PLACE - SINGLE LAYER
-
-            var firstNoteLine = f_note.vexNote.getLineNumber();
-            var lastNoteLine = l_note.vexNote.getLineNumber();
-
-            var distance = firstNoteLine - lastNoteLine;
-
-            if (firstStemDir !== lastStemDir) {
-              if ((distance < -0.5 && params.curvedir === 'above') || (distance > 0.5 && params.curvedir === 'below')) {
-                // first note noticeably lower than last note
-                slurOptions.position = VF.Curve.Position.NEAR_TOP;
-                slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
-              } else if ((distance > 0.5 && params.curvedir === 'above') ||
-                         (distance < -0.5 && params.curvedir === 'below')) {
-                // first note noticeably higher than last note
-                slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-                //                slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-              }
-            } else {
-              if (slurOptions.invert === true) {
-                slurOptions.position = VF.Curve.Position.NEAR_TOP;
-              } else {
-                //                slurOptions.position = VF.Curve.Position.NEAR_HEAD;
-              }
-            }
-
+            setPositionBasedOnDistance();
           }
         }
 
+//        console.log('curve dir: ' + curveDir + ', ' + 'layer dir: ' + params.layerDir + ', ');
 
+        // finally, in all cases, handle system breaks and create slur objects
         if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
           me.createSingleSlur(f_note, {}, {
             y_shift_start : slurOptions.y_shift_start,
             y_shift_end : slurOptions.y_shift_end,
-            invert: ((params.curvedir === 'above' && firstStemDir === 1) ||
-                     (params.curvedir === 'below' && firstStemDir === -1)),
-            position: slurOptions.position,
+            invert : ((curveDir === ABOVE && firstStemDir === ABOVE) ||
+                      (curveDir === BELOW && firstStemDir === BELOW)),
+            position : slurOptions.position,
             position_end : slurOptions.position
           });
 
@@ -280,16 +230,13 @@ define([
         } else {
           me.createSingleSlur(f_note, l_note, slurOptions);
         }
+
       }
       return this;
     },
 
     createSingleSlur : function (f_note, l_note, slurOptions) {
-      var me = this, vexSlur;
-
-      vexSlur = new VF.Curve(f_note.vexNote, l_note.vexNote, slurOptions);
-
-      me.allVexObjects.push(vexSlur);
+      this.allVexObjects.push(new VF.Curve(f_note.vexNote, l_note.vexNote, slurOptions));
     },
 
     bezierStringToCps : function (str) {
@@ -301,10 +248,7 @@ define([
           y : +matched[2]
         });
       }
-
-      // TODO allow less and more than two set of cps in VexFlow
       if (!cps[1]) cps[1] = cps[0];
-
       return cps;
     }
   });
