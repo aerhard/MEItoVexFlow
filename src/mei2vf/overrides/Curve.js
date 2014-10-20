@@ -4,7 +4,6 @@ define([
 ], function (VF, Vex, undefined) {
 
 
-
   VF.Curve.prototype.renderCurve = function (params) {
     var ctx = this.context;
     var cps = this.render_options.cps;
@@ -28,17 +27,30 @@ define([
     var cp_spacing = (last_x - first_x) / (cps.length + 2);
 
     ctx.beginPath();
-    ctx.moveTo(first_x, first_y);
-    ctx.bezierCurveTo(first_x + cp_spacing + cps[0].x, first_y + (cps[0].y * params.direction), last_x - cp_spacing +
-                                                                                                cps[1].x, last_y +
-                                                                                                          (cps[1].y *
-                                                                                                           params.direction), last_x, last_y);
-    ctx.bezierCurveTo(last_x - cp_spacing + cps[1].x, last_y + ((cps[1].y + thickness) * params.direction), first_x +
-                                                                                                            cp_spacing +
-                                                                                                            cps[0].x, first_y +
-                                                                                                                      ((cps[0].y +
-                                                                                                                        thickness) *
-                                                                                                                       params.direction), first_x, first_y);
+
+    if (this.render_options.custom_cps) {
+      // adjustments to MEI bezier encoding practice
+      var cps_0_x = first_x + cps[0].x;
+      var cps_0_y = first_y + cps[0].y;
+      var cps_1_x = last_x + cps[1].x;
+      var cps_1_y = last_y + cps[1].y;
+      ctx.moveTo(first_x, first_y);
+      ctx.bezierCurveTo(cps_0_x, cps_0_y, cps_1_x, cps_1_y, last_x, last_y);
+      ctx.bezierCurveTo(cps_1_x, cps_1_y + thickness, cps_0_x, cps_0_y + thickness, first_x, first_y);
+    } else {
+      ctx.moveTo(first_x, first_y);
+      ctx.bezierCurveTo(first_x + cp_spacing + cps[0].x,
+          first_y + (cps[0].y * params.direction),
+          last_x - cp_spacing + cps[1].x,
+          last_y + (cps[1].y * params.direction),
+        last_x, last_y);
+      ctx.bezierCurveTo(last_x - cp_spacing + cps[1].x,
+          last_y + ((cps[1].y + thickness) * params.direction),
+          first_x + cp_spacing + cps[0].x,
+          first_y + ((cps[0].y + thickness) * params.direction),
+        first_x, first_y);
+    }
+
     ctx.stroke();
     ctx.closePath();
     ctx.fill();

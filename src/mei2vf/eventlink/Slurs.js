@@ -81,7 +81,7 @@ define([
     },
 
     createVexFromInfos : function (notes_by_id) {
-      var me = this, f_note, l_note, i, j, model, bezier, params, curveDir, layerDir;
+      var me = this, f_note, l_note, i, j, model, bezier, params, curveDir, layerDir, slurOptions = {};
 
       var BELOW = -1;
       var ABOVE = 1;
@@ -90,7 +90,7 @@ define([
       for (i = 0, j = me.allModels.length; i < j; i++) {
         model = me.allModels[i];
         params = model.params;
-        curveDir = (params.curvedir === 'above') ? ABOVE : (params.curvedir=== 'below') ? BELOW : null;
+        curveDir = (params.curvedir === 'above') ? ABOVE : (params.curvedir === 'below') ? BELOW : null;
 
         var keysInChord;
         f_note = notes_by_id[model.getFirstId()] || {};
@@ -109,123 +109,129 @@ define([
         }
 
 
-        // if no @curvedir is specified, set @curvedir according to the layer direction or to
-        // the position of a note in a chord
-        if (!curveDir) {
-          layerDir = f_note.layerDir || l_note.layerDir;
-          if (layerDir) {
-            // calculate default curve direction based on the relative layer
-            curveDir = layerDir;
-          } else {
-            // if the slur links to a note in a chord, let the outer slurs of the
-            // chord point outwards
-
-            // TODO adjust to slurs!!
-            if (f_note.vexNote) {
-              keysInChord = f_note.vexNote.keys.length;
-              if (keysInChord > 1) {
-                curveDir =
-                (+f_note.index === 0) ? BELOW : (+f_note.index === keysInChord - 1) ? ABOVE : undefined;
-              }
-            } else {
-              keysInChord = l_note.vexNote.keys.length;
-              if (keysInChord > 1) {
-                curveDir = +l_note.index === 0 ? BELOW : (+l_note.index === keysInChord - 1) ? ABOVE : undefined;
-              }
-            }
-          }
-        }
-
-        var slurOptions = {
-          y_shift_start : +params.startvo || undefined,
-          y_shift_end : +params.endvo || undefined,
-
-        };
-
-        var firstStemDir, lastStemDir;
-        if (f_note.vexNote) firstStemDir = f_note.vexNote.getStemDirection();
-        if (l_note.vexNote) lastStemDir = l_note.vexNote.getStemDirection();
-
-        var setPositionBasedOnDistance = function () {
-          var firstNoteLine = f_note.vexNote.getLineNumber();
-          var lastNoteLine = l_note.vexNote.getLineNumber();
-          var distance = firstNoteLine - lastNoteLine;
-          if (firstStemDir !== lastStemDir) {
-            if ((firstStemDir === ABOVE && distance < -0.5 && curveDir === ABOVE) ||
-                (lastStemDir === BELOW && distance > 0.5 && curveDir === BELOW)) {
-              slurOptions.position = VF.Curve.Position.NEAR_TOP;
-              slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
-            } else if ((distance > 0.5 && curveDir === ABOVE) ||
-                       (distance < -0.5 && curveDir === BELOW)) {
-              slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-              //                slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-            } else if (distance > 0.5 || distance < -0.5) {
-              slurOptions.position = VF.Curve.Position.NEAR_HEAD;
-              slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
-            }
-          } else {
-            if (slurOptions.invert === true) {
-              slurOptions.position = VF.Curve.Position.NEAR_TOP;
-            }
-          }
-        };
+        // TODO
+        // STEPS :
+        // 1) if bezier, use bezier, otherwise calculate curvedir
+        // 2) if y shift, use y shift, otherwise calculate position
 
 
-        //bezier = params.bezier;
+        bezier = params.bezier;
         // ignore bezier for now!
-        bezier = null;
-        //      if (bezier) {
-        //        slurOptions.cps = me.bezierStringToCps(bezier);
-        //      } else {
-        //
+        //        bezier = null;
+        if (bezier) {
+          slurOptions.cps = me.bezierStringToCps(bezier);
+          slurOptions.custom_cps =true;
+          curveDir = (slurOptions.cps[0].y < 0) ? ABOVE : BELOW;
+        } else {
+          // if no @curvedir is specified, set @curvedir according to the layer direction or to
+          // the position of a note in a chord
+          if (!curveDir) {
+            layerDir = f_note.layerDir || l_note.layerDir;
+            if (layerDir) {
+              // calculate default curve direction based on the relative layer
+              curveDir = layerDir;
+            } else {
+              // if the slur links to a note in a chord, let the outer slurs of the
+              // chord point outwards
 
+              // TODO adjust to slurs!!
+              if (f_note.vexNote) {
+                keysInChord = f_note.vexNote.keys.length;
+                if (keysInChord > 1) {
+                  curveDir = (+f_note.index === 0) ? BELOW : (+f_note.index === keysInChord - 1) ? ABOVE : undefined;
+                }
+              } else {
+                keysInChord = l_note.vexNote.keys.length;
+                if (keysInChord > 1) {
+                  curveDir = +l_note.index === 0 ? BELOW : (+l_note.index === keysInChord - 1) ? ABOVE : undefined;
+                }
+              }
+            }
+          }
 
-        if ((curveDir === ABOVE && lastStemDir === ABOVE) ||
-            (curveDir === BELOW && lastStemDir === BELOW)) {
-          slurOptions.invert = true;
+          if ((curveDir === ABOVE && lastStemDir === ABOVE) || (curveDir === BELOW && lastStemDir === BELOW)) {
+            slurOptions.invert = true;
+          }
+
         }
 
 
+        if (+params.startvo) slurOptions.y_shift_start = +params.startvo;
+        if (+params.endvo) slurOptions.y_shift_end = +params.endvo;
 
-        if (curveDir && f_note.vexNote && l_note.vexNote
-          && f_note.vexNote.duration !== 'w' && l_note.vexNote.duration !== 'w') {
-          // CURVEDIR SPECIFIED - TWO NOTES THERE
-            setPositionBasedOnDistance();
+        if (!+params.startvo && +params.endvo) {
 
-        } else {
-          // NO CURVEDIR SPECIFIED
+          var firstStemDir, lastStemDir;
+          if (f_note.vexNote) firstStemDir = f_note.vexNote.getStemDirection();
+          if (l_note.vexNote) lastStemDir = l_note.vexNote.getStemDirection();
 
-          if (f_note.layerDir || l_note.layerDir) {
-            // NO FIXED PLACE - MULTI LAYER
-            slurOptions.invert = true;
-
-            if (f_note.vexNote && l_note.vexNote && f_note.vexNote.hasStem() && l_note.vexNote.hasStem()) {
-              slurOptions.position = VF.Curve.Position.NEAR_TOP;
-
-              if (f_note.vexNote.getStemDirection() !== l_note.vexNote.getStemDirection()) {
+          var setPositionBasedOnDistance = function () {
+            var firstNoteLine = f_note.vexNote.getLineNumber();
+            var lastNoteLine = l_note.vexNote.getLineNumber();
+            var distance = firstNoteLine - lastNoteLine;
+            if (firstStemDir !== lastStemDir) {
+              if ((firstStemDir === ABOVE && distance < -0.5 && curveDir === ABOVE) ||
+                  (lastStemDir === BELOW && distance > 0.5 && curveDir === BELOW)) {
+                slurOptions.position = VF.Curve.Position.NEAR_TOP;
+                slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
+              } else if ((distance > 0.5 && curveDir === ABOVE) || (distance < -0.5 && curveDir === BELOW)) {
+                slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+                //                slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+              } else if (distance > 0.5 || distance < -0.5) {
+                slurOptions.position = VF.Curve.Position.NEAR_HEAD;
                 slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
               }
-
+            } else {
+              if (slurOptions.invert === true) {
+                slurOptions.position = VF.Curve.Position.NEAR_TOP;
+              }
             }
-          } else {
+          };
+
+          if (curveDir && f_note.vexNote && l_note.vexNote && f_note.vexNote.duration !== 'w' &&
+              l_note.vexNote.duration !== 'w') {
+            // CURVEDIR SPECIFIED - TWO NOTES THERE
             setPositionBasedOnDistance();
+
+          } else {
+            // NO CURVEDIR SPECIFIED
+
+            if (f_note.layerDir || l_note.layerDir) {
+              // NO FIXED PLACE - MULTI LAYER
+              slurOptions.invert = true;
+
+              if (f_note.vexNote && l_note.vexNote && f_note.vexNote.hasStem() && l_note.vexNote.hasStem()) {
+                slurOptions.position = VF.Curve.Position.NEAR_TOP;
+
+                if (f_note.vexNote.getStemDirection() !== l_note.vexNote.getStemDirection()) {
+                  slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
+                }
+
+              }
+            } else {
+              if (f_note.vexNote && l_note.vexNote) {
+                setPositionBasedOnDistance();
+              }
+            }
           }
+
         }
 
-//        console.log('curve dir: ' + curveDir + ', ' + 'layer dir: ' + params.layerDir + ', ');
+        //        console.log('curve dir: ' + curveDir + ', ' + 'layer dir: ' + params.layerDir + ', ');
 
         // finally, in all cases, handle system breaks and create slur objects
         if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
           me.createSingleSlur(f_note, {}, {
             y_shift_start : slurOptions.y_shift_start,
             y_shift_end : slurOptions.y_shift_end,
-            invert : ((curveDir === ABOVE && firstStemDir === ABOVE) ||
-                      (curveDir === BELOW && firstStemDir === BELOW)),
+            invert : ((curveDir === ABOVE && firstStemDir === ABOVE) || (curveDir === BELOW && firstStemDir === BELOW)),
             position : slurOptions.position,
             position_end : slurOptions.position
           });
 
           slurOptions.position = slurOptions.position_end;
+          slurOptions.invert =
+          ((curveDir === ABOVE && lastStemDir === ABOVE) || (curveDir === BELOW && lastStemDir === BELOW));
           me.createSingleSlur({}, l_note, slurOptions);
         } else {
           me.createSingleSlur(f_note, l_note, slurOptions);
@@ -241,14 +247,17 @@ define([
 
     bezierStringToCps : function (str) {
       var cps = [], regex, matched;
-      regex = /(\-?\d+)\s+(\-?\d+)/g;
+      regex = /(\-?[\d|\.]+)\s+(\-?[\d|\.]+)/g;
       while (matched = regex.exec(str)) {
         cps.push({
           x : +matched[1],
           y : +matched[2]
         });
       }
-      if (!cps[1]) cps[1] = cps[0];
+      if (!cps[1]) {
+        Logger.info('Incomplete attribute', 'Expected four control points in slur/@bezier, but only found two. Providing cps 3 & 4 on basis on cps 1 & 2.')
+        cps[1] = {x:-cps[0].x,y:cps[0].y};
+      }
       return cps;
     }
   });
