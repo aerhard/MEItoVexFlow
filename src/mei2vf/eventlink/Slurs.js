@@ -274,18 +274,18 @@ define([
 
         // finally, in all cases, handle system breaks and create slur objects
         if (f_note.system !== undefined && l_note.system !== undefined && f_note.system !== l_note.system) {
-          //          me.createSingleSlur(f_note, {}, {
-          //            y_shift_start : slurOptions.y_shift_start,
-          //            y_shift_end : slurOptions.y_shift_end,
-          //            invert : ((curveDir === ABOVE && firstStemDir === ABOVE) || (curveDir === BELOW && firstStemDir === BELOW)),
-          //            position : slurOptions.position,
-          //            position_end : slurOptions.position
-          //          });
-          //
-          //          slurOptions.position = slurOptions.position_end;
-          //          slurOptions.invert =
-          //          ((curveDir === ABOVE && lastStemDir === ABOVE) || (curveDir === BELOW && lastStemDir === BELOW));
-          //          me.createSingleSlur({}, l_note, slurOptions);
+          me.createSingleSlur(f_note, {}, {
+            y_shift_start : slurOptions.y_shift_start,
+            y_shift_end : slurOptions.y_shift_end,
+            invert : ((curveDir === ABOVE && firstStemDir === ABOVE) || (curveDir === BELOW && firstStemDir === BELOW)),
+            position : slurOptions.position,
+            position_end : slurOptions.position
+          });
+
+          slurOptions.position = slurOptions.position_end;
+          slurOptions.invert =
+          ((curveDir === ABOVE && lastStemDir === ABOVE) || (curveDir === BELOW && lastStemDir === BELOW));
+          me.createSingleSlur({}, l_note, slurOptions);
         } else {
           me.createSingleSlur(f_note, l_note, slurOptions);
         }
