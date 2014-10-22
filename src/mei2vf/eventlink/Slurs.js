@@ -183,7 +183,7 @@ define([
           slurOptions.y_shift_end = endvo;
         } else {
 
-          if (!f_note.vexNote.hasStem() || !l_note.vexNote.hasStem()) {
+          if (!f_note.vexNote || !l_note.vexNote || !f_note.vexNote.hasStem() || !l_note.vexNote.hasStem()) {
             // always position at head when one of the notes doesn't have a stem
             slurOptions.position = VF.Curve.Position.NEAR_HEAD;
             slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;

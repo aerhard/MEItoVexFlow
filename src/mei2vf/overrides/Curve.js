@@ -38,6 +38,27 @@ define([
       ctx.bezierCurveTo(cps_0_x, cps_0_y, cps_1_x, cps_1_y, last_x, last_y);
       ctx.bezierCurveTo(cps_1_x, cps_1_y + thickness, cps_0_x, cps_0_y + thickness, first_x, first_y);
     } else {
+
+      var x_diff = last_x-first_x;
+      var y_diff = last_y-first_y;
+
+      // decrease height of very narrow slurs
+      if(x_diff < 60) {
+        cps[0].y = 5 + cps[0].y * (x_diff / 120);
+        cps[1].y = 5 + cps[1].y *(x_diff / 120);
+      }
+
+      // adjust cps when y_diff is bigger than x_diff
+      var max_y_diff = x_diff/2;
+      if (y_diff > max_y_diff) {
+        console.log('y ' +y_diff+' x ' +x_diff);
+        cps[0].y += y_diff - max_y_diff;
+      } else if (y_diff < -max_y_diff) {
+        console.log('y ' +y_diff+' x ' +x_diff);
+        cps[1].y += -y_diff - max_y_diff;
+      }
+
+
       ctx.moveTo(first_x, first_y);
       ctx.bezierCurveTo(first_x + cp_spacing + cps[0].x,
           first_y + (cps[0].y * params.direction),
