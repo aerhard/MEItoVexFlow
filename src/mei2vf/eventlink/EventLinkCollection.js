@@ -27,7 +27,7 @@ define([
 ], function (MeiLib, RuntimeError, Util, EventLink) {
 
   /**
-   * @class MEI2VF.EventLinkCollection
+   * @class EventLinkCollection
    * @private
    *
    * @constructor
@@ -84,7 +84,6 @@ define([
 
       // convert tstamp into startid in current measure
       var local_tstamp2id = function (tstamp, lnkelem, measureElement) {
-        var tstamp;
 
         var stffinf = link_staveInfo(lnkelem);
         var stave = measureElement.querySelector('staff[n="' + stffinf.stave_n + '"]');

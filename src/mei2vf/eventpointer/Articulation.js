@@ -17,7 +17,7 @@
 define([
   'vexflow',
   'common/Logger'
-], function (VF, Logger) {
+], function (VF) {
 
   var Articulation = function (type) {
     this.init(type);

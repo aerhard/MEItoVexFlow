@@ -242,9 +242,8 @@ define([
       getBottomY : function () {
         var options = this.options;
         var spacing = options.spacing_between_lines_px;
-        var score_bottom = this.getYForLine(options.num_lines) + (options.space_below_staff_ln * spacing);
 
-        return score_bottom;
+        return this.getYForLine(options.num_lines) + (options.space_below_staff_ln * spacing);
       },
 
       getBottomLineY : function () {
@@ -256,9 +255,7 @@ define([
         var spacing = options.spacing_between_lines_px;
         var headroom = options.space_above_staff_ln;
 
-        var y = this.y + ((line * spacing) + (headroom * spacing)) - (THICKNESS / 2);
-
-        return y;
+        return this.y + ((line * spacing) + (headroom * spacing)) - (THICKNESS / 2);
       },
 
       getYForTopText : function (line, font_scale) {
@@ -277,9 +274,8 @@ define([
         var options = this.options;
         var spacing = options.spacing_between_lines_px;
         var headroom = options.space_above_staff_ln;
-        var y = this.y + (headroom * spacing) + (5 * spacing) - (line * spacing);
 
-        return y;
+        return this.y + (headroom * spacing) + (5 * spacing) - (line * spacing);
       },
 
       getYForGlyphs : function () {

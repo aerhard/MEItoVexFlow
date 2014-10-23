@@ -117,7 +117,7 @@ define([
     addArticulation : function (note, element) {
       var i, j, k, articCode, vexArtic, articElement;
 
-      var articElement = element.getAttribute('artic');
+      articElement = element.getAttribute('artic');
 
       if (articElement !== null) {
 
@@ -138,7 +138,7 @@ define([
             if (vexArtic) {
               vexArtic.addMeiElement(element);
             } else {
-              var vexArtic = new Articulation(articCode).addMeiElement(element);
+              vexArtic = new Articulation(articCode).addMeiElement(element);
               var place = element.getAttribute('place');
               if (place) {
                 vexArtic.setPosition(Tables.positions[place]);

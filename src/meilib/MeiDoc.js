@@ -1,7 +1,6 @@
 define([
-  'jquery',
-  'meilib/Alt'
-], function ($, Alt) {
+  'jquery'
+], function ($) {
 
   if (!window.MeiLib) window.MeiLib = {};
 
@@ -452,7 +451,7 @@ define([
    * sectionplane
    *
    * @param {Object} alt_inst_update
-   * @return the updated score
+   * @return {Object} the updated score
    */
   MeiLib.MeiDoc.prototype.replaceAltInstance = function (alt_inst_update) {
 
@@ -557,9 +556,9 @@ define([
    * Get a slice of the sectionview_score.
    *
    * @param params
-   *            {Obejct} contains the parameters for slicing. For more info see at
+   *            {Object} contains the parameters for slicing. For more info see at
    *            documentation of MeiLib.SliceMEI
-   * @return an XML DOM object containing the slice of the plain MEI
+   * @return {Object} an XML DOM object containing the slice of the plain MEI
    */
   MeiLib.MeiDoc.prototype.getSectionViewSlice = function (params) {
     return MeiLib.SliceMEI(this.sectionview_score, params);

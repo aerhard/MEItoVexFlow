@@ -28,8 +28,8 @@ define([
 ], function (VF, Vex, Logger, Util, Tables, EventPointerCollection) {
 
   /**
-   * @class MEI2VF.Directives
-   * @extend MEI2VF.EventPointerCollection
+   * @class Directives
+   * @extend EventPointerCollection
    * @private
    *
    * @constructor

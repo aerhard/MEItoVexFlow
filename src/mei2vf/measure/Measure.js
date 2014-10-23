@@ -26,7 +26,7 @@ define([
 ], function (VF, RuntimeError, Util, StaveConnectors) {
 
   /**
-   * @class MEI2VF.Measure
+   * @class Measure
    * @private
    *
    * @constructor

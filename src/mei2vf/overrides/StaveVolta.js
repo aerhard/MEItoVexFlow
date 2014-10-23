@@ -7,7 +7,7 @@
 define([
   'vexflow',
   'vex'
-], function (VF, Vex, undefined) {
+], function (VF, Vex) {
 
   VF.Volta.prototype.draw = function (stave, x) {
 

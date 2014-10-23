@@ -28,8 +28,8 @@ define([
 ], function (VF, Vex, Logger, RuntimeError, Tables, EventLinkCollection, undefined) {
 
   /**
-   * @class MEI2VF.Hairpins
-   * @extend MEI2VF.EventLinkCollection
+   * @class Hairpins
+   * @extend EventLinkCollection
    * @private
    *
    * @constructor

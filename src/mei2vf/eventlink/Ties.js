@@ -27,8 +27,8 @@ define([
 
 
   /**
-   * @class MEI2VF.Ties
-   * @extend MEI2VF.EventLinkCollection
+   * @class Ties
+   * @extend EventLinkCollection
    * @private
    *
    * @constructor

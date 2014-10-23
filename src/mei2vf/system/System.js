@@ -25,7 +25,7 @@ define([
   /**
    * A single instance of a staff system, containing and processing information
    * about the measures contained
-   * @class MEI2VF.System
+   * @class System
    * @private
    *
    * @constructor

@@ -4,19 +4,19 @@ define([
   if (!window.MeiLib) window.MeiLib = {};
 
   /**
-   * @class EventEnumerator
+   * @class MeiLib.EventEnumerator
    * Enumerate over the children events of node (node is a layer, beam or tuplet).
    * @constructor
    * @param {Object} node an XML DOM object
-   * @param {} proportion
+   * @param {Object} proportion
    */
   MeiLib.EventEnumerator = function (node, proportion) {
     this.init(node, proportion);
   };
   /**
    * @method init
-   * @param {} node
-   * @param {} proportion
+   * @param {Node} node
+   * @param {Object} proportion
    */
   MeiLib.EventEnumerator.prototype.init = function (node, proportion) {
     if (!node) {

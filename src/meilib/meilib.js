@@ -148,11 +148,10 @@ define([
       // change the meter unit according to the ratio in the tuplet, the get the duration as if the tuplet were a beam
       var num = +tuplet.getAttribute('num') || 3;
       var numbase = +tuplet.getAttribute('numbase') || 2;
-      var acc = durationOf_Beam(tuplet, {
+      return durationOf_Beam(tuplet, {
         count : meter.count,
         unit : meter.unit * numbase / num
       });
-      return acc;
     };
 
     var evnt_name = evnt.localName;
@@ -204,7 +203,7 @@ define([
     var eventList = new MeiLib.EventEnumerator(layer);
     var evnt;
     var dist;
-    var prev_evnt;
+    var prev_evnt = null;
     // previous event
     var prev_dist;
     // previous distance

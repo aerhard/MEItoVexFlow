@@ -28,7 +28,7 @@ define([
 ], function (VF, MeiLib, Logger, RuntimeError, Util) {
 
   /**
-   * @class MEI2VF.EventPointerCollection
+   * @class EventPointerCollection
    * @private
    *
    * @constructor

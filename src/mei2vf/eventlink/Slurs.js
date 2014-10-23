@@ -28,8 +28,8 @@ define([
 
 
   /**
-   * @class MEI2VF.Slurs
-   * @extend MEI2VF.EventLinkCollection
+   * @class Slurs
+   * @extend EventLinkCollection
    * @private
    *
    * @constructor
@@ -92,7 +92,6 @@ define([
         params = model.params;
         curveDir = (params.curvedir === 'above') ? ABOVE : (params.curvedir === 'below') ? BELOW : null;
 
-        var keysInChord;
         f_note = notes_by_id[model.getFirstId()] || {};
         l_note = notes_by_id[model.getLastId()] || {};
 
@@ -108,7 +107,6 @@ define([
           return true;
         }
 
-        var firstDefinedNote = (f_note.vexNote) ? f_note : l_note;
         var firstStemDir, lastStemDir;
         if (f_note.vexNote) firstStemDir = f_note.vexNote.getStemDirection();
         if (l_note.vexNote) lastStemDir = l_note.vexNote.getStemDirection();
@@ -159,11 +157,7 @@ define([
           }
 
           // adjust slurOptions to curveDir
-          if ((curveDir === BELOW && lastStemDir === ABOVE) || (curveDir === ABOVE && lastStemDir === BELOW)) {
-            slurOptions.invert = false;
-          } else {
-            slurOptions.invert = true;
-          }
+          slurOptions.invert = !((curveDir === BELOW && lastStemDir === ABOVE) || (curveDir === ABOVE && lastStemDir === BELOW));
 
         }
 
@@ -308,7 +302,7 @@ define([
         });
       }
       if (!cps[1]) {
-        Logger.info('Incomplete attribute', 'Expected four control points in slur/@bezier, but only found two. Providing cps 3 & 4 on basis on cps 1 & 2.')
+        Logger.info('Incomplete attribute', 'Expected four control points in slur/@bezier, but only found two. Providing cps 3 & 4 on basis on cps 1 & 2.');
         cps[1] = {x : -cps[0].x, y : cps[0].y};
       }
       return cps;

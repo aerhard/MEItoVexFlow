@@ -24,8 +24,8 @@ define([
 ], function (VF, Vex, Logger, Util, Tables, EventPointerCollection) {
 
   /**
-   * @class MEI2VF.Ornaments
-   * @extend MEI2VF.PointerCollection
+   * @class Ornaments
+   * @extend PointerCollection
    * @private
    *
    * @constructor
@@ -41,7 +41,7 @@ define([
     },
 
     addToNote : function (model, note) {
-      this.addOrnamentToNote(note.vexNote, model);
+      this.addOrnamentToNote(note.vexNote, model, 0);
     },
 
     /**
@@ -109,7 +109,7 @@ define([
         vexOrnament.setLowerAccidental(Tables.accidentals[atts.accidlower]);
       }
 
-      note.addModifier(index || 0, vexOrnament);
+      note.addModifier(index, vexOrnament);
     }
   });
 

@@ -12,7 +12,7 @@
 define([
   'vexflow',
   'vex'
-], function (VF, Vex, undefined) {
+], function (VF, Vex) {
 
 
 
@@ -284,7 +284,7 @@ define([
             //            prev_note.getBeamCount() - next_note.getBeamCount()
 
             if (regular_dir_beam_count > 1) {
-              var width = this.render_options.beam_width;
+               width = this.render_options.beam_width;
               regular_dir_beam_count = Math.min (regular_dir_beam_count, note.getGlyph().beam_count);
               additional_stem_extension = (((regular_dir_beam_count - 1) * width * 1.5) + width - 1);
             }
@@ -459,32 +459,32 @@ define([
         // TODO integrate!:
 
 
-        var beam_width = this.render_options.beam_width * this.stem_direction * -1;
+         beam_width = this.render_options.beam_width * this.stem_direction * -1;
 
-        var first_y_px = first_note.getStemExtents().topY + (beam_width * 0.5);
-        var last_y_px = last_note.getStemExtents().topY + (beam_width * 0.5);
+         first_y_px = first_note.getStemExtents().topY + (beam_width * 0.5);
+         last_y_px = last_note.getStemExtents().topY + (beam_width * 0.5);
 
-        var first_x_px = first_note.getStemX();
+         first_x_px = first_note.getStemX();
 
         var inc = false;
 
         // Draw the beams.
-        for (var i = 0; i < valid_beam_durations.length; ++i) {
-          var duration = valid_beam_durations[i];
-          var beam_lines = this.getBeamLines(duration);
+        for ( i = 0; i < valid_beam_durations.length; ++i) {
+           duration = valid_beam_durations[i];
+           beam_lines = this.getBeamLines(duration);
 
-          for (var j = 0; j < beam_lines.length; ++j) {
-            var beam_line = beam_lines[j];
+          for ( j = 0; j < beam_lines.length; ++j) {
+             beam_line = beam_lines[j];
 
             if (beam_line.flipped) {
               inc = true;
 
-              var first_x = beam_line.start - (this.stem_direction * -1 == Stem.DOWN ? Vex.Flow.STEM_WIDTH / 2 : 0);
-              var first_y = this.getSlopeY(first_x, first_x_px, first_y_px, this.slope);
+              first_x = beam_line.start - (this.stem_direction * -1 == Stem.DOWN ? Vex.Flow.STEM_WIDTH / 2 : 0);
+              first_y = this.getSlopeY(first_x, first_x_px, first_y_px, this.slope);
 
-              var last_x = beam_line.end +
+              last_x = beam_line.end +
                            (this.stem_direction * -1 == 1 ? (Vex.Flow.STEM_WIDTH / 3) : (-Vex.Flow.STEM_WIDTH / 3));
-              var last_y = this.getSlopeY(last_x, first_x_px, first_y_px, this.slope);
+              last_y = this.getSlopeY(last_x, first_x_px, first_y_px, this.slope);
 
               this.context.beginPath();
               this.context.moveTo(first_x, first_y + this.y_shift);

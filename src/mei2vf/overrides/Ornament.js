@@ -1,7 +1,7 @@
 define([
   'vexflow',
   'vex'
-], function (VF, Vex, undefined) {
+], function (VF, Vex) {
 
   VF.Ornament.prototype.setMeiElement = function (element) {
     this.meiElement = element;
@@ -64,6 +64,8 @@ define([
     var ctx = this.context;
     var stem_direction = this.note.getStemDirection();
     var stave = this.note.getStave();
+
+    // TODO support bottom ornaments
 
     // Get stem extents
     var stem_ext = this.note.getStem().getExtents();

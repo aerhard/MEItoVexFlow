@@ -74,7 +74,7 @@ define([
       this.lowestY = lowestY;
     },
 
-    getLowestY : function (lowestY) {
+    getLowestY : function () {
       return this.lowestY;
     },
 

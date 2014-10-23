@@ -6,7 +6,7 @@
 define([
   'vexflow',
   'vex'
-], function (VF, Vex, undefined) {
+], function (VF, Vex) {
 
   VF.Annotation.prototype.setMeiElement = function (element) {
     this.meiElement = element;

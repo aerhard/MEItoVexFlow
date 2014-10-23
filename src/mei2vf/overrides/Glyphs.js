@@ -1,7 +1,6 @@
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex, undefined) {
+  'vexflow'
+], function (VF) {
 
 
 

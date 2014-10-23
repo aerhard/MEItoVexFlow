@@ -459,7 +459,7 @@ define([
 
     resolveBeamSpans : function () {
       var me = this;
-      var spanObjectCreator = function (notes, voices, element) {
+      var spanObjectCreator = function (notes) {
         me.allBeams.push(new VF.Beam(notes, false));
       };
       me.resolveSpans(me.allBeamSpans, spanObjectCreator, null);
@@ -476,7 +476,7 @@ define([
       };
 
       var spanObjectCreator = function (notes, voices, element) {
-        var tickables, tuplet, voice;
+        var tickables, tuplet, voice, m, n;
 
         tuplet = new VF.Tuplet(notes, {
           num_notes : parseInt(element.getAttribute('num'), 10) || 3,
@@ -500,8 +500,7 @@ define([
         for (m = 0, n = voices.length; m < n; m++) {
           voice = voices[m];
           tickables = voice.tickables;
-          var v = voice;
-          v.ticksUsed = new Vex.Flow.Fraction(0, 1);
+          voice.ticksUsed = new Vex.Flow.Fraction(0, 1);
           voice.tickables = [];
           voice.addTickables(tickables);
         }
@@ -512,16 +511,15 @@ define([
 
 
     resolveSpans : function (elements, spanObjectCreator, fragmentPostProcessor) {
-      var me = this, i, j, elements, idString, element, notes;
+      var me = this, i, j, element, pList, pListArray, startIdAtt, endIdAtt;
 
       for (i = 0, j = elements.length; i < j; i++) {
-        notes = [];
         element = elements[i];
-        var pList = element.getAttribute('plist');
-        var pListArray = Util.pListToArray(pList);
+        pList = element.getAttribute('plist');
+        pListArray = Util.pListToArray(pList);
 
-        var startIdAtt = element.getAttribute('startid');
-        var endIdAtt = element.getAttribute('endid');
+        startIdAtt = element.getAttribute('startid');
+        endIdAtt = element.getAttribute('endid');
         if (startIdAtt !== null || endIdAtt !== null) {
           // insert startid and endid to the plist if they're not already there
           if (pListArray[0] !== startIdAtt) {
@@ -547,6 +545,7 @@ define([
               // voice index remains -1 if the note is not in the start measure; it will not get
               // included then when adding spaces
               if (!firstMeasure || $(obj.meiNote).closest('measure').get(0) === firstMeasure) {
+                //noinspection JSReferencingMutableVariableFromClosure
                 voiceIndex = voices.push(voice) - 1;
               }
             }
@@ -900,6 +899,7 @@ define([
      * Processes a MEI measure element
      * @method processMeasure
      * @param {Element} element the MEI measure element
+     * @param {Object} sectionContext the context shared by the current elements
      */
     processMeasure : function (element, sectionContext) {
       var me = this, atSystemStart, system, system_n, childNodes;
@@ -1206,6 +1206,7 @@ define([
      * @param {Number} measureIndex the index of the current measure
      * @param {MEI2VF.StaveVoices} currentStaveVoices The current StaveVoices
      * object
+     * @param {EventContext} eventContext the context shared by the current events
      */
     processStaveEvents : function (staves, staveElement, measureIndex, currentStaveVoices, eventContext) {
       var me = this, stave, stave_n, layerElements, i, j, vexNotes, staveInfo;
@@ -1351,7 +1352,7 @@ define([
      * @method processNote
      */
     processNote : function (eventContext, element, staveInfo) {
-      var me = this, xml_id, mei_tie, mei_slur, atts, note_opts, note, clef, vexPitch, stave, stave_n, otherStave;
+      var me = this, xml_id, mei_tie, mei_slur, atts, note_opts, note, clef, vexPitch, stave, otherStave;
 
       atts = Util.attsToObj(element);
 
@@ -1445,13 +1446,12 @@ define([
      * @method processChord
      */
     processChord : function (eventContext, element, staveInfo) {
-      var me = this, noteElements, xml_id, chord, chord_opts, atts, i, j, mei_tie, mei_slur, clef, stave, otherStave;
+      var me = this, noteElements, xml_id, chord, chord_opts, atts, i, j, mei_slur, clef, stave, otherStave;
 
       noteElements = element.getElementsByTagName('note');
 
       atts = Util.attsToObj(element);
 
-      mei_tie = atts.tie;
       mei_slur = atts.slur;
 
       xml_id = MeiLib.XMLID(element);
@@ -1944,7 +1944,7 @@ define([
 
     },
 
-    postFormat : function (items, ctx) {
+    postFormat : function (items) {
       var i, j;
       for (i = 0, j = items.length; i < j; i++) {
         items[i].postFormat();

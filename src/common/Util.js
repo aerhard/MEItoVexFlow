@@ -126,7 +126,7 @@ define(function () {
         // If no nodeType, this is expected to be an array
         while ((node = elem[i++])) {
           // Do not traverse comment nodes
-          ret += getText(node);
+          ret += this.getText(node);
         }
       } else if (nodeType === 1 || nodeType === 9 || nodeType === 11) {
         // Use textContent for elements
@@ -136,7 +136,7 @@ define(function () {
         } else {
           // Traverse its children
           for (elem = elem.firstChild; elem; elem = elem.nextSibling) {
-            ret += getText(elem);
+            ret += this.getText(elem);
           }
         }
       } else if (nodeType === 3 || nodeType === 4) {

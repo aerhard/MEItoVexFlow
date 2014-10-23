@@ -118,7 +118,7 @@ define([
     //      }
     //    },
 
-    draw : function (context, staves) {
+    draw : function (context) {
       var i, staveVoice, all_voices = this.all_voices;
       for (i = 0; i < all_voices.length; ++i) {
         staveVoice = all_voices[i];

@@ -137,6 +137,7 @@ define([
      * is set
      * @param {Object} options The options passed to the converter. For a list, see
      * {@link MEI2VF.Converter MEI2VF.Converter}
+     * @param {Function} callback
      */
     render_notation : function (xmlDoc, target, width, height, backend, options, callback) {
       var ctx;

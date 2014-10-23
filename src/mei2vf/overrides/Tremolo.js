@@ -5,7 +5,7 @@
 define([
   'vexflow',
   'vex'
-], function (VF, Vex, undefined) {
+], function (VF, Vex) {
 
   VF.Tremolo.prototype.draw = function () {
     if (!this.context) throw new Vex.RERR("NoContext", "Can't draw Tremolo without a context.");

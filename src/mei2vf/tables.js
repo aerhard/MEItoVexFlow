@@ -33,7 +33,7 @@ define([
 
   /**
    * @private
-   * @namespace Tables
+   * @namespace {Object} Tables
    */
   var Tables = {
 

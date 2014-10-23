@@ -26,8 +26,8 @@ define([
 
 
   /**
-   * @class MEI2VF.Fermatas
-   * @extend MEI2VF.EventPointerCollection
+   * @class Fermatas
+   * @extend EventPointerCollection
    * @private
    *
    * @constructor

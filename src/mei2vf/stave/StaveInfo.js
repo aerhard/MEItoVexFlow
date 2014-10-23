@@ -110,6 +110,7 @@ define([
      * @public
      * @param staffDef
      * @param scoreDef
+     * @param skipRenderWith
      */
     updateDef : function (staffDef, scoreDef, skipRenderWith) {
       var me = this, clefDefiningElement, timeSigDefiningElement, keySigDefiningElement;
@@ -158,7 +159,9 @@ define([
 
     /**
      * @private
-     * @param newStaffDef
+     * @param clefDefiningElement
+     * @param keySigDefiningElement
+     * @param timeSigDefiningElement
      */
     updateRenderWith : function (clefDefiningElement, keySigDefiningElement, timeSigDefiningElement) {
       var me = this, result, hasEqualAtt;

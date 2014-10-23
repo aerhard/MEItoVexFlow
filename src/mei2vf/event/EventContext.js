@@ -15,12 +15,10 @@
  *
  */
 define([
-  'vexflow',
-  'common/Logger'
-], function (VF, Logger) {
+], function () {
 
 
-  var EventContext = function (notes_by_id, system_n, beamInfosToResolve) {
+  var EventContext = function (notes_by_id, system_n) {
 
     var me = this;
 

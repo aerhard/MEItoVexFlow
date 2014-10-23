@@ -331,6 +331,7 @@ define([
      * reads a staffDef, writes it to currentStaveInfos
      *
      * @param {Element} element
+     * @param {Element} scoreDef
      * @return {Number} the staff number of the staffDef
      */
     processStaffDef : function (element, scoreDef) {

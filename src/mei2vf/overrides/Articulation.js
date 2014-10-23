@@ -9,7 +9,7 @@
 define([
   'vexflow',
   'vex'
-], function (VF, Vex, undefined) {
+], function (VF, Vex) {
 
   // ## Static Methods
     // Arrange articulations inside `ModifierContext`
@@ -78,11 +78,7 @@ define([
 
       var articulation_line = note_line + (offset_direction * line_spacing);
 
-      if (articulation_line >= 1 && articulation_line <= 5 && articulation_line % 1 === 0) {
-        return true;
-      }
-
-      return false;
+      return (articulation_line >= 1 && articulation_line <= 5 && articulation_line % 1 === 0);
     };
 
     // Articulations are centered over/under the note head.

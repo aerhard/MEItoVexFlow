@@ -10,7 +10,7 @@
 define([
   'vexflow',
   'vex'
-], function (VF, Vex, undefined) {
+], function (VF, Vex) {
 
   // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
   // Author: Larry Kuhns
@@ -78,7 +78,7 @@ define([
 
       state.left_shift += x_shift;
       return true;
-    }
+    };
 
     // ## Prototype Methods
     Vex.Inherit(Stroke, Modifier, {

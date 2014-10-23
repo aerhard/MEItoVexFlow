@@ -6,7 +6,7 @@
 define([
   'vexflow',
   'vex'
-], function (VF, Vex, undefined) {
+], function (VF, Vex) {
 
 
   // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.

@@ -24,8 +24,8 @@ define([
 ], function (VF, Vex, Logger, Util, Tables, EventPointerCollection) {
 
   /**
-   * @class MEI2VF.Arpeggios
-   * @extend MEI2VF.EventPointerCollection
+   * @class Arpeggios
+   * @extend EventPointerCollection
    * @private
    *
    * @constructor

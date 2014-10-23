@@ -1,7 +1,7 @@
 define([
   'vexflow',
   'vex'
-], function (VF, Vex, undefined) {
+], function (VF, Vex) {
 
 
   VF.Curve.prototype.renderCurve = function (params) {

@@ -6,7 +6,7 @@
 define([
   'vexflow',
   'vex'
-], function (VF, Vex, undefined) {
+], function (VF, Vex) {
 
   // VexFlow - Music Engraving for HTML5
   // Copyright Mohit Muthanna 2010
@@ -172,10 +172,12 @@ define([
         this.y = y;
         this.height = height;
 
+        var height_diff;
+
         switch (this.hairpin) {
           case StaveHairpin.type.CRESC:
             if (params.continued_left) {
-              var height_diff = height * 0.2;
+              height_diff = height * 0.2;
               ctx.moveTo(x1 + l_shift, y);
               ctx.lineTo(x, y + height_diff);
               ctx.moveTo(x + l_shift,  y + height - height_diff);
@@ -188,7 +190,7 @@ define([
             break;
           case StaveHairpin.type.DECRESC:
             if (params.continued_right) {
-              var height_diff = height * 0.2;
+              height_diff = height * 0.2;
               ctx.moveTo(x + l_shift, y);
               ctx.lineTo(x1, y + height_diff);
               ctx.moveTo(x1 + l_shift,  y + height - height_diff);
@@ -213,10 +215,11 @@ define([
 
         var first_note = this.first_note;
         var last_note = this.last_note;
+        var start, end;
 
         if (first_note && last_note) {
-          var start = first_note.getModifierStartXY(this.position, 0);
-          var end = last_note.getModifierStartXY(this.position, 0);
+          start = first_note.getModifierStartXY(this.position, 0);
+          end = last_note.getModifierStartXY(this.position, 0);
 
           this.renderHairpin({
             first_x : start.x,
@@ -230,7 +233,7 @@ define([
           });
           return true;
         } else if (first_note) {
-          var start = first_note.getModifierStartXY(this.position, 0);
+          start = first_note.getModifierStartXY(this.position, 0);
           this.renderHairpin({
             first_x : start.x,
             last_x : first_note.getStave().getSlurEndX(),
@@ -244,7 +247,7 @@ define([
           return true;
 
         } else {
-          var end = last_note.getModifierStartXY(this.position, 0);
+          end = last_note.getModifierStartXY(this.position, 0);
           this.renderHairpin({
             first_x : last_note.getStave().getSlurStartX(),
             last_x : end.x,
