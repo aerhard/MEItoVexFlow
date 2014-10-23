@@ -52,10 +52,10 @@ define([
       var max_y_diff = x_diff/2;
       if (y_diff > max_y_diff) {
         //console.log('y ' +y_diff+' x ' +x_diff);
-        cps[0].y += y_diff - max_y_diff;
+        cps[1].y += y_diff; // - max_y_diff;
       } else if (y_diff < -max_y_diff) {
         //console.log('y ' +y_diff+' x ' +x_diff);
-        cps[1].y += -y_diff - max_y_diff;
+        cps[0].y += -y_diff; // - max_y_diff;
       }
 
 
