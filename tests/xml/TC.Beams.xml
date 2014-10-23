@@ -42,7 +42,13 @@
         					</staff>
                             <staff n="2">
                                 <layer>
-                                    <rest dur="2" dots="1"/>
+                                    <rest dur="2"/>
+                                    <beam>
+                                        <note pname="e" oct="2" dur="16" stem.dir="up"/>
+                                        <note pname="g" oct="3" dur="16" stem.dir="down"/>
+                                        <note pname="f" oct="3" dur="16" stem.dir="down"/>
+                                        <note pname="e" oct="3" dur="16" stem.dir="down"/>
+                                    </beam>
                                     <beam>
                                     <note pname="c" oct="4" dur="16" stem.dir="down"/>
                                     <note pname="a" oct="2" dur="16" stem.dir="up"/>

@@ -59,4 +59,37 @@ define([
 //  };
 
 
+  VF.StaveNote.prototype.draw = function() {
+    if (!this.context) throw new Vex.RERR("NoCanvasContext",
+      "Can't draw without a canvas context.");
+    if (!this.stave) throw new Vex.RERR("NoStave",
+      "Can't draw without a stave.");
+    if (this.ys.length === 0) throw new Vex.RERR("NoYValues",
+      "Can't draw note without Y values.");
+
+    var x_begin = this.getNoteHeadBeginX();
+    var x_end = this.getNoteHeadEndX();
+
+    var render_stem = this.hasStem() && !this.beam;
+
+    // Format note head x positions
+    this.note_heads.forEach(function(note_head) {
+      note_head.setX(x_begin);
+    }, this);
+
+
+    // Format stem x positions
+    this.stem.setNoteHeadXBounds(x_begin, x_end);
+
+
+    // Draw each part of the note
+    this.drawLedgerLines();
+    if (render_stem) this.drawStem();
+    this.drawNoteHeads();
+    this.drawFlag();
+    this.drawModifiers();
+  }
+
+
+
 });

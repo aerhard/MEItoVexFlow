@@ -252,12 +252,25 @@ define([
 
           var slope_y = this.getSlopeY(x_px, first_x_px, first_y_px, this.slope) + this.y_shift;
 
+          var note_stem_dir = note.getStemDirection();
+
           // addition to the stem extension when notes are on the other side of the beam
-          var additional_stem_extension;
-          if (note.stem_direction === this.stem_direction) {
-            additional_stem_extension = 0;
+          var additional_stem_extension, regular_dir_beam_count = 0;
+
+          if (note_stem_dir === this.stem_direction) {
+            // change stem for regular notes
+            note.setStem(new Vex.Flow.Stem({
+              x_begin : x_px - (Vex.Flow.STEM_WIDTH / 2),
+              x_end : x_px,
+              y_top : this.stem_direction === 1 ? top_y_px : base_y_px,
+              y_bottom : this.stem_direction === 1 ? base_y_px : top_y_px,
+              y_extend : y_displacement,
+              stem_extension : Math.abs(top_y_px - slope_y) - Stem.HEIGHT - 1,
+              stem_direction : this.stem_direction
+            }));
+
           } else {
-            var prev_note, regular_dir_beam_count = true;
+            var prev_note;
             var k;
             k = i;
             while (k--) {
@@ -273,21 +286,22 @@ define([
             if (regular_dir_beam_count > 1) {
               var width = this.render_options.beam_width;
               regular_dir_beam_count = Math.min (regular_dir_beam_count, note.getGlyph().beam_count);
-              additional_stem_extension = (((regular_dir_beam_count - 1) * width * 1.5) + width - 1)
-                * -1;
+              additional_stem_extension = (((regular_dir_beam_count - 1) * width * 1.5) + width - 1);
             }
+
+            // change stem for flipped notes
+            note.setStem(new Vex.Flow.Stem({
+              x_begin : x_px - (Vex.Flow.STEM_WIDTH / 2),
+              x_end : x_px,
+              y_top : note_stem_dir === 1 ? top_y_px : base_y_px,
+              y_bottom : note_stem_dir === 1 ? base_y_px : top_y_px,
+              y_extend : y_displacement,
+              stem_extension : -Math.abs(top_y_px - slope_y) - Stem.HEIGHT +.5 + additional_stem_extension,
+              stem_direction : note_stem_dir
+            }));
 
           }
 
-          note.setStem(new Vex.Flow.Stem({
-            x_begin : x_px - (Vex.Flow.STEM_WIDTH / 2),
-            x_end : x_px,
-            y_top : this.stem_direction === 1 ? top_y_px : base_y_px,
-            y_bottom : this.stem_direction === 1 ? base_y_px : top_y_px,
-            y_extend : y_displacement,
-            stem_extension : Math.abs(top_y_px - slope_y) - Stem.HEIGHT - 1 + additional_stem_extension,
-            stem_direction : this.stem_direction
-          }));
         }
       },
 
