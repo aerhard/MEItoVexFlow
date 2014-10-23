@@ -24,12 +24,9 @@ define([
     if (!annotations || annotations.length === 0) return false;
 
     var text_line = state.text_line;
-    var max_width = 0;
-
     var top_text_line = state.top_text_line;
-    if (top_text_line === undefined) top_text_line = text_line;
     var bottom_text_line = state.bottom_text_line;
-    if (bottom_text_line === undefined) bottom_text_line = text_line;
+    var max_width = 0;
 
     // TODO get this from the stave
     var spacing_between_lines = 10;
@@ -40,7 +37,7 @@ define([
     for (var i = 0; i < annotations.length; ++i) {
       var annotation = annotations[i];
 
-      height_in_lines = annotation.font.size / spacing_between_lines * 1.5;
+      height_in_lines = (annotation.font.size / spacing_between_lines) * 1.5;
 
       if (annotation.vert_justification === 1) {
         annotation.setTextLine(top_text_line);
@@ -58,6 +55,11 @@ define([
 
     state.left_shift += width / 2;
     state.right_shift += width / 2;
+
+    state.text_line = text_line;
+    state.top_text_line = top_text_line;
+    state.bottom_text_line = bottom_text_line;
+
     return true;
   }
 

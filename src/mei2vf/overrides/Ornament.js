@@ -18,12 +18,9 @@ define([
     if (!ornaments || ornaments.length === 0) return false;
 
     var text_line = state.text_line;
-    var max_width = 0;
-
     var top_text_line = state.top_text_line;
-    if (top_text_line === undefined) top_text_line = text_line;
     var bottom_text_line = state.bottom_text_line;
-    if (bottom_text_line === undefined) bottom_text_line = text_line;
+    var max_width = 0;
 
     // Format Articulations
     var width;

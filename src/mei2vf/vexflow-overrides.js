@@ -8,6 +8,7 @@ define([
   'mei2vf/overrides/GraceNoteGroup',
   'mei2vf/overrides/Hyphen',
   'mei2vf/overrides/KeySignature',
+  'mei2vf/overrides/ModifierContext',
   'mei2vf/overrides/Ornament',
   'mei2vf/overrides/Stave',
   'mei2vf/overrides/StaveNote',

@@ -17,10 +17,9 @@ define([
     if (!articulations || articulations.length === 0) return false;
 
     var text_line = state.text_line;
+    var top_text_line = state.top_text_line;
+    var bottom_text_line = state.bottom_text_line;
     var max_width = 0;
-
-    var top_text_line = text_line;
-    var bottom_text_line = text_line;
 
     // Format Articulations
     var width;
