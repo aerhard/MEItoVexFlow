@@ -64,7 +64,7 @@ define([
     state.bottom_text_line = bottom_text_line;
 
     return true;
-  };
+  }
 
 
   VF.Annotation.prototype.draw = function () {
@@ -131,9 +131,9 @@ define([
       y = yt + ( yb - yt ) / 2 + text_height / 2;
 
     } else if (this.vert_justification == Annotation.VerticalJustify.TOP) {
-      y = Math.min(stave.getYForTopText(this.text_line), this.note.getYs()[0] - 10);
+      y = Math.min(stave.getYForTopText(this.text_line), this.note.getYs()[0] - text_height);
       if (has_stem) {
-        y = Math.min(y, (stem_ext.topY - 5) - (spacing * this.text_line));
+        y = Math.min(y, (stem_ext.topY - 7) - (spacing * this.text_line));
       }
     } else /* CENTER_STEM */{
       var extents = this.note.getStemExtents();
@@ -148,13 +148,13 @@ define([
     this.text_width = text_width;
     // END ADDITION
 
-    var context = this.context;
-    context.save();
-    context.beginPath();
-    context.rect(x, y-this.text_height, this.text_width, this.text_height);
-    context.fillStyle = 'rgba(0, 0, 255, 0.5)';
-    context.fill();
-    context.restore();
+    //var context = this.context;
+    //context.save();
+    //context.beginPath();
+    //context.rect(x, y-this.text_height, this.text_width, this.text_height);
+    //context.fillStyle = 'rgba(0, 0, 255, 0.5)';
+    //context.fill();
+    //context.restore();
 
 
     this.context.fillText(this.text, x, y);
