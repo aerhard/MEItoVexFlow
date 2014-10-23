@@ -436,6 +436,7 @@ define([
     format : function (ctx) {
       var me = this;
       me.formatSystems(me.systems, ctx);
+      me.postFormat(me.allBeams);
     },
 
     /**
@@ -1941,6 +1942,13 @@ define([
 
       me.pageInfo.setLowestY(me.systemInfo.getCurrentLowestY() + me.STAVE_HEIGHT);
 
+    },
+
+    postFormat : function (items, ctx) {
+      var i, j;
+      for (i = 0, j = items.length; i < j; i++) {
+        items[i].postFormat();
+      }
     },
 
     setContextAndDraw : function (items, ctx) {
