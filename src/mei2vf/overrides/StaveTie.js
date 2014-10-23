@@ -111,11 +111,11 @@ define([
 
       // START ADDITION
       setDir : function (dir) {
-        this.curvedir = dir;
+        this.direction = dir;
       },
 
       getDir : function () {
-        return this.curvedir;
+        return this.direction;
       },
       // END ADDITION
 
@@ -123,14 +123,6 @@ define([
         if (params.first_ys.length === 0 || params.last_ys.length === 0) {
           throw new Vex.RERR("BadArguments", "No Y-values to render");
         }
-
-        // START ADDITION
-        if (this.curvedir) {
-          params.direction = (this.curvedir === 'above') ? -1 : 1;
-        } else {
-          this.curvedir = params.direction;
-        }
-        // END ADDITION
 
         var ctx = this.context;
         var cp1 = this.render_options.cp1;
@@ -210,13 +202,19 @@ define([
           this.last_indices = this.first_indices;
         }
 
+        // START MODIFICATION
+        if (!this.direction) {
+          this.direction = stem_direction;
+        }
+
         this.renderTie({
           first_x_px : first_x_px,
           last_x_px : last_x_px,
           first_ys : first_ys,
           last_ys : last_ys,
-          direction : stem_direction
+          direction : this.direction
         });
+        // END MODIFICATION
 
         this.renderText(first_x_px, last_x_px);
         return true;

@@ -165,7 +165,10 @@ define([
         first_indices : f_note.index,
         last_indices : l_note.index
       });
-      vexTie.setDir(params.curvedir);
+
+      if (params.curvedir) {
+        vexTie.setDir((params.curvedir === 'above') ? -1 : 1);
+      }
       if (f_note.vexNote && f_note.vexNote.grace === true) {
         vexTie.render_options.first_x_shift = -5;
       }
