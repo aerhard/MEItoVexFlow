@@ -71,9 +71,7 @@ define([
 
     var needsLineAdjustment = function (articulation, note_line, line_spacing) {
       var offset_direction = (articulation.position === Modifier.Position.ABOVE) ? 1 : -1;
-      var duration = articulation.getNote().getDuration();
-
-      if (!is_on_head && duration !== "w" && duration !== "1") {
+      if (!is_on_head && !articulation.getNote().hasStem()) {
         // Add stem length, inless it's on a whole note
         note_line += offset_direction * 3.5;
       }
@@ -156,6 +154,15 @@ define([
 
     L("Rendering articulation: ", this.articulation, glyph_x, glyph_y);
     VF.renderGlyph(this.context, glyph_x, glyph_y, this.render_options.font_scale, this.articulation.code);
+
+    //var context = this.context;
+    //context.save();
+    //context.beginPath();
+    //context.rect(glyph_x, glyph_y, 10, 10);
+    //context.fillStyle = 'rgba(0, 0, 255, 0.5)';
+    //context.fill();
+    //context.restore();
+
 
     // ### START ADDITION
     this.x = glyph_x;

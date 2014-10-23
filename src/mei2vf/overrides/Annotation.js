@@ -3,6 +3,8 @@
  * 1) draw(): let left justified notes align with note heads on the left
  * 2) format(): take text height into account when calculating text_line
  * 3) format(): increase text_lines of annotations separately for top, bottom and the rest
+ * 4) draw(): Fixed that annotations below stem-less notes with outside of the staff system didn't get
+ * shifted with their note
  */
 
 define([
@@ -46,6 +48,7 @@ define([
         annotation.setTextLine(bottom_text_line);
         bottom_text_line += height_in_lines;
       } else {
+
         annotation.setTextLine(text_line);
         text_line += height_in_lines;
       }
@@ -112,14 +115,14 @@ define([
     }
     spacing = stave.getSpacingBetweenLines();
 
-    // TODO check - spacing is not initialized when has_stem is false. does it need a default value
-    // or is has_stem always true?
-
     if (this.vert_justification == Annotation.VerticalJustify.BOTTOM) {
       y = stave.getYForBottomText(this.text_line);
+      console.log('y ' +this.text_line);
       if (has_stem) {
         var stem_base = (this.note.getStemDirection() === 1 ? stem_ext.baseY : stem_ext.topY);
-        y = Math.max(y, stem_base + (spacing * ((this.text_line) + 2)));
+        y = Math.max(y, stem_base + 7 + (spacing * ((this.text_line) + 2)));
+      } else {
+        y = Math.max(y, this.note.getYs()[0] + 7 + (spacing * ((this.text_line) + 2)));
       }
 
     } else if (this.vert_justification == Annotation.VerticalJustify.CENTER) {
@@ -144,6 +147,14 @@ define([
     this.text_height = text_height;
     this.text_width = text_width;
     // END ADDITION
+
+    var context = this.context;
+    context.save();
+    context.beginPath();
+    context.rect(x, y-this.text_height, this.text_width, this.text_height);
+    context.fillStyle = 'rgba(0, 0, 255, 0.5)';
+    context.fill();
+    context.restore();
 
 
     this.context.fillText(this.text, x, y);
