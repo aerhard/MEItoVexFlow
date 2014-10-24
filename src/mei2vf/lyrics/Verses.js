@@ -106,6 +106,8 @@ define([
      */
     format : function () {
       var me = this, stave_n, verse_n, text_line, verse, i, j, lowestY, padding, lowestTextLine;
+      var notesInContext;
+      var k, l;
 
       padding = 20;
 
@@ -125,6 +127,16 @@ define([
           // first pass: get lowest y
           for (i = 0, j = verse.length; i < j; i++) {
             verse[i].setTextLine(text_line);
+
+            notesInContext = verse[i].getModifierContext().modifiers.stavenotes;
+
+            if (notesInContext.length > 1) {
+              verse[i].setNote(notesInContext[0]);
+            }
+
+            // TODO compare lowest Ys
+
+
             lowestY = Math.max(lowestY, verse[i].preProcess());
 
 //            lowestTextLine = Math.max(lowestTextLine, verse[i].text_line);
