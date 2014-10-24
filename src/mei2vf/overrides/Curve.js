@@ -38,45 +38,49 @@ define([
       ctx.bezierCurveTo(cps_0_x, cps_0_y, cps_1_x, cps_1_y, last_x, last_y);
       ctx.bezierCurveTo(cps_1_x, cps_1_y + thickness, cps_0_x, cps_0_y + thickness, first_x, first_y);
     } else {
+      var cps_0_x = cps[0].x;
+      var cps_0_y = cps[0].y;
+      var cps_1_x = cps[1].x;
+      var cps_1_y = cps[1].y;
 
       var x_diff = last_x-first_x;
       var y_diff = last_y-first_y;
 
       // decrease height of very narrow slurs
       if(x_diff < 60) {
-        cps[0].y = 5 + cps[0].y * (x_diff / 120);
-        cps[1].y = 5 + cps[1].y *(x_diff / 120);
+        cps_0_y = 5 + cps_0_y * (x_diff / 120);
+        cps_1_y = 5 + cps_1_y *(x_diff / 120);
       }
 
       // adjust cps when y_diff is bigger than x_diff
       var max_y_diff = x_diff/2;
       if (y_diff > max_y_diff) {
         if (params.direction === 1) {
-          cps[0].y += Math.abs(y_diff);
+          cps_0_y += Math.abs(y_diff);
         } else {
-          cps[1].y += Math.abs(y_diff);
+          cps_1_y += Math.abs(y_diff);
         }
       } else if (y_diff < -max_y_diff) {
         //cps[0].y += -y_diff * -1;
 
         if (params.direction === 1) {
-          cps[1].y += Math.abs(y_diff);
+          cps_1_y += Math.abs(y_diff);
         } else {
-          cps[0].y += Math.abs(y_diff);
+          cps_0_y += Math.abs(y_diff);
         }
       }
 
 
       ctx.moveTo(first_x, first_y);
-      ctx.bezierCurveTo(first_x + cp_spacing + cps[0].x,
-        first_y + (cps[0].y * params.direction),
-        last_x - cp_spacing + cps[1].x,
-        last_y + (cps[1].y * params.direction),
+      ctx.bezierCurveTo(first_x + cp_spacing + cps_0_x,
+        first_y + (cps_0_y * params.direction),
+        last_x - cp_spacing + cps_1_x,
+        last_y + (cps_1_y * params.direction),
         last_x, last_y);
-      ctx.bezierCurveTo(last_x - cp_spacing + cps[1].x,
-        last_y + ((cps[1].y + thickness) * params.direction),
-        first_x + cp_spacing + cps[0].x,
-        first_y + ((cps[0].y + thickness) * params.direction),
+      ctx.bezierCurveTo(last_x - cp_spacing + cps_1_x,
+        last_y + ((cps_1_y + thickness) * params.direction),
+        first_x + cp_spacing + cps_0_x,
+        first_y + ((cps_0_y + thickness) * params.direction),
         first_x, first_y);
     }
 
