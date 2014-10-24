@@ -212,6 +212,7 @@ define([
     test_cases.push({ title : "Tuplet span", mei_xml : 'TC.TupletSpan.xml', canvas_width : 1100, canvas_height : 500});
 
     test_cases.push({ title : "Note modifiers - Spacing", mei_xml : 'TC.NoteModifier.Spacing.xml', canvas_height : 2200});
+    test_cases.push({ title : "Articulations", mei_xml : 'TC.Articulations.xml', canvas_height : 400, options: {pageTopMar:80}});
 
     go();
 

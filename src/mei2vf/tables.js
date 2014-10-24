@@ -116,6 +116,20 @@ define([
       'stroke' : 'a|'
     },
 
+    articulationsBelow : {
+      'acc' : 'a>',
+      'stacc' : 'a.',
+      'ten' : 'a-',
+      'stacciss' : 'avb', // different glyph
+      'marc' : 'a^b', // different glyph
+      'dnbow' : 'am',
+      'upbow' : 'a|',
+      'snap' : 'ao',
+      'lhpizz' : 'a+',
+      'dot' : 'a.',
+      'stroke' : 'a|'
+    },
+
     fermata : {
       'above' : 'a@a',
       'below' : 'a@u'

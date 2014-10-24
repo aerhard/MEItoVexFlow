@@ -115,7 +115,7 @@ define([
      * @param {Element} element the articulation element
      */
     addArticulation : function (note, element) {
-      var i, j, k, articCode, vexArtic, articElement;
+      var i, j, k, articCode, vexArtic, articElement, place;
 
       articElement = element.getAttribute('artic');
 
@@ -124,8 +124,8 @@ define([
         var artics = articElement.split(' ');
 
         for (k=0;k<artics.length;k++) {
-
-          articCode = Tables.articulations[artics[k]];
+          place = element.getAttribute('place');
+          articCode = (place==='below') ? Tables.articulationsBelow[artics[k]] : Tables.articulations[artics[k]];
 
           if (articCode) {
             vexArtic = null;
@@ -139,11 +139,10 @@ define([
               vexArtic.addMeiElement(element);
             } else {
               vexArtic = new Articulation(articCode).addMeiElement(element);
-              var place = element.getAttribute('place');
               if (place) {
                 vexArtic.setPosition(Tables.positions[place]);
               } else{
-                // sets position to null; null positions are processed in Articulation.draw()
+                // sets position to null; null positions are set in Articulation.draw()
                 vexArtic.setPosition(null);
               }
               note.addArticulation(0, vexArtic);
