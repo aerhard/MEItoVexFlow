@@ -1899,8 +1899,13 @@ define([
     processSyllables : function (note, element, stave_n) {
       var me = this, i, j, syllables, vexSyllable;
       syllables = element.getElementsByTagName('syl');
+      if (element.hasAttribute('syl')) {
+        vexSyllable = new Syllable(element.getAttribute('syl'), element, me.cfg.lyricsFont);
+        note.addAnnotation(0, vexSyllable);
+        me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, element, stave_n);
+      }
       for (i = 0, j = syllables.length; i < j; i++) {
-        vexSyllable = new Syllable(syllables[i], me.cfg.lyricsFont);
+        vexSyllable = new Syllable(Util.getText(syllables[i]), syllables[i], me.cfg.lyricsFont);
         note.addAnnotation(0, vexSyllable);
         me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, syllables[i], stave_n);
       }

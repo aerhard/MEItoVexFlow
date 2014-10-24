@@ -117,7 +117,7 @@ define([
 
     if (this.vert_justification == Annotation.VerticalJustify.BOTTOM) {
       y = stave.getYForBottomText(this.text_line);
-      console.log('y ' +this.text_line);
+      //console.log('y ' +this.text_line);
       if (has_stem) {
         var stem_base = (this.note.getStemDirection() === 1 ? stem_ext.baseY : stem_ext.topY);
         y = Math.max(y, stem_base + 7 + (spacing * ((this.text_line) + 2)));

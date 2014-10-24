@@ -13,8 +13,8 @@ define([
 ], function (VF, Vex, Util) {
 
 
-  var Syllable = function (element, font) {
-    this.init(Util.getText(element));
+  var Syllable = function (text, element, font) {
+    this.init(text);
     this.setFont(font.family, font.size, font.weight);
     this.setMeiElement(element);
     this.setLineSpacing(font.spacing);
