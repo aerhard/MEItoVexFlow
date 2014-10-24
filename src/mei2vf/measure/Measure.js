@@ -173,7 +173,7 @@ define([
      */
     addRehearsalMarks : function () {
       var me = this, stave_n, vexStave, offsetX, i, j, rehElement;
-      for (i=0,j=me.rehElements.length;i<j;i++) {
+      for (i = 0, j = me.rehElements.length; i < j; i++) {
         rehElement = me.rehElements[i];
         stave_n = rehElement.getAttribute('staff');
         vexStave = me.staves[stave_n];
@@ -192,17 +192,14 @@ define([
      */
     addTempoToStaves : function () {
       var me = this, offsetX, vexStave, vexTempo, atts, halfLineDistance, i, j, tempoElement;
-      for (i=0,j=me.tempoElements.length;i<j;i++) {
+      for (i = 0, j = me.tempoElements.length; i < j; i++) {
         tempoElement = me.tempoElements[i];
 
         atts = Util.attsToObj(tempoElement);
         vexStave = me.staves[atts.staff];
         halfLineDistance = vexStave.getSpacingBetweenLines() / 2;
         vexTempo = new VF.StaveTempo({
-          name : Util.getText(tempoElement),
-          duration : atts['mm.unit'],
-          dots : +atts['mm.dots'],
-          bpm : +atts.mm
+          name : Util.getText(tempoElement), duration : atts['mm.unit'], dots : +atts['mm.dots'], bpm : +atts.mm
         }, vexStave.x, 5);
         if (atts.vo) {
           vexTempo.setShiftY(+atts.vo * halfLineDistance);
@@ -227,7 +224,7 @@ define([
      * calculates the minimum width of the current measure
      */
     calculateMinWidth : function () {
-      var me = this, i, staves, stave, repeatPadding, maxNoteStartX=0, maxEndModifierW =0;
+      var me = this, i, staves, stave, repeatPadding, maxNoteStartX = 0, maxEndModifierW = 0;
 
       staves = me.staves;
       i = staves.length;

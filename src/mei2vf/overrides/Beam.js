@@ -223,84 +223,78 @@ define([
           var y_displacement = Vex.Flow.STEM_WIDTH;
 
           if (!note.hasStem()) {
-            if (note.isRest() && this.render_options.show_stemlets) {
-              var centerGlyphX = note.getCenterGlyphX();
-
-              var width = this.render_options.beam_width;
-              var total_width = ((this.beam_count - 1) * width * 1.5) + width;
-
-              var stemlet_height = (total_width - y_displacement + this.render_options.stemlet_extension);
-
-              var beam_y = this.getSlopeY(centerGlyphX, first_x_px, first_y_px, this.slope) + this.y_shift;
-              var start_y = beam_y + (Vex.Flow.Stem.HEIGHT * this.stem_direction);
-              var end_y = beam_y + (stemlet_height * this.stem_direction);
-
-              // Draw Stemlet
-              note.setStem(new Vex.Flow.Stem({
-                x_begin : centerGlyphX,
-                x_end : centerGlyphX,
-                y_bottom : this.stem_direction === 1 ? end_y : start_y,
-                y_top : this.stem_direction === 1 ? start_y : end_y,
-                y_extend : y_displacement,
-                stem_extension : -1, // To avoid protruding through the beam
-                stem_direction : this.stem_direction
-              }));
-            }
-
+            // SKIPPED in MEI2VF
+            //if (note.isRest() && this.render_options.show_stemlets) {
+            //  var centerGlyphX = note.getCenterGlyphX();
+            //
+            //  var width = this.render_options.beam_width;
+            //  var total_width = ((this.beam_count - 1) * width * 1.5) + width;
+            //
+            //  var stemlet_height = (total_width - y_displacement + this.render_options.stemlet_extension);
+            //
+            //  var beam_y = this.getSlopeY(centerGlyphX, first_x_px, first_y_px, this.slope) + this.y_shift;
+            //  var start_y = beam_y + (Vex.Flow.Stem.HEIGHT * this.stem_direction);
+            //  var end_y = beam_y + (stemlet_height * this.stem_direction);
+            //
+            //  // Draw Stemlet
+            //  note.setStem(new Vex.Flow.Stem({
+            //    x_begin : centerGlyphX,
+            //    x_end : centerGlyphX,
+            //    y_bottom : this.stem_direction === 1 ? end_y : start_y,
+            //    y_top : this.stem_direction === 1 ? start_y : end_y,
+            //    y_extend : y_displacement,
+            //    stem_extension : -1, // To avoid protruding through the beam
+            //    stem_direction : this.stem_direction
+            //  }));
+            //}
             continue;
           }
 
           var slope_y = this.getSlopeY(x_px, first_x_px, first_y_px, this.slope) + this.y_shift;
 
           var note_stem_dir = note.getStemDirection();
-
-          // addition to the stem extension when notes are on the other side of the beam
-          var additional_stem_extension, regular_dir_beam_count = 0;
+          var beam_width = this.render_options.beam_width;
+          var stem_through_beams_length = beam_width- 1;
+          var regular_beam_count = 0;
+          var stem_extension;
 
           if (note_stem_dir === this.stem_direction) {
-            // change stem for regular notes
-            note.setStem(new Vex.Flow.Stem({
-              x_begin : x_px - (Vex.Flow.STEM_WIDTH / 2),
-              x_end : x_px,
-              y_top : this.stem_direction === 1 ? top_y_px : base_y_px,
-              y_bottom : this.stem_direction === 1 ? base_y_px : top_y_px,
-              y_extend : y_displacement,
-              stem_extension : Math.abs(top_y_px - slope_y) - Stem.HEIGHT - 1,
-              stem_direction : this.stem_direction
-            }));
+            // set stem extension for notes on the regular side of the beam
+            stem_extension = Math.abs(top_y_px - slope_y) - Stem.HEIGHT - 1;
 
           } else {
+            // set stem extension for notes on the opposite side of the beam
+
             var prev_note;
-            var k;
-            k = i;
+            var k = i;
             while (k--) {
               prev_note = this.notes[k];
               if (prev_note.stem_direction === this.stem_direction) {
-                regular_dir_beam_count = prev_note.getBeamCount();
+                regular_beam_count = prev_note.getBeamCount();
                 break;
               }
             }
             //            var next_note = this.notes[i+1];
             //            prev_note.getBeamCount() - next_note.getBeamCount()
 
-            if (regular_dir_beam_count > 1) {
-               width = this.render_options.beam_width;
-              regular_dir_beam_count = Math.min (regular_dir_beam_count, note.getGlyph().beam_count);
-              additional_stem_extension = (((regular_dir_beam_count - 1) * width * 1.5) + width - 1);
+            if (regular_beam_count > 1) {
+              regular_beam_count = Math.min(regular_beam_count, note.getGlyph().beam_count);
+              stem_through_beams_length += (regular_beam_count - 1) * beam_width * 1.5;
             }
-
-            // change stem for flipped notes
-            note.setStem(new Vex.Flow.Stem({
-              x_begin : x_px - (Vex.Flow.STEM_WIDTH / 2),
-              x_end : x_px,
-              y_top : note_stem_dir === 1 ? top_y_px : base_y_px,
-              y_bottom : note_stem_dir === 1 ? base_y_px : top_y_px,
-              y_extend : y_displacement,
-              stem_extension : -Math.abs(top_y_px - slope_y) - Stem.HEIGHT +.5 + additional_stem_extension,
-              stem_direction : note_stem_dir
-            }));
-
+            stem_extension = -Math.abs(top_y_px - slope_y) - Stem.HEIGHT + .5 + stem_through_beams_length;
           }
+
+
+          note.setStem(new Vex.Flow.Stem({
+            x_begin : x_px - (Vex.Flow.STEM_WIDTH / 2),
+            x_end : x_px,
+            y_top : note_stem_dir === 1 ? top_y_px : base_y_px,
+            y_bottom : note_stem_dir === 1 ? base_y_px : top_y_px,
+            y_extend : y_displacement,
+            stem_extension : stem_extension,
+            stem_direction : note_stem_dir
+          }));
+
 
         }
       },
@@ -323,8 +317,7 @@ define([
           var right_partial = duration !== "8" && unshared_beams < 0;
 
           return {
-            left : prev_note,
-            right : right_partial
+            left : prev_note, right : right_partial
           };
         }
 
@@ -342,9 +335,7 @@ define([
               if (!note.isRest()) {
 
                 var new_line = {
-                  start : stem_x,
-                  end : null,
-                  flipped : note.getStemDirection() !== this.stem_direction
+                  start : stem_x, end : null, flipped : note.getStemDirection() !== this.stem_direction
                 };
 
                 if (partial.left && !partial.right) {
@@ -459,22 +450,22 @@ define([
         // TODO integrate!:
 
 
-         beam_width = this.render_options.beam_width * this.stem_direction * -1;
+        beam_width = this.render_options.beam_width * this.stem_direction * -1;
 
-         first_y_px = first_note.getStemExtents().topY + (beam_width * 0.5);
-         last_y_px = last_note.getStemExtents().topY + (beam_width * 0.5);
+        first_y_px = first_note.getStemExtents().topY + (beam_width * 0.5);
+        last_y_px = last_note.getStemExtents().topY + (beam_width * 0.5);
 
-         first_x_px = first_note.getStemX();
+        first_x_px = first_note.getStemX();
 
         var inc = false;
 
         // Draw the beams.
-        for ( i = 0; i < valid_beam_durations.length; ++i) {
-           duration = valid_beam_durations[i];
-           beam_lines = this.getBeamLines(duration);
+        for (i = 0; i < valid_beam_durations.length; ++i) {
+          duration = valid_beam_durations[i];
+          beam_lines = this.getBeamLines(duration);
 
-          for ( j = 0; j < beam_lines.length; ++j) {
-             beam_line = beam_lines[j];
+          for (j = 0; j < beam_lines.length; ++j) {
+            beam_line = beam_lines[j];
 
             if (beam_line.flipped) {
               inc = true;
@@ -482,8 +473,8 @@ define([
               first_x = beam_line.start - (this.stem_direction * -1 == Stem.DOWN ? Vex.Flow.STEM_WIDTH / 2 : 0);
               first_y = this.getSlopeY(first_x, first_x_px, first_y_px, this.slope);
 
-              last_x = beam_line.end +
-                           (this.stem_direction * -1 == 1 ? (Vex.Flow.STEM_WIDTH / 3) : (-Vex.Flow.STEM_WIDTH / 3));
+              last_x =
+              beam_line.end + (this.stem_direction * -1 == 1 ? (Vex.Flow.STEM_WIDTH / 3) : (-Vex.Flow.STEM_WIDTH / 3));
               last_y = this.getSlopeY(last_x, first_x_px, first_y_px, this.slope);
 
               this.context.beginPath();
@@ -550,8 +541,9 @@ define([
         }
       });
 
-      if (lineSum >= 0)
+      if (lineSum >= 0) {
         return Stem.DOWN;
+      }
       return Stem.UP;
     }
 

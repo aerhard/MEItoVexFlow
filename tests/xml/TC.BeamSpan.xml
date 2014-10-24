@@ -35,7 +35,7 @@
                                     <note xml:id="n03" pname="c" oct="5" dur="8"/>
                                     <note xml:id="n04" pname="c" oct="5" dur="8"/>
                                     <note xml:id="n05" pname="c" oct="5" dur="8"/>
-                                    <note xml:id="n06" pname="c" oct="5" dur="8"/>
+                                    <note xml:id="n06" pname="c" oct="5" dur="8" stem.dir="down"/>
 
                                     <note xml:id="n08" pname="c" oct="5" dur="8"/>
         						</layer>

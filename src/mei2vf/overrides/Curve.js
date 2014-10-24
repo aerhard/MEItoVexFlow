@@ -51,24 +51,32 @@ define([
       // adjust cps when y_diff is bigger than x_diff
       var max_y_diff = x_diff/2;
       if (y_diff > max_y_diff) {
-        //console.log('y ' +y_diff+' x ' +x_diff);
-        cps[1].y += y_diff; // - max_y_diff;
+        if (params.direction === 1) {
+          cps[0].y += Math.abs(y_diff);
+        } else {
+          cps[1].y += Math.abs(y_diff);
+        }
       } else if (y_diff < -max_y_diff) {
-        //console.log('y ' +y_diff+' x ' +x_diff);
-        cps[0].y += -y_diff; // - max_y_diff;
+        //cps[0].y += -y_diff * -1;
+
+        if (params.direction === 1) {
+          cps[1].y += Math.abs(y_diff);
+        } else {
+          cps[0].y += Math.abs(y_diff);
+        }
       }
 
 
       ctx.moveTo(first_x, first_y);
       ctx.bezierCurveTo(first_x + cp_spacing + cps[0].x,
-          first_y + (cps[0].y * params.direction),
-          last_x - cp_spacing + cps[1].x,
-          last_y + (cps[1].y * params.direction),
+        first_y + (cps[0].y * params.direction),
+        last_x - cp_spacing + cps[1].x,
+        last_y + (cps[1].y * params.direction),
         last_x, last_y);
       ctx.bezierCurveTo(last_x - cp_spacing + cps[1].x,
-          last_y + ((cps[1].y + thickness) * params.direction),
-          first_x + cp_spacing + cps[0].x,
-          first_y + ((cps[0].y + thickness) * params.direction),
+        last_y + ((cps[1].y + thickness) * params.direction),
+        first_x + cp_spacing + cps[0].x,
+        first_y + ((cps[0].y + thickness) * params.direction),
         first_x, first_y);
     }
 

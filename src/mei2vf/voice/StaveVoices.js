@@ -75,8 +75,6 @@ define([
       return me.formatter.getMinTotalWidth();
     },
 
-    // TODO it might be necessary to calculate this for every voice
-    // TODO also check if this works well with mRests!
     /**
      * returns how much of the total tick count in the measure is actually used by the first voice
      * return {Number}
@@ -117,6 +115,21 @@ define([
     //        return lowestY;
     //      }
     //    },
+
+    // TODO: also use this for auto y formatting!!
+
+    getYBounds : function () {
+      var me = this, vStaveWise = me.vexVoicesStaffWise;
+      var yBounds = {};
+      for (var i in vStaveWise) {
+        yBounds[i] = [];
+        for (var k= 0,l=vStaveWise[i].length;k<l;k++) {
+          yBounds[i].push(vStaveWise[i][k].getBoundingBox());
+        }
+      }
+      return yBounds;
+    },
+
 
     draw : function (context) {
       var i, staveVoice, all_voices = this.all_voices;

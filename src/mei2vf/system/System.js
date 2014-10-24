@@ -82,6 +82,7 @@ define([
        * system
        */
       me.measures = [];
+      me.systemVoiceYBounds = [];
     },
 
     /**
@@ -217,6 +218,8 @@ define([
         if (measures[i]) {
           labels = (i === 0) ? me.labels : null;
           measures[i].format(offsetX, labels);
+          //me.updateSystemVoiceYBounds(measures[i].getVoices().getYBounds());
+
           offsetX += measures[i].getW();
         }
         measures[i].addRehearsalMarks();
@@ -230,6 +233,12 @@ define([
 
       me.verses.format();
       return me;
+    },
+
+    updateSystemVoiceYBounds : function(bounds) {
+      var me = this;
+      me.systemVoiceYBounds.push(bounds);
+      console.log(me.systemVoiceYBounds);
     },
 
 
