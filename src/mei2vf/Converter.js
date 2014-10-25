@@ -65,6 +65,8 @@ define([
   'mei2vf/eventpointer/Dynamics',
   'mei2vf/eventpointer/Fermatas',
   'mei2vf/eventpointer/Ornaments',
+  'mei2vf/eventspan/BeamCollection',
+  'mei2vf/eventspan/TupletCollection',
   'mei2vf/lyrics/Verses',
   'mei2vf/lyrics/Syllable',
   'mei2vf/stave/Stave',
@@ -74,7 +76,8 @@ define([
   'mei2vf/system/SystemInfo',
   'mei2vf/Tables',
   'mei2vf/voice/StaveVoices'
-], function (VF, MeiLib, Logger, RuntimeError, Util, EventContext, EventUtil, Note, GraceNote, Chord, GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Arpeggios, Directives, Dynamics, Fermatas, Ornaments, Verses, Syllable, Stave, Measure, PageInfo, System, SystemInfo, Tables, StaveVoices) {
+], function (VF, MeiLib, Logger, RuntimeError, Util, EventContext, EventUtil, Note, GraceNote, Chord, GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Arpeggios, Directives, Dynamics, Fermatas, Ornaments,
+  BeamCollection, TupletCollection, Verses, Syllable, Stave, Measure, PageInfo, System, SystemInfo, Tables, StaveVoices) {
 
   /**
    * Converts an MEI XML document / document fragment to VexFlow objects and
@@ -112,48 +115,39 @@ define([
        * @cfg {Number|null} pageWidth The width of the page. If null, the page width is calculated on
        * basis of the page content
        */
-      pageWidth : null,
-      /**
+      pageWidth : null, /**
        * @cfg {Number} pageTopMar The page top margin
        */
-      pageTopMar : 60,
-      /**
+      pageTopMar : 60, /**
        * @cfg {Number} pageBottomMar The page bottom margin
        */
-      pageBottomMar : 80,
-      /**
+      pageBottomMar : 80, /**
        * @cfg {Number} pageLeftMar The page left margin
        */
-      pageLeftMar : 20,
-      /**
+      pageLeftMar : 20, /**
        * @cfg {Number} pageRightMar The page right margin
        */
-      pageRightMar : 20,
-      /**
+      pageRightMar : 20, /**
        * @cfg {Number} defaultSpacingInMeasure The default spacing added to a measure's minimum
        * width when no page width is specified (i.e. when the width cannot be determined on basis
        * of the page width)
        */
-      defaultSpacingInMeasure : 180,
-      /**
+      defaultSpacingInMeasure : 180, /**
        * @cfg {Number} systemSpacing The default spacing between two stave
        * systems
        */
-      systemSpacing : 90,
-      /**
+      systemSpacing : 90, /**
        * @cfg {Number} staveSpacing The default spacing between two staves
        * within a system; overridden by the spacing attribute of a staffDef
        * element in the MEI code
        */
-      staveSpacing : 60,
-      /**
+      staveSpacing : 60, /**
        * @cfg {Boolean} autoStaveConnectorLine Specifies if a stave connector
        * line is drawn on the left of systems by default; if set to true, the
        * auto line will not appear when staffDef/@symbol="none" is set for the
        * outermost staffDef element
        */
-      autoStaveConnectorLine : true,
-      /**
+      autoStaveConnectorLine : true, /**
        * @cfg {"full"/"abbr"/null} labelMode Specifies the way voice labels are
        * added
        * to staves. Values:
@@ -171,8 +165,7 @@ define([
        * @cfg {Number} maxHyphenDistance The maximum distance (in pixels)
        * between two hyphens in the lyrics lines
        */
-      maxHyphenDistance : 75,
-      /**
+      maxHyphenDistance : 75, /**
        * @cfg {Object} lyricsFont The font used for rendering lyrics (and
        * hyphens)
        * @cfg {String} lyricsFont.family the font family
@@ -184,41 +177,31 @@ define([
        * 'weight'
        */
       lyricsFont : {
-        family : 'Times',
-        size : 15,
-        spacing : 1.3
-      },
-      /**
+        family : 'Times', size : 15, spacing : 1.3
+      }, /**
        * @cfg {Object} annotFont the font used for annotations (for example,
        * 'pizz.')
        * @cfg {String} annotFont.family the font family
        * @cfg {Number} annotFont.size the font size
        */
       annotFont : {
-        family : 'Times',
-        size : 15
-      },
-      /**
+        family : 'Times', size : 15
+      }, /**
        * @cfg {Object} dynamFont the font used for dynamics
        * @cfg {String} dynamFont.family the font family
        * @cfg {Number} dynamFont.size the font size
        * @cfg {String} dynamFont.weight the font weight
        */
       dynamFont : {
-        family : 'Times',
-        size : 17.5,
-        weight : 'bold italic'
-      },
-      /**
+        family : 'Times', size : 17.5, weight : 'bold italic'
+      }, /**
        * @cfg {Object} tempoFont The tempo font
        * @cfg {String} tempoFont.family the font family
        * @cfg {Number} tempoFont.size the font size
        * @cfg {String} tempoFont.weight the font weight
        */
       tempoFont : {
-        family : "Times",
-        size : 17,
-        weight : "bold"
+        family : "Times", size : 17, weight : "bold"
       }
     },
 
@@ -292,22 +275,10 @@ define([
        * @property {Vex.Flow.Stave[][]} allVexMeasureStaves
        */
       me.allVexMeasureStaves = [];
-      /**
-       * Contains all Vex.Flow.Beam objects. Data is just pushed in
-       * and later processed as a whole, so the array index is
-       * irrelevant.
-       * @property {Vex.Flow.Beam[]} allBeams
-       */
-      me.allBeams = [];
-      me.allBeamSpans = [];
-      me.allTupletSpans = [];
-      /**
-       * Contains all Vex.Flow.Tuplet objects. Data is just pushed in
-       * and later processed as a whole, so the array index is
-       * irrelevant.
-       * @property {Vex.Flow.Tuplet[]} allTuplets
-       */
-      me.allTuplets = [];
+
+      me.beams = new BeamCollection();
+      me.tuplets = new TupletCollection();
+
       /**
        * an instance of MEI2VF.Dynamics dealing with and storing all dynamics
        * found in the MEI document
@@ -427,8 +398,8 @@ define([
       me.slurs.createVexFromInfos(me.notes_by_id);
       me.hairpins.createVexFromInfos(me.notes_by_id);
 
-      me.resolveTupletSpans();
-      me.resolveBeamSpans();
+      me.tuplets.resolveSpanElements(me.notes_by_id);
+      me.beams.resolveSpanElements(me.notes_by_id);
 
       return me;
     },
@@ -436,7 +407,7 @@ define([
     format : function (ctx) {
       var me = this;
       me.formatSystems(me.systems, ctx);
-      me.postFormat(me.allBeams);
+      me.beams.postFormat();
     },
 
     /**
@@ -449,165 +420,12 @@ define([
     draw : function (ctx) {
       var me = this;
       me.drawSystems(me.systems, ctx);
-      me.setContextAndDraw(me.allBeams, ctx);
-      me.setContextAndDraw(me.allTuplets, ctx);
+      me.beams.setContextAndDraw(ctx);
+      me.tuplets.setContextAndDraw(ctx);
       me.ties.setContext(ctx).draw();
       me.slurs.setContext(ctx).draw();
       me.hairpins.setContext(ctx).draw();
       return me;
-    },
-
-    resolveBeamSpans : function () {
-      var me = this;
-      var spanObjectCreator = function (notes) {
-        me.allBeams.push(new VF.Beam(notes, false));
-      };
-      me.resolveSpans(me.allBeamSpans, spanObjectCreator, null);
-    },
-
-    resolveTupletSpans : function () {
-      var me = this;
-
-      var fragmentPostProcessor = function (element, slice) {
-        new VF.Tuplet(slice, {
-          num_notes : parseInt(element.getAttribute('num'), 10) || 3,
-          beats_occupied : parseInt(element.getAttribute('numbase'), 10) || 2
-        })
-      };
-
-      var spanObjectCreator = function (notes, voices, element) {
-        var tickables, tuplet, voice, m, n;
-
-        tuplet = new VF.Tuplet(notes, {
-          num_notes : parseInt(element.getAttribute('num'), 10) || 3,
-          beats_occupied : parseInt(element.getAttribute('numbase'), 10) || 2
-        });
-
-        if (element.getAttribute('num.format') === 'ratio') {
-          tuplet.setRatioed(true);
-        }
-
-        tuplet.setBracketed(element.getAttribute('bracket.visible') === 'true');
-
-        var bracketPlace = element.getAttribute('bracket.place');
-        if (bracketPlace) {
-          tuplet.setTupletLocation((bracketPlace === 'above') ? 1 : -1);
-        }
-
-        me.allTuplets.push(tuplet);
-
-        // TODO make this more efficient
-        for (m = 0, n = voices.length; m < n; m++) {
-          voice = voices[m];
-          tickables = voice.tickables;
-          voice.ticksUsed = new Vex.Flow.Fraction(0, 1);
-          voice.tickables = [];
-          voice.addTickables(tickables);
-        }
-      };
-
-      me.resolveSpans(me.allTupletSpans, spanObjectCreator, fragmentPostProcessor);
-    },
-
-
-    resolveSpans : function (elements, spanObjectCreator, fragmentPostProcessor) {
-      var me = this, i, j, element, pList, pListArray, startIdAtt, endIdAtt;
-
-      for (i = 0, j = elements.length; i < j; i++) {
-        element = elements[i];
-        pList = element.getAttribute('plist');
-        pListArray = Util.pListToArray(pList);
-
-        startIdAtt = element.getAttribute('startid');
-        endIdAtt = element.getAttribute('endid');
-        if (startIdAtt !== null || endIdAtt !== null) {
-          // insert startid and endid to the plist if they're not already there
-          if (pListArray[0] !== startIdAtt) {
-            pListArray.unshift(startIdAtt);
-          }
-          if (pListArray[pListArray.length - 1] !== endIdAtt) {
-            pListArray.push(endIdAtt);
-          }
-          var voices = [];
-          var firstMeasure;
-          var noteObjects = pListArray.map(function (item, index) {
-            var obj = me.notes_by_id[item.substring(1)];
-            if (!obj) {
-              throw new RuntimeError('Reference "' + item + '" given in ' + Util.serializeElement(element) +
-                                     ' not found.')
-            }
-            var voice = obj.vexNote.voice;
-            if (index === 0) {
-              firstMeasure = $(obj.meiNote).closest('measure').get(0);
-            }
-            var voiceIndex = voices.indexOf(voice);
-            if (voiceIndex === -1) {
-              // voice index remains -1 if the note is not in the start measure; it will not get
-              // included then when adding spaces
-              if (!firstMeasure || $(obj.meiNote).closest('measure').get(0) === firstMeasure) {
-                //noinspection JSReferencingMutableVariableFromClosure
-                voiceIndex = voices.push(voice) - 1;
-              }
-            }
-            return {
-              obj : obj,
-              voiceIndex : voiceIndex,
-              vexNote : obj.vexNote
-            };
-          });
-
-          var newSpace;
-
-          var createSpaceFrom = function (vexNote, stave) {
-            var gn = new VF.GhostNote(vexNote.getDuration());
-
-            // TODO handle dots
-            gn.setStave(stave);
-            return gn;
-          };
-
-          var notes = noteObjects.map(function (item) {
-            return item.vexNote;
-          });
-
-          var newVoiceSegment;
-          var indicesInVoice;
-
-          if (voices.length > 1) {
-            // create spaces in voices
-
-            for (var m = 0, n = voices.length; m < n; m++) {
-              newVoiceSegment = [];
-              indicesInVoice = [];
-              for (var o = 0, p = noteObjects.length; o < p; o++) {
-                if (noteObjects[o].voiceIndex === m) {
-                  newVoiceSegment[o] = noteObjects[o].vexNote;
-                  indicesInVoice.push(voices[m].tickables.indexOf(noteObjects[o].vexNote));
-                } else if (noteObjects[o].voiceIndex !== -1) {
-
-                  // TODO handle this later for each measure!!!
-                  newSpace = createSpaceFrom(noteObjects[o].vexNote, voices[m].tickables[0].stave);
-                  newVoiceSegment[o] = newSpace;
-                }
-              }
-
-              var t = voices[m].tickables;
-              if (m !== 0 && typeof fragmentPostProcessor === 'function') {
-                fragmentPostProcessor(element, newVoiceSegment);
-              }
-              voices[m].tickables =
-              t.slice(0, indicesInVoice[0]).concat(newVoiceSegment).concat(t.slice(indicesInVoice[indicesInVoice.length -
-                                                                                                  1] + 1));
-            }
-          }
-
-          spanObjectCreator(notes, voices, element);
-
-        } else {
-          Logger.warn('Missing attributes', 'Could not process ' + Util.serializeElement(element) +
-                                            ', because @startid or @endid is missing.')
-        }
-      }
     },
 
     /**
@@ -648,8 +466,7 @@ define([
         }
       }
       return {
-        width : area_width,
-        height : height
+        width : area_width, height : height
       };
     },
 
@@ -708,8 +525,7 @@ define([
         staveYs : me.systemInfo.getYs(coords.y),
         labels : me.getStaveLabels(),
         versesCfg : {
-          font : me.cfg.lyricsFont,
-          maxHyphenDistance : me.cfg.maxHyphenDistance
+          font : me.cfg.lyricsFont, maxHyphenDistance : me.cfg.maxHyphenDistance
         }
       });
 
@@ -916,8 +732,7 @@ define([
       Logger.debug('Converter.processMeasure()', '{enter}');
 
       var barlineInfo = {
-        leftBarline : element.getAttribute('left'),
-        rightBarline : element.getAttribute('right')
+        leftBarline : element.getAttribute('left'), rightBarline : element.getAttribute('right')
       };
 
 
@@ -981,10 +796,10 @@ define([
             rehElements.push(childNodes[i]);
             break;
           case 'beamSpan':
-            me.allBeamSpans.push(childNodes[i]);
+            me.beams.addSpanElements(childNodes[i]);
             break;
           case 'tupletSpan':
-            me.allTupletSpans.push(childNodes[i]);
+            me.tuplets.addSpanElements(childNodes[i]);
             break;
           default:
             Logger.info('Not supported', '<' + childNodes[i].localName + '> is not supported as child of <measure>.');
@@ -1031,9 +846,7 @@ define([
           system_n : me.currentSystem_n
         } : null,
         inlineConnectorCfg : {
-          models : me.systemInfo.inlineConnectorInfos,
-          staves : staves,
-          barlineInfo : barlineInfo
+          models : me.systemInfo.inlineConnectorInfos, staves : staves, barlineInfo : barlineInfo
         },
         tempoElements : tempoElements,
         rehElements : rehElements,
@@ -1101,9 +914,7 @@ define([
         }
 
         stave = new Stave({
-          system : system,
-          y : system.getStaveYs()[stave_n],
-          barlineInfo : barlineInfo
+          system : system, y : system.getStaveYs()[stave_n], barlineInfo : barlineInfo
         });
         staves[stave_n] = stave;
 
@@ -1255,9 +1066,7 @@ define([
         throw new RuntimeError('me.createVexVoice() voice_contents argument must be an array.');
       }
       voice = new VF.Voice({
-        num_beats : meter.count,
-        beat_value : meter.unit,
-        resolution : VF.RESOLUTION
+        num_beats : meter.count, beat_value : meter.unit, resolution : VF.RESOLUTION
       });
       voice.setStrict(false);
       voice.addTickables(voiceContents);
@@ -1277,8 +1086,7 @@ define([
       if (unresolvedTStamp2) {
         for (i = 0, j = unresolvedTStamp2.length; i < j; i++) {
           unresolvedTStamp2[i].setContext({
-            layer : layer,
-            meter : meter
+            layer : layer, meter : meter
           });
           // TODO: remove eventLink from the list
           unresolvedTStamp2[i] = null;
@@ -1417,8 +1225,7 @@ define([
         }
 
         eventContext.addEvent(xml_id, {
-          meiNote : element,
-          vexNote : note
+          meiNote : element, vexNote : note
         });
 
         if (eventContext.clefChangeInfo) {
@@ -1514,9 +1321,7 @@ define([
         }
 
         eventContext.addEvent(xml_id, {
-          meiNote : element,
-          vexNote : chord,
-          index : allNoteIndices
+          meiNote : element, vexNote : chord, index : allNoteIndices
         });
 
         if (eventContext.clefChangeInfo) {
@@ -1563,9 +1368,7 @@ define([
       }
 
       eventContext.addEvent(xml_id, {
-        meiNote : chordElement,
-        vexNote : chord,
-        index : [chordIndex]
+        meiNote : chordElement, vexNote : chord, index : [chordIndex]
       });
 
       var childNodes = element.childNodes;
@@ -1617,8 +1420,7 @@ define([
 
 
         eventContext.addEvent(xml_id, {
-          meiNote : element,
-          vexNote : rest
+          meiNote : element, vexNote : rest
         });
         return rest;
       } catch (e) {
@@ -1650,8 +1452,7 @@ define([
         }
 
         eventContext.addEvent(xml_id, {
-          meiNote : element,
-          vexNote : mRest
+          meiNote : element, vexNote : mRest
         });
         return mRest;
       } catch (e) {
@@ -1666,7 +1467,7 @@ define([
       var space = null;
       if (element.hasAttribute('dur')) {
         try {
-          space = new Space({ element : element, stave : eventContext.getStave() });
+          space = new Space({element : element, stave : eventContext.getStave()});
 
           if (eventContext.isInBeam()) {
             eventContext.setSpaceInBeam(true);
@@ -1760,7 +1561,7 @@ define([
       if (filteredVexNotes && filteredVexNotes.length > 1) {
         try {
           // set autostem parameter of VF.Beam to true if neither layerDir nor any stem direction in the beam is specified
-          me.allBeams.push(new VF.Beam(filteredVexNotes, !eventContext.getLayerDir() &&
+          me.beams.addVexObject(new VF.Beam(filteredVexNotes, !eventContext.getLayerDir() &&
                                                          eventContext.getStemDirInBeam() === false));
         } catch (e) {
           Logger.error('VexFlow Error', 'An error occurred processing ' + Util.serializeElement(element) + ': "' +
@@ -1815,7 +1616,7 @@ define([
         tuplet.setTupletLocation((bracketPlace === 'above') ? 1 : -1);
       }
 
-      me.allTuplets.push(tuplet);
+      me.tuplets.addVexObject(tuplet);
       return vexNotes;
     },
 
@@ -1827,14 +1628,12 @@ define([
       for (i = 0, j = mei_tie.length; i < j; ++i) {
         if (mei_tie[i] === 't' || mei_tie[i] === 'm') {
           me.ties.terminateTie(xml_id, {
-            vexPitch : vexPitch,
-            stave_n : stave_n
+            vexPitch : vexPitch, stave_n : stave_n
           });
         }
         if (mei_tie[i] === 'i' || mei_tie[i] === 'm') {
           me.ties.startTie(xml_id, {
-            vexPitch : vexPitch,
-            stave_n : stave_n
+            vexPitch : vexPitch, stave_n : stave_n
           });
         }
       }
@@ -1874,8 +1673,7 @@ define([
         numbered_token = numbered_tokens[i];
         if (numbered_token.length === 1) {
           result.push({
-            letter : numbered_token,
-            nesting_level : 0
+            letter : numbered_token, nesting_level : 0
           });
         } else if (numbered_token.length === 2) {
           num = +numbered_token[1];
@@ -1883,8 +1681,7 @@ define([
             throw new RuntimeError('badly formed slur attribute');
           }
           result.push({
-            letter : numbered_token[0],
-            nesting_level : num
+            letter : numbered_token[0], nesting_level : num
           });
         } else {
           throw new RuntimeError('badly formed slur attribute');
@@ -1900,12 +1697,12 @@ define([
       var me = this, i, j, syllables, vexSyllable;
       syllables = element.getElementsByTagName('syl');
       if (element.hasAttribute('syl')) {
-        vexSyllable = new Syllable(element.getAttribute('syl'), element, me.cfg.lyricsFont);
+        vexSyllable = new Syllable(element.getAttribute('syl').replace(/\s+/g, ' '), element, me.cfg.lyricsFont);
         note.addAnnotation(0, vexSyllable);
         me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, element, stave_n);
       }
       for (i = 0, j = syllables.length; i < j; i++) {
-        vexSyllable = new Syllable(Util.getText(syllables[i]), syllables[i], me.cfg.lyricsFont);
+        vexSyllable = new Syllable(Util.getNormalizedText(syllables[i]), syllables[i], me.cfg.lyricsFont);
         note.addAnnotation(0, vexSyllable);
         me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, syllables[i], stave_n);
       }
@@ -1947,20 +1744,6 @@ define([
 
       me.pageInfo.setLowestY(me.systemInfo.getCurrentLowestY() + me.STAVE_HEIGHT);
 
-    },
-
-    postFormat : function (items) {
-      var i, j;
-      for (i = 0, j = items.length; i < j; i++) {
-        items[i].postFormat();
-      }
-    },
-
-    setContextAndDraw : function (items, ctx) {
-      var i, j;
-      for (i = 0, j = items.length; i < j; i++) {
-        items[i].setContext(ctx).draw();
-      }
     },
 
     drawSystems : function (systems, ctx) {

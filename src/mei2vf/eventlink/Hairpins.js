@@ -94,7 +94,9 @@ define([
       }, type);
 
       vex_options = {
-        height : stave_spacing * (parseFloat(params.opening) || 1),
+        // processing of @opening skipped for aesthetic reasons
+        //height : stave_spacing * (parseFloat(params.opening) || 1),
+        height: stave_spacing,
         y_shift : 0,
         left_shift_px : 0,
         right_shift_px : 0
