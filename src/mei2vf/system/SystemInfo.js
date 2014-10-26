@@ -130,6 +130,34 @@ define([
       return this.currentStaveInfos;
     },
 
+
+    /**
+     * @method getStaveLabels
+     */
+    getStaveLabels : function (currentSystem_n) {
+      var me = this, labels, i, infos, labelType;
+      labels = {};
+      if (!me.cfg.labelMode) {
+        return labels;
+      }
+      labelType = (me.cfg.labelMode === 'full' && currentSystem_n === 0) ? 'label' : 'labelAbbr';
+      infos = me.getAllStaveInfos();
+      i = infos.length;
+      while (i--) {
+        if (infos[i]) {
+          labels[i] = infos[i][labelType];
+        }
+      }
+      return labels;
+    },
+
+    getVerseConfig : function () {
+      var me = this;
+      return {
+        font : me.cfg.lyricsFont, maxHyphenDistance : me.cfg.maxHyphenDistance
+      };
+    },
+
     /**
      * @method
      */

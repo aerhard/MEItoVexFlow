@@ -31,8 +31,8 @@ define([
    * @constructor
    * @param {Object} config The configuration object
    */
-  var System = function (config) {
-    this.init(config);
+  var System = function (pageInfo, systemInfo, system_n) {
+    this.init(pageInfo, systemInfo, system_n);
   };
 
   System.prototype = {
@@ -46,7 +46,7 @@ define([
     /**
      * @param {Object} config The configuration object
      */
-    init : function (config) {
+    init : function (pageInfo, systemInfo, system_n) {
       var me = this;
 
       /**
@@ -54,29 +54,34 @@ define([
        * MEI file or null if there is no margin specified. In the latter case,
        * the margin will be calculated on basis of the text width of the labels
        */
-      me.leftMar = config.leftMar;
+      me.leftMar = systemInfo.getLeftMar();
       /**
        * @cfg {Object} coords the coords of the current system
        * @cfg {Number} coords.x the x coordinate of the system
        * @cfg {Number} coords.y the y coordinate of the system
        * @cfg {Number} coords.width the system width
        */
-      me.coords = config.coords;
+      var printSpace = pageInfo.getPrintSpace();
+      me.coords = {
+        x : printSpace.left,
+        y : (system_n === 0) ? printSpace.top : systemInfo.getCurrentLowestY() + systemInfo.cfg.systemSpacing,
+        width : printSpace.width
+      };
       /**
        * @cfg {Number[]} staveYs the y coordinates of all staves in the current
        * system
        */
-      me.staveYs = config.staveYs;
+      me.staveYs = systemInfo.getYs(me.coords.y);
       /**
        * an instance of MEI2VF.Verses dealing with and storing all verse lines
        * found in the MEI document
        * @property {MEI2VF.Verses} verses
        */
-      me.verses = new Verses(config.versesCfg);
+      me.verses = new Verses(systemInfo.getVerseConfig());
       /**
        * @cfg {String[]} labels the labels of all staves in the current system
        */
-      me.labels = config.labels;
+      me.labels = systemInfo.getStaveLabels(system_n);
       /**
        * @property {MEI2VF.Measure[]} measures the measures in the current
        * system

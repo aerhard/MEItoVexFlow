@@ -170,11 +170,6 @@ define([
        * hyphens)
        * @cfg {String} lyricsFont.family the font family
        * @cfg {Number} lyricsFont.size the font size
-       *
-       * NB the weight properties can be used to specify style, weight
-       * or both (space separated); some of the objects are passed directly
-       * to vexFlow (which requires the name 'weight'), so the name is
-       * 'weight'
        */
       lyricsFont : {
         family : 'Times', size : 15, spacing : 1.3
@@ -504,30 +499,14 @@ define([
      * @method createNewSystem
      */
     createNewSystem : function () {
-      var me = this, system, coords;
+      var me = this, system;
 
       Logger.debug('Converter.createNewSystem()', '{enter}');
 
       me.pendingSystemBreak = false;
       me.currentSystem_n += 1;
 
-      var printSpace = me.pageInfo.getPrintSpace();
-
-      coords = {
-        x : printSpace.left,
-        y : (me.currentSystem_n === 0) ? printSpace.top : me.systemInfo.getCurrentLowestY() + me.cfg.systemSpacing,
-        width : printSpace.width
-      };
-
-      system = new System({
-        leftMar : me.systemInfo.getLeftMar(),
-        coords : coords,
-        staveYs : me.systemInfo.getYs(coords.y),
-        labels : me.getStaveLabels(),
-        versesCfg : {
-          font : me.cfg.lyricsFont, maxHyphenDistance : me.cfg.maxHyphenDistance
-        }
-      });
+      system = new System(me.pageInfo, me.systemInfo, me.currentSystem_n);
 
       if (me.pendingSectionBreak) {
         me.pendingSectionBreak = false;
@@ -881,7 +860,6 @@ define([
 
       eventContext.emptyClefCheckQueue();
 
-
     },
 
 
@@ -985,26 +963,6 @@ define([
       }
 
       return staves;
-    },
-
-    /**
-     * @method getStaveLabels
-     */
-    getStaveLabels : function () {
-      var me = this, labels, i, infos, labelType;
-      labels = {};
-      if (!me.cfg.labelMode) {
-        return labels;
-      }
-      labelType = (me.cfg.labelMode === 'full' && me.currentSystem_n === 0) ? 'label' : 'labelAbbr';
-      infos = me.systemInfo.getAllStaveInfos();
-      i = infos.length;
-      while (i--) {
-        if (infos[i]) {
-          labels[i] = infos[i][labelType];
-        }
-      }
-      return labels;
     },
 
     /**
