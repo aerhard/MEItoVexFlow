@@ -147,8 +147,13 @@ define([
       }
     },
 
-    setContextAndDraw : function (ctx) {
-      var i, j, items = this.vexObjects;
+    setContext : function(ctx) {
+      this.ctx = ctx;
+      return this;
+    },
+
+    draw : function () {
+      var me = this, i, j, items = me.vexObjects, ctx = me.ctx;
       for (i = 0, j = items.length; i < j; i++) {
         items[i].setContext(ctx).draw();
       }

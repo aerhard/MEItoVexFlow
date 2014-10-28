@@ -71,13 +71,14 @@ define([
   'mei2vf/lyrics/Syllable',
   'mei2vf/stave/Stave',
   'mei2vf/measure/Measure',
+  'mei2vf/page/Page',
   'mei2vf/page/PageInfo',
   'mei2vf/system/System',
   'mei2vf/system/SystemInfo',
   'mei2vf/Tables',
   'mei2vf/voice/StaveVoices'
 ], function (VF, MeiLib, Logger, RuntimeError, Util, EventContext, EventUtil, Note, GraceNote, Chord, GraceChord, Rest, MRest, Space, Hairpins, Ties, Slurs, Arpeggios, Directives, Dynamics, Fermatas, Ornaments,
-  BeamCollection, TupletCollection, Verses, Syllable, Stave, Measure, PageInfo, System, SystemInfo, Tables, StaveVoices) {
+  BeamCollection, TupletCollection, Verses, Syllable, Stave, Measure, Page, PageInfo, System, SystemInfo, Tables, StaveVoices) {
 
   /**
    * Converts an MEI XML document / document fragment to VexFlow objects and
@@ -105,10 +106,6 @@ define([
   };
 
   Converter.prototype = {
-
-    BOTTOM : VF.Annotation.VerticalJustify.BOTTOM,
-
-    STAVE_HEIGHT : 40,
 
     defaults : {
       /**
@@ -254,16 +251,14 @@ define([
      */
     reset : function () {
       var me = this;
+
+      me.page = new Page();
+
       me.systemInfo.init(me.cfg);
       /**
        * @property {MEI2VF.EventLink[][]} unresolvedTStamp2
        */
       me.unresolvedTStamp2 = [];
-      /**
-       * Contains all {@link MEI2VF.System} objects
-       * @property {MEI2VF.System[]} systems
-       */
-      me.systems = [];
       /**
        * Contains all Vex.Flow.Stave objects. Addressing scheme:
        * [measure_n][stave_n]
@@ -401,7 +396,7 @@ define([
 
     format : function (ctx) {
       var me = this;
-      me.formatSystems(me.systems, ctx);
+      me.page.formatSystems(me.pageInfo, me.systemInfo, me.cfg, ctx);
       me.beams.postFormat();
     },
 
@@ -414,9 +409,9 @@ define([
      */
     draw : function (ctx) {
       var me = this;
-      me.drawSystems(me.systems, ctx);
-      me.beams.setContextAndDraw(ctx);
-      me.tuplets.setContextAndDraw(ctx);
+      me.page.setContext(ctx).drawSystems();
+      me.beams.setContext(ctx).draw();
+      me.tuplets.setContext(ctx).draw();
       me.ties.setContext(ctx).draw();
       me.slurs.setContext(ctx).draw();
       me.hairpins.setContext(ctx).draw();
@@ -481,7 +476,7 @@ define([
      * @return {MEI2VF.System[]}
      */
     getSystems : function () {
-      return this.systems;
+      return this.page.getSystems();
     },
 
     /**
@@ -515,7 +510,7 @@ define([
         me.systemInfo.forceStaveStartInfos();
       }
 
-      me.systems[me.currentSystem_n] = system;
+      me.page.addSystem(system, me.currentSystem_n);
       return system;
     },
 
@@ -697,14 +692,15 @@ define([
      * @param {Object} sectionContext the context shared by the current elements
      */
     processMeasure : function (element, sectionContext) {
-      var me = this, atSystemStart, system, system_n, childNodes;
+      var me = this, atSystemStart, systems, system, system_n, childNodes;
 
       if (me.pendingSectionBreak || me.pendingSystemBreak) {
         system = me.createNewSystem();
         atSystemStart = true;
       } else {
-        system_n = me.systems.length - 1;
-        system = me.systems[system_n];
+        systems = me.page.getSystems();
+        system_n = systems.length - 1;
+        system = systems[system_n];
         atSystemStart = false;
       }
 
@@ -1657,58 +1653,12 @@ define([
       if (element.hasAttribute('syl')) {
         vexSyllable = new Syllable(element.getAttribute('syl').replace(/\s+/g, ' '), element, me.cfg.lyricsFont);
         note.addAnnotation(0, vexSyllable);
-        me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, element, stave_n);
+        me.page.getSystems()[me.currentSystem_n].verses.addSyllable(vexSyllable, element, stave_n);
       }
       for (i = 0, j = syllables.length; i < j; i++) {
         vexSyllable = new Syllable(Util.getNormalizedText(syllables[i]), syllables[i], me.cfg.lyricsFont);
         note.addAnnotation(0, vexSyllable);
-        me.systems[me.currentSystem_n].verses.addSyllable(vexSyllable, syllables[i], stave_n);
-      }
-    },
-
-    formatSystems : function (systems, ctx) {
-      var me = this, i, j, totalMinSystemWidth = 0, minSystemWidth, broadestSystemN = 1;
-      j = systems.length;
-
-      // calculate page width if me.cfg.pageWidth is falsy
-      if (!me.cfg.pageWidth) {
-        for (i = 0; i < j; i++) {
-          minSystemWidth = systems[i].preFormat(ctx);
-          if (totalMinSystemWidth < minSystemWidth) {
-            broadestSystemN = i;
-            totalMinSystemWidth = minSystemWidth;
-          }
-        }
-
-        // calculate the width of all systems based on the final width of the system with the
-        // largest minSystemWidth and the default space to be added to each measure
-        var totalSystemWidth = totalMinSystemWidth +
-                               (systems[broadestSystemN].voiceFillFactorSum * me.cfg.defaultSpacingInMeasure);
-        me.pageInfo.setPrintSpaceWidth(totalSystemWidth);
-
-        for (i = 0; i < j; i++) {
-          systems[i].setFinalMeasureWidths(totalSystemWidth);
-          systems[i].format(ctx);
-        }
-
-      } else {
-        // ... if me.cfg.pageWidth is specified, format the measures based on that width
-        for (i = 0; i < j; i++) {
-          minSystemWidth = systems[i].preFormat(ctx);
-          systems[i].setFinalMeasureWidths();
-          systems[i].format(ctx);
-        }
-      }
-
-      me.pageInfo.setLowestY(me.systemInfo.getCurrentLowestY() + me.STAVE_HEIGHT);
-
-    },
-
-    drawSystems : function (systems, ctx) {
-      var i, j;
-      j = systems.length;
-      for (i = 0; i < j; i++) {
-        systems[i].draw(ctx);
+        me.page.getSystems()[me.currentSystem_n].verses.addSyllable(vexSyllable, syllables[i], stave_n);
       }
     }
 
