@@ -64,7 +64,7 @@ define([
     state.bottom_text_line = bottom_text_line;
 
     return true;
-  }
+  };
 
 
   VF.Annotation.prototype.draw = function () {

@@ -28,8 +28,10 @@ define([
    * @class System
    * @private
    *
+   * @param pageInfo
+   * @param systemInfo
+   * @param system_n
    * @constructor
-   * @param {Object} config The configuration object
    */
   var System = function (pageInfo, systemInfo, system_n) {
     this.init(pageInfo, systemInfo, system_n);
@@ -44,7 +46,10 @@ define([
     LABEL_PADDING : 20,
 
     /**
-     * @param {Object} config The configuration object
+     *
+     * @param pageInfo
+     * @param systemInfo
+     * @param system_n
      */
     init : function (pageInfo, systemInfo, system_n) {
       var me = this;

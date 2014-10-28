@@ -72,10 +72,10 @@ define([
     var top, bottom;
     if (stem_direction === Vex.Flow.StaveNote.STEM_DOWN) {
       top = stem_ext.baseY;
-      bottom = stem_ext.topY;
+      //bottom = stem_ext.topY;
     } else {
       top = stem_ext.topY;
-      bottom = stem_ext.baseY;
+      //bottom = stem_ext.baseY;
     }
 
     // TabNotes don't have stems attached to them. Tab stems are rendered
@@ -84,13 +84,13 @@ define([
     if (is_tabnote) {
       if (this.note.hasStem()) {
         if (stem_direction === Vex.Flow.StaveNote.STEM_UP) {
-          bottom = stave.getYForBottomText(this.text_line - 2);
+          //bottom = stave.getYForBottomText(this.text_line - 2);
         } else if (stem_direction === Vex.Flow.StaveNote.STEM_DOWN) {
           top = stave.getYForTopText(this.text_line - 1.5);
         }
       } else { // Without a stem
         top = stave.getYForTopText(this.text_line - 1);
-        bottom = stave.getYForBottomText(this.text_line - 2);
+        //bottom = stave.getYForBottomText(this.text_line - 2);
       }
     }
 

@@ -15,9 +15,7 @@
  *
  */
 define([
-  'vexflow',
-  'common/Logger'
-], function (VF, Logger) {
+], function () {
 
 
   var Page = function () {
@@ -89,7 +87,7 @@ define([
       return this;
     },
 
-    drawSystems : function (ctx) {
+    drawSystems : function () {
       var me = this, i, j, systems = me.systems, ctx = me.ctx;
       j = systems.length;
       for (i = 0; i < j; i++) {

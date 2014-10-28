@@ -1,22 +1,18 @@
 /*
- * MEItoVexFlow, Hairpins class
- * (based on meitovexflow.js)
- * Author of reworkings: Alexander Erhard
+ * (C) Copyright 2014 Alexander Erhard (http://alexandererhard.com/).
  *
- * Copyright © 2014 Richard Lewis, Raffaele Viglianti, Zoltan Komives,
- * University of Maryland
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  */
 define([
   'vexflow',
@@ -25,7 +21,7 @@ define([
   'common/RuntimeError',
   'mei2vf/Tables',
   'mei2vf/eventspan/SpanCollection'
-], function (VF, Vex, Logger, RuntimeError, Tables, SpanCollection, undefined) {
+], function (VF, Vex, Logger, RuntimeError, Tables, SpanCollection) {
 
   /**
    * @class TupletCollection
@@ -54,40 +50,40 @@ define([
         })
       };
 
-      var spanObjectCreator = function (notes, voices, element) {
-        var tickables, tuplet, voice, m, n;
+      me.resolveSpans(me.spanElements, fragmentPostProcessor, notes_by_id);
+    },
 
-        tuplet = new VF.Tuplet(notes, {
-          num_notes : parseInt(element.getAttribute('num'), 10) || 3,
-          beats_occupied : parseInt(element.getAttribute('numbase'), 10) || 2
-        });
+    createVexObject : function (notes, voices, element) {
+      var me=this, tickables, tuplet, voice, i, j;
 
-        if (element.getAttribute('num.format') === 'ratio') {
-          tuplet.setRatioed(true);
-        }
+      tuplet = new VF.Tuplet(notes, {
+        num_notes : parseInt(element.getAttribute('num'), 10) || 3,
+        beats_occupied : parseInt(element.getAttribute('numbase'), 10) || 2
+      });
 
-        tuplet.setBracketed(element.getAttribute('bracket.visible') === 'true');
+      if (element.getAttribute('num.format') === 'ratio') {
+        tuplet.setRatioed(true);
+      }
 
-        var bracketPlace = element.getAttribute('bracket.place');
-        if (bracketPlace) {
-          tuplet.setTupletLocation((bracketPlace === 'above') ? 1 : -1);
-        }
+      tuplet.setBracketed(element.getAttribute('bracket.visible') === 'true');
 
-        me.vexObjects.push(tuplet);
+      var bracketPlace = element.getAttribute('bracket.place');
+      if (bracketPlace) {
+        tuplet.setTupletLocation((bracketPlace === 'above') ? 1 : -1);
+      }
 
-        // TODO make this more efficient
-        for (m = 0, n = voices.length; m < n; m++) {
-          voice = voices[m];
-          tickables = voice.tickables;
-          voice.ticksUsed = new Vex.Flow.Fraction(0, 1);
-          voice.tickables = [];
-          voice.addTickables(tickables);
-        }
-      };
+      me.vexObjects.push(tuplet);
 
-      me.resolveSpans(me.spanElements, spanObjectCreator, fragmentPostProcessor, notes_by_id);
+      // TODO make this more efficient
+      for (i = 0, j = voices.length; i < j; i++) {
+        voice = voices[i];
+        tickables = voice.tickables;
+        voice.ticksUsed = new Vex.Flow.Fraction(0, 1);
+        voice.tickables = [];
+        voice.addTickables(tickables);
+      }
+
     }
-
 
   });
 

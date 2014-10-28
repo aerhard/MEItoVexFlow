@@ -107,7 +107,6 @@ define([
     format : function () {
       var me = this, stave_n, verse_n, text_line, verse, i, j, lowestY, padding, lowestTextLine;
       var notesInContext;
-      var k, l;
 
       padding = 20;
 

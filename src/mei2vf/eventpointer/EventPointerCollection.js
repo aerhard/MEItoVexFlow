@@ -63,29 +63,20 @@ define([
       this.font = font;
     },
 
-    createVexFromInfos : function (notes_by_id) {
-      var me = this, i, model, note;
-      i = me.allModels.length;
-      while (i--) {
-        model = me.allModels[i];
-        note = notes_by_id[model.startid];
-        if (note) {
-          me.addToNote(model, note);
-        } else {
-          if (model.startid) {
-            Logger.warn('Unknown reference', Util.serializeElement(model.element) +
-                                             ' could not be processed because the reference "' + model.startid +
-                                             '" could not be resolved.');
-          } else {
-            Logger.warn('Unknown reference', Util.serializeElement(model.element) +
-                                             ' could not be processed because it could not be assigned to an element.');
-          }
-        }
-      }
+    /**
+     * adds a new model to {@link #allModels}
+     * @param {Object} obj the object to add
+     */
+    addModel : function (obj) {
+      this.allModels.push(obj);
     },
 
-    addToNote : function () {
-      throw new RuntimeError('You have to provide a addToNote() method when inheriting MEI2VF.EventPointerCollection.');
+    /**
+     * gets all models
+     * @return {Object[]} all models in {@link #allModels}
+     */
+    getModels : function () {
+      return this.allModels;
     },
 
     createInfos : function (elements, measureElement) {
@@ -154,20 +145,30 @@ define([
       }
     },
 
-    /**
-     * adds a new model to {@link #allModels}
-     * @param {Object} obj the object to add
-     */
-    addModel : function (obj) {
-      this.allModels.push(obj);
+
+    createVexFromInfos : function (notes_by_id) {
+      var me = this, i, model, note;
+      i = me.allModels.length;
+      while (i--) {
+        model = me.allModels[i];
+        note = notes_by_id[model.startid];
+        if (note) {
+          me.addToNote(model, note);
+        } else {
+          if (model.startid) {
+            Logger.warn('Unknown reference', Util.serializeElement(model.element) +
+                                             ' could not be processed because the reference "' + model.startid +
+                                             '" could not be resolved.');
+          } else {
+            Logger.warn('Unknown reference', Util.serializeElement(model.element) +
+                                             ' could not be processed because it could not be assigned to an element.');
+          }
+        }
+      }
     },
 
-    /**
-     * gets all models
-     * @return {Object[]} all models in {@link #allModels}
-     */
-    getModels : function () {
-      return this.allModels;
+    addToNote : function () {
+      throw new RuntimeError('You have to provide an addToNote() method when inheriting MEI2VF.EventPointerCollection.');
     }
   };
 

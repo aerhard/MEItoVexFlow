@@ -20,11 +20,7 @@ define([
   'common/Util'
 ], function (VF, Logger, Util) {
 
-
-  var SpanCollection = function() {
-
-  };
-
+  var SpanCollection = function() {};
 
   SpanCollection.prototype = {
 
@@ -42,7 +38,7 @@ define([
       this.vexObjects.push(obj);
     },
 
-    resolveSpans : function (elements, spanObjectCreator, fragmentPostProcessor, notes_by_id) {
+    resolveSpans : function (elements, fragmentPostProcessor, notes_by_id) {
       var me = this, i, j, element, pList, pListArray, startIdAtt, endIdAtt;
 
       for (i = 0, j = elements.length; i < j; i++) {
@@ -131,13 +127,17 @@ define([
             }
           }
 
-          spanObjectCreator(notes, voices, element);
+          me.createVexObject(notes, voices, element);
 
         } else {
           Logger.warn('Missing attributes', 'Could not process ' + Util.serializeElement(element) +
                                             ', because @startid or @endid is missing.')
         }
       }
+    },
+
+    createVexObject : function () {
+      throw new RuntimeError('createVexObject() method not implemented.');
     },
 
     postFormat : function () {
