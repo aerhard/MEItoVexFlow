@@ -120,7 +120,7 @@ define([
     test_cases.push({ title : "Clef - Bass", mei_xml : 'TC.VexClef.03.xml'});
     test_cases.push({ title : "Clef - Bass with default clef.line", mei_xml : 'TC.VexClef.04.xml'});
     test_cases.push({ title : "Ties", mei_xml : 'TC.Ties.xml'});
-    test_cases.push({ title : "Ties Multi-layer and Chords", mei_xml : 'TC.Ties.02.xml'});
+    test_cases.push({ title : "Ties Multi-layer and Chords", mei_xml : 'TC.Ties.02.xml', canvas_height:700});
     test_cases.push({ title : "Ties with @tstamp", mei_xml : 'TC.Ties.TStamps.xml'});
     test_cases.push({ title : "Ties Multi-staff", mei_xml : 'TC.Ties.Staves.xml'});
     test_cases.push({ title : "Slurs", mei_xml : 'TC.Slurs.xml'});
