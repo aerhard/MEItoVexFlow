@@ -1267,9 +1267,9 @@ define([
         }
 
         // TODO tie attribute on chord should render a tie on each note
-        //                if (mei_tie) {
-        //                  me.processAttrTie(mei_tie, xml_id, vexPitch, atts.staff || eventContext.stave_n);
-        //                }
+        if (atts.tie) {
+          me.processAttrTie(atts.tie, xml_id, null, atts.staff || eventContext.stave_n);
+        }
         if (mei_slur) {
           me.processSlurAttribute(mei_slur, xml_id);
         }
