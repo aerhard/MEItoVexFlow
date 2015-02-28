@@ -82,7 +82,7 @@ define([
 
   /**
    * Converts an MEI XML document / document fragment to VexFlow objects and
-   * optionally renders it using Raphael or HTML5 Canvas.
+   * optionally renders it using SVG, Raphael or HTML5 Canvas.
    *
    * Usage:
    *

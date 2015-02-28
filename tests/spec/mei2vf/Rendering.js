@@ -24,7 +24,7 @@ define([
         var render = function () {
           var canvas;
 
-          if (backend === Vex.Flow.Renderer.Backends.RAPHAEL) {
+          if (backend === Vex.Flow.Renderer.Backends.RAPHAEL || backend === Vex.Flow.Renderer.Backends.SVG) {
             testItemHtmlTemplate = "<h2><span class='test-title' property='dc:title'>Title of Test Comes Here</span></h2><div class='a'><svg id='svg"+i+"'></svg></div>";
             $(document.body).append(testItemHtmlTemplate);
             canvas = $("svg").last().get(0);

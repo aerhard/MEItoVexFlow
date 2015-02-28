@@ -133,8 +133,8 @@ define([
      * @param {Number} width The width of the print space in pixels. Defaults to 800 (optional)
      * @param {Number} height The height of the print space in pixels. Defaults to 350 (optional)
      * @param {Number} backend Set to Vex.Flow.Renderer.Backends.RAPHAEL to
-     * render to a Raphael context; if falsy, Vex.Flow.Renderer.Backends.CANVAS
-     * is set
+     * render to a Raphael context, to Vex.Flow.Renderer.Backends.SVG to use SVG;
+     * if falsy, Vex.Flow.Renderer.Backends.CANVAS is set
      * @param {Object} options The options passed to the converter. For a list, see
      * {@link MEI2VF.Converter MEI2VF.Converter}
      * @param {Function} callback
