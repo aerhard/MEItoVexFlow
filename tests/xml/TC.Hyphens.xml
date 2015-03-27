@@ -6,7 +6,7 @@
 	<meiHead>
 		<fileDesc>
 			<titleStmt>
-				<title>MeiToVexFlow Dynamics Test Case</title>
+				<title>MeiToVexFlow Hyphens Test Case</title>
 			</titleStmt>
 			<pubStmt>
 				<respStmt>
@@ -35,10 +35,10 @@
 									<note xml:id="n03" pname="c" oct="5" dur="8">
 										<syl>wir</syl>
 									</note>
-									<note xml:id="n04" pname="c" oct="5" dur="8" ho="1">
+									<note xml:id="n04" pname="c" oct="5" dur="8" tie="i">
 										<syl wordpos="i">schlach</syl>
 									</note>
-									<note xml:id="n05" pname="c" oct="5" dur="8" ho="1">
+									<note xml:id="n05" pname="c" oct="5" dur="8" tie="t">
 										<syl wordpos="t">ten</syl>
 									</note>
 									<note xml:id="n06" pname="c" oct="5" dur="8">

@@ -153,6 +153,8 @@ define([
     test_cases.push({ title : "Adjusting Voices 2", mei_xml : 'TC.StaveVoices.02.xml', canvas_height : 450});
     test_cases.push({ title : "Adjusting Voices 3", mei_xml : 'TC.StaveVoices.03.xml', canvas_height : 400, canvas_width : 1000});
     test_cases.push({ title : "Space element", mei_xml : 'TC.Space.xml', canvas_height : 400});
+      test_cases.push({ title : "Rests", mei_xml : 'TC.Rests.xml', canvas_height : 400});
+
 
     /* the following xml file is missing: */
     //test_cases.push({ title: "Single Variant-Path with Processing Instructions", mei_xml: 'TC.SingleVariantPath.xml', canvas_height:400});

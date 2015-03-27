@@ -996,6 +996,11 @@ define([
         currentStaveVoices.addVoice(me.createVexVoice(vexNotes, meter), stave_n);
       }
 
+            var anchoredTexts = staveElement.getElementsByTagName('anchoredText');
+            for (i = 0, j = anchoredTexts.length; i < j; i++) {
+                me.processAnchoredText(eventContext, anchoredTexts[i]);
+            }
+
       // if there is a clef not yet attached to a note (i.e. the last clef), add it as a stave end modifier
       if (eventContext.clefChangeInfo) {
         stave.addEndClefFromInfo(eventContext.clefChangeInfo);
@@ -1099,15 +1104,15 @@ define([
           return me.processClef(eventContext, element, staveInfo);
         case 'bTrem' :
           return me.processBTrem(eventContext, element, staveInfo);
-        case 'anchoredText' :
-          me.processAnchoredText(eventContext, element, staveInfo);
-          return;
+                //case 'anchoredText' :
+                //  me.processAnchoredText(eventContext, element);
+                //  return;
         default :
           Logger.info('Not supported', 'Element "' + element.localName + '" is not supported. Ignoring element.');
       }
     },
 
-    processAnchoredText : function (eventContext, element, staveInfo) {
+        processAnchoredText: function (eventContext, element) {
     },
 
     /**
