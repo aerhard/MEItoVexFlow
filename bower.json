@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "jquery": "~2.1.0",
-    "vexflow": "*",
+    "vexflow": "1.2.27",
     "raphael": "~2.1.2"
   },
   "devDependencies": {
