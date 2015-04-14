@@ -128,6 +128,7 @@ define([
     test_cases.push({ title : "Slurs with @tstamp (no xml:ids)", mei_xml : 'TC.Slurs.TStamps.NoIDs.xml'});
     test_cases.push({ title : "Slurs with @bezier", mei_xml : 'TC.Slurs.Bezier.xml'});
     test_cases.push({ title : "Slur Positions", mei_xml : 'TC.Slurs.Position.xml', canvas_height : 450});
+    test_cases.push({ title : "Slur Shapes", mei_xml : 'TC.Slurs.Shape.xml', canvas_height : 850});
     test_cases.push({ title : "Long slurs across staves", mei_xml : 'TC.Slurs.Long.xml', canvas_height : 350});
     test_cases.push({ title : "Hairpins (startid/endid tstamp/tstamp2)", mei_xml : 'TC.Hairpins.xml'});
     test_cases.push({ title : "System breaks: two systems", mei_xml : 'TC.SystemBreak.01.xml', canvas_height : 250});
@@ -153,7 +154,7 @@ define([
     test_cases.push({ title : "Adjusting Voices 2", mei_xml : 'TC.StaveVoices.02.xml', canvas_height : 450});
     test_cases.push({ title : "Adjusting Voices 3", mei_xml : 'TC.StaveVoices.03.xml', canvas_height : 400, canvas_width : 1000});
     test_cases.push({ title : "Space element", mei_xml : 'TC.Space.xml', canvas_height : 400});
-      test_cases.push({ title : "Rests", mei_xml : 'TC.Rests.xml', canvas_height : 400});
+    //  test_cases.push({ title : "Rests", mei_xml : 'TC.Rests.xml', canvas_height : 400});
 
 
     /* the following xml file is missing: */

@@ -36,6 +36,7 @@ define([
         clef : options.clef.type,
         octave_shift : options.clef.shift
       }
+        this.manualPosition = true;
     } else {
       vexOptions = {
         duration: duration,
