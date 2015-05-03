@@ -106,7 +106,7 @@ define([
        * @return {Vex.Flow.Stave[][]} see {@link MEI2VF.Converter#allVexMeasureStaves}
        */
       getAllVexMeasureStaffs : function () {
-        Converter.prototype.getAllVexMeasureStaves();
+        return Converter.prototype.getAllVexMeasureStaves();
       },
       /**
        * Returns the width and the height of the area that contains all drawn
@@ -172,7 +172,9 @@ define([
         ctx.paper.setSize(this.calculatedWidth || width, this.calculatedHeight || height);
       }
 
-      callback(this.calculatedHeight, this.calculatedWidth);
+      if (callback) {
+        callback(this.calculatedHeight, this.calculatedWidth);
+      }
 
       this.Converter.draw(ctx);
       this.rendered_measures = this.Converter.getAllVexMeasureStaffs();
