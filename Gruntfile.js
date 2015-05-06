@@ -154,7 +154,7 @@ module.exports = function(grunt) {
   // Tasks.
   grunt.registerTask('run', ['connect', 'watch']);
 
-  // headless unit and rendering tests of requirejs code in phantomJS
+  // unit and rendering tests of requirejs code in phantomJS
   grunt.registerTask('test', ['connect', 'jasmine:testdev']);
 
   grunt.registerTask('compile', ['requirejs:compile']);
