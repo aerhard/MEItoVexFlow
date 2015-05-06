@@ -4,9 +4,8 @@
  */
 
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex) {
+    'vex'
+], function (Vex) {
 
 
   // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
@@ -16,7 +15,7 @@ define([
   // This class implements various types of modifiers to notes (e.g. bends,
   // fingering positions etc.)
 
-  VF.ModifierContext = (function() {
+  Vex.Flow.ModifierContext = (function() {
     function ModifierContext() {
       // Current modifiers
       this.modifiers = {};
@@ -37,26 +36,26 @@ define([
       // Add new modifiers to this array. The ordering is significant -- lower
       // modifiers are formatted and rendered before higher ones.
       this.PREFORMAT = [
-        VF.StaveNote,
-        VF.Dot,
-        VF.FretHandFinger,
-        VF.Accidental,
-        VF.GraceNoteGroup,
-        VF.Stroke,
-        VF.StringNumber,
-        VF.Articulation,
-        VF.Ornament,
-        VF.Annotation,
-        VF.Bend,
-        VF.Vibrato
+        Vex.Flow.StaveNote,
+        Vex.Flow.Dot,
+        Vex.Flow.FretHandFinger,
+        Vex.Flow.Accidental,
+        Vex.Flow.GraceNoteGroup,
+        Vex.Flow.Stroke,
+        Vex.Flow.StringNumber,
+        Vex.Flow.Articulation,
+        Vex.Flow.Ornament,
+        Vex.Flow.Annotation,
+        Vex.Flow.Bend,
+        Vex.Flow.Vibrato
       ];
 
       // If post-formatting is required for an element, add it to this array.
-      this.POSTFORMAT = [ VF.StaveNote ];
+      this.POSTFORMAT = [ Vex.Flow.StaveNote ];
     }
 
-    // To enable logging for this class. Set `VF.ModifierContext.DEBUG` to `true`.
-    function L() { if (ModifierContext.DEBUG) Vex.L("VF.ModifierContext", arguments); }
+    // To enable logging for this class. Set `Vex.Flow.ModifierContext.DEBUG` to `true`.
+    function L() { if (ModifierContext.DEBUG) Vex.L("Vex.Flow.ModifierContext", arguments); }
 
     ModifierContext.prototype = {
       addModifier: function(modifier) {

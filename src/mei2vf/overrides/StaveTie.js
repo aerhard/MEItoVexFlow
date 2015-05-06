@@ -1,7 +1,6 @@
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex) {
+    'vex'
+], function (Vex) {
 
 
 
@@ -20,7 +19,7 @@ define([
    * @param {!Object} notes The notes to tie up.
    * @param {!Object} Options
    */
-  VF.StaveTie = ( function () {
+  Vex.Flow.StaveTie = ( function () {
     function StaveTie(notes, text) {
       if (arguments.length > 0) {
         this.init(notes, text);

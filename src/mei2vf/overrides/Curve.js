@@ -1,10 +1,9 @@
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex) {
+    'vex'
+], function (Vex) {
 
 
-  VF.Curve.prototype.renderCurve = function (params) {
+  Vex.Flow.Curve.prototype.renderCurve = function (params) {
     var ctx = this.context;
     var cps = this.render_options.cps;
 
@@ -90,9 +89,9 @@ define([
   };
 
 
-  VF.Curve.prototype.draw = function () {
+  Vex.Flow.Curve.prototype.draw = function () {
     //#######start addition
-    var Curve = VF.Curve;
+    var Curve = Vex.Flow.Curve;
     //###########end addition
 
 

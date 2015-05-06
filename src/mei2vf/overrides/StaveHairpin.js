@@ -4,9 +4,8 @@
  */
 
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex) {
+    'vex'
+], function (Vex) {
 
   // VexFlow - Music Engraving for HTML5
   // Copyright Mohit Muthanna 2010
@@ -23,7 +22,7 @@ define([
    * @param {!Object} type The type of hairpin
    */
 
-  VF.StaveHairpin = (function () {
+  Vex.Flow.StaveHairpin = (function () {
     function StaveHairpin(notes, type) {
       if (arguments.length > 0) this.init(notes, type);
     }
@@ -94,7 +93,7 @@ define([
 
         this.setNotes(notes);
         this.hairpin = type;
-        this.position = VF.Modifier.Position.BELOW;
+        this.position = Vex.Flow.Modifier.Position.BELOW;
 
         this.context = null;
 
@@ -114,7 +113,7 @@ define([
       },
 
       setPosition : function (position) {
-        if (position == VF.Modifier.Position.ABOVE || position == VF.Modifier.Position.BELOW) {
+        if (position == Vex.Flow.Modifier.Position.ABOVE || position == Vex.Flow.Modifier.Position.BELOW) {
           this.position = position;
         }
         return this;
@@ -153,7 +152,7 @@ define([
         var dis = this.render_options.y_shift + 20;
         var y_shift = params.first_y;
 
-        if (this.position == VF.Modifier.Position.ABOVE) {
+        if (this.position == Vex.Flow.Modifier.Position.ABOVE) {
           dis = -dis + 30;
           y_shift = params.first_y - params.staff_height;
         }

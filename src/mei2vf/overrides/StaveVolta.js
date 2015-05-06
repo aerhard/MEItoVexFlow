@@ -5,15 +5,14 @@
  */
 
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex) {
+    'vex'
+], function (Vex) {
 
-  VF.Volta.prototype.draw = function (stave, x) {
+  Vex.Flow.Volta.prototype.draw = function (stave, x) {
 
     x-=stave.getModifierXShift();
 
-    var Volta = VF.Volta;
+    var Volta = Vex.Flow.Volta;
 
     if (!stave.context) throw new Vex.RERR("NoCanvasContext", "Can't draw stave without canvas context.");
     var ctx = stave.context;

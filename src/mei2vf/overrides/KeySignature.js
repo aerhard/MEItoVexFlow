@@ -1,7 +1,6 @@
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex) {
+    'vex'
+], function (Vex) {
 
 
 
@@ -13,7 +12,7 @@ define([
   //
   // This file implements key signatures. A key signature sits on a stave
   // and indicates the notes with implicit accidentals.
-  VF.KeySignature = (function () {
+  Vex.Flow.KeySignature = (function () {
     // MODIFIED: ADDED PARAMETER
     function KeySignature(keySpec, customPadding) {
       // MODIFIED: ADDED PARAMETER
@@ -38,7 +37,7 @@ define([
     };
 
     // ## Prototype Methods
-    Vex.Inherit(KeySignature, VF.StaveModifier, {
+    Vex.Inherit(KeySignature, Vex.Flow.StaveModifier, {
       // Create a new Key Signature based on a `key_spec`
       // MODIFIED: ADDED PARAMETER
       init : function (key_spec, customPadding) {
@@ -49,15 +48,15 @@ define([
         this.setPadding(padding);
 
         this.glyphFontScale = 38; // TODO(0xFE): Should this match StaveNote?
-        this.accList = VF.keySignature(key_spec);
+        this.accList = Vex.Flow.keySignature(key_spec);
       },
 
       // Add an accidental glyph to the `stave`. `acc` is the data of the
       // accidental to add. If the `next` accidental is also provided, extra
       // width will be added to the initial accidental for optimal spacing.
       addAccToStave : function (stave, acc, next) {
-        var glyph_data = VF.accidentalCodes(acc.type);
-        var glyph = new VF.Glyph(glyph_data.code, this.glyphFontScale);
+        var glyph_data = Vex.Flow.accidentalCodes(acc.type);
+        var glyph = new Vex.Flow.Glyph(glyph_data.code, this.glyphFontScale);
 
         // Determine spacing between current accidental and the next accidental
         var extra_width = 0;
@@ -77,7 +76,7 @@ define([
       // place appropriate natural accidentals before the key signature.
       cancelKey : function (spec) {
         // Get the accidental list for the cancelled key signature
-        var cancel_accList = VF.keySignature(spec);
+        var cancel_accList = Vex.Flow.keySignature(spec);
 
         // If the cancelled key has a different accidental type, ie: # vs b
         var different_types = this.accList.length > 0 && cancel_accList[0].type !== this.accList[0].type;

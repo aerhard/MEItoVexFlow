@@ -94,7 +94,7 @@ define([
     var score, mei_xml, xmlDoc;
 
     var loadTstampXML = function() {
-      mei_xml = 'xml/TC.tstamp2id.xml';
+      mei_xml = 'tests/xml/TC.tstamp2id.xml';
       //load the xml file...
       xmlDoc = loadXMLDoc(mei_xml);
       console.log('MEI-XML loaded.');
@@ -112,7 +112,7 @@ define([
 
         var tstamp;
 
-        var id2ts_xmlDoc = loadXMLDoc('xml/TC.id2tstamp.xml');
+        var id2ts_xmlDoc = loadXMLDoc('tests/xml/TC.id2tstamp.xml');
         console.log('MEI-XML loaded.');
         var id2ts_score = id2ts_xmlDoc.getElementsByTagNameNS("http://www.music-encoding.org/ns/mei", 'score');
 
@@ -474,7 +474,7 @@ define([
         console.log('********* TEST: MeiLib.SliceMEI() ********************************');
 
         start_test('SliceMEI');
-        var xmlDoc_slice = loadXMLDoc('xml/TC.Slice.xml');
+        var xmlDoc_slice = loadXMLDoc('tests/xml/TC.Slice.xml');
         var score2slice = xmlDoc_slice.getElementsByTagNameNS("http://www.music-encoding.org/ns/mei", 'score')[0];
         var slice = MeiLib.SliceMEI(score2slice, {start_n : 1, end_n : 8, noClef : true, noKey : true, noMeter : true, staves : [
           1,
@@ -589,7 +589,7 @@ define([
             'choice01' : {},
             'app-var' : {}
           };
-          var xmlDoc_rich_mei = loadXMLDoc('xml/TC.CanonicalMEI.01.xml');
+          var xmlDoc_rich_mei = loadXMLDoc('tests/xml/TC.CanonicalMEI.01.xml');
           var meiDoc = new MeiLib.MeiDoc(xmlDoc_rich_mei);
 
           console.log(meiDoc.APPs);
@@ -631,7 +631,7 @@ define([
             'app-var-01' : {},
             'app-var-02' : {}
           };
-          var xmlDoc_rich_mei = loadXMLDoc('xml/TC.CanonicalMEI.02.xml');
+          var xmlDoc_rich_mei = loadXMLDoc('tests/xml/TC.CanonicalMEI.02.xml');
           var meiDoc = new MeiLib.MeiDoc(xmlDoc_rich_mei);
 
           for (var appID in meiDoc.ALTs) {
@@ -667,7 +667,7 @@ define([
 
         it('MeiDoc-SectionView', function () {
           console.log('********* TEST: MeiLib.MeiDoc - Modify Section View ***********');
-          var xmlDoc_rich_mei = loadXMLDoc('xml/TC.CanonicalMEI.02.xml');
+          var xmlDoc_rich_mei = loadXMLDoc('tests/xml/TC.CanonicalMEI.02.xml');
           var meiDoc = new MeiLib.MeiDoc(xmlDoc_rich_mei);
           meiDoc.initSectionView();
 
@@ -714,7 +714,7 @@ define([
         it('MeiDoc-SectionView-MultipleChoice', function () {
           console.log('********* TEST: MeiLib.MeiDoc - Modify Section View (Multiple Choice) ***********');
 
-          var xmlDoc_rich_mei = loadXMLDoc('xml/TC.CanonicalMEI.02.xml');
+          var xmlDoc_rich_mei = loadXMLDoc('tests/xml/TC.CanonicalMEI.02.xml');
           var meiDoc = new MeiLib.MeiDoc(xmlDoc_rich_mei);
           meiDoc.initSectionView();
 

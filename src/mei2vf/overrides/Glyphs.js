@@ -1,8 +1,8 @@
 define([
-  'vexflow'
-], function (VF) {
+    'vex'
+], function (Vex) {
 
-  VF.articulationCodes.articulations['a^b'] = {   // Marcato below
+  Vex.Flow.articulationCodes.articulations['a^b'] = {   // Marcato below
     code : "v16",
     width : 8,
     shift_right : 0,
@@ -11,7 +11,7 @@ define([
     between_lines : false
   };
 
-  VF.articulationCodes.articulations['avb'] = {   // Staccatissimo below
+  Vex.Flow.articulationCodes.articulations['avb'] = {   // Staccatissimo below
     code : "v66",
     width : 4,
     shift_right : 0,
@@ -21,14 +21,14 @@ define([
   };
 
 
-  VF.Font.glyphs['v66'] = {
+  Vex.Flow.Font.glyphs['v66'] = {
     "x_min" : -73.5,
     "x_max" : 72.140625,
     "ha" : 74,
     "o" : "m -36 -126 b 0 0 -17 -56 -1 0 b 70 -254 0 0 70 -249 l 72 -255 l 0 -255 l -73 -255 l -72 -254 b -36 -126 -72 -254 -55 -195 "
   };
 
-  VF.Font.glyphs['v16'] = {
+  Vex.Flow.Font.glyphs['v16'] = {
     "x_min" : -155.171875,
     "x_max" : 153.8125,
     "ha" : 157,
@@ -36,27 +36,27 @@ define([
   };
 
   // use square breve glyph instead of VexFlow's ||O||
-  VF.durationToGlyph.duration_codes['1/2'].type.n = {code_head : "noteheadDoubleWholeSquare"};
+  Vex.Flow.durationToGlyph.duration_codes['1/2'].type.n = {code_head : "noteheadDoubleWholeSquare"};
 
   //fallback: remove when the CMN long is implemented in VexFlow
-  if (!VF.durationToTicks.durations['1/4']) {
-    VF.durationToTicks.durations['1/4'] = VF.RESOLUTION / 0.25;
+  if (!Vex.Flow.durationToTicks.durations['1/4']) {
+    Vex.Flow.durationToTicks.durations['1/4'] = Vex.Flow.RESOLUTION / 0.25;
   }
 
   // fallback: remove when the CMN long is implemented in VexFlow
-  if (!VF.durationToGlyph.duration_codes['1/4']) {
-    VF.durationToGlyph.duration_codes['1/4'] = {
+  if (!Vex.Flow.durationToGlyph.duration_codes['1/4']) {
+    Vex.Flow.durationToGlyph.duration_codes['1/4'] = {
       common : {
         head_width : 22,
         stem : false,
         stem_offset : 0,
         flag : false,
-        stem_up_extension : -VF.STEM_HEIGHT,
-        stem_down_extension : -VF.STEM_HEIGHT,
-        gracenote_stem_up_extension : -VF.STEM_HEIGHT,
-        gracenote_stem_down_extension : -VF.STEM_HEIGHT,
-        tabnote_stem_up_extension : -VF.STEM_HEIGHT,
-        tabnote_stem_down_extension : -VF.STEM_HEIGHT,
+        stem_up_extension : -Vex.Flow.STEM_HEIGHT,
+        stem_down_extension : -Vex.Flow.STEM_HEIGHT,
+        gracenote_stem_up_extension : -Vex.Flow.STEM_HEIGHT,
+        gracenote_stem_down_extension : -Vex.Flow.STEM_HEIGHT,
+        tabnote_stem_up_extension : -Vex.Flow.STEM_HEIGHT,
+        tabnote_stem_down_extension : -Vex.Flow.STEM_HEIGHT,
         dot_shiftY : 0,
         line_above : 0,
         line_below : 0
@@ -78,14 +78,14 @@ define([
     };
   }
 
-  VF.Font.glyphs["noteheadDoubleWholeSquare"] = {
+  Vex.Flow.Font.glyphs["noteheadDoubleWholeSquare"] = {
     "x_min" : 0,
     "x_max" : 746,
     "ha" : 746,
     "o" : "0 0 117 0 1 1 560 560 1 -1 0 -1120 m 724 350 b 746 328 736 350 746 340 l 746 -328 b 724 -350 746 -339 736 -350 b 701 -328 711 -350 701 -339 l 701 -270 b 659 -234 701 -253 683 -234 l 83 -234 b 45 -276 67 -234 45 -256 l 45 -328 b 22 -350 45 -339 35 -350 b 0 -328 10 -350 0 -339 l 0 328 b 22 350 0 340 10 350 b 45 328 35 350 45 340 l 45 260 b 77 218 45 260 64 218 l 659 218 b 701 265 679 218 701 232 l 701 328 b 724 350 701 340 711 350 m 45 18 l 45 -36 b 146 -94 45 -70 83 -94 l 606 -94 b 701 -36 664 -94 701 -77 l 701 28 b 606 78 701 57 664 78 l 139 78 b 45 18 71 78 45 59 "
   };
   // NOT PART OF BRAVURA:
-  VF.Font.glyphs["noteheadCMNLonga"] = {
+  Vex.Flow.Font.glyphs["noteheadCMNLonga"] = {
     "x_min" : 0, "x_max" : 746, "ha" : 746, // based on the Bravura breve glyph; CHANGES: all values < -1400
     "o" : "0 0 117 0 1 1 560 560 1 -1 0 -1120 " + "m 724 350 " + "b 746 328 736 350 746 340 " + "l 746 -1428 " +
           "b 724 -1450 746 -1439 736 -1450 " + "b 701 -1428 711 -1450 701 -1439 " + "l 701 -270 " +

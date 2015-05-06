@@ -1,25 +1,24 @@
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex, undefined) {
+    'vex'
+], function (Vex) {
 
-  VF.ClefNote.prototype.setMeiElement = function (element) {
+  Vex.Flow.ClefNote.prototype.setMeiElement = function (element) {
     this.meiElement = element;
     return this;
   };
-  VF.ClefNote.prototype.getMeiElement = function () {
+  Vex.Flow.ClefNote.prototype.getMeiElement = function () {
     return this.meiElement;
   };
 
 
 
   //######## start addition
-  VF.ClefNote.prototype.setOffsetLeft = function (offset) {
+  Vex.Flow.ClefNote.prototype.setOffsetLeft = function (offset) {
     this.offsetLeft = offset;
   };
   //######### end addition
 
-  VF.ClefNote.prototype.draw = function () {
+  Vex.Flow.ClefNote.prototype.draw = function () {
     if (!this.stave) throw new Vex.RERR("NoStave", "Can't draw without a stave.");
 
     if (!this.glyph.getContext()) {
@@ -34,9 +33,9 @@ define([
     this.glyph.renderToStave(abs_x);
     // ##########END MODIFICATION
 
-    // If the VF.Clef has an annotation, such as 8va, draw it.
+    // If the Vex.Flow.Clef has an annotation, such as 8va, draw it.
     if (this.clef_obj.annotation !== undefined) {
-      var attachment = new VF.Glyph(this.clef_obj.annotation.code, this.clef_obj.annotation.point);
+      var attachment = new Vex.Flow.Glyph(this.clef_obj.annotation.code, this.clef_obj.annotation.point);
       if (!attachment.getContext()) {
         attachment.setContext(this.context);
       }

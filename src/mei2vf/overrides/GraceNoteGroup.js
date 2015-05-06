@@ -6,11 +6,10 @@
  */
 
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex) {
+    'vex'
+], function (Vex) {
 
-  VF.GraceNoteGroup.prototype.draw = function () {
+  Vex.Flow.GraceNoteGroup.prototype.draw = function () {
     if (!this.context) {
       throw new Vex.RuntimeError("NoContext", "Can't draw Grace note without a context.");
     }

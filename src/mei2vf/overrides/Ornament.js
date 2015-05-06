@@ -1,20 +1,19 @@
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex) {
+    'vex'
+], function (Vex) {
 
-  VF.Ornament.prototype.setMeiElement = function (element) {
+  Vex.Flow.Ornament.prototype.setMeiElement = function (element) {
     this.meiElement = element;
     return this;
   };
-  VF.Ornament.prototype.getMeiElement = function () {
+  Vex.Flow.Ornament.prototype.getMeiElement = function () {
     return this.meiElement;
   };
 
 
   // ## Static Methods
   // Arrange ornaments inside `ModifierContext`
-  VF.Ornament.format = function(ornaments, state) {
+  Vex.Flow.Ornament.format = function(ornaments, state) {
     if (!ornaments || ornaments.length === 0) return false;
 
     var text_line = state.text_line;
@@ -55,7 +54,7 @@ define([
   };
 
 
-  VF.Ornament.prototype.draw = function () {
+  Vex.Flow.Ornament.prototype.draw = function () {
     if (!this.context) throw new Vex.RERR("NoContext", "Can't draw Ornament without a context.");
     if (!(this.note && (this.index !== null))) {
       throw new Vex.RERR("NoAttachedNote", "Can't draw Ornament without a note and index.");

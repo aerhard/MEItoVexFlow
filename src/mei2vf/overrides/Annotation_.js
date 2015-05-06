@@ -8,21 +8,21 @@ define([
   'vex'
 ], function (VF, Vex) {
 
-  VF.Annotation.prototype.setMeiElement = function (element) {
+  Vex.Flow.Annotation.prototype.setMeiElement = function (element) {
     this.meiElement = element;
     return this;
   };
 
-  VF.Annotation.prototype.getMeiElement = function () {
+  Vex.Flow.Annotation.prototype.getMeiElement = function () {
     return this.meiElement;
   };
 
 
-  VF.Annotation.prototype.draw = function () {
+  Vex.Flow.Annotation.prototype.draw = function () {
 
     // START ADDITION
-    var Annotation = VF.Annotation;
-    var Modifier = VF.Modifier;
+    var Annotation = Vex.Flow.Annotation;
+    var Modifier = Vex.Flow.Modifier;
     // END ADDITION
 
     if (!this.context) throw new Vex.RERR("NoContext", "Can't draw text annotation without a context.");

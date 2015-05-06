@@ -20,11 +20,10 @@
  */
 define([
   'vexflow',
-  'mei2vf/vexflow-overrides',
   'meilib/MeiLib',
   'common/Logger',
   'mei2vf/Converter'
-], function (VF, overrides, MeiLib, Logger, Converter) {
+], function (VF, MeiLib, Logger, Converter) {
   window.MeiLib = MeiLib;
 
 

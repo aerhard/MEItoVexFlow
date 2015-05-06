@@ -21,9 +21,6 @@ module.exports = function(grunt) {
           baseUrl: "src",
           mainConfigFile: "src/config.js",
           out: 'dist/<%= pkg.name %>.js',
-          paths: {
-            "vexflow": "empty:"
-          },
           wrap: {
             start: "(function($, VF, undefined) {",
             end: "})(jQuery, Vex.Flow);"
@@ -118,43 +115,55 @@ module.exports = function(grunt) {
     },
 
     jasmine: {
-        test: {
-            src: 'src/**/*.js',
+        testdev: {
+            src: 'src/*/*.js',
             options: {
-                specs: 'spec/*/*.js',
-                //helpers: 'spec/*Helper.js',
+                specs: 'tests/spec/*/*.js',
+                helpers: ['tests/loadXMLDoc.js', 'tests/phantomPolyFill.js'],
                 host: 'http://127.0.0.1:8000/',
                 template: require('grunt-template-jasmine-requirejs'),
+                options : {
+                    keepRunner :true
+                },
                 templateOptions: {
-                    //requireConfigFile: 'src/config.js',
                     requireConfig: {
+                        baseUrl: 'src/',
                         paths : {
-                            'tests' : 'tests',
-                            'spec' : 'tests/spec'
+                            'tests' : '../tests',
+                                'jquery' : '../bower_components/jquery/dist/jquery.min',
+                                'vex' : '../bower_components/vexflow/releases/vexflow-min',
+                            'vexflow':'../src/mei2vf/vexflow',
+                                'common' : '../src/common',
+                                'mei2vf' : '../src/mei2vf',
+                                'meilib' : '../src/meilib'
+                        },
+                        shim : {
+                            'vex' : {
+                                exports : 'Vex'
+                            }
                         }
                     }
                 }
             }
         }
-      //
-      //pivotal: {
-      //  src: 'src/**/*.js',
-      //  options: {
-      //    specs: 'test/spec/*/*.js',
-      //    helpers: 'spec/*Helper.js'
-      //  }
-      //}
     }
 
   });
 
 
   // Tasks.
-  grunt.registerTask('default', ['requirejs:compile', 'closurecompiler:minify']);
-
   grunt.registerTask('run', ['connect', 'watch']);
+
+  // headless unit and rendering tests of requirejs code in phantomJS
+  grunt.registerTask('test', ['connect', 'jasmine:testdev']);
 
   grunt.registerTask('compile', ['requirejs:compile']);
   grunt.registerTask('minify', ['closurecompiler:minify']);
+
+  grunt.registerTask('build', ['compile', 'minify']);
+
+  grunt.registerTask('dist', ['test', 'compile', 'minify']);
+
+  grunt.registerTask('default', ['dist']);
 
 }

@@ -1,7 +1,6 @@
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex) {
+    'vex'
+], function (Vex) {
 
 
   // Vex Flow Notation
@@ -9,14 +8,14 @@ define([
   //
   // Requires vex.js.
 
-  VF.StaveNote.prototype.getTieRightX = function () {
+  Vex.Flow.StaveNote.prototype.getTieRightX = function () {
     var tieStartX = this.getAbsoluteX();
     tieStartX += this.glyph.head_width + this.x_shift + this.extraRightPx;
     //if (this.modifierContext) tieStartX += this.modifierContext.getExtraRightPx();
     return tieStartX;
   };
 
-  VF.StaveNote.prototype.getYForBottomText = function (text_line) {
+  Vex.Flow.StaveNote.prototype.getYForBottomText = function (text_line) {
     var extents = this.getStemExtents();
     return Vex.Max(this.stave.getYForBottomText(text_line), extents.baseY +
                                                             (this.render_options.annotation_spacing * (text_line + 1)));
@@ -59,7 +58,7 @@ define([
 //  };
 
 
-  VF.StaveNote.prototype.draw = function() {
+  Vex.Flow.StaveNote.prototype.draw = function() {
     if (!this.context) throw new Vex.RERR("NoCanvasContext",
       "Can't draw without a canvas context.");
     if (!this.stave) throw new Vex.RERR("NoStave",

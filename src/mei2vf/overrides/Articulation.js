@@ -7,13 +7,12 @@
  */
 
 define([
-  'vexflow',
   'vex'
-], function (VF, Vex) {
+], function (Vex) {
 
   // ## Static Methods
     // Arrange articulations inside `ModifierContext`
-  VF.Articulation.format = function(articulations, state) {
+  Vex.Flow.Articulation.format = function(articulations, state) {
     if (!articulations || articulations.length === 0) return false;
 
     var text_line = state.text_line;
@@ -54,8 +53,8 @@ define([
   };
 
 
-  VF.Articulation.prototype.draw = function () {
-    var Modifier = VF.Modifier;
+  Vex.Flow.Articulation.prototype.draw = function () {
+    var Modifier = Vex.Flow.Modifier;
     var L = function () {
     };
     if (!this.context) throw new Vex.RERR("NoContext", "Can't draw Articulation without a context.");
@@ -66,8 +65,8 @@ define([
     var stem_direction = this.note.getStemDirection();
     var stave = this.note.getStave();
 
-    var is_on_head = (this.position === Modifier.Position.ABOVE && stem_direction === VF.StaveNote.STEM_DOWN) ||
-                     (this.position === Modifier.Position.BELOW && stem_direction === VF.StaveNote.STEM_UP);
+    var is_on_head = (this.position === Modifier.Position.ABOVE && stem_direction === Vex.Flow.StaveNote.STEM_DOWN) ||
+                     (this.position === Modifier.Position.BELOW && stem_direction === Vex.Flow.StaveNote.STEM_UP);
 
     var needsLineAdjustment = function (articulation, note_line, line_spacing) {
       var offset_direction = (articulation.position === Modifier.Position.ABOVE) ? 1 : -1;
@@ -93,7 +92,7 @@ define([
     var top = stem_ext.topY;
     var bottom = stem_ext.baseY;
 
-    if (stem_direction === VF.StaveNote.STEM_DOWN) {
+    if (stem_direction === Vex.Flow.StaveNote.STEM_DOWN) {
       top = stem_ext.baseY;
       bottom = stem_ext.topY;
     }
@@ -102,9 +101,9 @@ define([
     // outside the stave.
     if (is_tabnote) {
       if (this.note.hasStem()) {
-        if (stem_direction === VF.StaveNote.STEM_UP) {
+        if (stem_direction === Vex.Flow.StaveNote.STEM_UP) {
           bottom = stave.getYForBottomText(this.text_line - 2);
-        } else if (stem_direction === VF.StaveNote.STEM_DOWN) {
+        } else if (stem_direction === Vex.Flow.StaveNote.STEM_DOWN) {
           top = stave.getYForTopText(this.text_line - 1.5);
         }
       } else { // Without a stem
@@ -149,7 +148,7 @@ define([
     glyph_y += shiftY + this.y_shift;
 
     L("Rendering articulation: ", this.articulation, glyph_x, glyph_y);
-    VF.renderGlyph(this.context, glyph_x, glyph_y, this.render_options.font_scale, this.articulation.code);
+    Vex.Flow.renderGlyph(this.context, glyph_x, glyph_y, this.render_options.font_scale, this.articulation.code);
 
     //var context = this.context;
     //context.save();

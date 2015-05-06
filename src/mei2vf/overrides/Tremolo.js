@@ -3,11 +3,10 @@
  */
 
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex) {
+    'vex'
+], function (Vex) {
 
-  VF.Tremolo.prototype.draw = function () {
+  Vex.Flow.Tremolo.prototype.draw = function () {
     if (!this.context) throw new Vex.RERR("NoContext", "Can't draw Tremolo without a context.");
     if (!(this.note && (this.index != null))) {
       throw new Vex.RERR("NoAttachedNote", "Can't draw Tremolo without a note and index.");
