@@ -8,6 +8,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-requirejs');
   grunt.loadNpmTasks('grunt-closurecompiler');
+  grunt.loadNpmTasks('grunt-contrib-jasmine');
 
   // Project configuration.
   grunt.initConfig({
@@ -114,6 +115,35 @@ module.exports = function(grunt) {
           livereload: true
         }
       }
+    },
+
+    jasmine: {
+        test: {
+            src: 'src/**/*.js',
+            options: {
+                specs: 'spec/*/*.js',
+                //helpers: 'spec/*Helper.js',
+                host: 'http://127.0.0.1:8000/',
+                template: require('grunt-template-jasmine-requirejs'),
+                templateOptions: {
+                    //requireConfigFile: 'src/config.js',
+                    requireConfig: {
+                        paths : {
+                            'tests' : 'tests',
+                            'spec' : 'tests/spec'
+                        }
+                    }
+                }
+            }
+        }
+      //
+      //pivotal: {
+      //  src: 'src/**/*.js',
+      //  options: {
+      //    specs: 'test/spec/*/*.js',
+      //    helpers: 'spec/*Helper.js'
+      //  }
+      //}
     }
 
   });
