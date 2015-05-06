@@ -1,7 +1,6 @@
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex) {
+    'vex'
+], function (Vex) {
 
 
   /**
@@ -9,7 +8,7 @@ define([
    *
    * @constructor
    */
-  VF.Hyphen = ( function () {
+  Vex.Flow.Hyphen = ( function () {
     function Hyphen(config) {
       if (arguments.length > 0) {
         this.init(config);

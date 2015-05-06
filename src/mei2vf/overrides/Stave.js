@@ -1,7 +1,6 @@
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex, undefined) {
+    'vex'
+], function (Vex) {
 
   // Vex Flow
   // Mohit Muthanna <mohit@muthanna.com>
@@ -9,12 +8,12 @@ define([
   // Copyright Mohit Cheppudira 2010
 
   /** @constructor */
-  VF.Stave = (function () {
+  Vex.Flow.Stave = (function () {
     function Stave(x, y, width, options) {
       if (arguments.length > 0) this.init(x, y, width, options);
     }
 
-    var THICKNESS = (VF.STAVE_LINE_THICKNESS > 1 ? VF.STAVE_LINE_THICKNESS : 0);
+    var THICKNESS = (Vex.Flow.STAVE_LINE_THICKNESS > 1 ? Vex.Flow.STAVE_LINE_THICKNESS : 0);
     Stave.prototype = {
       init : function (x, y, width, options) {
         this.x = x;
@@ -48,8 +47,8 @@ define([
 
         this.resetLines();
 
-        this.modifiers.push(new VF.Barline(VF.Barline.type.SINGLE, this.x)); // beg bar
-        this.modifiers.push(new VF.Barline(VF.Barline.type.SINGLE, this.x + this.width)); // end bar
+        this.modifiers.push(new Vex.Flow.Barline(Vex.Flow.Barline.type.SINGLE, this.x)); // beg bar
+        this.modifiers.push(new Vex.Flow.Barline(Vex.Flow.Barline.type.SINGLE, this.x + this.width)); // end bar
       },
 
       getGlyphStartX : function () {
@@ -79,7 +78,7 @@ define([
 
         // Add additional space if left barline is REPEAT_BEGIN and there are other
         // start modifiers than barlines
-        if (this.modifiers[0].barline == VF.Barline.type.REPEAT_BEGIN && this.modifiers.length > 2) {
+        if (this.modifiers[0].barline == Vex.Flow.Barline.type.REPEAT_BEGIN && this.modifiers.length > 2) {
           start_x += 20;
         }
         return start_x;
@@ -152,16 +151,16 @@ define([
       // Bar Line functions
       setBegBarType : function (type) {
         // Only valid bar types at beginning of stave is none, single or begin repeat
-        if (type == VF.Barline.type.SINGLE || type == VF.Barline.type.REPEAT_BEGIN || type == VF.Barline.type.NONE) {
-          this.modifiers[0] = new VF.Barline(type, this.x);
+        if (type == Vex.Flow.Barline.type.SINGLE || type == Vex.Flow.Barline.type.REPEAT_BEGIN || type == Vex.Flow.Barline.type.NONE) {
+          this.modifiers[0] = new Vex.Flow.Barline(type, this.x);
         }
         return this;
       },
 
       setEndBarType : function (type) {
         // Repeat end not valid at end of stave
-        if (type != VF.Barline.type.REPEAT_BEGIN) {
-          this.modifiers[1] = new VF.Barline(type, this.x + this.width);
+        if (type != Vex.Flow.Barline.type.REPEAT_BEGIN) {
+          this.modifiers[1] = new Vex.Flow.Barline(type, this.x + this.width);
         }
         return this;
       },
@@ -193,36 +192,36 @@ define([
 
       // Coda & Segno Symbol functions
       setRepetitionTypeLeft : function (type, y) {
-        this.modifiers.push(new VF.Repetition(type, this.x, y));
+        this.modifiers.push(new Vex.Flow.Repetition(type, this.x, y));
         return this;
       },
 
       setRepetitionTypeRight : function (type, y) {
-        this.modifiers.push(new VF.Repetition(type, this.x, y));
+        this.modifiers.push(new Vex.Flow.Repetition(type, this.x, y));
         return this;
       },
 
       // Volta functions
       setVoltaType : function (type, number_t, y) {
-        this.modifiers.push(new VF.Volta(type, number_t, this.x, y));
+        this.modifiers.push(new Vex.Flow.Volta(type, number_t, this.x, y));
         return this;
       },
 
       // Section functions
       setSection : function (section, y) {
-        this.modifiers.push(new VF.StaveSection(section, this.x, y));
+        this.modifiers.push(new Vex.Flow.StaveSection(section, this.x, y));
         return this;
       },
 
       // Tempo functions
       setTempo : function (tempo, y) {
-        this.modifiers.push(new VF.StaveTempo(tempo, this.x, y));
+        this.modifiers.push(new Vex.Flow.StaveTempo(tempo, this.x, y));
         return this;
       },
 
       // Text functions
       setText : function (text, position, options) {
-        this.modifiers.push(new VF.StaveText(text, position, options));
+        this.modifiers.push(new Vex.Flow.StaveText(text, position, options));
         return this;
       },
 
@@ -235,7 +234,7 @@ define([
       },
 
       getBoundingBox : function () {
-        return new VF.BoundingBox(this.x, this.y, this.width, this.getBottomY() - this.y);
+        return new Vex.Flow.BoundingBox(this.x, this.y, this.width, this.getBottomY() - this.y);
         // body...
       },
 
@@ -309,33 +308,33 @@ define([
       },
 
       addKeySignature : function (keySpec) {
-        this.addModifier(new VF.KeySignature(keySpec));
+        this.addModifier(new Vex.Flow.KeySignature(keySpec));
         return this;
       },
 
       addClef : function (clef, size, annotation) {
         this.clef = clef;
-        this.addModifier(new VF.Clef(clef, size, annotation));
+        this.addModifier(new Vex.Flow.Clef(clef, size, annotation));
         return this;
       },
 
       addEndClef : function (clef, size, annotation) {
-        this.addEndModifier(new VF.Clef(clef, size, annotation));
+        this.addEndModifier(new Vex.Flow.Clef(clef, size, annotation));
         return this;
       },
 
       addTimeSignature : function (timeSpec, customPadding) {
-        this.addModifier(new VF.TimeSignature(timeSpec, customPadding));
+        this.addModifier(new Vex.Flow.TimeSignature(timeSpec, customPadding));
         return this;
       },
 
       addEndTimeSignature : function (timeSpec, customPadding) {
-        this.addEndModifier(new VF.TimeSignature(timeSpec, customPadding));
+        this.addEndModifier(new Vex.Flow.TimeSignature(timeSpec, customPadding));
       },
 
       addTrebleGlyph : function () {
         this.clef = "treble";
-        this.addGlyph(new VF.Glyph("v83", 40));
+        this.addGlyph(new Vex.Flow.Glyph("v83", 40));
         return this;
       },
 
@@ -359,7 +358,7 @@ define([
           this.context.setFillStyle(this.options.fill_style);
           this.context.setStrokeStyle(this.options.fill_style);
           if (this.options.line_config[line].visible) {
-            this.context.fillRect(x, y, width, VF.STAVE_LINE_THICKNESS);
+            this.context.fillRect(x, y, width, Vex.Flow.STAVE_LINE_THICKNESS);
           }
           this.context.restore();
         }

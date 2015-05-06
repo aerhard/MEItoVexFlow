@@ -5,18 +5,13 @@ require.config({
     'vex' : '../bower_components/vexflow/releases/vexflow-min',
     'common' : '../src/common',
     'mei2vf' : '../src/mei2vf',
-    'meilib' : '../src/meilib'
+    'meilib' : '../src/meilib',
+    'vexflow' : '../src/mei2vf/vexflow'
   },
   shim : {
     'vex' : {
       exports : 'Vex'
-    },
-
-    'vexflow' : {deps : ['vex'],
-      exports : 'Vex.Flow'}
+    }
   }
 });
 
-define('vexflow', ['vex'], function (Vex) {
-  return Vex.Flow;
-});

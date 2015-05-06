@@ -10,9 +10,8 @@
  */
 
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex) {
+    'vex'
+], function (Vex) {
 
 
 

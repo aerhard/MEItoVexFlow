@@ -8,9 +8,8 @@
  */
 
 define([
-  'vexflow',
-  'vex'
-], function (VF, Vex) {
+    'vex'
+], function (Vex) {
 
   // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
   // Author: Larry Kuhns

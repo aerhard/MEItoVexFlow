@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>MEI-to-VexFlow Test Page</title>
+
+    <link rel="shortcut icon" type="image/png" href="bower_components/jasmine/images/jasmine_favicon.png">
+    <link rel="stylesheet" type="text/css" href="bower_components/jasmine/lib/jasmine-core/jasmine.css">
+    <link rel="stylesheet" type="text/css" href="tests/css/style.css"/>
+
+    <script type="text/javascript" src="bower_components/jasmine/lib/jasmine-core/jasmine.js"></script>
+    <script type="text/javascript" src="bower_components/jasmine/lib/jasmine-core/jasmine-html.js"></script>
+    <script type="text/JavaScript" src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/vexflow/releases/vexflow-min.js"></script>
+
+    <script type="text/JavaScript" src="dist/meitovexflow.min.js"></script>
+
+    <script src="bower_components/requirejs/require.js"></script>
+
+    <script type="text/javascript" src="tests/loadXMLDoc.js"></script>
+
+    <script type="text/javascript" src="tests/runSpec.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            require.config({
+                baseUrl : 'src/',
+                paths : {
+                    'tests' : '../tests',
+                    'spec' : '../tests/spec',
+                    'mei2vf' : '../tests'
+                }
+            });
+            runSpec(['spec/mei2vf/Rendering']);
+        });
+    </script>
+</head>
+<body>
+<!--<script src="//localhost:35729/livereload.js"></script>-->
+</body>
+</html>

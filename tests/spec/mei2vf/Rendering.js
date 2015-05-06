@@ -46,7 +46,7 @@ define([
           var score_width = canvas_width; // - 50;
           var score_height = canvas_height; // - 50;
 
-          var xmlDocPath = 'xml/' + input.mei_xml;
+          var xmlDocPath = 'tests/xml/' + input.mei_xml;
 
           //load the xml file...
           window.console.log("Running Test Case Title: '" + input.title + "' MEI-XML: '" + xmlDocPath + "'");
