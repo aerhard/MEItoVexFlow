@@ -38,7 +38,7 @@ define([
 
           $(titleElem).html(input.title);
           var canvas_width = input.canvas_width || 1031;
-          var canvas_height = input.canvas_height || 200;
+          var canvas_height = input.canvas_height;
 
 //          $(canvas).attr('width', canvas_width);
 //          $(canvas).attr('height', canvas_height);
@@ -206,14 +206,14 @@ define([
     test_cases.push({ title : "Grace Notes", mei_xml : 'TC.GraceNotes.xml', canvas_height : 400});
     test_cases.push({ title : "Ornaments and Trills", mei_xml : 'TC.Ornaments.xml', canvas_height : 400, options: {pageTopMar:80}});
     test_cases.push({ title : 'Throw an exception on missing attribute', mei_xml : 'TC.MissingAttribute.xml', fail: true});
-    test_cases.push({ title : "Dots", mei_xml : 'TC.Dots.xml', canvas_height: 600, options : {labelMode : 'full'}});
+    test_cases.push({ title : "Dots", mei_xml : 'TC.Dots.xml', options : {labelMode : 'full'}});
     test_cases.push({ title : "Measure widths (with pick-up beat)", mei_xml : 'TC.MeasureWidths.xml', options : {labelMode : 'full'}});
     test_cases.push({ title : "Stem modifiers", mei_xml : 'TC.StemModifiers.xml', options : {labelMode : 'full'}});
 
     test_cases.push({ title : "Hairpins across systems", mei_xml : 'TC.Hairpins.CrossStave.xml', canvas_height: 500});
 
     test_cases.push({ title : "Beam span", mei_xml : 'TC.BeamSpan.xml', canvas_width : 800, canvas_height : 500});
-    test_cases.push({ title : "Tuplet span", mei_xml : 'TC.TupletSpan.xml', canvas_width : 1100, canvas_height : 500});
+    test_cases.push({ title : "Tuplet span", mei_xml : 'TC.TupletSpan.xml', canvas_width : 1100});
 
     test_cases.push({ title : "Note modifiers - Spacing", mei_xml : 'TC.NoteModifier.Spacing.xml', canvas_height : 2200});
     test_cases.push({ title : "Articulations", mei_xml : 'TC.Articulations.xml', canvas_height : 400, options: {pageTopMar:80}});
