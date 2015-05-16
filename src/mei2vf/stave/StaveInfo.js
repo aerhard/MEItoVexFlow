@@ -80,6 +80,7 @@ define([
     me.startClefCopy = null;
 
     me.updateDef(staffDef, scoreDef, true);
+    me.updateRenderWithFromMEI();
   };
 
   StaveInfo.prototype = {
@@ -104,6 +105,22 @@ define([
 
     getCurrentScoreDef : function () {
       return this.currentScoreDef;
+    },
+
+    /**
+    * @public
+    */
+    updateRenderWithFromMEI : function() {
+      debugger;
+      if (this.keySpec.meiElement && this.keySpec.meiElement.hasAttribute('key.sig.show')) {
+        this.renderWith.keysig = this.getKeySigShow();
+      }
+      if (this.clef.meiElement && this.clef.meiElement.hasAttribute('clef.visible')) {
+        this.renderWith.clef = this.getClefVisible();
+      }
+      if (this.timeSpec.meiElement && this.timeSpec.meiElement.hasAttribute('meter.rend')) {
+        this.renderWith.timesig = this.getMeterRend();
+      }
     },
 
     /**
@@ -403,7 +420,7 @@ define([
      */
     showClefCheck : function () {
       var me = this;
-      if (me.renderWith.clef && me.clef.meiElement && me.clef.meiElement.getAttribute('clef.visible') !== 'false') {
+      if (me.renderWith.clef && me.getClefVisible()) {
         me.renderWith.clef = false;
         return true;
       }
@@ -414,7 +431,7 @@ define([
      */
     showKeysigCheck : function () {
       var me = this;
-      if (me.renderWith.keysig && me.keySpec.meiElement && me.keySpec.meiElement.getAttribute('key.sig.show') !== 'false') {
+      if (me.renderWith.keysig && me.getKeySigShow()) {
         me.renderWith.keysig = false;
         return true;
       }
@@ -427,11 +444,33 @@ define([
       var me = this;
       if (me.renderWith.timesig) {
         me.renderWith.timesig = false;
-        if (me.timeSpec.meiElement && me.timeSpec.meiElement.getAttribute('meter.rend') !== 'invis') {
+        if (me.getMeterRend()) {
           return true;
         }
       }
     },
+
+    /**
+     * @public
+     */
+    getMeterRend : function() {
+      return this.timeSpec.meiElement && this.timeSpec.meiElement.getAttribute('meter.rend') !== 'invis'
+    },
+
+    /**
+     * @public
+     */
+    getKeySigShow : function() {
+      return this.keySpec.meiElement && this.keySpec.meiElement.getAttribute('key.sig.show') !== 'false';
+    },
+
+    /**
+     * @public
+     */
+    getClefVisible : function() {
+      return this.clef.meiElement && this.clef.meiElement.getAttribute('clef.visible') !== 'false';
+    },
+
 
     /**
      * @public

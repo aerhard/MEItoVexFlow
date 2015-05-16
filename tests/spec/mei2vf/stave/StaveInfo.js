@@ -40,6 +40,17 @@ define([
 
       });
 
+      it('gives preference to meter.rend, key.sig.show and clef.visible attributes over parameters', function() {
+        var staffDef = mei('<staffDef meter.rend="invis" key.sig.show="false" clef.visible="false" key.pname="a" key.mode="minor" meter.count="4" meter.unit="4" clef.shape="G" clef.line="2"/>');
+        var scoreDef = mei('<scoreDef meter.rend="invis" key.sig.show="false" clef.visible="false" key.pname="b" key.mode="major" meter.count="2" meter.unit="2" meter.sym="C" clef.shape="F" clef.line="4" clef.dis="8" clef.dis.place="below"/>');
+
+        var staveInfo = new StaveInfo(staffDef, undefined, true, true, true);
+
+        expect(staveInfo.renderWith.clef).toEqual(false);
+        expect(staveInfo.renderWith.keysig).toEqual(false);
+        expect(staveInfo.renderWith.timesig).toEqual(false);
+      });
+
       it('prefers specifications in <staffDef> over those in <scoreDef>', function () {
 
         var staffDef = mei('<staffDef key.pname="a" key.mode="minor" meter.count="4" meter.unit="4" clef.shape="G" clef.line="2"/>');
