@@ -130,7 +130,7 @@ define([
             if (f_note.vexNote) {
               keysInChord = f_note.vexNote.keys.length;
               tieIndices = f_note.index;
-            } else if (f_note.vexNote) {
+            } else if (l_note.vexNote) {
               keysInChord = l_note.vexNote.keys.length;
               tieIndices = l_note.index;
             }
@@ -160,6 +160,10 @@ define([
           }
           me.createSingleTie({}, l_note, model.params);
         } else {
+          var note = f_note.vexNote || l_note.vexNote;
+          if (!model.params.curvedir) {
+            model.params.curvedir = (note.getStemDirection() === -1) ? 'above' : 'below';
+          }
           // ... otherwise render only one tie:
           me.createSingleTie(f_note, l_note, model.params);
         }
