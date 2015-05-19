@@ -118,7 +118,7 @@ module.exports = function (grunt) {
       testdev: {
         src: 'src/*/*.js',
         options: {
-          specs: 'tests/spec/*/*.js',
+          specs: 'tests/spec/**/*.js',
           helpers: ['tests/loadXMLDoc.js', 'tests/phantomPolyFill.js'],
           host: 'http://127.0.0.1:8000/',
           template: require('grunt-template-jasmine-requirejs'),
@@ -131,7 +131,7 @@ module.exports = function (grunt) {
               paths: {
                 'tests': '../tests',
                 'jquery': '../bower_components/jquery/dist/jquery.min',
-                'vex': '../bower_components/vexflow/releases/vexflow-min',
+                'vex': '../bower_components/vexflow/releases/vexflow-debug',
                 'vexflow': '../src/mei2vf/vexflow',
                 'common': '../src/common',
                 'mei2vf': '../src/mei2vf',
