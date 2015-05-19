@@ -7820,17 +7820,9 @@
         var firstDefinedStemDir = firstStemDir || lastStemDir;
 
 
-        // TODO
-        // STEPS :
-        // 1) if bezier, use bezier, otherwise calculate curvedir
-        // 2) if y shift, use y shift, otherwise calculate position
-
-
         // ### STEP 1: Determine curve and curve dir
 
         bezier = params.bezier;
-        //ignore bezier for now!
-        bezier = null;
         if (bezier) {
           slurOptions.cps = me.bezierStringToCps(bezier);
           slurOptions.custom_cps = true;
@@ -7875,46 +7867,40 @@
         var startvo = parseFloat(params.startvo);
         var endvo = parseFloat(params.endvo);
 
-        // skip this for now
-        startvo = null;
+        slurOptions.y_shift_start = startvo;
+        slurOptions.y_shift_end = endvo;
 
-        if (startvo && endvo) {
-          slurOptions.y_shift_start = startvo;
-          slurOptions.y_shift_end = endvo;
-        } else {
+        if (!f_note.vexNote || !l_note.vexNote || !f_note.vexNote.hasStem() || !l_note.vexNote.hasStem()) {
+          // always position at head when one of the notes doesn't have a stem
+          slurOptions.position = VF.Curve.Position.NEAR_HEAD;
+          slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
 
-          if (!f_note.vexNote || !l_note.vexNote || !f_note.vexNote.hasStem() || !l_note.vexNote.hasStem()) {
-            // always position at head when one of the notes doesn't have a stem
+        } else if (firstStemDir === lastStemDir || !firstStemDir || !lastStemDir) {
+          // same stem direction in both notes
+
+          // shift slurs to stem end if stem direction equals curve direction
+          if (firstDefinedStemDir === curveDir) {
+            slurOptions.position = VF.Curve.Position.NEAR_TOP;
+            slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+          } else {
             slurOptions.position = VF.Curve.Position.NEAR_HEAD;
             slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
+          }
 
-          } else if (firstStemDir === lastStemDir || !firstStemDir || !lastStemDir) {
-            // same stem direction in both notes
+        } else {
+          // different direction in notes
 
-            // shift slurs to stem end if stem direction equals curve direction
-            if (firstDefinedStemDir === curveDir) {
-              slurOptions.position = VF.Curve.Position.NEAR_TOP;
-              slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-            } else {
-              slurOptions.position = VF.Curve.Position.NEAR_HEAD;
-              slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
-            }
-
+          // change position
+          if (firstDefinedStemDir === curveDir) {
+            slurOptions.position = VF.Curve.Position.NEAR_TOP;
+            slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
           } else {
-            // different direction in notes
-
-            // change position
-            if (firstDefinedStemDir === curveDir) {
-              slurOptions.position = VF.Curve.Position.NEAR_TOP;
-              slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
-            } else {
-              slurOptions.position = VF.Curve.Position.NEAR_HEAD;
-              slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-            }
-
+            slurOptions.position = VF.Curve.Position.NEAR_HEAD;
+            slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
           }
 
         }
+
 
 
         //
@@ -10683,6 +10669,7 @@
     me.startClefCopy = null;
 
     me.updateDef(staffDef, scoreDef, true);
+    me.updateRenderWithFromMEI();
   };
 
   StaveInfo.prototype = {
@@ -10707,6 +10694,21 @@
 
     getCurrentScoreDef : function () {
       return this.currentScoreDef;
+    },
+
+    /**
+    * @public
+    */
+    updateRenderWithFromMEI : function() {
+      if (this.keySpec.meiElement && this.keySpec.meiElement.hasAttribute('key.sig.show')) {
+        this.renderWith.keysig = this.getKeySigShow();
+      }
+      if (this.clef.meiElement && this.clef.meiElement.hasAttribute('clef.visible')) {
+        this.renderWith.clef = this.getClefVisible();
+      }
+      if (this.timeSpec.meiElement && this.timeSpec.meiElement.hasAttribute('meter.rend')) {
+        this.renderWith.timesig = this.getMeterRend();
+      }
     },
 
     /**
@@ -11006,7 +11008,7 @@
      */
     showClefCheck : function () {
       var me = this;
-      if (me.renderWith.clef && me.clef.meiElement && me.clef.meiElement.getAttribute('clef.visible') !== 'false') {
+      if (me.renderWith.clef && me.getClefVisible()) {
         me.renderWith.clef = false;
         return true;
       }
@@ -11017,7 +11019,7 @@
      */
     showKeysigCheck : function () {
       var me = this;
-      if (me.renderWith.keysig && me.keySpec.meiElement && me.keySpec.meiElement.getAttribute('key.sig.show') !== 'false') {
+      if (me.renderWith.keysig && me.getKeySigShow()) {
         me.renderWith.keysig = false;
         return true;
       }
@@ -11030,11 +11032,33 @@
       var me = this;
       if (me.renderWith.timesig) {
         me.renderWith.timesig = false;
-        if (me.timeSpec.meiElement && me.timeSpec.meiElement.getAttribute('meter.rend') !== 'invis') {
+        if (me.getMeterRend()) {
           return true;
         }
       }
     },
+
+    /**
+     * @public
+     */
+    getMeterRend : function() {
+      return this.timeSpec.meiElement && this.timeSpec.meiElement.getAttribute('meter.rend') !== 'invis'
+    },
+
+    /**
+     * @public
+     */
+    getKeySigShow : function() {
+      return this.keySpec.meiElement && this.keySpec.meiElement.getAttribute('key.sig.show') !== 'false';
+    },
+
+    /**
+     * @public
+     */
+    getClefVisible : function() {
+      return this.clef.meiElement && this.clef.meiElement.getAttribute('clef.visible') !== 'false';
+    },
+
 
     /**
      * @public
@@ -11594,6 +11618,14 @@
                     }
                     i++;
                 }
+
+                // Locate the mid point between two lines.
+                if (compare && rest_line != next_rest_line) {
+                  var top = Vex.Max(rest_line, next_rest_line);
+                  var bot = Vex.Min(rest_line, next_rest_line);
+                  next_rest_line = Vex.MidLine(top, bot);
+                }
+                return next_rest_line;
             };
 
             for (var i = 0; i < notes.length; ++i) {
