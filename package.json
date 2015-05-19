@@ -11,5 +11,9 @@
     "grunt-contrib-watch": "~0.5.3",
     "grunt-requirejs": "~0.4.2",
     "grunt-template-jasmine-requirejs": "^0.2.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TEI-Music-SIG/MEItoVexFlow.git"
   }
 }
