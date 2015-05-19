@@ -41,12 +41,12 @@
 									<note xml:id="n06" pname="f" oct="4" dur="4"/>
 								</layer>
 							</staff>
-							<slur startid="#n01" endid="#n04" startvo="10" bezier="-10 30 0 30"/>
+							<slur startid="#n01" endid="#n04" startvo="10" bezier="10 30 0 30"/>
 							<slur startid="#n05" endid="#n06" bezier="0 10 0 5"/>
-							<slur startid="#n01" endid="#n06" startvo="20" endvo="5" bezier="-35 30 0 30"/>
+							<slur startid="#n01" endid="#n06" startvo="20" endvo="5" bezier="0 30 0 30"/>
 							
 							
-							<slur staff="1" tstamp="1" tstamp2="2m+4" startvo="30" endvo="10" bezier="-190 50 120 50"/>
+							<slur staff="1" tstamp="1" tstamp2="2m+4" startvo="30" endvo="15" bezier="0 50 0 50"/>
 						</measure>
 						<measure n="2">
 							<staff n="1">
@@ -61,9 +61,9 @@
 									<note pname="d" oct="4" dur="4"/>
 								</layer>
 							</staff>
-							<slur staff="1" tstamp="1" tstamp2="2.5" bezier="-10 30 0 30"/>
+							<slur staff="1" tstamp="1" tstamp2="2.5" bezier="0 30 0 30"/>
 							<slur staff="1" tstamp="3" tstamp2="4" bezier="0 10 0 5"/>
-							<slur staff="1" tstamp="1" tstamp2="4" startvo="10" endvo="5" bezier="-35 30 0 30"/>
+							<slur staff="1" tstamp="1" tstamp2="4" startvo="10" endvo="5" bezier="0 30 0 30"/>
 						</measure>
 						<measure n="3">
 							<staff n="1">
@@ -78,9 +78,9 @@
 									<note pname="d" oct="4" dur="4"/>
 								</layer>
 							</staff>
-							<slur staff="1" tstamp="1" tstamp2="2.5" bezier="-10 30 0 30"/>
+							<slur staff="1" tstamp="1" tstamp2="2.5" bezier="0 30 0 30"/>
 							<slur staff="1" tstamp="3" tstamp2="4" bezier="0 10 0 5"/>
-							<slur staff="1" tstamp="1" tstamp2="4" startvo="10" endvo="5" bezier="-35 30 0 30"/>
+							<slur staff="1" tstamp="1" tstamp2="4" startvo="10" endvo="5" bezier="0 30 0 30"/>
 						</measure>
 					</section>
 				</score>

@@ -114,17 +114,9 @@ define([
         var firstDefinedStemDir = firstStemDir || lastStemDir;
 
 
-        // TODO
-        // STEPS :
-        // 1) if bezier, use bezier, otherwise calculate curvedir
-        // 2) if y shift, use y shift, otherwise calculate position
-
-
         // ### STEP 1: Determine curve and curve dir
 
         bezier = params.bezier;
-        //ignore bezier for now!
-        bezier = null;
         if (bezier) {
           slurOptions.cps = me.bezierStringToCps(bezier);
           slurOptions.custom_cps = true;
@@ -169,46 +161,40 @@ define([
         var startvo = parseFloat(params.startvo);
         var endvo = parseFloat(params.endvo);
 
-        // skip this for now
-        startvo = null;
+        slurOptions.y_shift_start = startvo;
+        slurOptions.y_shift_end = endvo;
 
-        if (startvo && endvo) {
-          slurOptions.y_shift_start = startvo;
-          slurOptions.y_shift_end = endvo;
-        } else {
+        if (!f_note.vexNote || !l_note.vexNote || !f_note.vexNote.hasStem() || !l_note.vexNote.hasStem()) {
+          // always position at head when one of the notes doesn't have a stem
+          slurOptions.position = VF.Curve.Position.NEAR_HEAD;
+          slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
 
-          if (!f_note.vexNote || !l_note.vexNote || !f_note.vexNote.hasStem() || !l_note.vexNote.hasStem()) {
-            // always position at head when one of the notes doesn't have a stem
+        } else if (firstStemDir === lastStemDir || !firstStemDir || !lastStemDir) {
+          // same stem direction in both notes
+
+          // shift slurs to stem end if stem direction equals curve direction
+          if (firstDefinedStemDir === curveDir) {
+            slurOptions.position = VF.Curve.Position.NEAR_TOP;
+            slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
+          } else {
             slurOptions.position = VF.Curve.Position.NEAR_HEAD;
             slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
+          }
 
-          } else if (firstStemDir === lastStemDir || !firstStemDir || !lastStemDir) {
-            // same stem direction in both notes
+        } else {
+          // different direction in notes
 
-            // shift slurs to stem end if stem direction equals curve direction
-            if (firstDefinedStemDir === curveDir) {
-              slurOptions.position = VF.Curve.Position.NEAR_TOP;
-              slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-            } else {
-              slurOptions.position = VF.Curve.Position.NEAR_HEAD;
-              slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
-            }
-
+          // change position
+          if (firstDefinedStemDir === curveDir) {
+            slurOptions.position = VF.Curve.Position.NEAR_TOP;
+            slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
           } else {
-            // different direction in notes
-
-            // change position
-            if (firstDefinedStemDir === curveDir) {
-              slurOptions.position = VF.Curve.Position.NEAR_TOP;
-              slurOptions.position_end = VF.Curve.Position.NEAR_HEAD;
-            } else {
-              slurOptions.position = VF.Curve.Position.NEAR_HEAD;
-              slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
-            }
-
+            slurOptions.position = VF.Curve.Position.NEAR_HEAD;
+            slurOptions.position_end = VF.Curve.Position.NEAR_TOP;
           }
 
         }
+
 
 
         //
