@@ -37,6 +37,7 @@ var runSpec = function (m2vTests) {
     'spec/mei2vf/event/EventUtil',
     'spec/mei2vf/eventlink/EventLink',
     'spec/mei2vf/eventlink/EventReference',
+    'spec/mei2vf/eventlink/Ties',
     'spec/mei2vf/stave/StaveInfo',
     'spec/mei2vf/system/SystemInfo',
     'spec/mei2vf/Rendering',

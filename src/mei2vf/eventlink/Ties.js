@@ -162,8 +162,12 @@ define([
       vexTie = new VF.StaveTie({
         first_note : f_note.vexNote,
         last_note : l_note.vexNote,
-        first_indices : f_note.index,
-        last_indices : l_note.index
+
+        // set specified indices; if indices are not specified for a note, either
+        // use the indices of the other note (in case of a line break, i.e. when
+        // the current note is not defined) or set the default value [0]
+        first_indices : f_note.index || ((f_note.vexNote) ? [0] : l_note.index),
+        last_indices : l_note.index || ((l_note.vexNote) ? [0] : f_note.index)
       });
 
       if (params.curvedir) {
