@@ -2,7 +2,7 @@ require.config({
   baseUrl : '../src',
   paths : {
     'jquery' : '../bower_components/jquery/dist/jquery.min',
-    'vex' : '../bower_components/vexflow/releases/vexflow-min',
+    'vex' : '../bower_components/vexflow/releases/vexflow-debug',
     'common' : '../src/common',
     'mei2vf' : '../src/mei2vf',
     'meilib' : '../src/meilib',

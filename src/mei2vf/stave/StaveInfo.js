@@ -111,7 +111,6 @@ define([
     * @public
     */
     updateRenderWithFromMEI : function() {
-      debugger;
       if (this.keySpec.meiElement && this.keySpec.meiElement.hasAttribute('key.sig.show')) {
         this.renderWith.keysig = this.getKeySigShow();
       }

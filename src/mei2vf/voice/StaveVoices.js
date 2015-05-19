@@ -128,6 +128,14 @@ define([
                     }
                     i++;
                 }
+
+                // Locate the mid point between two lines.
+                if (compare && rest_line != next_rest_line) {
+                  var top = Vex.Max(rest_line, next_rest_line);
+                  var bot = Vex.Min(rest_line, next_rest_line);
+                  next_rest_line = Vex.MidLine(top, bot);
+                }
+                return next_rest_line;
             };
 
             for (var i = 0; i < notes.length; ++i) {
