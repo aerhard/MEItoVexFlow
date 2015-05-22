@@ -103,7 +103,7 @@ define([
           }
           console.log(model);
           Logger.warn('Slur could not be processed', 'No slur start or slur end could be found. Slur parameters: ' +
-                                                     paramString + '. Skipping slur.');
+            paramString + '. Skipping slur.');
           return true;
         }
 
@@ -158,8 +158,13 @@ define([
 
         // ### STEP 2: Determine position
 
-        var startvo = parseFloat(params.startvo);
-        var endvo = parseFloat(params.endvo);
+        // 'virtual unit' = 'A single vu is half the distance
+        // between the vertical center point of a staff line and that of an adjacent staff line.'
+        // TODO calculate
+        var vu = 5;
+
+        var startvo = -1 * parseFloat(params.startvo) * vu;
+        var endvo = -1 * parseFloat(params.endvo) * vu;
 
         slurOptions.y_shift_start = startvo;
         slurOptions.y_shift_end = endvo;
@@ -264,7 +269,7 @@ define([
 
           slurOptions.position = slurOptions.position_end;
           slurOptions.invert =
-          ((curveDir === ABOVE && lastStemDir === ABOVE) || (curveDir === BELOW && lastStemDir === BELOW));
+            ((curveDir === ABOVE && lastStemDir === ABOVE) || (curveDir === BELOW && lastStemDir === BELOW));
           me.createSingleSlur({}, l_note, slurOptions);
         } else {
           me.createSingleSlur(f_note, l_note, slurOptions);
@@ -280,16 +285,26 @@ define([
 
     bezierStringToCps : function (str) {
       var cps = [], regex, matched;
+
+      // 'virtual unit' = 'A single vu is half the distance
+      // between the vertical center point of a staff line and that of an adjacent staff line.'
+      // TODO calculate
+      var vu = 5;
+
       regex = /(\-?[\d|\.]+)\s+(\-?[\d|\.]+)/g;
       while (matched = regex.exec(str)) {
         cps.push({
-          x : +matched[1],
-          y : +matched[2]
+          x : parseFloat(matched[1]) * vu,
+          //
+          y : -1 * parseFloat(matched[2]) * vu
         });
       }
       if (!cps[1]) {
         Logger.info('Incomplete attribute', 'Expected four control points in slur/@bezier, but only found two. Providing cps 3 & 4 on basis on cps 1 & 2.');
-        cps[1] = {x : -cps[0].x, y : cps[0].y};
+        cps[1] = {
+          x : -1 * parseFloat(cps[0].x) * vu,
+          y : -1 * parseFloat(cps[0].y) * vu
+        };
       }
       return cps;
     }

@@ -191,18 +191,18 @@ define([
      * corresponding Vex.Flow.Stave object
      */
     addTempoToStaves : function () {
-      var me = this, offsetX, vexStave, vexTempo, atts, halfLineDistance, i, j, tempoElement;
+      var me = this, offsetX, vexStave, vexTempo, atts, vu, i, j, tempoElement;
       for (i = 0, j = me.tempoElements.length; i < j; i++) {
         tempoElement = me.tempoElements[i];
 
         atts = Util.attsToObj(tempoElement);
         vexStave = me.staves[atts.staff];
-        halfLineDistance = vexStave.getSpacingBetweenLines() / 2;
+        vu = vexStave.getSpacingBetweenLines() / 2;
         vexTempo = new VF.StaveTempo({
           name : Util.getText(tempoElement), duration : atts['mm.unit'], dots : +atts['mm.dots'], bpm : +atts.mm
         }, vexStave.x, 5);
         if (atts.vo) {
-          vexTempo.setShiftY(+atts.vo * halfLineDistance);
+          vexTempo.setShiftY(+atts.vo * vu * -1);
         }
         offsetX = (vexStave.getModifierXShift() > 0) ? -14 : 14;
 
@@ -212,7 +212,7 @@ define([
           offsetX -= 24;
         }
         if (atts.ho) {
-          offsetX += +atts.ho * halfLineDistance;
+          offsetX += +atts.ho * vu;
         }
         vexTempo.setShiftX(offsetX);
         vexTempo.font = me.tempoFont;
