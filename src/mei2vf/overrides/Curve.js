@@ -45,7 +45,7 @@ define([
       //var x_diff = last_x-first_x;
       var y_diff = last_y-first_y;
 
-      cps_1_y += Math.abs(y_diff);
+      //cps_1_y += Math.abs(y_diff);
 
       ctx.moveTo(first_x, first_y);
       ctx.bezierCurveTo(first_x + cp_spacing + cps_0_x,
